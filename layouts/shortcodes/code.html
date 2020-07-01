@@ -1,0 +1,3 @@
+{{ $file := .Get "file" }}
+{{ $lang := .Get "language" }}
+{{ highlight ( $file | readFile | safeHTML ) $lang "" }}
