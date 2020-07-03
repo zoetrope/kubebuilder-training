@@ -1,3 +1,6 @@
+# for Hugo
+/docs
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
