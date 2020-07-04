@@ -24,6 +24,7 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	webappv1 "github.com/zoetrope/kubebuilder-training/static/codes/api/v1"
@@ -55,11 +56,12 @@ func main() {
 	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-		Scheme:             scheme,
-		MetricsBindAddress: metricsAddr,
-		Port:               9443,
-		LeaderElection:     enableLeaderElection,
-		LeaderElectionID:   "27475f02.example.com",
+		Scheme:                 scheme,
+		MetricsBindAddress:     metricsAddr,
+		HealthProbeBindAddress: ":9090",
+		Port:                   9443,
+		LeaderElection:         enableLeaderElection,
+		LeaderElectionID:       "27475f02.example.com",
 	})
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
@@ -80,9 +82,34 @@ func main() {
 	}
 	// +kubebuilder:scaffold:builder
 
+	//err = mgr.Add(runner{cli: mgr.GetAPIReader()})
+	//if err != nil {
+	//	setupLog.Error(err, "unable to add new runner")
+	//	os.Exit(1)
+	//}
+	mgr.AddHealthzCheck("ping", healthz.Ping)
+	mgr.AddReadyzCheck("ping", healthz.Ping)
+
 	setupLog.Info("starting manager")
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}
 }
+
+//type runner struct {
+//	cli client.Reader
+//}
+//
+//func (r runner) Start(<-chan struct{}) error {
+//	var nodes v1.NodeList
+//	err := r.cli.List(context.TODO(), &nodes, &client.ListOptions{})
+//	if err != nil {
+//		setupLog.Error(err, "unable to list")
+//		return err
+//	}
+//	for _, n := range nodes.Items {
+//		fmt.Println(n.Name)
+//	}
+//	return nil
+//}
