@@ -72,12 +72,12 @@ controller-genのバージョンを最新にあげておくことを推奨しま
 
 ## PROJECT
 
-ドメイン名やリポジトリのURLが記述されています。
+ドメイン名やリポジトリのURLや生成したAPIの情報などが記述されています。
 
 ## main.go
 
 あなたがこれから作成するソフトウェア(コントローラやオペレータ、またはAdmission Webhook: 
-今後、**コントローラマネージャ**と表記します)のエントリーポイントとなるソースコードです。
+以降、**コントローラマネージャ**と表記します)のエントリーポイントとなるソースコードです。
 
 ソースコード中に`// +kubebuilder:scaffold:imports`, `// +kubebuilder:scaffold:scheme`, `// +kubebuilder:scaffold:builder`などのコメントが記述されています。
 kubebuilderはこれらのコメントを目印にソースコードの自動生成をおこなうので、
