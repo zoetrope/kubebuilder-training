@@ -5,16 +5,14 @@ weight: 14
 ---
 
 ```console
-$ kubebuilder create webhook --group webapp --version v1 --kind Guestbook --programmatic-validation --defaulting
+$ kubebuilder create webhook --group multitenancy --version v1 --kind Tenant --programmatic-validation --defaulting
 $ make manifests
 ```
 
 ```
 ├── api
 │   └── v1
-│       ├── groupversion_info.go
-│       ├── guestbook_types.go
-│       ├── guestbook_webhook.go
+│       ├── tenant_webhook.go
 │       └── zz_generated.deepcopy.go
 ├── config
 │   └── webhook
