@@ -5,7 +5,7 @@ weight: 13
 ---
 
 ```console
-$ kubebuilder create api --group webapp --version v1 --kind Guestbook
+$ kubebuilder create api --group multitenancy --version v1 --kind Tenant
 Create Resource [y/n]
 y
 Create Controller [y/n]
@@ -19,26 +19,26 @@ $ make manifests
 ├── api
 │   └── v1
 │       ├── groupversion_info.go
-│       ├── guestbook_types.go
+│       ├── tenant_types.go
 │       └── zz_generated.deepcopy.go
 ├── config
 │   ├── crd
 │   │   ├── bases
-│   │   │   └── webapp.example.com_guestbooks.yaml
+│   │   │   └── multitenancy.example.com_tenants.yaml
 │   │   ├── kustomization.yaml
 │   │   ├── kustomizeconfig.yaml
 │   │   └── patches
-│   │       ├── cainjection_in_guestbooks.yaml
-│   │       └── webhook_in_guestbooks.yaml
+│   │       ├── cainjection_in_tenants.yaml
+│   │       └── webhook_in_tenants.yaml
 │   ├── rbac
-│   │   ├── guestbook_editor_role.yaml
-│   │   ├── guestbook_viewer_role.yaml
 │   │   ├── role.yaml
-│   │   └── role_binding.yaml
+│   │   ├── role_binding.yaml
+│   │   ├── tenant_editor_role.yaml
+│   │   └── tenant_viewer_role.yaml
 │   └── samples
-│        └── webapp_v1_guestbook.yaml
+│      └── multitenancy_v1_tenant.yaml
 ├── controllers
-│   ├── guestbook_controller.go
-│   └── suite_test.go
+│   ├── suite_test.go
+│   └── tenant_controller.go
 └── main.go
 ```

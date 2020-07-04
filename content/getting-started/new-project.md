@@ -7,8 +7,8 @@ weight: 12
 それではさっそくkubebuilderコマンドを利用して、プロジェクトの雛形を生成しましょう。
 
 ```console
-$ mkdir sample
-$ cd sample
+$ mkdir tenant
+$ cd tenant
 $ kubebuilder init --domain example.com
 ```
 

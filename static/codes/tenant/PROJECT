@@ -1,3 +1,7 @@
 domain: example.com
 repo: github.com/zoetrope/kubebuilder-training/static/codes
+resources:
+- group: multitenancy
+  kind: Tenant
+  version: v1
 version: "2"
