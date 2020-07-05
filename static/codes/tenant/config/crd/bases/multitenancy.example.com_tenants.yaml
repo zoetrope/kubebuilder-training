@@ -36,17 +36,85 @@ spec:
           spec:
             description: TenantSpec defines the desired state of Tenant
             properties:
-              foo:
-                description: Foo is an example field of Tenant. Edit Tenant_types.go
-                  to remove/update
+              admin:
+                description: Admin is the identity with admin for the tenant
+                properties:
+                  apiGroup:
+                    description: APIGroup holds the API group of the referenced subject.
+                      Defaults to "" for ServiceAccount subjects. Defaults to "rbac.authorization.k8s.io"
+                      for User and Group subjects.
+                    type: string
+                  kind:
+                    description: Kind of object being referenced. Values defined by
+                      this API group are "User", "Group", and "ServiceAccount". If
+                      the Authorizer does not recognized the kind value, the Authorizer
+                      should report an error.
+                    type: string
+                  name:
+                    description: Name of the object being referenced.
+                    type: string
+                  namespace:
+                    description: Namespace of the referenced object.  If the object
+                      kind is non-namespace, such as "User" or "Group", and this value
+                      is not empty the Authorizer should report an error.
+                    type: string
+                required:
+                - kind
+                - name
+                type: object
+              namespacePrefix:
+                description: NamespacePrefix is the prefix for the name of namespaces
                 type: string
+              namespaces:
+                description: Namespaces are the names of the namespaces that belong
+                  to the tenant
+                items:
+                  type: string
+                type: array
+            required:
+            - admin
+            - namespaces
             type: object
           status:
             description: TenantStatus defines the observed state of Tenant
+            properties:
+              conditions:
+                description: Conditions is an array of conditions.
+                items:
+                  properties:
+                    lastTransitionTime:
+                      description: Message is a human-readable message indicating
+                        details about last transition.
+                      format: date-time
+                      type: string
+                    message:
+                      description: Message is a human-readable message indicating
+                        details about last transition.
+                      type: string
+                    reason:
+                      description: Reason is a one-word CamelCase reason for the condition's
+                        last transition.
+                      type: string
+                    status:
+                      description: Status is the status of the condition
+                      type: string
+                    type:
+                      description: Type is the type fo the condition
+                      enum:
+                      - Initialized
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - status
+                  - type
+                  type: object
+                type: array
             type: object
         type: object
     served: true
     storage: true
+    subresources:
+      status: {}
 status:
   acceptedNames:
     kind: ""

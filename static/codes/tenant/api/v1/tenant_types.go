@@ -1,6 +1,8 @@
 package v1
 
 import (
+	corev1 "k8s.io/api/core/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -12,17 +14,54 @@ type TenantSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of Tenant. Edit Tenant_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Namespaces are the names of the namespaces that belong to the tenant
+	// +kubebuiler:validation:MinItems=1
+	Namespaces []string `json:"namespaces"`
+
+	// NamespacePrefix is the prefix for the name of namespaces
+	// +optional
+	NamespacePrefix string `json:"namespacePrefix"`
+
+	// Admin is the identity with admin for the tenant
+	Admin rbacv1.Subject `json:"admin"`
 }
 
 // TenantStatus defines the observed state of Tenant
 type TenantStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+
+	// Conditions is an array of conditions.
+	// +optional
+	Conditions []TenantCondition `json:"conditions,omitempty"`
 }
 
+type TenantCondition struct {
+	// Type is the type fo the condition
+	Type TenantConditionType `json:"type"`
+	// Status is the status of the condition
+	Status corev1.ConditionStatus `json:"status"`
+	// Reason is a one-word CamelCase reason for the condition's last transition.
+	// +optional
+	Reason string `json:"reason,omitempty"`
+	// Message is a human-readable message indicating details about last transition.
+	// +optional
+	Message string `json:"message,omitempty"`
+	// Message is a human-readable message indicating details about last transition.
+	LastTransitionTime metav1.Time `json:"lastTransitionTime"`
+}
+
+// TenantConditionType is the type of Tenant condition.
+// +kubebuilder:validation:Enum=Initialized
+type TenantConditionType string
+
+// Valid values for TenantConditionType
+const (
+	ConditionInitialized TenantConditionType = "Initialized"
+)
+
 // +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 
 // Tenant is the Schema for the tenants API
 type Tenant struct {
