@@ -61,6 +61,7 @@ const (
 )
 
 // +kubebuilder:object:root=true
+// +kubebuilder:resource:scope=Cluster
 // +kubebuilder:subresource:status
 
 // Tenant is the Schema for the tenants API

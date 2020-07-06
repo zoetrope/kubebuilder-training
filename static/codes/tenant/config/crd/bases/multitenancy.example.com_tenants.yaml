@@ -14,7 +14,7 @@ spec:
     listKind: TenantList
     plural: tenants
     singular: tenant
-  scope: Namespaced
+  scope: Cluster
   versions:
   - name: v1
     schema:

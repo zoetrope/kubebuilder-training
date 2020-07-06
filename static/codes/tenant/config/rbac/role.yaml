@@ -39,7 +39,7 @@ rules:
   - patch
   - update
 - apiGroups:
-  - rbac
+  - rbac.authorization.k8s.io
   resources:
   - rolebindings
   verbs:
