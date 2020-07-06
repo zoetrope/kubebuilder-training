@@ -13,6 +13,7 @@ y
 $ make manifests
 ```
 
+Cluster scopeのCRDを生成したい場合は`--namespaced=false`
 
 
 ```

@@ -1,4 +1,0 @@
----
-title: "manifest"
-draft: false
----

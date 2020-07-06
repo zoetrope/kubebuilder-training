@@ -18,4 +18,8 @@ structural
 $ make manifests CRD_OPTIONS=crd:crdVersions=v1
 ```
 
+## Spec
 
+## Status
+
+phaseではなくconditions
