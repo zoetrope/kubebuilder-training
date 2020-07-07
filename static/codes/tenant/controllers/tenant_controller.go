@@ -10,6 +10,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
 	multitenancyv1 "github.com/zoetrope/kubebuilder-training/static/codes/api/v1"
 )
@@ -28,19 +29,25 @@ type TenantReconciler struct {
 
 func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
-	r.Log = r.Log.WithValues("tenant", req.NamespacedName)
+	log := r.Log.WithValues("tenant", req.NamespacedName)
 
 	// your logic here
 
 	var tenant multitenancyv1.Tenant
 	err := r.Get(ctx, req.NamespacedName, &tenant)
 	if err != nil {
-		r.Log.Error(err, "unable to get tenant")
+		log.Error(err, "unable to get tenant")
 		return ctrl.Result{}, err
 	}
-	err = r.cleanupOwnedResources(ctx, tenant)
+	err = r.reconcileNamespaces(ctx, log, tenant)
 	if err != nil {
-		r.Log.Error(err, "unable to reconcile")
+		log.Error(err, "unable to reconcile")
+		return ctrl.Result{}, err
+	}
+
+	err = r.reconcileRoleBindings(ctx, log, tenant)
+	if err != nil {
+		log.Error(err, "unable to reconcile")
 		return ctrl.Result{}, err
 	}
 
@@ -61,11 +68,11 @@ func predicate(obj runtime.Object) []string {
 	return []string{owner.Name}
 }
 
-func (r *TenantReconciler) cleanupOwnedResources(ctx context.Context, tenant multitenancyv1.Tenant) error {
+func (r *TenantReconciler) reconcileNamespaces(ctx context.Context, log logr.Logger, tenant multitenancyv1.Tenant) error {
 	var namespaces corev1.NamespaceList
 	err := r.List(ctx, &namespaces, client.MatchingFields(map[string]string{namespaceOwnerKey: tenant.Name}))
 	if err != nil {
-		r.Log.Error(err, "unable to fetch namespaces")
+		log.Error(err, "unable to fetch namespaces")
 		return err
 	}
 	namespaceNames := make(map[string]corev1.Namespace)
@@ -86,27 +93,56 @@ func (r *TenantReconciler) cleanupOwnedResources(ctx context.Context, tenant mul
 		}
 		err = ctrl.SetControllerReference(&tenant, &target, r.Scheme)
 		if err != nil {
-			r.Log.Error(err, "unable to set owner reference", "name", name)
+			log.Error(err, "unable to set owner reference", "name", name)
 			return err
 		}
-		r.Log.Info("creating the new namespace", "name", name)
+		log.Info("creating the new namespace", "name", name)
 		err = r.Create(ctx, &target, &client.CreateOptions{})
 		if err != nil {
-			r.Log.Error(err, "unable to create the namespace", "name", name)
+			log.Error(err, "unable to create the namespace", "name", name)
 			return err
 		}
 		delete(namespaceNames, name)
 	}
 
 	for _, ns := range namespaceNames {
-		r.Log.Info("deleting the new namespace", "name", ns.Name)
+		log.Info("deleting the new namespace", "name", ns.Name)
 		err = r.Delete(ctx, &ns, &client.DeleteOptions{})
 		if err != nil {
-			r.Log.Error(err, "unable to delete the namespace", "name", ns.Name)
+			log.Error(err, "unable to delete the namespace", "name", ns.Name)
 			return err
 		}
 	}
 
+	return nil
+}
+
+func (r *TenantReconciler) reconcileRoleBindings(ctx context.Context, log logr.Logger, tenant multitenancyv1.Tenant) error {
+	for _, ns := range tenant.Spec.Namespaces {
+		name := tenant.Spec.NamespacePrefix + ns
+
+		rb := &rbacv1.RoleBinding{}
+		rb.SetNamespace(name)
+		rb.SetName(name + "-admin")
+
+		op, err := ctrl.CreateOrUpdate(ctx, r.Client, rb, func() error {
+			rb.RoleRef = rbacv1.RoleRef{
+				APIGroup: "rbac.authorization.k8s.io",
+				Kind:     "ClusterRole",
+				Name:     "admin",
+			}
+			rb.Subjects = []rbacv1.Subject{tenant.Spec.Admin}
+			return ctrl.SetControllerReference(&tenant, rb, r.Scheme)
+		})
+		if err != nil {
+			log.Error(err, "unable to create-or-update RoleBinding")
+			return err
+		}
+
+		if op != controllerutil.OperationResultNone {
+			log.Info("reconcile RoleBinding successfully", "op", op)
+		}
+	}
 	return nil
 }
 
