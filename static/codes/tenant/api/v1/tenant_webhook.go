@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"errors"
+
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
@@ -18,7 +20,7 @@ func (r *Tenant) SetupWebhookWithManager(mgr ctrl.Manager) error {
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 
-// +kubebuilder:webhook:path=/mutate-multitenancy-example-com-v1-tenant,mutating=true,failurePolicy=fail,groups=multitenancy.example.com,resources=tenants,verbs=create;update,versions=v1,name=mtenant.kb.io
+// +kubebuilder:webhook:path=/mutate-tenant,mutating=true,failurePolicy=fail,groups=multitenancy.example.com,resources=tenants,verbs=create,versions=v1,name=mutate-tenant
 
 var _ webhook.Defaulter = &Tenant{}
 
@@ -27,10 +29,13 @@ func (r *Tenant) Default() {
 	tenantlog.Info("default", "name", r.Name)
 
 	// TODO(user): fill in your defaulting logic.
+	if r.Spec.NamespacePrefix == "" {
+		r.Spec.NamespacePrefix = r.Name + "-"
+	}
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
-// +kubebuilder:webhook:verbs=create;update,path=/validate-multitenancy-example-com-v1-tenant,mutating=false,failurePolicy=fail,groups=multitenancy.example.com,resources=tenants,versions=v1,name=vtenant.kb.io
+// +kubebuilder:webhook:verbs=update,path=/validate-tenant,mutating=false,failurePolicy=fail,groups=multitenancy.example.com,resources=tenants,versions=v1,name=validate-tenant
 
 var _ webhook.Validator = &Tenant{}
 
@@ -47,6 +52,10 @@ func (r *Tenant) ValidateUpdate(old runtime.Object) error {
 	tenantlog.Info("validate update", "name", r.Name)
 
 	// TODO(user): fill in your validation logic upon object update.
+	oldTenant := old.(*Tenant)
+	if r.Spec.NamespacePrefix != oldTenant.Spec.NamespacePrefix {
+		return errors.New("spec.namespacePrefix field should not be changed")
+	}
 	return nil
 }
 

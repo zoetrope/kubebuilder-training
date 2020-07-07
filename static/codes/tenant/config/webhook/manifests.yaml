@@ -11,9 +11,9 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /mutate-multitenancy-example-com-v1-tenant
+      path: /mutate-tenant
   failurePolicy: Fail
-  name: mtenant.kb.io
+  name: mutate-tenant
   rules:
   - apiGroups:
     - multitenancy.example.com
@@ -21,7 +21,6 @@ webhooks:
     - v1
     operations:
     - CREATE
-    - UPDATE
     resources:
     - tenants
 
@@ -37,16 +36,15 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /validate-multitenancy-example-com-v1-tenant
+      path: /validate-tenant
   failurePolicy: Fail
-  name: vtenant.kb.io
+  name: validate-tenant
   rules:
   - apiGroups:
     - multitenancy.example.com
     apiVersions:
     - v1
     operations:
-    - CREATE
     - UPDATE
     resources:
     - tenants
