@@ -4,7 +4,7 @@ draft: true
 weight: 12
 ---
 
-それではさっそくkubebuilderコマンドを利用して、プロジェクトの雛形を生成しましょう。
+それではさっそくKubebuilderコマンドを利用して、プロジェクトの雛形を生成しましょう。
 
 ```console
 $ mkdir tenant
@@ -61,7 +61,7 @@ $ kubebuilder init --domain example.com
 
 ## Makefile
 
-kubebuilder v2.3.1では、controller-gen v0.2.5を利用するようになっていますが、
+Kubebuilder v2.3.1では、controller-gen v0.2.5を利用するようになっていますが、
 Webhookのマニフェスト生成部分で問題があるため、以下のようにMakefile内の
 controller-genのバージョンを最新にあげておくことを推奨します。
 
@@ -76,10 +76,10 @@ controller-genのバージョンを最新にあげておくことを推奨しま
 
 ## main.go
 
-あなたがこれから作成するソフトウェア(コントローラやオペレータ、またはAdmission Webhook)のエントリーポイントとなるソースコードです。
+あなたがこれから作成するコントローラのエントリーポイントとなるソースコードです。
 
 ソースコード中に`// +kubebuilder:scaffold:imports`, `// +kubebuilder:scaffold:scheme`, `// +kubebuilder:scaffold:builder`などのコメントが記述されています。
-kubebuilderはこれらのコメントを目印にソースコードの自動生成をおこなうので、
+Kubebuilderはこれらのコメントを目印にソースコードの自動生成をおこなうので、
 決して削除しないように注意してください。
 
 ## hack/boilerplate.go.txt
@@ -90,14 +90,13 @@ kubebuilderはこれらのコメントを目印にソースコードの自動生
 
 ## config
 
-configディレクトリ配下には、コントローラマネージャをKubernetesクラスタにデプロイするための
-マニフェストが生成されます。
+configディレクトリ配下には、コントローラをKubernetesクラスタにデプロイするためのマニフェストが生成されます。
 
 実装する機能によっては必要のないマニフェストも含まれているので、適切に取捨選択してください。
 
 ### manager
 
-マネージャをデプロイするためのマニフェストです。
+コントローラのDeploymentリソースのマニフェストです。
 必要に応じて書き換えてください。
 
 ### rbac
@@ -110,7 +109,7 @@ kube-auth-proxyを利用するとメトリクスエンドポイントへのア�
 `leader_election_role.yaml`と`leader_election_role_binding.yaml`は、リーダーエレクション機能
 を利用するために必要な権限です。
 
-`role.yaml`と`role_binding.yaml`は、コントローラマネージャが各種リソースにアクセスするための
+`role.yaml`と`role_binding.yaml`は、コントローラが各種リソースにアクセスするための
 権限を設定するマニフェストです。
 この2つのファイルは基本的に自動生成されるものなので、開発者が編集する必要はありません。
 
@@ -120,20 +119,20 @@ kube-auth-proxyを利用するとメトリクスエンドポイントへのア�
 
 Prometheus Operator用のカスタムリソースのマニフェストです。
 Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的に
-コントローラマネージャのメトリクスを収集してくれるようになります。
+コントローラのメトリクスを収集してくれるようになります。
 
 Prometheus Operatorを利用していない場合は不要なので削除してしまいましょう。
 
 ### webhook
 
 Admission Webhook機能を提供するためのマニフェストです。
-Admission Webhook機能を利用しない場合は必要ないので、ディレクトリごと消してしまってもよいでしょう。
+Admission Webhook機能を利用しない場合は、ディレクトリごと消してしまってもよいでしょう。
 
 ### certmanager
 
 Admission Webhook機能を提供するためには証明書が必要となります。
 certmanagerディレクトリ下のマニフェストを適用すると、[cert-manager][]を利用して証明書を発行することができます。
-Admission Webhook機能を利用しない場合や、cert-managerを利用せずに証明書を用意する場合は
+Admission Webhook機能を利用しない場合や、cert-managerを利用せずに自前で証明書を用意する場合は
 必要ないマニフェストなので、ディレクトリごと消してしまってもよいでしょう。
 
 ### default
