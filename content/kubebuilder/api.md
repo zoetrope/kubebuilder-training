@@ -5,7 +5,7 @@ weight: 13
 ---
 
 ```console
-$ kubebuilder create api --group multitenancy --version v1 --kind Tenant
+$ kubebuilder create api --group multitenancy --version v1 --kind Tenant `--namespaced=false`
 Create Resource [y/n]
 y
 Create Controller [y/n]

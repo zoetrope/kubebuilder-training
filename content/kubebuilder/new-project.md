@@ -4,7 +4,7 @@ draft: true
 weight: 12
 ---
 
-それではさっそくKubebuilderコマンドを利用して、プロジェクトの雛形を生成しましょう。
+それではさっそく`kubebuilder`コマンドを利用して、プロジェクトの雛形を生成しましょう。
 
 ```console
 $ mkdir tenant
@@ -61,6 +61,21 @@ $ kubebuilder init --domain example.com
 
 ## Makefile
 
+コード生成やコントローラのビルドなどをおこなうためのMakefileです。
+
+よく利用するターゲットとしては以下のものがあります。
+
+| target       | 処理内容                             |
+| -----        | -----                            |
+| manifests    | goのソースコードからCRDやRBAC等のマニフェストを生成する |
+| generate     | DeepCopy関数などを生成する                |
+| docker-build | Dockerイメージのビルドをおこなう              |
+| install      | KubernetesクラスタにCRDを適用する          |
+| deploy       | Kubernetesクラスタにコントローラを適用する       |
+| manager      | コントローラのビルド                       |
+| run          | コントローラをローカル環境で実行する               |
+| test         | テストを実行する                         |
+
 Kubebuilder v2.3.1では、controller-gen v0.2.5を利用するようになっていますが、
 Webhookのマニフェスト生成部分で問題があるため、以下のようにMakefile内の
 controller-genのバージョンを最新にあげておくことを推奨します。
@@ -79,8 +94,7 @@ controller-genのバージョンを最新にあげておくことを推奨しま
 あなたがこれから作成するコントローラのエントリーポイントとなるソースコードです。
 
 ソースコード中に`// +kubebuilder:scaffold:imports`, `// +kubebuilder:scaffold:scheme`, `// +kubebuilder:scaffold:builder`などのコメントが記述されています。
-Kubebuilderはこれらのコメントを目印にソースコードの自動生成をおこなうので、
-決して削除しないように注意してください。
+Kubebuilderはこれらのコメントを目印にソースコードの自動生成をおこなうので、決して削除しないように注意してください。
 
 ## hack/boilerplate.go.txt
 
@@ -97,7 +111,7 @@ configディレクトリ配下には、コントローラをKubernetesクラス�
 ### manager
 
 コントローラのDeploymentリソースのマニフェストです。
-必要に応じて書き換えてください。
+コントローラのコマンドラインオプションの変更などをおおこなった場合など、必要に応じて書き換えてください。
 
 ### rbac
 
