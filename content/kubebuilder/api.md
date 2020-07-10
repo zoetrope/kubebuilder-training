@@ -4,6 +4,10 @@ draft: true
 weight: 13
 ---
 
+`kubebuilder create api`コマンドを利用すると、カスタムリソースやコントローラの実装の雛形を生成することができます。
+
+以下のコマンドを実行して、Tenantを表現するためのカスタムリソースと、Tenantリソースを扱うコントローラを生成してみましょう。
+
 ```console
 $ kubebuilder create api --group multitenancy --version v1 --kind Tenant `--namespaced=false`
 Create Resource [y/n]
@@ -13,7 +17,13 @@ y
 $ make manifests
 ```
 
-Cluster scopeのCRDを生成したい場合は`--namespaced=false`
+`--group`,`--version`, `--kind`オプションは、生成するカスタムリソースのGVKを指定します。
+
+`--namespace`オプションでは、生成するカスタムリソースをnamespace-scopeとcluster-scopeのどちらにするか指定できます。
+今回のTenantリソースはnamespaceなどのcluster-scopeのリソースを扱うため、cluster-scopeを指定しています。
+
+Custom ResourceとControllerのソースコードを生成するかどうか聞かれるので、今回はどちらも`y`と回答します。
+カスタムリソースではなく既存のリソースを扱うコントローラを実装する場合は、`Create Resource [y/n]`に`n`と回答します。
 
 
 ```

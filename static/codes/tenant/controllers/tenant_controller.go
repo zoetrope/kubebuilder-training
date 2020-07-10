@@ -46,7 +46,7 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	if err != nil {
 		log.Error(err, "unable to reconcile", "name", tenant.Name)
 		setCondition(&tenant.Status.Conditions, multitenancyv1.TenantCondition{
-			Type:    multitenancyv1.ConditionInitialized,
+			Type:    multitenancyv1.ConditionReady,
 			Status:  corev1.ConditionFalse,
 			Reason:  "Error",
 			Message: err.Error(),
@@ -60,7 +60,7 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 
 	if updated {
 		setCondition(&tenant.Status.Conditions, multitenancyv1.TenantCondition{
-			Type:   multitenancyv1.ConditionInitialized,
+			Type:   multitenancyv1.ConditionReady,
 			Status: corev1.ConditionTrue,
 		})
 		err = r.Status().Update(ctx, &tenant)

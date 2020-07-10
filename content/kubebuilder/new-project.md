@@ -9,7 +9,7 @@ weight: 12
 ```console
 $ mkdir tenant
 $ cd tenant
-$ kubebuilder init --domain example.com
+$ kubebuilder init --repo example.com/tenant --domain example.com
 ```
 
 `--domain`で指定した名前はCRDのグループ名に使われます。
