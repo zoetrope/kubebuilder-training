@@ -52,7 +52,7 @@ type TenantCondition struct {
 }
 
 // TenantConditionType is the type of Tenant condition.
-// +kubebuilder:validation:Enum=Initialized
+// +kubebuilder:validation:Enum=Ready
 type TenantConditionType string
 
 // Valid values for TenantConditionType

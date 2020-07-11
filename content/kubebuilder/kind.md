@@ -23,8 +23,8 @@ $ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/rel
 コンテナイメージをビルドして、kind環境にロードします。
 
 ```console
-$ make docker build
-$ kind load docker-image controller:latest
+$ make docker-build
+$ kind load docker-image controller:v1
 ```
 
 CRDをKubernetesクラスタに適用します。

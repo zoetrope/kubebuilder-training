@@ -111,7 +111,7 @@ spec:
                     type:
                       description: Type is the type fo the condition
                       enum:
-                      - Initialized
+                      - Ready
                       type: string
                   required:
                   - lastTransitionTime

@@ -4,7 +4,8 @@ draft: false
 weight: 10
 ---
 
-Kubebuilderとは
+`kubebuilder`コマンドは、
+
 
 - kubebuilder
 - controller-tools
