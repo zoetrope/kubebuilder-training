@@ -14,7 +14,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/event"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
+	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
 // TenantReconciler reconciles a Tenant object
@@ -231,10 +233,20 @@ func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		GenericFunc: func(event.GenericEvent) bool { return true },
 	}
 
+	external := newExternalEvent()
+	err = mgr.Add(external)
+	if err != nil {
+		return err
+	}
+	src := source.Channel{
+		Source: external.channel,
+	}
+
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&multitenancyv1.Tenant{}).
 		Owns(&corev1.Namespace{}).
 		Owns(&rbacv1.RoleBinding{}).
+		Watches(&src, &handler.EnqueueRequestForObject{}).
 		WithEventFilter(pred).
 		Complete(r)
 }
