@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"os"
+	"time"
 
+	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
@@ -64,9 +66,35 @@ func main() {
 	}
 	// +kubebuilder:scaffold:builder
 
+	err = mgr.Add(&runner{ctrl.Log.WithName("runner")})
+	if err != nil {
+		setupLog.Error(err, "unable to add runner")
+		os.Exit(1)
+	}
+
 	setupLog.Info("starting manager")
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}
+}
+
+type runner struct {
+	log logr.Logger
+}
+
+func (r runner) Start(ch <-chan struct{}) error {
+	timer := time.NewTicker(10 * time.Second)
+	for {
+		select {
+		case <-ch:
+			return nil
+		case <-timer.C:
+			r.log.Info("run something")
+		}
+	}
+}
+
+func (r runner) NeedLeaderElection() bool {
+	return true
 }
