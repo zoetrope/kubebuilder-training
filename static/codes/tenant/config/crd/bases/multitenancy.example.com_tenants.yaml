@@ -16,7 +16,17 @@ spec:
     singular: tenant
   scope: Cluster
   versions:
-  - name: v1
+  - additionalPrinterColumns:
+    - jsonPath: .spec.admin.name
+      name: ADMIN
+      type: string
+    - jsonPath: .spec.namespacePrefix
+      name: PREFIX
+      type: string
+    - jsonPath: .status.conditions[?(@.type=='Ready')].status
+      name: READY
+      type: string
+    name: v1
     schema:
       openAPIV3Schema:
         description: Tenant is the Schema for the tenants API

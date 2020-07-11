@@ -18,7 +18,7 @@ https://cert-manager.io/docs/installation/kubernetes/
 $ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.1/cert-manager.yaml
 ```
 
-## コントローラマネージャの動作確認
+## コントローラの動作確認
 
 コンテナイメージをビルドして、kind環境にロードします。
 
@@ -36,13 +36,13 @@ $ make install
 次に`config/manager/manager.yaml`に`imagePullPolicy: IfNotPresent`を追加します。
 これはコンテナレジストリからコンテナイメージを取得するのではなく、ローカルのイメージを利用するために必要な設定です。
 
-次にコントローラマネージャのマニフェストを適用します。
+次に各種マニフェストを適用します。
 
 ```console
 $ make deploy
 ```
 
-コントローラマネージャのPodがRunningになったことを確認してください。
+コントローラのPodがRunningになったことを確認してください。
 
 ```console
 $ kubectl get pod -n sample-system -l control-plane=controller-manager
@@ -50,7 +50,7 @@ NAME                                         READY   STATUS    RESTARTS   AGE
 sample-controller-manager-6dd494cc9c-vwbzq   1/1     Running   0          1m
 ```
 
-次にコントローラマネージャのログを表示させておきましょう。
+次にコントローラのログを表示させておきましょう。
 
 ```console
 $ kubectl logs -n sample-system -l control-plane=controller-manager -f

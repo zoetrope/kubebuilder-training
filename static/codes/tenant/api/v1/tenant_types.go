@@ -15,14 +15,14 @@ type TenantSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Namespaces are the names of the namespaces that belong to the tenant
+	// +kubebuiler:validation:Required
 	// +kubebuiler:validation:MinItems=1
 	Namespaces []string `json:"namespaces"`
-
 	// NamespacePrefix is the prefix for the name of namespaces
 	// +optional
-	NamespacePrefix string `json:"namespacePrefix"`
-
+	NamespacePrefix string `json:"namespacePrefix,omitempty"`
 	// Admin is the identity with admin for the tenant
+	// +kubebuiler:validation:Required
 	Admin rbacv1.Subject `json:"admin"`
 }
 
@@ -57,12 +57,15 @@ type TenantConditionType string
 
 // Valid values for TenantConditionType
 const (
-	ConditionInitialized TenantConditionType = "Initialized"
+	ConditionReady TenantConditionType = "Ready"
 )
 
 // +kubebuilder:object:root=true
 // +kubebuilder:resource:scope=Cluster
 // +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="ADMIN",type="string",JSONPath=".spec.admin.name"
+// +kubebuilder:printcolumn:name="PREFIX",type="string",JSONPath=".spec.namespacePrefix"
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
 
 // Tenant is the Schema for the tenants API
 type Tenant struct {
