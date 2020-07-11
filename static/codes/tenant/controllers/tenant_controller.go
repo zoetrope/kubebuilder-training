@@ -135,6 +135,7 @@ func (r *TenantReconciler) reconcileNamespaces(ctx context.Context, log logr.Log
 			log.Error(err, "unable to create the namespace", "name", name)
 			return updated, err
 		}
+		addedNamespaces.Inc()
 		updated = true
 		delete(namespaceNames, name)
 	}
@@ -146,6 +147,7 @@ func (r *TenantReconciler) reconcileNamespaces(ctx context.Context, log logr.Log
 			log.Error(err, "unable to delete the namespace", "name", ns.Name)
 			return updated, err
 		}
+		removedNamespaces.Inc()
 		updated = true
 	}
 
