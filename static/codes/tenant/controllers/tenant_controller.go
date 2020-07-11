@@ -24,6 +24,21 @@ type TenantReconciler struct {
 	Log      logr.Logger
 	Scheme   *runtime.Scheme
 	Recorder record.EventRecorder
+	stopCh   <-chan struct{}
+}
+
+func (r *TenantReconciler) InjectStopChannel(ch <-chan struct{}) error {
+	r.stopCh = ch
+	return nil
+}
+
+func contextFromStopChannel(ch <-chan struct{}) context.Context {
+	ctx, cancel := context.WithCancel(context.Background())
+	go func() {
+		defer cancel()
+		<-ch
+	}()
+	return ctx
 }
 
 // +kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants,verbs=get;list;watch;create;update;patch;delete
@@ -33,7 +48,7 @@ type TenantReconciler struct {
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=rolebindings,verbs=get;list;watch;create;update;patch;delete
 
 func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
+	ctx := contextFromStopChannel(r.stopCh)
 	log := r.Log.WithValues("tenant", req.NamespacedName)
 
 	// your logic here
