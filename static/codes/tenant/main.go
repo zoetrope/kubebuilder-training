@@ -3,9 +3,7 @@ package main
 import (
 	"flag"
 	"os"
-	"time"
 
-	"github.com/go-logr/logr"
 	multitenancyv1 "github.com/zoetrope/kubebuilder-training/static/codes/api/v1"
 	"github.com/zoetrope/kubebuilder-training/static/codes/controllers"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -91,24 +89,4 @@ func main() {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}
-}
-
-type runner struct {
-	log logr.Logger
-}
-
-func (r runner) Start(ch <-chan struct{}) error {
-	timer := time.NewTicker(10 * time.Second)
-	for {
-		select {
-		case <-ch:
-			return nil
-		case <-timer.C:
-			r.log.Info("run something")
-		}
-	}
-}
-
-func (r runner) NeedLeaderElection() bool {
-	return true
 }
