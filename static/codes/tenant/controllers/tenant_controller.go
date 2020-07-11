@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/go-logr/logr"
+	multitenancyv1 "github.com/zoetrope/kubebuilder-training/static/codes/api/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -12,8 +13,8 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
-
-	multitenancyv1 "github.com/zoetrope/kubebuilder-training/static/codes/api/v1"
+	"sigs.k8s.io/controller-runtime/pkg/event"
+	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
 
 // TenantReconciler reconciles a Tenant object
@@ -244,9 +245,17 @@ func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		return err
 	}
 
+	pred := predicate.Funcs{
+		CreateFunc:  func(event.CreateEvent) bool { return true },
+		DeleteFunc:  func(event.DeleteEvent) bool { return true },
+		UpdateFunc:  func(event.UpdateEvent) bool { return true },
+		GenericFunc: func(event.GenericEvent) bool { return true },
+	}
+
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&multitenancyv1.Tenant{}).
 		Owns(&corev1.Namespace{}).
 		Owns(&rbacv1.RoleBinding{}).
+		WithEventFilter(pred).
 		Complete(r)
 }
