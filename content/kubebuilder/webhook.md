@@ -24,15 +24,15 @@ $ make manifests
 
 ```
 ├── api
-│   └── v1
-│       ├── tenant_webhook.go
-│       └── zz_generated.deepcopy.go
+│    └── v1
+│        ├── tenant_webhook.go
+│        └── zz_generated.deepcopy.go
 ├── config
-│   └── webhook
-│       ├── kustomization.yaml
-│       ├── kustomizeconfig.yaml
-│       ├── manifests.yaml
-│       └── service.yaml
+│    └── webhook
+│        ├── kustomization.yaml
+│        ├── kustomizeconfig.yaml
+│        ├── manifests.yaml
+│        └── service.yaml
 └── main.go
 ```
 

@@ -28,28 +28,28 @@ Custom ResourceとControllerのソースコードを生成するかどうか聞�
 
 ```
 ├── api
-│   └── v1
-│       ├── groupversion_info.go
-│       ├── tenant_types.go
-│       └── zz_generated.deepcopy.go
+│    └── v1
+│        ├── groupversion_info.go
+│        ├── tenant_types.go
+│        └── zz_generated.deepcopy.go
 ├── config
-│   ├── crd
-│   │   ├── bases
-│   │   │   └── multitenancy.example.com_tenants.yaml
-│   │   ├── kustomization.yaml
-│   │   ├── kustomizeconfig.yaml
-│   │   └── patches
-│   │       ├── cainjection_in_tenants.yaml
-│   │       └── webhook_in_tenants.yaml
-│   ├── rbac
-│   │   ├── role.yaml
-│   │   ├── role_binding.yaml
-│   │   ├── tenant_editor_role.yaml
-│   │   └── tenant_viewer_role.yaml
-│   └── samples
-│      └── multitenancy_v1_tenant.yaml
+│    ├── crd
+│    │    ├── bases
+│    │    │    └── multitenancy.example.com_tenants.yaml
+│    │    ├── kustomization.yaml
+│    │    ├── kustomizeconfig.yaml
+│    │    └── patches
+│    │        ├── cainjection_in_tenants.yaml
+│    │        └── webhook_in_tenants.yaml
+│    ├── rbac
+│    │    ├── role.yaml
+│    │    ├── role_binding.yaml
+│    │    ├── tenant_editor_role.yaml
+│    │    └── tenant_viewer_role.yaml
+│    └── samples
+│        └── multitenancy_v1_tenant.yaml
 ├── controllers
-│   ├── suite_test.go
-│   └── tenant_controller.go
+│    ├── suite_test.go
+│    └── tenant_controller.go
 └── main.go
 ```

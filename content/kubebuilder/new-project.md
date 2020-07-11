@@ -22,40 +22,40 @@ $ kubebuilder init --repo example.com/tenant --domain example.com
 ├── Makefile
 ├── PROJECT
 ├── bin
-│   └── manager
+│    └── manager
 ├── config
-│   ├── certmanager
-│   │   ├── certificate.yaml
-│   │   ├── kustomization.yaml
-│   │   └── kustomizeconfig.yaml
-│   ├── default
-│   │   ├── kustomization.yaml
-│   │   ├── manager_auth_proxy_patch.yaml
-│   │   ├── manager_webhook_patch.yaml
-│   │   └── webhookcainjection_patch.yaml
-│   ├── manager
-│   │   ├── kustomization.yaml
-│   │   └── manager.yaml
-│   ├── prometheus
-│   │   ├── kustomization.yaml
-│   │   └── monitor.yaml
-│   ├── rbac
-│   │   ├── auth_proxy_client_clusterrole.yaml
-│   │   ├── auth_proxy_role.yaml
-│   │   ├── auth_proxy_role_binding.yaml
-│   │   ├── auth_proxy_service.yaml
-│   │   ├── kustomization.yaml
-│   │   ├── leader_election_role.yaml
-│   │   ├── leader_election_role_binding.yaml
-│   │   └── role_binding.yaml
-│   └── webhook
-│       ├── kustomization.yaml
-│       ├── kustomizeconfig.yaml
-│       └── service.yaml
+│    ├── certmanager
+│    │    ├── certificate.yaml
+│    │    ├── kustomization.yaml
+│    │    └── kustomizeconfig.yaml
+│    ├── default
+│    │    ├── kustomization.yaml
+│    │    ├── manager_auth_proxy_patch.yaml
+│    │    ├── manager_webhook_patch.yaml
+│    │    └── webhookcainjection_patch.yaml
+│    ├── manager
+│    │    ├── kustomization.yaml
+│    │    └── manager.yaml
+│    ├── prometheus
+│    │    ├── kustomization.yaml
+│    │    └── monitor.yaml
+│    ├── rbac
+│    │    ├── auth_proxy_client_clusterrole.yaml
+│    │    ├── auth_proxy_role.yaml
+│    │    ├── auth_proxy_role_binding.yaml
+│    │    ├── auth_proxy_service.yaml
+│    │    ├── kustomization.yaml
+│    │    ├── leader_election_role.yaml
+│    │    ├── leader_election_role_binding.yaml
+│    │    └── role_binding.yaml
+│    └── webhook
+│        ├── kustomization.yaml
+│        ├── kustomizeconfig.yaml
+│        └── service.yaml
 ├── go.mod
 ├── go.sum
 ├── hack
-│   └── boilerplate.go.txt
+│    └── boilerplate.go.txt
 └── main.go
 ```
 
