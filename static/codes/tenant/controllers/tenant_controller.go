@@ -10,6 +10,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
@@ -20,8 +21,9 @@ import (
 // TenantReconciler reconciles a Tenant object
 type TenantReconciler struct {
 	client.Client
-	Log    logr.Logger
-	Scheme *runtime.Scheme
+	Log      logr.Logger
+	Scheme   *runtime.Scheme
+	Recorder record.EventRecorder
 }
 
 // +kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants,verbs=get;list;watch;create;update;patch;delete
@@ -46,6 +48,7 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	updated, err := r.reconcile(ctx, log, tenant)
 	if err != nil {
 		log.Error(err, "unable to reconcile", "name", tenant.Name)
+		r.Recorder.Eventf(&tenant, corev1.EventTypeWarning, "Failed", "failed to reconciled: %s", err.Error())
 		setCondition(&tenant.Status.Conditions, multitenancyv1.TenantCondition{
 			Type:    multitenancyv1.ConditionReady,
 			Status:  corev1.ConditionFalse,
@@ -60,6 +63,7 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	}
 
 	if updated {
+		r.Recorder.Event(&tenant, corev1.EventTypeNormal, "Updated", "the tenant was updated")
 		setCondition(&tenant.Status.Conditions, multitenancyv1.TenantCondition{
 			Type:   multitenancyv1.ConditionReady,
 			Status: corev1.ConditionTrue,
