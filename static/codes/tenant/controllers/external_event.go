@@ -3,35 +3,34 @@ package controllers
 import (
 	"time"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 )
 
-func newExternalEvent() *externalEventSource {
+func newExternalEventWatcher() *externalEventWatcher {
 	ch := make(chan event.GenericEvent)
 
-	return &externalEventSource{
+	return &externalEventWatcher{
 		channel: ch,
 	}
 }
 
-type externalEventSource struct {
+type externalEventWatcher struct {
 	channel chan event.GenericEvent
 }
 
-func (r externalEventSource) Start(ch <-chan struct{}) error {
+func (r externalEventWatcher) Start(ch <-chan struct{}) error {
 	ticker := time.NewTicker(1 * time.Minute)
+	defer ticker.Stop()
 	for {
 		select {
 		case <-ch:
-			ticker.Stop()
 			return nil
 		case <-ticker.C:
-			r.channel <- event.GenericEvent{
-				Meta: &metav1.ObjectMeta{
-					Name: "unknown-tenant",
-				},
-			}
+			//r.channel <- event.GenericEvent{
+			//	Meta: &metav1.ObjectMeta{
+			//		Name: "unknown-tenant",
+			//	},
+			//}
 		}
 	}
 }

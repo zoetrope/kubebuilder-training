@@ -1,3 +1,8 @@
+---
+title: "Deletion"
+draft: true
+weight: 33
+---
 
 権限の確認
 ```console

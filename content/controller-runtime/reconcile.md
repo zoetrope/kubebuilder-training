@@ -1,3 +1,8 @@
+---
+title: "Reconcile"
+draft: true
+weight: 32
+---
 
 権限の確認
 ```console

@@ -255,7 +255,7 @@ func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		GenericFunc: func(event.GenericEvent) bool { return true },
 	}
 
-	external := newExternalEvent()
+	external := newExternalEventWatcher()
 	err = mgr.Add(external)
 	if err != nil {
 		return err

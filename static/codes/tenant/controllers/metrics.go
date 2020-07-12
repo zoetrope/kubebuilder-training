@@ -8,14 +8,16 @@ import (
 var (
 	addedNamespaces = prometheus.NewCounter(
 		prometheus.CounterOpts{
-			Name: "added_namespaces",
-			Help: "Number of added namespaces",
+			Name:      "added_namespaces",
+			Namespace: "tenant_controller",
+			Help:      "Number of added namespaces",
 		},
 	)
 	removedNamespaces = prometheus.NewCounter(
 		prometheus.CounterOpts{
-			Name: "removed_namespaces",
-			Help: "Number of removed namespaces",
+			Name:      "removed_namespaces",
+			Namespace: "tenant_controller",
+			Help:      "Number of removed namespaces",
 		},
 	)
 )

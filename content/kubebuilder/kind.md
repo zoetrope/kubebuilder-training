@@ -1,5 +1,5 @@
 ---
-title: "Running"
+title: "Kind"
 draft: true
 weight: 15
 ---
