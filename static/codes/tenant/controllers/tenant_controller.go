@@ -47,6 +47,28 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		return ctrl.Result{}, err
 	}
 
+	tenantFinalizerName := "tenant.finalizers.multitenancy.example.com"
+	if tenant.ObjectMeta.DeletionTimestamp.IsZero() {
+		if !containsFinalizer(tenant.ObjectMeta.Finalizers, tenantFinalizerName) {
+			tenant.ObjectMeta.Finalizers = append(tenant.ObjectMeta.Finalizers, tenantFinalizerName)
+			err = r.Update(ctx, &tenant)
+			if err != nil {
+				return ctrl.Result{}, err
+			}
+		}
+	} else {
+		if containsFinalizer(tenant.ObjectMeta.Finalizers, tenantFinalizerName) {
+			// remove external resources
+
+			tenant.ObjectMeta.Finalizers = removeFinalizer(tenant.ObjectMeta.Finalizers, tenantFinalizerName)
+			err = r.Update(ctx, &tenant)
+			if err != nil {
+				return ctrl.Result{}, err
+			}
+		}
+		return ctrl.Result{}, nil
+	}
+
 	updated, err := r.reconcile(ctx, log, tenant)
 	if err != nil {
 		log.Error(err, "unable to reconcile", "name", tenant.Name)
@@ -249,4 +271,23 @@ func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Watches(&src, &handler.EnqueueRequestForObject{}).
 		WithEventFilter(pred).
 		Complete(r)
+}
+
+func containsFinalizer(slice []string, s string) bool {
+	for _, item := range slice {
+		if item == s {
+			return true
+		}
+	}
+	return false
+}
+
+func removeFinalizer(slice []string, s string) (result []string) {
+	for _, item := range slice {
+		if item == s {
+			continue
+		}
+		result = append(result, item)
+	}
+	return
 }
