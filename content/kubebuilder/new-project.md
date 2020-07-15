@@ -85,6 +85,17 @@ controller-genのバージョンを最新にあげておくことを推奨しま
 +	go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.3.0 ;\
 ```
 
+## go.mod
+
+```diff
+-	sigs.k8s.io/controller-runtime v0.5.0
++	sigs.k8s.io/controller-runtime v0.6.1
+```
+
+```console
+$ go mod tidy
+```
+
 ## PROJECT
 
 ドメイン名やリポジトリのURLや生成したAPIの情報などが記述されています。

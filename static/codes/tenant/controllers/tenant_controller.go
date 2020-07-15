@@ -49,18 +49,18 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 
 	tenantFinalizerName := "tenant.finalizers.multitenancy.example.com"
 	if tenant.ObjectMeta.DeletionTimestamp.IsZero() {
-		if !containsFinalizer(tenant.ObjectMeta.Finalizers, tenantFinalizerName) {
-			tenant.ObjectMeta.Finalizers = append(tenant.ObjectMeta.Finalizers, tenantFinalizerName)
+		if !controllerutil.ContainsFinalizer(&tenant, tenantFinalizerName) {
+			controllerutil.AddFinalizer(&tenant, tenantFinalizerName)
 			err = r.Update(ctx, &tenant)
 			if err != nil {
 				return ctrl.Result{}, err
 			}
 		}
 	} else {
-		if containsFinalizer(tenant.ObjectMeta.Finalizers, tenantFinalizerName) {
+		if controllerutil.ContainsFinalizer(&tenant, tenantFinalizerName) {
 			// remove external resources
 
-			tenant.ObjectMeta.Finalizers = removeFinalizer(tenant.ObjectMeta.Finalizers, tenantFinalizerName)
+			controllerutil.RemoveFinalizer(&tenant, tenantFinalizerName)
 			err = r.Update(ctx, &tenant)
 			if err != nil {
 				return ctrl.Result{}, err
@@ -253,11 +253,12 @@ func (r *TenantReconciler) reconcileRBAC(ctx context.Context, log logr.Logger, t
 }
 
 func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	err := mgr.GetFieldIndexer().IndexField(&corev1.Namespace{}, namespaceOwnerKey, selectOwnedNamespaces)
+	ctx := context.Background()
+	err := mgr.GetFieldIndexer().IndexField(ctx, &corev1.Namespace{}, namespaceOwnerKey, selectOwnedNamespaces)
 	if err != nil {
 		return err
 	}
-	err = mgr.GetFieldIndexer().IndexField(&multitenancyv1.Tenant{}, tenantConditionReadyKey, selectReadyTenant)
+	err = mgr.GetFieldIndexer().IndexField(ctx, &multitenancyv1.Tenant{}, tenantConditionReadyKey, selectReadyTenant)
 	if err != nil {
 		return err
 	}
@@ -285,23 +286,4 @@ func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Watches(&src, &handler.EnqueueRequestForObject{}).
 		WithEventFilter(pred).
 		Complete(r)
-}
-
-func containsFinalizer(slice []string, s string) bool {
-	for _, item := range slice {
-		if item == s {
-			return true
-		}
-	}
-	return false
-}
-
-func removeFinalizer(slice []string, s string) (result []string) {
-	for _, item := range slice {
-		if item == s {
-			continue
-		}
-		result = append(result, item)
-	}
-	return
 }
