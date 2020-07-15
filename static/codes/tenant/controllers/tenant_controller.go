@@ -115,6 +115,7 @@ func (r *TenantReconciler) reconcile(ctx context.Context, log logr.Logger, tenan
 }
 
 const namespaceOwnerKey = ".metadata.ownerReference.controller"
+const tenantConditionReadyKey = ".status.conditions.ready"
 
 func selectOwnedNamespaces(obj runtime.Object) []string {
 	namespace := obj.(*corev1.Namespace)
@@ -126,6 +127,15 @@ func selectOwnedNamespaces(obj runtime.Object) []string {
 		return nil
 	}
 	return []string{owner.Name}
+}
+
+func selectReadyTenant(obj runtime.Object) []string {
+	tenant := obj.(*multitenancyv1.Tenant)
+	cond := findCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
+	if cond == nil {
+		return []string{string(corev1.ConditionUnknown)}
+	}
+	return []string{string(cond.Status)}
 }
 
 func (r *TenantReconciler) reconcileNamespaces(ctx context.Context, log logr.Logger, tenant multitenancyv1.Tenant) (bool, error) {
@@ -244,6 +254,10 @@ func (r *TenantReconciler) reconcileRBAC(ctx context.Context, log logr.Logger, t
 
 func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	err := mgr.GetFieldIndexer().IndexField(&corev1.Namespace{}, namespaceOwnerKey, selectOwnedNamespaces)
+	if err != nil {
+		return err
+	}
+	err = mgr.GetFieldIndexer().IndexField(&multitenancyv1.Tenant{}, tenantConditionReadyKey, selectReadyTenant)
 	if err != nil {
 		return err
 	}
