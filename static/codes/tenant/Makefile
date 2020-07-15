@@ -78,3 +78,27 @@ CONTROLLER_GEN=$(GOBIN)/controller-gen
 else
 CONTROLLER_GEN=$(shell which controller-gen)
 endif
+
+start:
+	kind create cluster --wait 180s
+
+	kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.1/cert-manager.yaml
+	kubectl wait pod --all -n cert-manager --for condition=Ready
+
+	kubectl create ns prometheus
+	helm install prometheus stable/prometheus-operator --namespace=prometheus --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+	kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
+
+	make docker-build
+	kind load docker-image controller:v1
+
+	make install
+	kubectl wait crd/tenants.multitenancy.example.com --for condition=established
+
+	make deploy
+	kubectl wait pod --all -n tenant-system --for condition=Ready
+
+	kubectl apply -f config/samples/multitenancy_v1_tenant.yaml
+
+stop:
+	kind delete cluster
