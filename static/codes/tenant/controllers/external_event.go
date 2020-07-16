@@ -39,7 +39,7 @@ func (r externalEventWatcher) Start(ch <-chan struct{}) error {
 			return nil
 		case <-ticker.C:
 			var tenants multitenancyv1.TenantList
-			err := r.client.List(ctx, &tenants, client.MatchingFields(map[string]string{tenantConditionReadyKey: string(corev1.ConditionTrue)}))
+			err := r.client.List(ctx, &tenants, client.MatchingFields(map[string]string{conditionReadyField: string(corev1.ConditionTrue)}))
 			if err != nil {
 				break
 			}

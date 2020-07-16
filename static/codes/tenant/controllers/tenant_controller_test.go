@@ -64,7 +64,7 @@ var _ = Describe("Tenant controller", func() {
 			}).Should(Succeed())
 
 			nsList := &corev1.NamespaceList{}
-			err = k8sClient.List(ctx, nsList, client.MatchingFields(map[string]string{namespaceOwnerKey: tenant.Name}))
+			err = k8sClient.List(ctx, nsList, client.MatchingFields(map[string]string{ownerControllerField: tenant.Name}))
 			Expect(err).Should(Succeed())
 
 			var namespaces []string

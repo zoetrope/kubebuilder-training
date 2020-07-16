@@ -114,10 +114,10 @@ func (r *TenantReconciler) reconcile(ctx context.Context, log logr.Logger, tenan
 	return nsUpdated || rbUpdated, nil
 }
 
-const namespaceOwnerKey = ".metadata.ownerReference.controller"
-const tenantConditionReadyKey = ".status.conditions.ready"
+const ownerControllerField = ".metadata.ownerReference.controller"
+const conditionReadyField = ".status.conditions.ready"
 
-func selectOwnedNamespaces(obj runtime.Object) []string {
+func indexByOwnerTenant(obj runtime.Object) []string {
 	namespace := obj.(*corev1.Namespace)
 	owner := metav1.GetControllerOf(namespace)
 	if owner == nil {
@@ -129,18 +129,18 @@ func selectOwnedNamespaces(obj runtime.Object) []string {
 	return []string{owner.Name}
 }
 
-func selectReadyTenant(obj runtime.Object) []string {
+func indexByConditionReady(obj runtime.Object) []string {
 	tenant := obj.(*multitenancyv1.Tenant)
 	cond := findCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
 	if cond == nil {
-		return []string{string(corev1.ConditionUnknown)}
+		return nil
 	}
 	return []string{string(cond.Status)}
 }
 
 func (r *TenantReconciler) reconcileNamespaces(ctx context.Context, log logr.Logger, tenant multitenancyv1.Tenant) (bool, error) {
 	var namespaces corev1.NamespaceList
-	err := r.List(ctx, &namespaces, client.MatchingFields(map[string]string{namespaceOwnerKey: tenant.Name}))
+	err := r.List(ctx, &namespaces, client.MatchingFields(map[string]string{ownerControllerField: tenant.Name}))
 	if err != nil {
 		log.Error(err, "unable to fetch namespaces")
 		return false, err
@@ -254,11 +254,11 @@ func (r *TenantReconciler) reconcileRBAC(ctx context.Context, log logr.Logger, t
 
 func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	ctx := context.Background()
-	err := mgr.GetFieldIndexer().IndexField(ctx, &corev1.Namespace{}, namespaceOwnerKey, selectOwnedNamespaces)
+	err := mgr.GetFieldIndexer().IndexField(ctx, &corev1.Namespace{}, ownerControllerField, indexByOwnerTenant)
 	if err != nil {
 		return err
 	}
-	err = mgr.GetFieldIndexer().IndexField(ctx, &multitenancyv1.Tenant{}, tenantConditionReadyKey, selectReadyTenant)
+	err = mgr.GetFieldIndexer().IndexField(ctx, &multitenancyv1.Tenant{}, conditionReadyField, indexByConditionReady)
 	if err != nil {
 		return err
 	}
