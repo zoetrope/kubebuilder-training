@@ -1,5 +1,5 @@
 ---
-title: "Installation"
+title: "インストール"
 draft: false
 weight: 11
 ---

@@ -65,16 +65,16 @@ $ kubebuilder init --repo example.com/tenant --domain example.com
 
 よく利用するターゲットとしては以下のものがあります。
 
-| target       | 処理内容                             |
-| -----        | -----                            |
+| target       | 処理内容                                            |
+|:-------------|:---------------------------------------------------|
 | manifests    | goのソースコードからCRDやRBAC等のマニフェストを生成する |
-| generate     | DeepCopy関数などを生成する                |
-| docker-build | Dockerイメージのビルドをおこなう              |
-| install      | KubernetesクラスタにCRDを適用する          |
-| deploy       | Kubernetesクラスタにコントローラを適用する       |
-| manager      | コントローラのビルド                       |
-| run          | コントローラをローカル環境で実行する               |
-| test         | テストを実行する                         |
+| generate     | DeepCopy関数などを生成する                           |
+| docker-build | Dockerイメージのビルドをおこなう                      |
+| install      | KubernetesクラスタにCRDを適用する                    |
+| deploy       | Kubernetesクラスタにコントローラを適用する            |
+| manager      | コントローラのビルド                                 |
+| run          | コントローラをローカル環境で実行する                   |
+| test         | テストを実行する                                     |
 
 Kubebuilder v2.3.1では、controller-gen v0.2.5を利用するようになっていますが、
 Webhookのマニフェスト生成部分で問題があるため、以下のようにMakefile内の

@@ -132,7 +132,7 @@ SSA
 
 ## Status.Update/Patch
 
-サブリソース
+statusをサブリソース化していない場合、この処理は失敗するので注意
 
 
 ## Delete/DeleteOfAll
