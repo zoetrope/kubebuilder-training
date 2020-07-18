@@ -448,32 +448,7 @@ manager&#x3067;&#x306F;&#x305D;&#x306E;&#x3088;&#x3046;&#x306A;&#x51E6;&#x7406;&
 <blockquote>
 <p><a id="runner.go" href="../../codes/tenant/runners/runner.go">runner.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">package</span> runners
-
-<span class="hljs-keyword">import</span> (
-    <span class="hljs-string">&quot;fmt&quot;</span>
-    <span class="hljs-string">&quot;time&quot;</span>
-)
-
-<span class="hljs-keyword">type</span> Runner <span class="hljs-keyword">struct</span> {
-}
-
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r Runner)</span> <span class="hljs-title">Start</span><span class="hljs-params">(ch &lt;-<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>{})</span> <span class="hljs-title">error</span></span> {
-    ticker := time.NewTicker(<span class="hljs-number">10</span> * time.Second)
-    <span class="hljs-keyword">defer</span> ticker.Stop()
-    <span class="hljs-keyword">for</span> {
-        <span class="hljs-keyword">select</span> {
-        <span class="hljs-keyword">case</span> &lt;-ch:
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
-        <span class="hljs-keyword">case</span> &lt;-ticker.C:
-            fmt.Println(<span class="hljs-string">&quot;run something&quot;</span>)
-        }
-    }
-}
-
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r Runner)</span> <span class="hljs-title">NeedLeaderElection</span><span class="hljs-params">()</span> <span class="hljs-title">bool</span></span> {
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
-}
+<pre><code class="lang-golang">Error: file not found: /home/zoetro/<span class="hljs-keyword">go</span>/src/github.com/zoetrope/kubebuilder-training/codes/tenant/runners/runner.<span class="hljs-keyword">go</span>
 </code></pre>
 <p>Start&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x306F;manager&#x306E;Start&#x3092;&#x547C;&#x3073;&#x51FA;&#x3057;&#x305F;&#x969B;&#x306B;&#x3001;goroutine&#x3068;&#x3057;&#x3066;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;
 &#x5F15;&#x6570;&#x306E;ch&#x306B;&#x3088;&#x308A;manager&#x304B;&#x3089;&#x306E;&#x7D42;&#x4E86;&#x901A;&#x77E5;&#x3092;&#x53D7;&#x3051;&#x53D6;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
@@ -499,38 +474,7 @@ r.Recorder.Eventf(&amp;tenant, corev1.EventTypeWarning, <span class="hljs-string
 <blockquote>
 <p><a id="event_recorder_rbac.yaml" href="../../codes/tenant/config/rbac/event_recorder_rbac.yaml">event_recorder_rbac.yaml</a></p>
 </blockquote>
-<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> rbac.authorization.k8s.io/v1
-<span class="hljs-attr">kind:</span> Role
-<span class="hljs-attr">metadata:</span>
-<span class="hljs-attr">  name:</span> eventrecorder-role
-<span class="hljs-attr">  namespace:</span> default
-<span class="hljs-attr">rules:</span>
-<span class="hljs-attr">  - apiGroups:</span>
-<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;&quot;</span>
-<span class="hljs-attr">    resources:</span>
-<span class="hljs-bullet">      -</span> events
-<span class="hljs-attr">    verbs:</span>
-<span class="hljs-bullet">      -</span> create
-<span class="hljs-bullet">      -</span> delete
-<span class="hljs-bullet">      -</span> get
-<span class="hljs-bullet">      -</span> list
-<span class="hljs-bullet">      -</span> patch
-<span class="hljs-bullet">      -</span> update
-<span class="hljs-bullet">      -</span> watch
-<span class="hljs-meta">---</span>
-<span class="hljs-attr">apiVersion:</span> rbac.authorization.k8s.io/v1
-<span class="hljs-attr">kind:</span> RoleBinding
-<span class="hljs-attr">metadata:</span>
-<span class="hljs-attr">  name:</span> eventrecorder-rolebinding
-<span class="hljs-attr">  namespace:</span> default
-<span class="hljs-attr">roleRef:</span>
-<span class="hljs-attr">  apiGroup:</span> rbac.authorization.k8s.io
-<span class="hljs-attr">  kind:</span> Role
-<span class="hljs-attr">  name:</span> eventrecorder-role
-<span class="hljs-attr">subjects:</span>
-<span class="hljs-attr">  - kind:</span> ServiceAccount
-<span class="hljs-attr">    name:</span> default
-<span class="hljs-attr">    namespace:</span> tenant-system
+<pre><code class="lang-yaml"><span class="hljs-attr">Error:</span> file not found: /home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/codes/tenant/config/rbac/event_recorder_rbac.yaml
 </code></pre>
 <h2 id="metricslistener">metricsListener</h2>
 <pre><code class="lang-go">    mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
@@ -548,33 +492,7 @@ r.Recorder.Eventf(&amp;tenant, corev1.EventTypeWarning, <span class="hljs-string
 <blockquote>
 <p><a id="metrics.go" href="../../codes/tenant/controllers/metrics.go">metrics.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">package</span> controllers
-
-<span class="hljs-keyword">import</span> (
-    <span class="hljs-string">&quot;github.com/prometheus/client_golang/prometheus&quot;</span>
-    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/metrics&quot;</span>
-)
-
-<span class="hljs-keyword">var</span> (
-    addedNamespaces = prometheus.NewCounter(
-        prometheus.CounterOpts{
-            Name:      <span class="hljs-string">&quot;added_namespaces&quot;</span>,
-            Namespace: <span class="hljs-string">&quot;tenant_controller&quot;</span>,
-            Help:      <span class="hljs-string">&quot;Number of added namespaces&quot;</span>,
-        },
-    )
-    removedNamespaces = prometheus.NewCounter(
-        prometheus.CounterOpts{
-            Name:      <span class="hljs-string">&quot;removed_namespaces&quot;</span>,
-            Namespace: <span class="hljs-string">&quot;tenant_controller&quot;</span>,
-            Help:      <span class="hljs-string">&quot;Number of removed namespaces&quot;</span>,
-        },
-    )
-)
-
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">init</span><span class="hljs-params">()</span></span> {
-    metrics.Registry.MustRegister(addedNamespaces, removedNamespaces)
-}
+<pre><code class="lang-golang">Error: file not found: /home/zoetro/<span class="hljs-keyword">go</span>/src/github.com/zoetrope/kubebuilder-training/codes/tenant/controllers/metrics.<span class="hljs-keyword">go</span>
 </code></pre>
 <p>Reconcile&#x51E6;&#x7406;&#x306E;&#x4E2D;&#x3067;&#x4EE5;&#x4E0B;&#x306E;&#x51E6;&#x7406;&#x3092;&#x547C;&#x3073;&#x51FA;&#x3057;&#x307E;&#x3059;&#x3002;</p>
 <pre><code class="lang-go"><span class="hljs-comment">// namespace&#x304C;&#x8FFD;&#x52A0;&#x3055;&#x308C;&#x305F;&#x3068;&#x304D;&#x306B;&#x4EE5;&#x4E0B;&#x306E;&#x51E6;&#x7406;&#x3092;&#x5B9F;&#x884C;</span>
@@ -598,23 +516,7 @@ Kubernetes&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x3084;&#x30ED;&#x30A
 <blockquote>
 <p><a id="inject.go" href="../../codes/tenant/controllers/inject.go">inject.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">package</span> controllers
-
-<span class="hljs-keyword">import</span> <span class="hljs-string">&quot;context&quot;</span>
-
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *TenantReconciler)</span> <span class="hljs-title">InjectStopChannel</span><span class="hljs-params">(ch &lt;-<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>{})</span> <span class="hljs-title">error</span></span> {
-    r.stopCh = ch
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
-}
-
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">contextFromStopChannel</span><span class="hljs-params">(ch &lt;-<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>{})</span> <span class="hljs-title">context</span>.<span class="hljs-title">Context</span></span> {
-    ctx, cancel := context.WithCancel(context.Background())
-    <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
-        <span class="hljs-keyword">defer</span> cancel()
-        &lt;-ch
-    }()
-    <span class="hljs-keyword">return</span> ctx
-}
+<pre><code class="lang-golang">Error: file not found: /home/zoetro/<span class="hljs-keyword">go</span>/src/github.com/zoetrope/kubebuilder-training/codes/tenant/controllers/inject.<span class="hljs-keyword">go</span>
 </code></pre>
 <p>&#x3053;&#x306E;StopChannel&#x304B;&#x3089;<code>context.Context</code>&#x3092;&#x4F5C;&#x6210;&#x3057;&#x3066;&#x304A;&#x3051;&#x3070;&#x3001;Reconcile Loop&#x306E;&#x4E2D;&#x3067;manager&#x304B;&#x3089;&#x306E;&#x7D42;&#x4E86;&#x901A;&#x77E5;&#x3092;&#x53D7;&#x3051;&#x53D6;&#x308C;&#x307E;&#x3059;&#x3002;</p>
 <pre><code class="lang-go"><span class="hljs-keyword">type</span> TenantReconciler <span class="hljs-keyword">struct</span> {
@@ -669,7 +571,7 @@ Kubernetes&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x3084;&#x30ED;&#x30A
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.5","depth":2,"next":{"title":"Advanced","level":"1.5","depth":1,"path":"advanced/README.md","ref":"advanced/README.md","articles":[{"title":"コントローラのテスト","level":"1.5.1","depth":2,"path":"advanced/controller_test.md","ref":"advanced/controller_test.md","articles":[]},{"title":"Webhookのテスト","level":"1.5.2","depth":2,"path":"advanced/webhook_test.md","ref":"advanced/webhook_test.md","articles":[]},{"title":"Conversion","level":"1.5.3","depth":2,"path":"advanced/conversion.md","ref":"advanced/conversion.md","articles":[]}]},"previous":{"title":"Webhookの実装","level":"1.4.4","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"full","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2020-07-18T03:19:48.670Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-18T03:49:52.885Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.5","depth":2,"next":{"title":"Advanced","level":"1.5","depth":1,"path":"advanced/README.md","ref":"advanced/README.md","articles":[{"title":"コントローラのテスト","level":"1.5.1","depth":2,"path":"advanced/controller_test.md","ref":"advanced/controller_test.md","articles":[]},{"title":"Webhookのテスト","level":"1.5.2","depth":2,"path":"advanced/webhook_test.md","ref":"advanced/webhook_test.md","articles":[]},{"title":"Conversion","level":"1.5.3","depth":2,"path":"advanced/conversion.md","ref":"advanced/conversion.md","articles":[]}]},"previous":{"title":"Webhookの実装","level":"1.4.4","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"full","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2020-07-18T03:19:48.670Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-18T06:13:07.172Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
