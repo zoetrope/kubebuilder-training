@@ -1,0 +1,6 @@
+{
+  "root": "./docs",
+  "plugins": [
+    "include-codeblock"
+  ]
+}

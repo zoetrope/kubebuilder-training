@@ -1,0 +1,27 @@
+{
+  "name": "kubebuilder-training",
+  "version": "1.0.0",
+  "description": "つくって学ぶKubebuilder",
+  "main": "index.js",
+  "dependencies": {
+    "honkit": "^3.5.2"
+  },
+  "devDependencies": {
+    "gitbook-plugin-include-codeblock": "^3.2.2"
+  },
+  "scripts": {
+    "build": "honkit build",
+    "serve": "honkit serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zoetrope/kubebuilder-training.git"
+  },
+  "keywords": [],
+  "author": "zoetrope",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zoetrope/kubebuilder-training/issues"
+  },
+  "homepage": "https://github.com/zoetrope/kubebuilder-training#readme"
+}

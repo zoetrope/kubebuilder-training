@@ -1,22 +1,21 @@
 # training-kubebuilder
 
 ## how to build
-* install Hugo
-  * [https://gohugo.io/getting-started/installing](https://gohugo.io/getting-started/installing)
- 
-* fetch theme files
-```console
-git submodule update -i
+
+### Requirement
+- Node.js LTS version
+
+###  install packages
+```
+npm install
 ```
 
-* start the Hugo server on localhost
-
+### start a honkit server on localhost
 ```console
-hugo server -D
+npm run serve
 ```
 
-* build static pages
-
+### build static pages
 ```console
-hugo -D
+npm run build
 ```
