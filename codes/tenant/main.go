@@ -79,6 +79,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	//! [health]
 	err = mgr.AddHealthzCheck("ping", healthz.Ping)
 	if err != nil {
 		setupLog.Error(err, "unable to add healthz check")
@@ -89,6 +90,7 @@ func main() {
 		setupLog.Error(err, "unable to add readyz check")
 		os.Exit(1)
 	}
+	//! [health]
 
 	setupLog.Info("starting manager")
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {

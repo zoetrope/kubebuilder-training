@@ -1,5 +1,7 @@
 # Webhookのテスト
 
+controller-runtime v0.6.0以降では、testenvでwebhookのテストもサポートするようになりました。
+
 ## テスト環境のセットアップ
 
 [import, title="api/v1/suite_test.go"](../../codes/tenant/api/v1/suite_test.go)

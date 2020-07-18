@@ -30,7 +30,7 @@ Enum型
 `Phase`フィールドを用意して現在の状態のみを格納するのではなく、`Conditions`フィールドで各状態を
 判断できるようにしておくことが推奨されています。
 
-https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties
+[API Conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties)
 
 Tenantリソースでは状態遷移を扱う必要はないのですが、ここではConditionsフィールドを定義してみましょう。
 
@@ -89,4 +89,3 @@ structural
 ```console
 $ make manifests CRD_OPTIONS=crd:crdVersions=v1
 ```
-

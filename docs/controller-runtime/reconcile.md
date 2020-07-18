@@ -1,4 +1,4 @@
-# Reconcileの実装
+# Reconcile
 
 ## Reconcileとは
 
@@ -9,7 +9,8 @@
 * 外部イベント
 * Resync
 
-権限の確認
-```console
-kubectl get all -n test1 --as=system:serviceaccount:default:default
-```
+[import:"pred,managedby",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
+
+## Reconcileの実装
+
+[import:"reconcile"](../../codes/tenant/controllers/tenant_controller.go)

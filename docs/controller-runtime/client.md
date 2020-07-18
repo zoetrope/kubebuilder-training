@@ -69,6 +69,8 @@ Updateはリソースが存在しない場合には失敗
 
 CreateOrUpdateを利用すると、リソースが存在しなければ作成し、存在すれば更新してくれます。
 
+[import:"create-or-update",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
+
 ## Patch
 
 SSA
@@ -79,4 +81,3 @@ statusをサブリソース化していない場合、この処理は失敗す�
 
 
 ## Delete/DeleteOfAll
-

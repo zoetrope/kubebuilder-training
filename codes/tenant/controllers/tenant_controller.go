@@ -28,11 +28,13 @@ type TenantReconciler struct {
 	stopCh   <-chan struct{}
 }
 
+//! [rbac]
 // +kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=core,resources=namespaces,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterroles,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=rolebindings,verbs=get;list;watch;create;update;patch;delete
+//! [rbac]
 
 func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := contextFromStopChannel(r.stopCh)
@@ -49,6 +51,7 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		return ctrl.Result{}, err
 	}
 
+	//! [finalizer]
 	tenantFinalizerName := "tenant.finalizers.multitenancy.example.com"
 	if tenant.ObjectMeta.DeletionTimestamp.IsZero() {
 		if !controllerutil.ContainsFinalizer(&tenant, tenantFinalizerName) {
@@ -70,7 +73,9 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		}
 		return ctrl.Result{}, nil
 	}
+	//! [finalizer]
 
+	//! [status]
 	updated, err := r.reconcile(ctx, log, tenant)
 	if err != nil {
 		log.Error(err, "unable to reconcile", "name", tenant.Name)
@@ -78,7 +83,7 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		setCondition(&tenant.Status.Conditions, multitenancyv1.TenantCondition{
 			Type:    multitenancyv1.ConditionReady,
 			Status:  corev1.ConditionFalse,
-			Reason:  "Error",
+			Reason:  "Failed",
 			Message: err.Error(),
 		})
 		stErr := r.Status().Update(ctx, &tenant)
@@ -100,10 +105,12 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 			return ctrl.Result{}, err
 		}
 	}
+	//! [status]
 
 	return ctrl.Result{}, nil
 }
 
+//! [reconcile]
 func (r *TenantReconciler) reconcile(ctx context.Context, log logr.Logger, tenant multitenancyv1.Tenant) (bool, error) {
 	nsUpdated, err := r.reconcileNamespaces(ctx, log, tenant)
 	if err != nil {
@@ -114,34 +121,6 @@ func (r *TenantReconciler) reconcile(ctx context.Context, log logr.Logger, tenan
 		return rbUpdated, err
 	}
 	return nsUpdated || rbUpdated, nil
-}
-
-//! [indexer]
-const ownerControllerField = ".metadata.ownerReference.controller"
-
-func indexByOwnerTenant(obj runtime.Object) []string {
-	namespace := obj.(*corev1.Namespace)
-	owner := metav1.GetControllerOf(namespace)
-	if owner == nil {
-		return nil
-	}
-	if owner.APIVersion != multitenancyv1.GroupVersion.String() || owner.Kind != "Tenant" {
-		return nil
-	}
-	return []string{owner.Name}
-}
-
-//! [indexer]
-
-const conditionReadyField = ".status.conditions.ready"
-
-func indexByConditionReady(obj runtime.Object) []string {
-	tenant := obj.(*multitenancyv1.Tenant)
-	cond := findCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
-	if cond == nil {
-		return nil
-	}
-	return []string{string(cond.Status)}
 }
 
 func (r *TenantReconciler) reconcileNamespaces(ctx context.Context, log logr.Logger, tenant multitenancyv1.Tenant) (bool, error) {
@@ -172,7 +151,9 @@ func (r *TenantReconciler) reconcileNamespaces(ctx context.Context, log logr.Log
 			},
 		}
 		//! [namespace]
+		//! [controller-reference]
 		err = ctrl.SetControllerReference(&tenant, &target, r.Scheme)
+		//! [controller-reference]
 		if err != nil {
 			log.Error(err, "unable to set owner reference", "name", name)
 			return updated, err
@@ -209,6 +190,7 @@ func (r *TenantReconciler) reconcileNamespaces(ctx context.Context, log logr.Log
 func (r *TenantReconciler) reconcileRBAC(ctx context.Context, log logr.Logger, tenant multitenancyv1.Tenant) (bool, error) {
 	updated := false
 	for _, ns := range tenant.Spec.Namespaces {
+		//! [create-or-update]
 		name := tenant.Spec.NamespacePrefix + ns
 
 		role := &rbacv1.ClusterRole{}
@@ -230,6 +212,7 @@ func (r *TenantReconciler) reconcileRBAC(ctx context.Context, log logr.Logger, t
 			}
 			return ctrl.SetControllerReference(&tenant, role, r.Scheme)
 		})
+		//! [create-or-update]
 		if err != nil {
 			log.Error(err, "unable to create-or-update RoleBinding")
 			return updated, err
@@ -265,6 +248,35 @@ func (r *TenantReconciler) reconcileRBAC(ctx context.Context, log logr.Logger, t
 	}
 	return updated, nil
 }
+//! [reconcile]
+
+//! [indexer]
+const ownerControllerField = ".metadata.ownerReference.controller"
+
+func indexByOwnerTenant(obj runtime.Object) []string {
+	namespace := obj.(*corev1.Namespace)
+	owner := metav1.GetControllerOf(namespace)
+	if owner == nil {
+		return nil
+	}
+	if owner.APIVersion != multitenancyv1.GroupVersion.String() || owner.Kind != "Tenant" {
+		return nil
+	}
+	return []string{owner.Name}
+}
+
+//! [indexer]
+
+const conditionReadyField = ".status.conditions.ready"
+
+func indexByConditionReady(obj runtime.Object) []string {
+	tenant := obj.(*multitenancyv1.Tenant)
+	cond := findCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
+	if cond == nil {
+		return nil
+	}
+	return []string{string(cond.Status)}
+}
 
 func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	ctx := context.Background()
@@ -279,12 +291,14 @@ func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		return err
 	}
 
+	//! [pred]
 	pred := predicate.Funcs{
 		CreateFunc:  func(event.CreateEvent) bool { return true },
 		DeleteFunc:  func(event.DeleteEvent) bool { return true },
 		UpdateFunc:  func(event.UpdateEvent) bool { return true },
 		GenericFunc: func(event.GenericEvent) bool { return true },
 	}
+	//! [pred]
 
 	external := newExternalEventWatcher()
 	err = mgr.Add(external)
@@ -295,6 +309,7 @@ func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Source: external.channel,
 	}
 
+	//! [managedby]
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&multitenancyv1.Tenant{}).
 		Owns(&corev1.Namespace{}).
@@ -302,4 +317,5 @@ func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Watches(&src, &handler.EnqueueRequestForObject{}).
 		WithEventFilter(pred).
 		Complete(r)
+	//! [managedby]
 }

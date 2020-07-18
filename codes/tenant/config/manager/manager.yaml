@@ -37,4 +37,18 @@ spec:
           requests:
             cpu: 100m
             memory: 20Mi
+        #! [probe]
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 9090
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 9090
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        #! [probe]
       terminationGracePeriodSeconds: 10
