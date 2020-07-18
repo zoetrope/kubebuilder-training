@@ -44,7 +44,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: TenantSpec defines the desired state of Tenant
+            description: '! [spec] TenantSpec defines the desired state of Tenant'
             properties:
               admin:
                 description: Admin is the identity with admin for the tenant
@@ -86,7 +86,7 @@ spec:
             - namespaces
             type: object
           status:
-            description: TenantStatus defines the observed state of Tenant
+            description: '! [status] TenantStatus defines the observed state of Tenant'
             properties:
               conditions:
                 description: Conditions is an array of conditions.
@@ -123,7 +123,8 @@ spec:
         type: object
     served: true
     storage: true
-    subresources: {}
+    subresources:
+      status: {}
 status:
   acceptedNames:
     kind: ""

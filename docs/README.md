@@ -1,28 +1,10 @@
-# 作って学ぶKubebuilder
+# つくって学ぶKubebuilder
 
 本資料ではKubebuilderを利用して、Kubernetesを拡張するカスタムコントローラの実装方法を学びます。
 
 ## Kubebuilderとは
 
-## 作成するコントローラ
-
-本資料ではカスタムコントローラの実装例として、Kubernetesでマルチテナンシーを実現するための
-テナントコントローラを実装します。
-
-テナントコントローラは以下のような機能を持ちます。
-
-- 各テナントは複数のnamespaceから構成される
-- テナントリソースを作成するとテナントに属するnamespaceが作成される
-- namespaceの名前にはprefixを指定することができる
-- namespaceのprefixは途中で変更することができない
-- テナントには管理者ユーザーを指定することができる
-- 管理者ユーザーはテナントにnamespaceを追加・削除することができる
-
-マルチテナンシーを実現するためには機能不足ですが、Kubebuilderを学ぶためには十分な要素が含まれています。
-
-ソースコードは以下にあります。
-
-- https://github.com/zoetrope/kubebuilder-training/tree/master/codes/tenant
+https://github.com/kubernetes-sigs/kubebuilder
 
 ## 参考資料
 
@@ -41,7 +23,7 @@
 
 Kubebuilderの活用事例として、我々が実装しているOSSを紹介します。
 
-- [TopoLVM](https://github.com/cybozu-go/topolvm)
+- [TopoLVM](https://github.com/topolvm/topolvm)
     - LVMを利用したDynamic Provisioning可能なCSIプラグイン実装
 - [Contour Plus](https://github.com/cybozu-go/contour-plus)
     - Ingress Controller [Contour](https://github.com/projectcontour/contour)を機能拡張するためのコントローラ

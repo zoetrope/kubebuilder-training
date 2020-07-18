@@ -9,6 +9,7 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+//! [spec]
 // TenantSpec defines the desired state of Tenant
 type TenantSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
@@ -26,6 +27,9 @@ type TenantSpec struct {
 	Admin rbacv1.Subject `json:"admin"`
 }
 
+//! [spec]
+
+//! [status]
 // TenantStatus defines the observed state of Tenant
 type TenantStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
@@ -60,6 +64,9 @@ const (
 	ConditionReady TenantConditionType = "Ready"
 )
 
+//! [status]
+
+//! [tenant]
 // +kubebuilder:object:root=true
 // +kubebuilder:resource:scope=Cluster
 // +kubebuilder:subresource:status
@@ -75,6 +82,8 @@ type Tenant struct {
 	Spec   TenantSpec   `json:"spec,omitempty"`
 	Status TenantStatus `json:"status,omitempty"`
 }
+
+//! [tenant]
 
 // +kubebuilder:object:root=true
 

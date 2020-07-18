@@ -1,67 +1,29 @@
 # CRDの生成
 
-[api/v1/tenant_types.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/api/v1/tenant_types.go)
+コントローラでカスタムリソースを扱うためには、そのリソースのCRD(Custom Resource Definition)を定義する必要があります。このCRDはOpenAPI v3.0の形式で書く必要があるのですが、人間が記述するには少々大変です。
 
-## SubResource
+- [CRDの例](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/config/crd/bases/multitenancy.example.com_tenants.yaml)
 
-```go
-// +kubebuilder:object:root=true
-// +kubebuilder:resource:scope=Cluster
-
-// Tenant is the Schema for the tenants API
-type Tenant struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
-
-	Spec   TenantSpec   `json:"spec,omitempty"`
-	Status TenantStatus `json:"status,omitempty"`
-}
-```
-
-
-`+kubebuilder:object:root=true`: `Tenant`というstructがAPIのrootオブジェクトであることを表すマーカーです。
-`+kubebuilder:resource:scope=Cluster`: `Tenant`がcluster-scopeのカスタムリソースであることを表すマーカーです。
-
-
+そこでKubebuilderでは、controller-genというツールを利用して、Goで記述したstructからCRDを生成することが可能になっています。
 
 ## Spec
 
-```go
-// TenantSpec defines the desired state of Tenant
-type TenantSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+[import:"spec"](../../codes/tenant/api/v1/tenant_types.go)
 
-	// Namespaces are the names of the namespaces that belong to the tenant
-	// +kubebuiler:validation:Required
-	// +kubebuiler:validation:MinItems=1
-	Namespaces []string `json:"namespaces"`
+テナントに属するnamespaceの一覧を
+namespace名のプリフィックスを指定するための`NamespacePrefix`
+テナントの管理ユーザーを指定するために`Admin`フィールド
 
-	// NamespacePrefix is the prefix for the name of namespaces
-	// +optional
-	NamespacePrefix string `json:"namespacePrefix,omitempty"`
+また、各フィールドの上に`// +kubebuilder`という文字列から始まるマーカーと呼ばれるコメントが記述されています。
+これらのマーカーによって、生成されるCRDの内容を制御することができます。
 
-	// Admin is the identity with admin for the tenant
-	// +kubebuiler:validation:Required
-	Admin rbacv1.Subject `json:"admin"`
-}
-```
+付与できるマーカーは`controller-gen crd -w`コマンドで確認することができます。
 
-```go
-// +kubebuilder:object:root=true
-// +kubebuilder:resource:scope=Cluster
-// +kubebuilder:printcolumn:name="ADMIN",type="string",JSONPath=".spec.admin.name"
-// +kubebuilder:printcolumn:name="PREFIX",type="string",JSONPath=".spec.namespacePrefix"
+Required, Optional
+各種バリデーション
+Enum型
+デフォルト値の設定
 
-// Tenant is the Schema for the tenants API
-type Tenant struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
-
-	Spec   TenantSpec   `json:"spec,omitempty"`
-	Status TenantStatus `json:"status,omitempty"`
-}
-```
 
 ## Status
 
@@ -72,71 +34,49 @@ https://github.com/kubernetes/community/blob/master/contributors/devel/sig-archi
 
 Tenantリソースでは状態遷移を扱う必要はないのですが、ここではConditionsフィールドを定義してみましょう。
 
-```go
-// TenantStatus defines the observed state of Tenant
-type TenantStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+[import:"status"](../../codes/tenant/api/v1/tenant_types.go)
 
-	// Conditions is an array of conditions.
-	// +optional
-	Conditions []TenantCondition `json:"conditions,omitempty"`
-}
+## Tenant
 
+[import:"tenant"](../../codes/tenant/api/v1/tenant_types.go)
 
-type TenantCondition struct {
-	// Type is the type fo the condition
-	Type TenantConditionType `json:"type"`
-	// Status is the status of the condition
-	Status corev1.ConditionStatus `json:"status"`
-	// Reason is a one-word CamelCase reason for the condition's last transition.
-	// +optional
-	Reason string `json:"reason,omitempty"`
-	// Message is a human-readable message indicating details about last transition.
-	// +optional
-	Message string `json:"message,omitempty"`
-	// Message is a human-readable message indicating details about last transition.
-	LastTransitionTime metav1.Time `json:"lastTransitionTime"`
-}
+`+kubebuilder:object:root=true`: `Tenant`というstructがAPIのrootオブジェクトであることを表すマーカーです。
+`+kubebuilder:resource:scope=Cluster`: `Tenant`がcluster-scopeのカスタムリソースであることを表すマーカーです。
 
-// TenantConditionType is the type of Tenant condition.
-// +kubebuilder:validation:Enum=Ready
-type TenantConditionType string
+### subresource
 
-// Valid values for TenantConditionType
-const (
-	ConditionReady TenantConditionType = "Ready"
-)
-```
-
-```go
-// +kubebuilder:object:root=true
-// +kubebuilder:resource:scope=Cluster
-// +kubebuilder:subresource:status
-// +kubebuilder:printcolumn:name="ADMIN",type="string",JSONPath=".spec.admin.name"
-// +kubebuilder:printcolumn:name="PREFIX",type="string",JSONPath=".spec.namespacePrefix"
-// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
-
-// Tenant is the Schema for the tenants API
-type Tenant struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
-
-	Spec   TenantSpec   `json:"spec,omitempty"`
-	Status TenantStatus `json:"status,omitempty"`
-}
-```
-
-ここに`+kubebuilder:subresource:status`というマーカーを追加すると、
-`status`フィールドがサブリソースとして扱われるようになります。
+`+kubebuilder:subresource:status`というマーカーを追加すると、`status`フィールドがサブリソースとして扱われるようになります。
 
 サブリソースを有効にすると`status`が独自のエンドポイントを持つようになります。
 これによりTenantリソース全体を取得・更新しなくても、`status`のみを取得したり更新することが可能になります。
 ただし、あくまでもメインのリソースに属するリソースなので、個別に作成や削除することはできません。
 
+サブリソース化しておかないと、クライアントでの編集
+基本的にはstatusはサブリソースにしておくのがよいでしょう。
+
 なお、CRDでは任意のサブリソースをもたせることはできず、`status`と`scale`の2つのフィールドのみに対応しています。
 
+### printcolumn
+
+表示対象のフィールドはJSONPathで指定することが可能です。これにより
+例えば、`JSONPath=".status.conditions[?(@.type=='Ready')].status"`と記述すると、
+
+kubectlでTenantリソースを取得すると、下記のようにPREFIXやREADYの値が表示されていることが確認できます。
+
+```
+$ kubectl get tenant
+NAME            ADMIN     PREFIX           READY
+tenant-sample   default   tenant-sample-   True
+```
+
 ## Defaulting, Pruning
+
+Defaulting機能を利用するためには、Structural SchemeかつPruningが有効になっている必要があります。
+
+Pruningを有効にするためには
+CRDの`spec.preserveUnknownFields: false`にするか、
+v1にすればいい。
+
 
 `apiextensions.k8s.io/v1beta1`
 

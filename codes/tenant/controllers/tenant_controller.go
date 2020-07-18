@@ -40,8 +40,10 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 
 	// your logic here
 
+	//! [get]
 	var tenant multitenancyv1.Tenant
 	err := r.Get(ctx, req.NamespacedName, &tenant)
+	//! [get]
 	if err != nil {
 		log.Error(err, "unable to get tenant", "name", req.NamespacedName)
 		return ctrl.Result{}, err
@@ -114,7 +116,7 @@ func (r *TenantReconciler) reconcile(ctx context.Context, log logr.Logger, tenan
 	return nsUpdated || rbUpdated, nil
 }
 
-/// [indexer]
+//! [indexer]
 const ownerControllerField = ".metadata.ownerReference.controller"
 
 func indexByOwnerTenant(obj runtime.Object) []string {
@@ -129,7 +131,7 @@ func indexByOwnerTenant(obj runtime.Object) []string {
 	return []string{owner.Name}
 }
 
-/// [indexer]
+//! [indexer]
 
 const conditionReadyField = ".status.conditions.ready"
 
@@ -143,10 +145,10 @@ func indexByConditionReady(obj runtime.Object) []string {
 }
 
 func (r *TenantReconciler) reconcileNamespaces(ctx context.Context, log logr.Logger, tenant multitenancyv1.Tenant) (bool, error) {
-	/// [matching-fields]
+	//! [matching-fields]
 	var namespaces corev1.NamespaceList
 	err := r.List(ctx, &namespaces, client.MatchingFields(map[string]string{ownerControllerField: tenant.Name}))
-	/// [matching-fields]
+	//! [matching-fields]
 	if err != nil {
 		log.Error(err, "unable to fetch namespaces")
 		return false, err
@@ -163,27 +165,29 @@ func (r *TenantReconciler) reconcileNamespaces(ctx context.Context, log logr.Log
 			delete(namespaceNames, name)
 			continue
 		}
-		/// [namespace]
+		//! [namespace]
 		target := corev1.Namespace{
 			ObjectMeta: metav1.ObjectMeta{
 				Name: name,
 			},
 		}
-		/// [namespace]
+		//! [namespace]
 		err = ctrl.SetControllerReference(&tenant, &target, r.Scheme)
 		if err != nil {
 			log.Error(err, "unable to set owner reference", "name", name)
 			return updated, err
 		}
 		log.Info("creating the new namespace", "name", name)
-		/// [create]
+		//! [create]
 		err = r.Create(ctx, &target, &client.CreateOptions{})
 		if err != nil {
 			log.Error(err, "unable to create the namespace", "name", name)
 			return updated, err
 		}
-		/// [create]
+		//! [create]
+		//! [metrics]
 		addedNamespaces.Inc()
+		//! [metrics]
 		updated = true
 		delete(namespaceNames, name)
 	}
@@ -264,12 +268,12 @@ func (r *TenantReconciler) reconcileRBAC(ctx context.Context, log logr.Logger, t
 
 func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	ctx := context.Background()
-	/// [index-field]
+	//! [index-field]
 	err := mgr.GetFieldIndexer().IndexField(ctx, &corev1.Namespace{}, ownerControllerField, indexByOwnerTenant)
 	if err != nil {
 		return err
 	}
-	/// [index-field]
+	//! [index-field]
 	err = mgr.GetFieldIndexer().IndexField(ctx, &multitenancyv1.Tenant{}, conditionReadyField, indexByConditionReady)
 	if err != nil {
 		return err

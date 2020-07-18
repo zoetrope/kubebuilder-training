@@ -23,9 +23,15 @@ controller-runtimeでは、Kubernetes APIにアクセスするためのクライ
 このようなキャッシュの仕組みが必要ない場合は、`GetAPIReader()`でキャッシュを利用しないクライアントを取得することもできます。
 基本的には`GetClient()`で取得するクライアントを利用すれば問題ありません。
 
-## Get
+## Get/List
 
-## List
+### Getの使い方
+
+[import:"get",unindent="true"](../../codes/tenant/controllers/tenant_controller.go)
+
+### キャッシュ
+
+### インデックス
 
 index field: リソースごとに一意になっていればよい。 実態のフィールドの構成と一致していなくても良い。
 informerはgvkごとに作られる。namespaceは自動的にキーに付与されるので、わざわざつけなくてもよい。

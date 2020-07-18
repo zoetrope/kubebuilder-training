@@ -1,5 +1,7 @@
 # training-kubebuilder
 
+[つくって学ぶKubebuilder](https://zoetrope.github.io/kubebuilder-training/)
+
 ## how to build
 
 ### Requirement

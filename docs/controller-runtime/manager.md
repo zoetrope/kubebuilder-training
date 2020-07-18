@@ -61,36 +61,6 @@ r.Recorder.Eventf(&tenant, corev1.EventTypeWarning, "Failed", "failed to reconci
 
 [import, title="event_recorder_rbac.yaml"](../../codes/tenant/config/rbac/event_recorder_rbac.yaml)
 
-## metricsListener
-
-```go
-	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-		Scheme:                 scheme,
-		MetricsBindAddress:     metricsAddr,
-		Port:                   9443,
-		LeaderElection:         enableLeaderElection,
-		LeaderElectionID:       "27475f02.example.com",
-		HealthProbeBindAddress: probeAddr,
-	})
-```
-
-これだけで、CPUやメモリの使用量などの基本的なメトリクスと、Reconcileにかかった時間やKubernetesクライアントのレイテンシーなど、controller-runtime関連のメトリクスが収集できるようになります。
-
-さらに追加でコントローラ固有のメトリクスを収集したい場合は、以下のようなコードを記述します。
-詳しくは[Prometheusのドキュメント](https://prometheus.io/docs/instrumenting/writing_exporters/)を参照してください。
-
-[import, title="metrics.go"](../../codes/tenant/controllers/metrics.go)
-
-Reconcile処理の中で以下の処理を呼び出します。
-
-```go
-// namespaceが追加されたときに以下の処理を実行
-addedNamespaces.Inc()
-
-// namespaceが削除されたときに以下の処理を実行
-removedNamespaces.Inc()
-```
-
 
 
 ## healthProbeListener

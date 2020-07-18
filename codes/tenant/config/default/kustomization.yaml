@@ -12,7 +12,9 @@ namePrefix: tenant-
 #commonLabels:
 #  someName: someValue
 
+#! [bases]
 bases:
+#! [bases]
 - ../crd
 - ../rbac
 - ../manager
@@ -21,14 +23,18 @@ bases:
 - ../webhook
 # [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER'. 'WEBHOOK' components are required.
 - ../certmanager
-# [PROMETHEUS] To enable prometheus monitor, uncomment all sections with 'PROMETHEUS'. 
+#! [enable-prometheus]
+# [PROMETHEUS] To enable prometheus monitor, uncomment all sections with 'PROMETHEUS'.
 - ../prometheus
+#! [enable-prometheus]
 
+#! [enable-auth-proxy]
 patchesStrategicMerge:
   # Protect the /metrics endpoint by putting it behind auth.
   # If you want your controller-manager to expose the /metrics
   # endpoint w/o any authn/z, please comment the following line.
 - manager_auth_proxy_patch.yaml
+#! [enable-auth-proxy]
 
 # [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in 
 # crd/kustomization.yaml
