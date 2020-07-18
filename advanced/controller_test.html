@@ -1,0 +1,692 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>コントローラのテスト · HonKit</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 3.5.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="webhook_test.html" />
+    
+    
+    <link rel="prev" href="./" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    つくって学ぶKubebuilder
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../kubebuilder/">
+            
+                <a href="../kubebuilder/">
+            
+                    
+                    Kubebuilder
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../kubebuilder/installation.html">
+            
+                <a href="../kubebuilder/installation.html">
+            
+                    
+                    インストール
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../kubebuilder/new-project.html">
+            
+                <a href="../kubebuilder/new-project.html">
+            
+                    
+                    プロジェクトの作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../kubebuilder/api.html">
+            
+                <a href="../kubebuilder/api.html">
+            
+                    
+                    APIの作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../kubebuilder/webhook.html">
+            
+                <a href="../kubebuilder/webhook.html">
+            
+                    
+                    Webhookの作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/kind.html">
+            
+                <a href="../kubebuilder/kind.html">
+            
+                    
+                    kindで動かしてみよう
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../controller-gen/">
+            
+                <a href="../controller-gen/">
+            
+                    
+                    controller-tools
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../controller-gen/crd.html">
+            
+                <a href="../controller-gen/crd.html">
+            
+                    
+                    CRDの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../controller-gen/rbac.html">
+            
+                <a href="../controller-gen/rbac.html">
+            
+                    
+                    RBACの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../controller-gen/webhook.html">
+            
+                <a href="../controller-gen/webhook.html">
+            
+                    
+                    Webhookの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../controller-runtime/">
+            
+                <a href="../controller-runtime/">
+            
+                    
+                    controller-runtime
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/client.html">
+            
+                <a href="../controller-runtime/client.html">
+            
+                    
+                    クライアントの使い方
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
+            
+                <a href="../controller-runtime/reconcile.html">
+            
+                    
+                    Reconcileの実装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
+            
+                <a href="../controller-runtime/deletion.html">
+            
+                    
+                    削除処理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/webhook.html">
+            
+                <a href="../controller-runtime/webhook.html">
+            
+                    
+                    Webhookの実装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/manager.html">
+            
+                <a href="../controller-runtime/manager.html">
+            
+                    
+                    Manager
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Advanced
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter active" data-level="1.5.1" data-path="controller_test.html">
+            
+                <a href="controller_test.html">
+            
+                    
+                    コントローラのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.2" data-path="webhook_test.html">
+            
+                <a href="webhook_test.html">
+            
+                    
+                    Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.3" data-path="conversion.html">
+            
+                <a href="conversion.html">
+            
+                    
+                    Conversion
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >コントローラのテスト</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30C6;&#x30B9;&#x30C8;">&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30C6;&#x30B9;&#x30C8;</h1>
+<p>testenv</p>
+<p>kubebuilder&#x3092;&#x30BB;&#x30C3;&#x30C8;&#x30A2;&#x30C3;&#x30D7;&#x3059;&#x308B;&#x3068;&#x3001;kube-apiserver</p>
+<pre><code class="lang-console">$ ls /usr/local/kubebuilder/bin/
+etcd  kube-apiserver  kubebuilder  kubectl  kustomize
+</code></pre>
+<h2 id="&#x30C6;&#x30B9;&#x30C8;&#x74B0;&#x5883;&#x306E;&#x30BB;&#x30C3;&#x30C8;&#x30A2;&#x30C3;&#x30D7;">&#x30C6;&#x30B9;&#x30C8;&#x74B0;&#x5883;&#x306E;&#x30BB;&#x30C3;&#x30C8;&#x30A2;&#x30C3;&#x30D7;</h2>
+<blockquote>
+<p><a id="controllers/suite_test.go" href="../../codes/tenant/controllers/suite_test.go">controllers/suite_test.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-keyword">package</span> controllers
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">&quot;path/filepath&quot;</span>
+    <span class="hljs-string">&quot;testing&quot;</span>
+
+    . <span class="hljs-string">&quot;github.com/onsi/ginkgo&quot;</span>
+    . <span class="hljs-string">&quot;github.com/onsi/gomega&quot;</span>
+    multitenancyv1 <span class="hljs-string">&quot;github.com/zoetrope/kubebuilder-training/codes/api/v1&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/client-go/kubernetes/scheme&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/client-go/rest&quot;</span>
+    ctrl <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime&quot;</span>
+    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;</span>
+    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/envtest&quot;</span>
+    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/envtest/printer&quot;</span>
+    logf <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log&quot;</span>
+    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log/zap&quot;</span>
+    <span class="hljs-comment">// +kubebuilder:scaffold:imports</span>
+)
+
+<span class="hljs-comment">// These tests use Ginkgo (BDD-style Go testing framework). Refer to</span>
+<span class="hljs-comment">// http://onsi.github.io/ginkgo/ to learn more about Ginkgo.</span>
+
+<span class="hljs-keyword">var</span> cfg *rest.Config
+<span class="hljs-keyword">var</span> k8sClient client.Client
+<span class="hljs-keyword">var</span> testEnv *envtest.Environment
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">TestAPIs</span><span class="hljs-params">(t *testing.T)</span></span> {
+    RegisterFailHandler(Fail)
+
+    RunSpecsWithDefaultAndCustomReporters(t,
+        <span class="hljs-string">&quot;Controller Suite&quot;</span>,
+        []Reporter{printer.NewlineReporter{}})
+}
+
+<span class="hljs-keyword">var</span> _ = BeforeSuite(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(done Done)</span></span> {
+    logf.SetLogger(zap.LoggerTo(GinkgoWriter, <span class="hljs-literal">true</span>))
+
+    By(<span class="hljs-string">&quot;bootstrapping test environment&quot;</span>)
+    testEnv = &amp;envtest.Environment{
+        CRDDirectoryPaths: []<span class="hljs-keyword">string</span>{filepath.Join(<span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>, <span class="hljs-string">&quot;crd&quot;</span>, <span class="hljs-string">&quot;bases&quot;</span>)},
+    }
+
+    <span class="hljs-keyword">var</span> err error
+    cfg, err = testEnv.Start()
+    Expect(err).ToNot(HaveOccurred())
+    Expect(cfg).ToNot(BeNil())
+
+    err = multitenancyv1.AddToScheme(scheme.Scheme)
+    Expect(err).NotTo(HaveOccurred())
+
+    <span class="hljs-comment">// +kubebuilder:scaffold:scheme</span>
+
+    mgr, err := ctrl.NewManager(cfg, ctrl.Options{
+        Scheme: scheme.Scheme,
+    })
+    Expect(err).ToNot(HaveOccurred())
+
+    err = (&amp;TenantReconciler{
+        Client:   mgr.GetClient(),
+        Log:      ctrl.Log.WithName(<span class="hljs-string">&quot;controllers&quot;</span>).WithName(<span class="hljs-string">&quot;Tenant&quot;</span>),
+        Scheme:   mgr.GetScheme(),
+        Recorder: mgr.GetEventRecorderFor(<span class="hljs-string">&quot;tenant-controller&quot;</span>),
+    }).SetupWithManager(mgr)
+    Expect(err).ToNot(HaveOccurred())
+
+    <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+        err = mgr.Start(ctrl.SetupSignalHandler())
+        Expect(err).ToNot(HaveOccurred())
+    }()
+
+    k8sClient = mgr.GetClient()
+    Expect(k8sClient).ToNot(BeNil())
+
+    <span class="hljs-built_in">close</span>(done)
+}, <span class="hljs-number">60</span>)
+
+<span class="hljs-keyword">var</span> _ = AfterSuite(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+    By(<span class="hljs-string">&quot;tearing down the test environment&quot;</span>)
+    err := testEnv.Stop()
+    Expect(err).ToNot(HaveOccurred())
+})
+</code></pre>
+<h2 id="&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30C6;&#x30B9;&#x30C8;">&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30C6;&#x30B9;&#x30C8;</h2>
+<blockquote>
+<p><a id="controllers/tenant_controller_test.go" href="../../codes/tenant/controllers/tenant_controller_test.go">controllers/tenant_controller_test.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-keyword">package</span> controllers
+
+<span class="hljs-keyword">import</span> (
+    <span class="hljs-string">&quot;context&quot;</span>
+    <span class="hljs-string">&quot;errors&quot;</span>
+
+    . <span class="hljs-string">&quot;github.com/onsi/ginkgo&quot;</span>
+    . <span class="hljs-string">&quot;github.com/onsi/gomega&quot;</span>
+    multitenancyv1 <span class="hljs-string">&quot;github.com/zoetrope/kubebuilder-training/codes/api/v1&quot;</span>
+    corev1 <span class="hljs-string">&quot;k8s.io/api/core/v1&quot;</span>
+    rbacv1 <span class="hljs-string">&quot;k8s.io/api/rbac/v1&quot;</span>
+    metav1 <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/types&quot;</span>
+    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;</span>
+)
+
+<span class="hljs-keyword">var</span> _ = Describe(<span class="hljs-string">&quot;Tenant controller&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+
+    <span class="hljs-keyword">const</span> (
+        tenantName = <span class="hljs-string">&quot;sample&quot;</span>
+    )
+
+    Context(<span class="hljs-string">&quot;when creating Tenant resource&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+        It(<span class="hljs-string">&quot;Should create namespaces&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+            ctx := context.Background()
+            tenant := &amp;multitenancyv1.Tenant{
+                TypeMeta: metav1.TypeMeta{
+                    APIVersion: multitenancyv1.GroupVersion.String(),
+                    Kind:       <span class="hljs-string">&quot;Tenant&quot;</span>,
+                },
+                ObjectMeta: metav1.ObjectMeta{
+                    Name: tenantName,
+                },
+                Spec: multitenancyv1.TenantSpec{
+                    Namespaces: []<span class="hljs-keyword">string</span>{
+                        <span class="hljs-string">&quot;test1&quot;</span>,
+                        <span class="hljs-string">&quot;test2&quot;</span>,
+                    },
+                    NamespacePrefix: <span class="hljs-string">&quot;&quot;</span>,
+                    Admin: rbacv1.Subject{
+                        Kind:      <span class="hljs-string">&quot;ServiceAccount&quot;</span>,
+                        Name:      <span class="hljs-string">&quot;default&quot;</span>,
+                        Namespace: <span class="hljs-string">&quot;default&quot;</span>,
+                    },
+                },
+            }
+            err := k8sClient.Create(ctx, tenant)
+            Expect(err).Should(Succeed())
+
+            createdTenant := &amp;multitenancyv1.Tenant{}
+            Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+                err := k8sClient.Get(ctx, types.NamespacedName{Name: tenantName}, createdTenant)
+                <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+                    <span class="hljs-keyword">return</span> err
+                }
+                cond := findCondition(createdTenant.Status.Conditions, multitenancyv1.ConditionReady)
+                <span class="hljs-keyword">if</span> cond == <span class="hljs-literal">nil</span> {
+                    <span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">&quot;condition not found&quot;</span>)
+                }
+                <span class="hljs-keyword">if</span> cond.Status != corev1.ConditionTrue {
+                    <span class="hljs-keyword">return</span> errors.New(cond.Reason)
+                }
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+            }).Should(Succeed())
+
+            nsList := &amp;corev1.NamespaceList{}
+            err = k8sClient.List(ctx, nsList, client.MatchingFields(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{ownerControllerField: tenant.Name}))
+            Expect(err).Should(Succeed())
+
+            <span class="hljs-keyword">var</span> namespaces []<span class="hljs-keyword">string</span>
+            <span class="hljs-keyword">for</span> _, ns := <span class="hljs-keyword">range</span> nsList.Items {
+                namespaces = <span class="hljs-built_in">append</span>(namespaces, ns.Name)
+            }
+            Expect(namespaces).Should(ContainElement(<span class="hljs-string">&quot;test1&quot;</span>))
+            Expect(namespaces).Should(ContainElement(<span class="hljs-string">&quot;test2&quot;</span>))
+
+        })
+    })
+})
+</code></pre>
+<h2 id="&#x30C6;&#x30B9;&#x30C8;&#x306E;&#x5B9F;&#x884C;">&#x30C6;&#x30B9;&#x30C8;&#x306E;&#x5B9F;&#x884C;</h2>
+<p>make test</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: Advanced">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="webhook_test.html" class="navigation navigation-next " aria-label="Next page: Webhookのテスト">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"コントローラのテスト","level":"1.5.1","depth":2,"next":{"title":"Webhookのテスト","level":"1.5.2","depth":2,"path":"advanced/webhook_test.md","ref":"advanced/webhook_test.md","articles":[]},"previous":{"title":"Advanced","level":"1.5","depth":1,"path":"advanced/README.md","ref":"advanced/README.md","articles":[{"title":"コントローラのテスト","level":"1.5.1","depth":2,"path":"advanced/controller_test.md","ref":"advanced/controller_test.md","articles":[]},{"title":"Webhookのテスト","level":"1.5.2","depth":2,"path":"advanced/webhook_test.md","ref":"advanced/webhook_test.md","articles":[]},{"title":"Conversion","level":"1.5.3","depth":2,"path":"advanced/conversion.md","ref":"advanced/conversion.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"full","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"advanced/controller_test.md","mtime":"2020-07-18T03:16:32.150Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-18T03:49:52.885Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

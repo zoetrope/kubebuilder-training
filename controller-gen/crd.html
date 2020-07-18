@@ -1,0 +1,633 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>CRDの生成 · HonKit</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 3.5.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="rbac.html" />
+    
+    
+    <link rel="prev" href="./" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    つくって学ぶKubebuilder
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../kubebuilder/">
+            
+                <a href="../kubebuilder/">
+            
+                    
+                    Kubebuilder
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../kubebuilder/installation.html">
+            
+                <a href="../kubebuilder/installation.html">
+            
+                    
+                    インストール
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../kubebuilder/new-project.html">
+            
+                <a href="../kubebuilder/new-project.html">
+            
+                    
+                    プロジェクトの作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../kubebuilder/api.html">
+            
+                <a href="../kubebuilder/api.html">
+            
+                    
+                    APIの作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../kubebuilder/webhook.html">
+            
+                <a href="../kubebuilder/webhook.html">
+            
+                    
+                    Webhookの作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/kind.html">
+            
+                <a href="../kubebuilder/kind.html">
+            
+                    
+                    kindで動かしてみよう
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    controller-tools
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter active" data-level="1.3.1" data-path="crd.html">
+            
+                <a href="crd.html">
+            
+                    
+                    CRDの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="rbac.html">
+            
+                <a href="rbac.html">
+            
+                    
+                    RBACの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="webhook.html">
+            
+                <a href="webhook.html">
+            
+                    
+                    Webhookの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../controller-runtime/">
+            
+                <a href="../controller-runtime/">
+            
+                    
+                    controller-runtime
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/client.html">
+            
+                <a href="../controller-runtime/client.html">
+            
+                    
+                    クライアントの使い方
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
+            
+                <a href="../controller-runtime/reconcile.html">
+            
+                    
+                    Reconcileの実装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
+            
+                <a href="../controller-runtime/deletion.html">
+            
+                    
+                    削除処理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/webhook.html">
+            
+                <a href="../controller-runtime/webhook.html">
+            
+                    
+                    Webhookの実装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/manager.html">
+            
+                <a href="../controller-runtime/manager.html">
+            
+                    
+                    Manager
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../advanced/">
+            
+                <a href="../advanced/">
+            
+                    
+                    Advanced
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.5.1" data-path="../advanced/controller_test.html">
+            
+                <a href="../advanced/controller_test.html">
+            
+                    
+                    コントローラのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.2" data-path="../advanced/webhook_test.html">
+            
+                <a href="../advanced/webhook_test.html">
+            
+                    
+                    Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.3" data-path="../advanced/conversion.html">
+            
+                <a href="../advanced/conversion.html">
+            
+                    
+                    Conversion
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >CRDの生成</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="crd&#x306E;&#x751F;&#x6210;">CRD&#x306E;&#x751F;&#x6210;</h1>
+<p><a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/api/v1/tenant_types.go" target="_blank">api/v1/tenant_types.go</a></p>
+<h2 id="subresource">SubResource</h2>
+<pre><code class="lang-go"><span class="hljs-comment">// +kubebuilder:object:root=true</span>
+<span class="hljs-comment">// +kubebuilder:resource:scope=Cluster</span>
+
+<span class="hljs-comment">// Tenant is the Schema for the tenants API</span>
+<span class="hljs-keyword">type</span> Tenant <span class="hljs-keyword">struct</span> {
+    metav1.TypeMeta   <span class="hljs-string">`json:&quot;,inline&quot;`</span>
+    metav1.ObjectMeta <span class="hljs-string">`json:&quot;metadata,omitempty&quot;`</span>
+
+    Spec   TenantSpec   <span class="hljs-string">`json:&quot;spec,omitempty&quot;`</span>
+    Status TenantStatus <span class="hljs-string">`json:&quot;status,omitempty&quot;`</span>
+}
+</code></pre>
+<p><code>+kubebuilder:object:root=true</code>: <code>Tenant</code>&#x3068;&#x3044;&#x3046;struct&#x304C;API&#x306E;root&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x3067;&#x3042;&#x308B;&#x3053;&#x3068;&#x3092;&#x8868;&#x3059;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3067;&#x3059;&#x3002;
+<code>+kubebuilder:resource:scope=Cluster</code>: <code>Tenant</code>&#x304C;cluster-scope&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3067;&#x3042;&#x308B;&#x3053;&#x3068;&#x3092;&#x8868;&#x3059;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3067;&#x3059;&#x3002;</p>
+<h2 id="spec">Spec</h2>
+<pre><code class="lang-go"><span class="hljs-comment">// TenantSpec defines the desired state of Tenant</span>
+<span class="hljs-keyword">type</span> TenantSpec <span class="hljs-keyword">struct</span> {
+    <span class="hljs-comment">// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster</span>
+    <span class="hljs-comment">// Important: Run &quot;make&quot; to regenerate code after modifying this file</span>
+
+    <span class="hljs-comment">// Namespaces are the names of the namespaces that belong to the tenant</span>
+    <span class="hljs-comment">// +kubebuiler:validation:Required</span>
+    <span class="hljs-comment">// +kubebuiler:validation:MinItems=1</span>
+    Namespaces []<span class="hljs-keyword">string</span> <span class="hljs-string">`json:&quot;namespaces&quot;`</span>
+
+    <span class="hljs-comment">// NamespacePrefix is the prefix for the name of namespaces</span>
+    <span class="hljs-comment">// +optional</span>
+    NamespacePrefix <span class="hljs-keyword">string</span> <span class="hljs-string">`json:&quot;namespacePrefix,omitempty&quot;`</span>
+
+    <span class="hljs-comment">// Admin is the identity with admin for the tenant</span>
+    <span class="hljs-comment">// +kubebuiler:validation:Required</span>
+    Admin rbacv1.Subject <span class="hljs-string">`json:&quot;admin&quot;`</span>
+}
+</code></pre>
+<pre><code class="lang-go"><span class="hljs-comment">// +kubebuilder:object:root=true</span>
+<span class="hljs-comment">// +kubebuilder:resource:scope=Cluster</span>
+<span class="hljs-comment">// +kubebuilder:printcolumn:name=&quot;ADMIN&quot;,type=&quot;string&quot;,JSONPath=&quot;.spec.admin.name&quot;</span>
+<span class="hljs-comment">// +kubebuilder:printcolumn:name=&quot;PREFIX&quot;,type=&quot;string&quot;,JSONPath=&quot;.spec.namespacePrefix&quot;</span>
+
+<span class="hljs-comment">// Tenant is the Schema for the tenants API</span>
+<span class="hljs-keyword">type</span> Tenant <span class="hljs-keyword">struct</span> {
+    metav1.TypeMeta   <span class="hljs-string">`json:&quot;,inline&quot;`</span>
+    metav1.ObjectMeta <span class="hljs-string">`json:&quot;metadata,omitempty&quot;`</span>
+
+    Spec   TenantSpec   <span class="hljs-string">`json:&quot;spec,omitempty&quot;`</span>
+    Status TenantStatus <span class="hljs-string">`json:&quot;status,omitempty&quot;`</span>
+}
+</code></pre>
+<h2 id="status">Status</h2>
+<p><code>Phase</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x7528;&#x610F;&#x3057;&#x3066;&#x73FE;&#x5728;&#x306E;&#x72B6;&#x614B;&#x306E;&#x307F;&#x3092;&#x683C;&#x7D0D;&#x3059;&#x308B;&#x306E;&#x3067;&#x306F;&#x306A;&#x304F;&#x3001;<code>Conditions</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3067;&#x5404;&#x72B6;&#x614B;&#x3092;
+&#x5224;&#x65AD;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x3057;&#x3066;&#x304A;&#x304F;&#x3053;&#x3068;&#x304C;&#x63A8;&#x5968;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p><a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties" target="_blank">https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties</a></p>
+<p>Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3067;&#x306F;&#x72B6;&#x614B;&#x9077;&#x79FB;&#x3092;&#x6271;&#x3046;&#x5FC5;&#x8981;&#x306F;&#x306A;&#x3044;&#x306E;&#x3067;&#x3059;&#x304C;&#x3001;&#x3053;&#x3053;&#x3067;&#x306F;Conditions&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x5B9A;&#x7FA9;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<pre><code class="lang-go"><span class="hljs-comment">// TenantStatus defines the observed state of Tenant</span>
+<span class="hljs-keyword">type</span> TenantStatus <span class="hljs-keyword">struct</span> {
+    <span class="hljs-comment">// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster</span>
+    <span class="hljs-comment">// Important: Run &quot;make&quot; to regenerate code after modifying this file</span>
+
+    <span class="hljs-comment">// Conditions is an array of conditions.</span>
+    <span class="hljs-comment">// +optional</span>
+    Conditions []TenantCondition <span class="hljs-string">`json:&quot;conditions,omitempty&quot;`</span>
+}
+
+
+<span class="hljs-keyword">type</span> TenantCondition <span class="hljs-keyword">struct</span> {
+    <span class="hljs-comment">// Type is the type fo the condition</span>
+    Type TenantConditionType <span class="hljs-string">`json:&quot;type&quot;`</span>
+    <span class="hljs-comment">// Status is the status of the condition</span>
+    Status corev1.ConditionStatus <span class="hljs-string">`json:&quot;status&quot;`</span>
+    <span class="hljs-comment">// Reason is a one-word CamelCase reason for the condition&apos;s last transition.</span>
+    <span class="hljs-comment">// +optional</span>
+    Reason <span class="hljs-keyword">string</span> <span class="hljs-string">`json:&quot;reason,omitempty&quot;`</span>
+    <span class="hljs-comment">// Message is a human-readable message indicating details about last transition.</span>
+    <span class="hljs-comment">// +optional</span>
+    Message <span class="hljs-keyword">string</span> <span class="hljs-string">`json:&quot;message,omitempty&quot;`</span>
+    <span class="hljs-comment">// Message is a human-readable message indicating details about last transition.</span>
+    LastTransitionTime metav1.Time <span class="hljs-string">`json:&quot;lastTransitionTime&quot;`</span>
+}
+
+<span class="hljs-comment">// TenantConditionType is the type of Tenant condition.</span>
+<span class="hljs-comment">// +kubebuilder:validation:Enum=Ready</span>
+<span class="hljs-keyword">type</span> TenantConditionType <span class="hljs-keyword">string</span>
+
+<span class="hljs-comment">// Valid values for TenantConditionType</span>
+<span class="hljs-keyword">const</span> (
+    ConditionReady TenantConditionType = <span class="hljs-string">&quot;Ready&quot;</span>
+)
+</code></pre>
+<pre><code class="lang-go"><span class="hljs-comment">// +kubebuilder:object:root=true</span>
+<span class="hljs-comment">// +kubebuilder:resource:scope=Cluster</span>
+<span class="hljs-comment">// +kubebuilder:subresource:status</span>
+<span class="hljs-comment">// +kubebuilder:printcolumn:name=&quot;ADMIN&quot;,type=&quot;string&quot;,JSONPath=&quot;.spec.admin.name&quot;</span>
+<span class="hljs-comment">// +kubebuilder:printcolumn:name=&quot;PREFIX&quot;,type=&quot;string&quot;,JSONPath=&quot;.spec.namespacePrefix&quot;</span>
+<span class="hljs-comment">// +kubebuilder:printcolumn:name=&quot;READY&quot;,type=&quot;string&quot;,JSONPath=&quot;.status.conditions[?(@.type==&apos;Ready&apos;)].status&quot;</span>
+
+<span class="hljs-comment">// Tenant is the Schema for the tenants API</span>
+<span class="hljs-keyword">type</span> Tenant <span class="hljs-keyword">struct</span> {
+    metav1.TypeMeta   <span class="hljs-string">`json:&quot;,inline&quot;`</span>
+    metav1.ObjectMeta <span class="hljs-string">`json:&quot;metadata,omitempty&quot;`</span>
+
+    Spec   TenantSpec   <span class="hljs-string">`json:&quot;spec,omitempty&quot;`</span>
+    Status TenantStatus <span class="hljs-string">`json:&quot;status,omitempty&quot;`</span>
+}
+</code></pre>
+<p>&#x3053;&#x3053;&#x306B;<code>+kubebuilder:subresource:status</code>&#x3068;&#x3044;&#x3046;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x8FFD;&#x52A0;&#x3059;&#x308B;&#x3068;&#x3001;
+<code>status</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x304C;&#x30B5;&#x30D6;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x3057;&#x3066;&#x6271;&#x308F;&#x308C;&#x308B;&#x3088;&#x3046;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x30B5;&#x30D6;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6709;&#x52B9;&#x306B;&#x3059;&#x308B;&#x3068;<code>status</code>&#x304C;&#x72EC;&#x81EA;&#x306E;&#x30A8;&#x30F3;&#x30C9;&#x30DD;&#x30A4;&#x30F3;&#x30C8;&#x3092;&#x6301;&#x3064;&#x3088;&#x3046;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
+&#x3053;&#x308C;&#x306B;&#x3088;&#x308A;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x5168;&#x4F53;&#x3092;&#x53D6;&#x5F97;&#x30FB;&#x66F4;&#x65B0;&#x3057;&#x306A;&#x304F;&#x3066;&#x3082;&#x3001;<code>status</code>&#x306E;&#x307F;&#x3092;&#x53D6;&#x5F97;&#x3057;&#x305F;&#x308A;&#x66F4;&#x65B0;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x53EF;&#x80FD;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
+&#x305F;&#x3060;&#x3057;&#x3001;&#x3042;&#x304F;&#x307E;&#x3067;&#x3082;&#x30E1;&#x30A4;&#x30F3;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x5C5E;&#x3059;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306A;&#x306E;&#x3067;&#x3001;&#x500B;&#x5225;&#x306B;&#x4F5C;&#x6210;&#x3084;&#x524A;&#x9664;&#x3059;&#x308B;&#x3053;&#x3068;&#x306F;&#x3067;&#x304D;&#x307E;&#x305B;&#x3093;&#x3002;</p>
+<p>&#x306A;&#x304A;&#x3001;CRD&#x3067;&#x306F;&#x4EFB;&#x610F;&#x306E;&#x30B5;&#x30D6;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x3082;&#x305F;&#x305B;&#x308B;&#x3053;&#x3068;&#x306F;&#x3067;&#x304D;&#x305A;&#x3001;<code>status</code>&#x3068;<code>scale</code>&#x306E;2&#x3064;&#x306E;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306E;&#x307F;&#x306B;&#x5BFE;&#x5FDC;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<h2 id="defaulting-pruning">Defaulting, Pruning</h2>
+<p><code>apiextensions.k8s.io/v1beta1</code></p>
+<p>defaulting&#x3084;pruning</p>
+<p><code>apiextensions.k8s.io/v1</code></p>
+<p>structural</p>
+<pre><code class="lang-console">$ make manifests CRD_OPTIONS=crd:crdVersions=v1
+</code></pre>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: controller-tools">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="rbac.html" class="navigation navigation-next " aria-label="Next page: RBACの生成">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"CRDの生成","level":"1.3.1","depth":2,"next":{"title":"RBACの生成","level":"1.3.2","depth":2,"path":"controller-gen/rbac.md","ref":"controller-gen/rbac.md","articles":[]},"previous":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-gen/README.md","ref":"controller-gen/README.md","articles":[{"title":"CRDの生成","level":"1.3.1","depth":2,"path":"controller-gen/crd.md","ref":"controller-gen/crd.md","articles":[]},{"title":"RBACの生成","level":"1.3.2","depth":2,"path":"controller-gen/rbac.md","ref":"controller-gen/rbac.md","articles":[]},{"title":"Webhookの生成","level":"1.3.3","depth":2,"path":"controller-gen/webhook.md","ref":"controller-gen/webhook.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"full","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-gen/crd.md","mtime":"2020-07-18T03:19:48.480Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-18T03:49:52.885Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

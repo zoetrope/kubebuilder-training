@@ -1,0 +1,554 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>kindで動かしてみよう · HonKit</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 3.5.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="../controller-gen/" />
+    
+    
+    <link rel="prev" href="webhook.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    つくって学ぶKubebuilder
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Kubebuilder
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="installation.html">
+            
+                <a href="installation.html">
+            
+                    
+                    インストール
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="new-project.html">
+            
+                <a href="new-project.html">
+            
+                    
+                    プロジェクトの作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="api.html">
+            
+                <a href="api.html">
+            
+                    
+                    APIの作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="webhook.html">
+            
+                <a href="webhook.html">
+            
+                    
+                    Webhookの作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.2.5" data-path="kind.html">
+            
+                <a href="kind.html">
+            
+                    
+                    kindで動かしてみよう
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../controller-gen/">
+            
+                <a href="../controller-gen/">
+            
+                    
+                    controller-tools
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../controller-gen/crd.html">
+            
+                <a href="../controller-gen/crd.html">
+            
+                    
+                    CRDの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../controller-gen/rbac.html">
+            
+                <a href="../controller-gen/rbac.html">
+            
+                    
+                    RBACの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../controller-gen/webhook.html">
+            
+                <a href="../controller-gen/webhook.html">
+            
+                    
+                    Webhookの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../controller-runtime/">
+            
+                <a href="../controller-runtime/">
+            
+                    
+                    controller-runtime
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/client.html">
+            
+                <a href="../controller-runtime/client.html">
+            
+                    
+                    クライアントの使い方
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
+            
+                <a href="../controller-runtime/reconcile.html">
+            
+                    
+                    Reconcileの実装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
+            
+                <a href="../controller-runtime/deletion.html">
+            
+                    
+                    削除処理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/webhook.html">
+            
+                <a href="../controller-runtime/webhook.html">
+            
+                    
+                    Webhookの実装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/manager.html">
+            
+                <a href="../controller-runtime/manager.html">
+            
+                    
+                    Manager
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="../advanced/">
+            
+                <a href="../advanced/">
+            
+                    
+                    Advanced
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.5.1" data-path="../advanced/controller_test.html">
+            
+                <a href="../advanced/controller_test.html">
+            
+                    
+                    コントローラのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.2" data-path="../advanced/webhook_test.html">
+            
+                <a href="../advanced/webhook_test.html">
+            
+                    
+                    Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5.3" data-path="../advanced/conversion.html">
+            
+                <a href="../advanced/conversion.html">
+            
+                    
+                    Conversion
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >kindで動かしてみよう</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="kind&#x3067;&#x52D5;&#x304B;&#x3057;&#x3066;&#x307F;&#x3088;&#x3046;">Kind&#x3067;&#x52D5;&#x304B;&#x3057;&#x3066;&#x307F;&#x3088;&#x3046;</h1>
+<h2 id="kind&#x306E;&#x7ACB;&#x3061;&#x4E0A;&#x3052;">kind&#x306E;&#x7ACB;&#x3061;&#x4E0A;&#x3052;</h2>
+<pre><code class="lang-console">$ kind create cluster
+</code></pre>
+<h2 id="cert-manager&#x306E;&#x30A4;&#x30F3;&#x30B9;&#x30C8;&#x30FC;&#x30EB;">cert-manager&#x306E;&#x30A4;&#x30F3;&#x30B9;&#x30C8;&#x30FC;&#x30EB;</h2>
+<p><a href="https://cert-manager.io/docs/installation/kubernetes/" target="_blank">https://cert-manager.io/docs/installation/kubernetes/</a></p>
+<pre><code class="lang-console">$ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.1/cert-manager.yaml
+</code></pre>
+<h2 id="&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;">&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;</h2>
+<p>&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x30A4;&#x30E1;&#x30FC;&#x30B8;&#x3092;&#x30D3;&#x30EB;&#x30C9;&#x3057;&#x3066;&#x3001;kind&#x74B0;&#x5883;&#x306B;&#x30ED;&#x30FC;&#x30C9;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-console">$ make docker-build
+$ kind load docker-image controller:v1
+</code></pre>
+<p>CRD&#x3092;Kubernetes&#x30AF;&#x30E9;&#x30B9;&#x30BF;&#x306B;&#x9069;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-console">$ make install
+</code></pre>
+<p>&#x6B21;&#x306B;<code>config/manager/manager.yaml</code>&#x306B;<code>imagePullPolicy: IfNotPresent</code>&#x3092;&#x8FFD;&#x52A0;&#x3057;&#x307E;&#x3059;&#x3002;
+&#x3053;&#x308C;&#x306F;&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x30EC;&#x30B8;&#x30B9;&#x30C8;&#x30EA;&#x304B;&#x3089;&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x30A4;&#x30E1;&#x30FC;&#x30B8;&#x3092;&#x53D6;&#x5F97;&#x3059;&#x308B;&#x306E;&#x3067;&#x306F;&#x306A;&#x304F;&#x3001;&#x30ED;&#x30FC;&#x30AB;&#x30EB;&#x306E;&#x30A4;&#x30E1;&#x30FC;&#x30B8;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x5FC5;&#x8981;&#x306A;&#x8A2D;&#x5B9A;&#x3067;&#x3059;&#x3002;</p>
+<p>&#x6B21;&#x306B;&#x5404;&#x7A2E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x9069;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-console">$ make deploy
+</code></pre>
+<p>&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;Pod&#x304C;Running&#x306B;&#x306A;&#x3063;&#x305F;&#x3053;&#x3068;&#x3092;&#x78BA;&#x8A8D;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<pre><code class="lang-console">$ kubectl get pod -n sample-system -l control-plane=controller-manager
+NAME                                         READY   STATUS    RESTARTS   AGE
+sample-controller-manager-6dd494cc9c-vwbzq   1/1     Running   0          1m
+</code></pre>
+<p>&#x6B21;&#x306B;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30ED;&#x30B0;&#x3092;&#x8868;&#x793A;&#x3055;&#x305B;&#x3066;&#x304A;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<pre><code class="lang-console">$ kubectl logs -n sample-system -l control-plane=controller-manager -f
+</code></pre>
+<p>&#x30B5;&#x30F3;&#x30D7;&#x30EB;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x9069;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-console">$ kubectl apply -f config/samples/webapp_v1_guestbook.yaml
+</code></pre>
+<p>Pod&#x306E;&#x30ED;&#x30B0;&#x306B;&#x3001;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306B;Webhook&#x3084;Reconcile&#x306E;&#x30E1;&#x30C3;&#x30BB;&#x30FC;&#x30B8;&#x304C;&#x8868;&#x793A;&#x3055;&#x308C;&#x3066;&#x3044;&#x308C;&#x3070;&#x6210;&#x529F;&#x3067;&#x3059;&#x3002;</p>
+<pre><code class="lang-consle">2020-07-03T09:57:11.980Z        DEBUG   controller-runtime.webhook.webhooks     received request        {&quot;webhook&quot;: &quot;/mutate-webapp-example-com-v1-guestbook&quot;, &quot;UID&quot;: &quot;1bc1074e-a16d-4fe7-a302-6be2b6ded099&quot;, &quot;kind&quot;: &quot;webapp.example.com/v1, Kind=Guestbook&quot;, &quot;resource&quot;: {&quot;group&quot;:&quot;webapp.example.com&quot;,&quot;version&quot;:&quot;v1&quot;,&quot;resource&quot;:&quot;guestbooks&quot;}}
+2020-07-03T09:57:11.981Z        INFO    guestbook-resource      default {&quot;name&quot;: &quot;guestbook-sample&quot;}
+2020-07-03T09:57:11.981Z        DEBUG   controller-runtime.webhook.webhooks     wrote response  {&quot;webhook&quot;: &quot;/mutate-webapp-example-com-v1-guestbook&quot;, &quot;UID&quot;: &quot;1bc1074e-a16d-4fe7-a302-6be2b6ded099&quot;, &quot;allowed&quot;: true, &quot;result&quot;: {}, &quot;resultError&quot;: &quot;got runtime.Object without object metadata: &amp;Status{ListMeta:ListMeta{SelfLink:,ResourceVersion:,Continue:,RemainingItemCount:nil,},Status:,Message:,Reason:,Details:nil,Code:200,}&quot;}
+2020-07-03T09:57:11.982Z        DEBUG   controller-runtime.webhook.webhooks     received request        {&quot;webhook&quot;: &quot;/validate-webapp-example-com-v1-guestbook&quot;, &quot;UID&quot;: &quot;b352235b-e49c-4653-a059-10692137ea1f&quot;, &quot;kind&quot;: &quot;webapp.example.com/v1, Kind=Guestbook&quot;, &quot;resource&quot;: {&quot;group&quot;:&quot;webapp.example.com&quot;,&quot;version&quot;:&quot;v1&quot;,&quot;resource&quot;:&quot;guestbooks&quot;}}
+2020-07-03T09:57:11.982Z        INFO    guestbook-resource      validate create {&quot;name&quot;: &quot;guestbook-sample&quot;}
+2020-07-03T09:57:11.982Z        DEBUG   controller-runtime.webhook.webhooks     wrote response  {&quot;webhook&quot;: &quot;/validate-webapp-example-com-v1-guestbook&quot;, &quot;UID&quot;: &quot;b352235b-e49c-4653-a059-10692137ea1f&quot;, &quot;allowed&quot;: true, &quot;result&quot;: {}, &quot;resultError&quot;: &quot;got runtime.Object without object metadata: &amp;Status{ListMeta:ListMeta{SelfLink:,ResourceVersion:,Continue:,RemainingItemCount:nil,},Status:,Message:,Reason:,Details:nil,Code:200,}&quot;}
+2020-07-03T09:57:11.986Z        DEBUG   controller-runtime.controller   Successfully Reconciled {&quot;controller&quot;: &quot;guestbook&quot;, &quot;request&quot;: &quot;default/guestbook-sample&quot;}
+</code></pre>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="webhook.html" class="navigation navigation-prev " aria-label="Previous page: Webhookの作成">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="../controller-gen/" class="navigation navigation-next " aria-label="Next page: controller-tools">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"kindで動かしてみよう","level":"1.2.5","depth":2,"next":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-gen/README.md","ref":"controller-gen/README.md","articles":[{"title":"CRDの生成","level":"1.3.1","depth":2,"path":"controller-gen/crd.md","ref":"controller-gen/crd.md","articles":[]},{"title":"RBACの生成","level":"1.3.2","depth":2,"path":"controller-gen/rbac.md","ref":"controller-gen/rbac.md","articles":[]},{"title":"Webhookの生成","level":"1.3.3","depth":2,"path":"controller-gen/webhook.md","ref":"controller-gen/webhook.md","articles":[]}]},"previous":{"title":"Webhookの作成","level":"1.2.4","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"full","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"kubebuilder/kind.md","mtime":"2020-07-18T03:19:48.550Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-18T03:49:52.885Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
