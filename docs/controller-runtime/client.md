@@ -2,34 +2,9 @@
 
 controller-runtimeでは、Kubernetes APIにアクセスするためのクライアントとして[client.Client](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client?tab=doc#Client)を提供しています。
 
-```go
-import (
-	multitenancyv1 "github.com/zoetrope/kubebuilder-training/codes/api/v1"
-	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
-	ctrl "sigs.k8s.io/controller-runtime"
-)
+[import:"init"](../../codes/tenant/main.go)
+[import:"new-manager",unindent:"true"](../../codes/tenant/main.go)
 
-var (
-	scheme   = runtime.NewScheme()
-)
-
-func init() {
-	_ = clientgoscheme.AddToScheme(scheme)
-	_ = multitenancyv1.AddToScheme(scheme)
-}
-
-func main() {
-	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-		Scheme: scheme,
-	})
-	if err != nil {
-		return
-	}
-
-	client := mgr.GetClient()
-	reader := mgr.GetAPIReader()
-}
-```
 
 最初に、`runtime.NewScheme()`で新しい`scheme`を作成し、
 
@@ -63,33 +38,13 @@ informerはgvkごとに作られる。namespaceは自動的にキーに付与さ
 インメモリキャッシュにインデックスを張ることができます。
 インデックスを利用するためには事前に`GetFieldIndexer().IndexField()`を利用して、TenantリソースのConditionReadyの値に応じてインデックスを作成しておきます。
 
-```go
-const conditionReadyField = ".status.conditions.ready"
-
-func indexByConditionReady(obj runtime.Object) []string {
-	tenant := obj.(*multitenancyv1.Tenant)
-	cond := findCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
-	if cond == nil {
-		return nil
-	}
-	return []string{string(cond.Status)}
-}
-
-func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	ctx := context.Background()
-	err = mgr.GetFieldIndexer().IndexField(ctx, &multitenancyv1.Tenant{}, conditionReadyField, indexByConditionReady)
-	if err != nil {
-		return err
-	}
-```
+[import:"indexer"](../../codes/tenant/controllers/tenant_controller.go)
+[import:"index-field",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
 
 上記のようなインデックスを作成しておくと、`List()`を呼び出す際に特定のフィールドが指定した値と一致するリソースだけを取得することができます。
 例えば以下の例であれば、ConditionReadyが"True"のTenantリソース一覧を取得することが可能です。
 
-```go
-	var tenants multitenancyv1.TenantList
-	err := r.client.List(ctx, &tenants, client.MatchingFields(map[string]string{conditionReadyField: string(corev1.ConditionTrue)}))
-```
+[import:"matching-fields",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
 
 フィールド名には、どのフィールドを利用してインデックスを張っているのかを示す文字列を指定します。
 実際にインデックスに利用しているフィールドのパスと一致していなくても問題はないのですが、なるべく一致させたほうが可読性がよくなるのでおすすめです。
@@ -98,19 +53,7 @@ func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 ## Create/Update
 
-```go
-		target := corev1.Namespace{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: name,
-			},
-		}
-		log.Info("creating the new namespace", "name", name)
-		err = r.Create(ctx, &target, &client.CreateOptions{})
-		if err != nil {
-			log.Error(err, "unable to create the namespace", "name", name)
-			return updated, err
-		}
-```
+[import:"namespace,create",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
 
 
 ## CreateOrUpdate

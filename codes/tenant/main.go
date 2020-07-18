@@ -15,6 +15,7 @@ import (
 	// +kubebuilder:scaffold:imports
 )
 
+/// [init]
 var (
 	scheme   = runtime.NewScheme()
 	setupLog = ctrl.Log.WithName("setup")
@@ -26,6 +27,8 @@ func init() {
 	_ = multitenancyv1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
+
+/// [init]
 
 func main() {
 	var metricsAddr string
@@ -40,6 +43,7 @@ func main() {
 
 	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
 
+	/// [new-manager]
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
 		MetricsBindAddress:     metricsAddr,
@@ -48,6 +52,7 @@ func main() {
 		LeaderElectionID:       "27475f02.example.com",
 		HealthProbeBindAddress: probeAddr,
 	})
+	/// [new-manager]
 	if err != nil {
 		setupLog.Error(err, "unable to start manager")
 		os.Exit(1)
