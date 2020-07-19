@@ -6,6 +6,7 @@ controller-runtimeでは、複数のコントローラを管理するための�
 
 ## Leader Election
 
+[import:"new-manager",unindent:"true"](../../codes/tenant/main.go)
 
 
 ## Runnable
@@ -65,6 +66,21 @@ r.Recorder.Eventf(&tenant, corev1.EventTypeWarning, "Failed", "failed to reconci
 
 ## healthProbeListener
 
+managerには、ヘルスチェック用のAPIのエンドポイントが用意されています。
+
+まずは、Managerの作成時に`HealthProbeBindAddress`でエンドポイントのアドレスを指定します。
+
+[import:"new-manager",unindent:"true"](../../codes/tenant/main.go)
+
+そして、`AddHealthzCheck`と`AddReadyzCheck`で、ハンドラの登録をおこないます。
+ここでは`healthz.Ping`という何もしない関数を利用していますが、独自の関数を登録することも可能です。
+
+[import:"health",unindent:"true"](../../codes/tenant/main.go)
+
+これでコントローラにヘルスチェック用のAPIが実装できました。
+マニフェストに`livenessProbe`や`readinessProbe`の設定を追加しておきましょう。
+
+[import:"probe"](../../codes/tenant/config/manager/manager.yaml)
 
 ## Inject
 
