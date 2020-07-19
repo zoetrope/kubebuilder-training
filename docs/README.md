@@ -4,7 +4,17 @@
 
 ## Kubebuilderとは
 
-https://github.com/kubernetes-sigs/kubebuilder
+なぜKubebuilderを使うのか。
+Kubernetesはカスタムコントローラを実装するための機能を標準で提供しています。
+
+たくさんのマニフェストを用意し、Kubernetesの設計コンセプトを理解してたくさんのコードを書くのは大変。
+
+- [kubebuilder](https://github.com/kubernetes-sigs/kubebuilder)
+  - カスタムコントローラを実装するためのプロジェクトの雛形を生成するためのツール
+- [controller-tools](https://github.com/kubernetes-sigs/controller-tools)
+  - Goのソースコードからマニフェストを生成するツール
+- [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime)
+  - カスタムコントローラを実装するためのライブラリ
 
 ## 参考資料
 

@@ -3,10 +3,6 @@
 `kubebuilder`コマンドは、
 
 
-- kubebuilder
-- controller-tools
-- controller-runtime
-
 
 
 ```console

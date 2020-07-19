@@ -1,7 +1,7 @@
 # インストール
 
 kubebuilderを利用する上で下記のソフトウェアが必要になります。
-こちらも手順に従ってセットアップをおこなってください。
+手順に従ってセットアップをおこなってください。
 
 * Go
     * v1.13+
@@ -19,4 +19,3 @@ kubebuilderを利用する上で下記のソフトウェアが必要になりま
 * Kubebuilder
     * v2.3.1
     * [Quick Start - The Kubebuilder Book](https://book.kubebuilder.io/quick-start.html)
-
