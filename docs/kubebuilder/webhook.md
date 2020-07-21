@@ -32,18 +32,25 @@ $ make manifests
 └── main.go
 ```
 
-`api/v1/tenant_webhook.go`がWebhook実装の雛形になります。
+## api/v1
+
+`tenant_webhook.go`がWebhook実装の雛形になります。
 このファイルにWebhookの実装を追加していくことになります。
 
-`api/v1/zz_generated.deepcopy.go`は自動生成されるコードなので編集しないようにしてください。
+`zz_generated.deepcopy.go`は自動生成されるコードなので編集しないようにしてください。
+
+## config/webhook
 
 `config/webhook`下のファイルは、Webhook機能を利用するために必要なマニフェストになります。
+基本的に編集する必要はありません。
+
+## main.go
 
 `main.go`には、以下のようなWebhookの初期化をおこなうためのコードが追加されています。
 
 ```go
-	if err = (&multitenancyv1.Tenant{}).SetupWebhookWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create webhook", "webhook", "Tenant")
-		os.Exit(1)
-	}
+if err = (&multitenancyv1.Tenant{}).SetupWebhookWithManager(mgr); err != nil {
+	setupLog.Error(err, "unable to create webhook", "webhook", "Tenant")
+	os.Exit(1)
+}
 ```

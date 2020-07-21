@@ -1,15 +1,17 @@
-# プロジェクトの作成
+# プロジェクトの雛形作成
 
-それではさっそく`kubebuilder`コマンドを利用して、プロジェクトの雛形を生成しましょう。
+それではさっそく`kubebuilder init`コマンドを利用して、プロジェクトの雛形を生成しましょう。
 
 ```console
 $ mkdir tenant
 $ cd tenant
-$ kubebuilder init --repo example.com/tenant --domain example.com
+$ kubebuilder init --domain example.com --repo github.com/zoetrope/tenant
 ```
 
 `--domain`で指定した名前はCRDのグループ名に使われます。
 あなたの所属する組織が保持するドメインなどを利用して、ユニークでvalidな名前を指定してください。
+
+`--repo`にはgo modulesのmodule名を指定します。通常は`github.com/<user_name>/<product_name>`を指定します。
 
 コマンドの実行に成功すると、下記のようなファイルが生成されます。
 
@@ -55,6 +57,8 @@ $ kubebuilder init --repo example.com/tenant --domain example.com
 └── main.go
 ```
 
+生成されたファイルをそれぞれ見ていきましょう。
+
 ## Makefile
 
 コード生成やコントローラのビルドなどをおこなうためのMakefileです。
@@ -72,9 +76,7 @@ $ kubebuilder init --repo example.com/tenant --domain example.com
 | run          | コントローラをローカル環境で実行する                   |
 | test         | テストを実行する                                     |
 
-Kubebuilder v2.3.1では、controller-gen v0.2.5を利用するようになっていますが、
-Webhookのマニフェスト生成部分で問題があるため、以下のようにMakefile内の
-controller-genのバージョンを最新にあげておくことを推奨します。
+Kubebuilder v2.3.1では、controller-gen v0.2.5を利用するようになっていますが、Webhookのマニフェスト生成部分で問題があるため、以下のようにMakefile内のcontroller-genのバージョンを最新にあげておくことを推奨します。
 
 ```diff
 -	go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.2.5 ;\
@@ -83,10 +85,16 @@ controller-genのバージョンを最新にあげておくことを推奨しま
 
 ## go.mod
 
+goの依存ライブラリを管理するためのファイルです。
+
+Kubebuilder v2.3.1では、controller-runtime v0.5.0を利用するようになっていますが、下記のように最新のバージョンに変更しておくことを推奨します。
+
 ```diff
 -	sigs.k8s.io/controller-runtime v0.5.0
 +	sigs.k8s.io/controller-runtime v0.6.1
 ```
+
+変更後、下記のコマンドを実行して依存パッケージの更新もおこないましょう。
 
 ```console
 $ go mod tidy
@@ -95,13 +103,7 @@ $ go mod tidy
 ## PROJECT
 
 ドメイン名やリポジトリのURLや生成したAPIの情報などが記述されています。
-
-## main.go
-
-あなたがこれから作成するコントローラのエントリーポイントとなるソースコードです。
-
-ソースコード中に`// +kubebuilder:scaffold:imports`, `// +kubebuilder:scaffold:scheme`, `// +kubebuilder:scaffold:builder`などのコメントが記述されています。
-Kubebuilderはこれらのコメントを目印にソースコードの自動生成をおこなうので、決して削除しないように注意してください。
+基本的にこのファイルを編集することはあまりないでしょう。
 
 ## hack/boilerplate.go.txt
 
@@ -109,16 +111,23 @@ Kubebuilderはこれらのコメントを目印にソースコードの自動生
 
 デフォルトではApache 2 Licenseの文面が記述されているので、必要に応じて書き換えてください。
 
+## main.go
+
+これから作成するカスタムコントローラのエントリーポイントとなるソースコードです。
+
+ソースコード中に`// +kubebuilder:scaffold:imports`, `// +kubebuilder:scaffold:scheme`, `// +kubebuilder:scaffold:builder`などのコメントが記述されています。
+Kubebuilderはこれらのコメントを目印にソースコードの自動生成をおこなうので、決して削除しないように注意してください。
+
 ## config
 
-configディレクトリ配下には、コントローラをKubernetesクラスタにデプロイするためのマニフェストが生成されます。
+configディレクトリ配下には、カスタムコントローラをKubernetesクラスタにデプロイするためのマニフェストが生成されます。
 
 実装する機能によっては必要のないマニフェストも含まれているので、適切に取捨選択してください。
 
 ### manager
 
-コントローラのDeploymentリソースのマニフェストです。
-コントローラのコマンドラインオプションの変更などをおおこなった場合など、必要に応じて書き換えてください。
+カスタムコントローラのDeploymentリソースのマニフェストです。
+カスタムコントローラのコマンドラインオプションの変更をおこなった場合など、必要に応じて書き換えてください。
 
 ### rbac
 
@@ -139,22 +148,16 @@ kube-auth-proxyを利用するとメトリクスエンドポイントへのア�
 ### prometheus
 
 Prometheus Operator用のカスタムリソースのマニフェストです。
-Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的に
-コントローラのメトリクスを収集してくれるようになります。
-
-Prometheus Operatorを利用していない場合は不要なので削除してしまいましょう。
+Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的にカスタムコントローラのメトリクスを収集してくれるようになります。
 
 ### webhook
 
 Admission Webhook機能を提供するためのマニフェストです。
-Admission Webhook機能を利用しない場合は、ディレクトリごと消してしまってもよいでしょう。
 
 ### certmanager
 
 Admission Webhook機能を提供するためには証明書が必要となります。
 certmanagerディレクトリ下のマニフェストを適用すると、[cert-manager][]を利用して証明書を発行することができます。
-Admission Webhook機能を利用しない場合や、cert-managerを利用せずに自前で証明書を用意する場合は
-必要ないマニフェストなので、ディレクトリごと消してしまってもよいでしょう。
 
 ### default
 

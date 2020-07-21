@@ -1,19 +1,36 @@
-# 作成するコントローラ
+# 作成するカスタムコントローラ
 
-本資料ではカスタムコントローラの実装例として、Kubernetesでマルチテナンシーを実現するための
-テナントコントローラを実装します。
+本資料ではカスタムコントローラの実装例として、Kubernetesでマルチテナンシーを実現するためのテナントコントローラを実装します。
 
-テナントコントローラは以下のような機能を持ちます。
+Kubernetesでは、namespaceという仕組みにより各種リソースの分離をおこなうことが可能になっています。
+しかし複数のチームがKubernetesを利用するユースケースでは、namespaceだけでは機能が不足する場合があります。
+例えば1つのチームが複数のnamespaceを利用したいと思っても、namespaceの作成には強い権限が必要となるため、チームのメンバーがnamespaceを自由に追加することはできません。
 
-- 各テナントは複数のnamespaceから構成される
-- テナントリソースを作成するとテナントに属するnamespaceが作成される
-- namespaceの名前にはprefixを指定することができる
-- namespaceのprefixは途中で変更することができない
-- テナントには管理者ユーザーを指定することができる
-- 管理者ユーザーはテナントにnamespaceを追加・削除することができる
+そこでテナントという仕組みを考えてみましょう。
+- テナントは複数のnamespaceから構成される
+- テナントの管理者に指定されたユーザーはテナントに新しいnamespaceを自由に追加・削除できる
 
-マルチテナンシーを実現するためには機能不足ですが、Kubebuilderを学ぶためには十分な要素が含まれています。
+次にこのテナントを表現するためのカスタムリソースを考えてみます。
+下記のようにテナントを構成するnamespace名の一覧と、管理者を指定できるようにしましょう。
 
-ソースコードは以下にあります。
+```yaml
+apiVersion: multitenancy.example.com/v1
+kind: Tenant
+metadata:
+  name: sample
+spec:
+  namespaces:
+    - test1
+    - test2
+  admin:
+    kind: User
+    name: test
+    namespace: default
+    apiGroup: rbac.authorization.k8s.io
+```
+
+本資料でこれから開発するカスタムコントローラは、上記のカスタムリソースを読み取り、実際のnamespaceを作成したり管理者権限の設定をおこなうことになります。
+
+ソースコードは以下にありますので参考にしてください。
 
 - https://github.com/zoetrope/kubebuilder-training/tree/master/codes/tenant

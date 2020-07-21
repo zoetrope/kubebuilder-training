@@ -1,0 +1,19 @@
+apiVersion: multitenancy.example.com/v2
+kind: Tenant
+metadata:
+  name: tenant-sample
+spec:
+  namespaces:
+    - test1
+    - test2
+  namespacePrefix: sample-
+  admins:
+    - kind: ServiceAccount
+      name: default
+      namespace: default
+    - kind: ServiceAccount
+      name: default
+      namespace: kube-system
+    - kind: User
+      name: test
+      namespace: default

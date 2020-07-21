@@ -14,3 +14,4 @@ Kubebuilderによって生成されたMakefileには`make run`というターゲ
   * [Options](https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.6.1/pkg/manager?tab=doc#Options)の`CertDir`に証明書のパスを指定します
   * `MutatingWebhookConfiguration`, `ValidatingWebhookConfiguration`のマニフェストに、証明書の設定と、ローカルのWebhook APIのURLを指定します。
 * コントローラがAPIサーバにアクセスするときの権限が、クラスタ内で動作させた場合と異なります(例えば、`$HOME/.kube/config`の設定を利用すると、kubectlと同じ権限を持つようになります)。
+* [Downward API](https://kubernetes.io/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information/)が利用できません。

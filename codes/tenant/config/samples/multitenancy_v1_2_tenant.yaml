@@ -11,3 +11,10 @@ spec:
     kind: ServiceAccount
     name: default
     namespace: default
+  admins:
+    - kind: ServiceAccount
+      name: default
+      namespace: kube-system
+    - kind: User
+      name: test
+      namespace: default

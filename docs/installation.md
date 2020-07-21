@@ -14,7 +14,7 @@ kubebuilderを利用する上で下記のソフトウェアが必要になりま
     * [Quick Start | kind](https://kind.sigs.k8s.io/docs/user/quick-start/)
 
 本資料では下記のバージョンのKubebuilderを利用します。
-手順に従ってセットアップをおこなってください。
+こちらも手順に従ってセットアップをおこなってください。
 
 * Kubebuilder
     * v2.3.1
