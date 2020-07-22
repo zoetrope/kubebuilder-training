@@ -1,8 +1,10 @@
 # Summary
 
 * [つくって学ぶKubebuilder](README.md)
-* [インストール](installation.md)
-* [作成するカスタムコントローラ](sample.md)
+  * [インストール](introduction/installation.md)
+  * [カスタムコントローラの基礎](introduction/basics.md)
+  * [作成するカスタムコントローラ](introduction/sample.md)
+  * [参考情報](introduction/references.md)
 * [Kubebuilder](kubebuilder/README.md)
   * [プロジェクトの雛形作成](kubebuilder/new-project.md)
   * [APIの雛形作成](kubebuilder/api.md)
@@ -14,6 +16,7 @@
   * [RBACマニフェストの生成](controller-tools/rbac.md)
   * [Webhookマニフェストの生成](controller-tools/webhook.md)
 * [controller-runtime](controller-runtime/README.md)
+  * [Kubernetesプログラミングの基礎](controller-runtime/basics.md)
   * [クライアントの使い方](controller-runtime/client.md)
   * [Reconcileの実装](controller-runtime/reconcile.md)
   * [ガベージコレクション](controller-runtime/deletion.md)
