@@ -7,7 +7,7 @@
 
 そこでKubebuilderではcontroller-genというツールを利用して、Goで記述したstructからCRDを生成する方式を採用しています。
 
-`kubebuilder create api`コマンドで生成された[api/v1/tenant_types.go](../../codes/tenant/api/v1/tenant_types.go)を見てみると、`TenantSpec`, `TenantStatus`, `Tenant`, `TenantList`という構造体が定義されており、たくさんの`// +kubebuilder:`から始まるマーカーコメントが付与されています。
+`kubebuilder create api`コマンドで生成された[api/v1/tenant_types.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/api/v1/tenant_types.go)を見てみると、`TenantSpec`, `TenantStatus`, `Tenant`, `TenantList`という構造体が定義されており、たくさんの`// +kubebuilder:`から始まるマーカーコメントが付与されています。
 controller-genは、これらの構造体とマーカーを頼りにCRDの生成をおこないます。
 
 `Tenant`がカスタムリソースの本体となる構造体です。`TenantList`は`Tenant`のリストを表す構造体です。これら2つの構造体は基本的に変更することはありません。

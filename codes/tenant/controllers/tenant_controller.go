@@ -248,6 +248,7 @@ func (r *TenantReconciler) reconcileRBAC(ctx context.Context, log logr.Logger, t
 	}
 	return updated, nil
 }
+
 //! [reconcile]
 
 //! [indexer]
