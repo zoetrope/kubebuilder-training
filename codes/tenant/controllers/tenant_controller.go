@@ -63,7 +63,7 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		}
 	} else {
 		if controllerutil.ContainsFinalizer(&tenant, tenantFinalizerName) {
-			// remove external resources
+			// ここで外部リソースを削除する
 
 			controllerutil.RemoveFinalizer(&tenant, tenantFinalizerName)
 			err = r.Update(ctx, &tenant)

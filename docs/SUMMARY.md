@@ -20,7 +20,7 @@
   * [Kubernetesプログラミングの基礎](controller-runtime/basics.md)
   * [クライアントの使い方](controller-runtime/client.md)
   * [Reconcileの実装](controller-runtime/reconcile.md)
-  * [ガベージコレクション](controller-runtime/deletion.md)
+  * [リソースの削除](controller-runtime/deletion.md)
   * [コントローラのテスト](controller-runtime/controller_test.md)
   * [Webhookの実装](controller-runtime/webhook.md)
   * [Webhookのテスト](controller-runtime/webhook_test.md)
