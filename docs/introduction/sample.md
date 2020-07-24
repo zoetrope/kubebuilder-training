@@ -11,7 +11,7 @@ Kubernetesでは、namespaceという仕組みにより各種リソースの分�
 - テナントの管理者に指定されたユーザーはテナントに新しいnamespaceを自由に追加・削除できる
 
 次にこのテナントを表現するためのカスタムリソースを考えてみます。
-下記のようにテナントを構成するnamespace名の一覧と、管理者を指定できるようにしましょう。
+下記のようにテナントを構成するnamespace名の一覧と、namespace名のプリフィックス、管理者を指定できるようにしましょう。
 
 ```yaml
 apiVersion: multitenancy.example.com/v1
@@ -22,6 +22,7 @@ spec:
   namespaces:
     - test1
     - test2
+  namespacePrefix: sample-
   admin:
     kind: User
     name: test

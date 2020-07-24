@@ -60,3 +60,28 @@ Edge
 Level
 * 状態を定期的にチェックして、特定の条件に入ったときにトリガーされる
 
+`Phase`フィールドを用意して現在の状態のみを格納するのではなく、`Conditions`フィールドで各状態を
+判断できるようにしておくことが推奨されています。
+
+[API Conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties)
+
+```yaml
+status:
+  phase: A
+```
+
+```yaml
+status:
+  phase: C
+```
+
+```yaml
+status:
+  conditions:
+  - type: A
+    status: True
+  - type: B
+    status: True
+  - type: C
+    status: False
+```
