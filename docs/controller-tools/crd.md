@@ -102,6 +102,59 @@ type SampleSpec struct {
 - 正規表現にマッチするかどうか
 - リスト内の要素がユニークかどうか
 
+### Server Side Apply用のマーカー
+
+https://kubernetes.io/docs/reference/using-api/api-concepts/#merge-strategy
+
+Kubernetesには、リソース全体を更新するのではなく、一部のフィールドのみを
+
+```yaml
+apiVersion: multitenancy.example.com/v1
+kind: Tenant
+metadata:
+  name: sample
+spec:
+  namespaces:
+  - test1
+  - test2
+  syncResources:
+  - apiVersion: v1
+    kind: ConfigMap
+    name: test
+    namespace: sample1
+    mode: remove
+  - apiVersion: v1
+    kind: ConfigMap
+    name: test
+    namespace: sample2
+    mode: remove
+```
+
+```yaml
+apiVersion: multitenancy.example.com/v1
+kind: Tenant
+metadata:
+  name: sample
+spec:
+  syncResources:
+  - apiVersion: v1
+    kind: ConfigMap
+    name: test
+    namespace: sample2
+    mode: ignore
+```
+
+```go
+type TenantSpec struct {
+	// +listType=map
+	// +listMapKey=apiVersion
+	// +listMapKey=kind
+	// +listMapKey=name
+	// +listMapKey=namespace
+	SyncResources []SyncResource `json:"syncResources,omitempty"`
+}
+```
+
 ## TenantStatus
 
 次にテナントリソースの状態を表現するために`TenantStatus`に`Conditions`フィールドを追加します。
@@ -152,8 +205,8 @@ status:
 
 [import:"tenant"](../../codes/tenant/api/v1/tenant_types.go)
 
-`+kubebuilder:object:root=true`: `Tenant`というstructがAPIのrootオブジェクトであることを表すマーカーです。
-`+kubebuilder:resource:scope=Cluster`: `Tenant`がcluster-scopeのカスタムリソースであることを表すマーカーです。
+- `+kubebuilder:object:root=true`: `Tenant`構造体がカスタムリソースのrootオブジェクトであることを表すマーカーです。
+- `+kubebuilder:resource:scope=Cluster`: `Tenant`がcluster-scopeのカスタムリソースであることを表すマーカーです。namespaced-scopeの場合は"scope=Namespaced"とするか、このマーカーを省略します。
 
 上記に加えて`+kubebuilder:subresource`と`+kubebuilder:printcolumn`を付与します。
 
@@ -171,8 +224,10 @@ status:
 
 ### printcolumn
 
-表示対象のフィールドはJSONPathで指定することが可能です。これにより
-例えば、`JSONPath=".status.conditions[?(@.type=='Ready')].status"`と記述すると、
+`+kubebuilder:printcolumn`マーカーを付与すると、kubectlでカスタムリソースを取得したときに表示する項目を指定することができます。
+
+表示対象のフィールドはJSONPathで指定することが可能です。
+これにより`JSONPath=".status.conditions[?(@.type=='Ready')].status"`と記述すると、`status.conditions`の中の`type`が"Ready"な要素の`status`の値を表示することができます。
 
 kubectlでTenantリソースを取得すると、下記のようにPREFIXやREADYの値が表示されていることが確認できます。
 
@@ -182,6 +237,7 @@ NAME            ADMIN     PREFIX           READY
 tenant-sample   default   tenant-sample-   True
 ```
 
+
 ## Defaulting, Pruning
 
 Defaulting機能を利用するためには、Structural SchemeかつPruningが有効になっている必要があります。
@@ -189,6 +245,8 @@ Defaulting機能を利用するためには、Structural SchemeかつPruningが�
 Pruningを有効にするためには
 CRDの`spec.preserveUnknownFields: false`にするか、
 v1にすればいい。
+
+defaultにはoptionalをつけないと駄目。
 
 
 `apiextensions.k8s.io/v1beta1`
