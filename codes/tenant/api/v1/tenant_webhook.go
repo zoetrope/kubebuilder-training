@@ -27,6 +27,7 @@ var _ webhook.Defaulter = &Tenant{}
 
 //! [webhook-defaulter]
 
+//! [default]
 // Default implements webhook.Defaulter so a webhook will be registered for the type
 func (r *Tenant) Default() {
 	tenantlog.Info("default", "name", r.Name)
@@ -37,6 +38,8 @@ func (r *Tenant) Default() {
 	}
 }
 
+//! [default]
+
 //! [webhook-validator]
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
 // +kubebuilder:webhook:verbs=update,path=/validate-multitenancy-example-com-v1-tenant,mutating=false,failurePolicy=fail,groups=multitenancy.example.com,resources=tenants,versions=v1,name=vtenant.kb.io
@@ -45,6 +48,7 @@ var _ webhook.Validator = &Tenant{}
 
 //! [webhook-validator]
 
+//! [validate]
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (r *Tenant) ValidateCreate() error {
 	tenantlog.Info("validate create", "name", r.Name)
@@ -72,3 +76,5 @@ func (r *Tenant) ValidateDelete() error {
 	// TODO(user): fill in your validation logic upon object deletion.
 	return nil
 }
+
+//! [validate]
