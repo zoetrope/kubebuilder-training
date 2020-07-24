@@ -1,6 +1,6 @@
 # Webhookのテスト
 
-controller-runtime v0.6.0以降では、testenvでwebhookのテストもサポートするようになりました。
+controller-runtime v0.6.0では、testenvでwebhookのテストもサポートするようになりました。
 
 ## テスト環境のセットアップ
 

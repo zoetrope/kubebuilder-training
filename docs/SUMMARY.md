@@ -13,6 +13,7 @@
   * [make runによるデバッグ](kubebuilder/debug.md)
 * [controller-tools](controller-tools/README.md)
   * [CRDマニフェストの生成](controller-tools/crd.md)
+  * [CRDマニフェストの生成(応用編)](controller-tools/advanced_crd.md)
   * [RBACマニフェストの生成](controller-tools/rbac.md)
   * [Webhookマニフェストの生成](controller-tools/webhook.md)
 * [controller-runtime](controller-runtime/README.md)
