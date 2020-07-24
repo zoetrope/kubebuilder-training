@@ -20,7 +20,7 @@ Reconcile処理の中で以下の処理を呼び出します。
 
 ## kube-rbac-proxy
 
-[import:"bases,enable-prometheus,enable-auth-proxy"](../../codes/tenant/config/default/kustomization.yaml)
+[import:"bases,enable-prometheus,patches,enable-auth-proxy"](../../codes/tenant/config/default/kustomization.yaml)
 
 [import](../../codes/tenant/config/rbac/kustomization.yaml)
 

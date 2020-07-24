@@ -18,25 +18,30 @@ bases:
 - ../crd
 - ../rbac
 - ../manager
-# [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in 
+#! [enable-webhook]
+# [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in
 # crd/kustomization.yaml
 - ../webhook
 # [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER'. 'WEBHOOK' components are required.
 - ../certmanager
+#! [enable-webhook]
 #! [enable-prometheus]
 # [PROMETHEUS] To enable prometheus monitor, uncomment all sections with 'PROMETHEUS'.
 - ../prometheus
 #! [enable-prometheus]
 
-#! [enable-auth-proxy]
+#! [patches]
 patchesStrategicMerge:
+#! [patches]
+#! [enable-auth-proxy]
   # Protect the /metrics endpoint by putting it behind auth.
   # If you want your controller-manager to expose the /metrics
   # endpoint w/o any authn/z, please comment the following line.
 - manager_auth_proxy_patch.yaml
 #! [enable-auth-proxy]
 
-# [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in 
+#! [enable-webhook-patch]
+# [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in
 # crd/kustomization.yaml
 - manager_webhook_patch.yaml
 
@@ -44,7 +49,9 @@ patchesStrategicMerge:
 # Uncomment 'CERTMANAGER' sections in crd/kustomization.yaml to enable the CA injection in the admission webhooks.
 # 'CERTMANAGER' needs to be enabled to use ca injection
 - webhookcainjection_patch.yaml
+#! [enable-webhook-patch]
 
+#! [vars]
 # the following config is for teaching kustomize how to do var substitution
 vars:
 # [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER' prefix.
@@ -74,3 +81,4 @@ vars:
     kind: Service
     version: v1
     name: webhook-service
+#! [vars]

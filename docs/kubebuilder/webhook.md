@@ -54,3 +54,13 @@ if err = (&multitenancyv1.Tenant{}).SetupWebhookWithManager(mgr); err != nil {
 	os.Exit(1)
 }
 ```
+
+## kustomization.yamlの編集
+
+kubebuilderコマンドで生成した直後の状態では、`make manifests`コマンドでマニフェストを生成しても、Webhook機能が利用できるようにはなっていません。
+
+[config/default/kustomization.yaml](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/config/default/kustomization.yaml)ファイルを編集する必要があります。
+
+生成直後は`bases`の`../webhook`と`../certmanager`、`patchesStrategicMerge`の`manager_webhook_patch.yaml`と`webhookcainjection_patch.yaml`、`vars`がコメントアウトされていますが、これらのコメントを外します。
+
+[import:"bases,enable-webhook,patches,enable-webhook-patch,vars"](../../codes/tenant/config/default/kustomization.yaml)
