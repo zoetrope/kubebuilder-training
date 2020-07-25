@@ -79,7 +79,7 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	updated, err := r.reconcile(ctx, log, tenant)
 	if err != nil {
 		log.Error(err, "unable to reconcile", "name", tenant.Name)
-		r.Recorder.Eventf(&tenant, corev1.EventTypeWarning, "Failed", "failed to reconciled: %s", err.Error())
+		r.Recorder.Eventf(&tenant, corev1.EventTypeWarning, "Failed", "failed to reconcile: %s", err.Error())
 		setCondition(&tenant.Status.Conditions, multitenancyv1.TenantCondition{
 			Type:    multitenancyv1.ConditionReady,
 			Status:  corev1.ConditionFalse,
@@ -93,7 +93,8 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		return ctrl.Result{}, err
 	}
 
-	if updated {
+	currentCond := findCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
+	if updated || currentCond == nil || currentCond.Status != corev1.ConditionTrue {
 		r.Recorder.Event(&tenant, corev1.EventTypeNormal, "Updated", "the tenant was updated")
 		setCondition(&tenant.Status.Conditions, multitenancyv1.TenantCondition{
 			Type:   multitenancyv1.ConditionReady,
@@ -123,6 +124,9 @@ func (r *TenantReconciler) reconcile(ctx context.Context, log logr.Logger, tenan
 	return nsUpdated || rbUpdated, nil
 }
 
+//! [reconcile]
+
+//! [reconcile-namespaces]
 func (r *TenantReconciler) reconcileNamespaces(ctx context.Context, log logr.Logger, tenant multitenancyv1.Tenant) (bool, error) {
 	//! [matching-fields]
 	var namespaces corev1.NamespaceList
@@ -187,6 +191,9 @@ func (r *TenantReconciler) reconcileNamespaces(ctx context.Context, log logr.Log
 	return updated, nil
 }
 
+//! [reconcile-namespaces]
+
+//! [reconcile-rbac]
 func (r *TenantReconciler) reconcileRBAC(ctx context.Context, log logr.Logger, tenant multitenancyv1.Tenant) (bool, error) {
 	updated := false
 	for _, ns := range tenant.Spec.Namespaces {
@@ -249,7 +256,7 @@ func (r *TenantReconciler) reconcileRBAC(ctx context.Context, log logr.Logger, t
 	return updated, nil
 }
 
-//! [reconcile]
+//! [reconcile-rbac]
 
 //! [indexer]
 const ownerControllerField = ".metadata.ownerReference.controller"
@@ -301,6 +308,7 @@ func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	}
 	//! [pred]
 
+	//! [external-event]
 	external := newExternalEventWatcher()
 	err = mgr.Add(external)
 	if err != nil {
@@ -309,11 +317,13 @@ func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	src := source.Channel{
 		Source: external.channel,
 	}
+	//! [external-event]
 
 	//! [managedby]
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&multitenancyv1.Tenant{}).
 		Owns(&corev1.Namespace{}).
+		Owns(&rbacv1.ClusterRole{}).
 		Owns(&rbacv1.RoleBinding{}).
 		Watches(&src, &handler.EnqueueRequestForObject{}).
 		WithEventFilter(pred).
