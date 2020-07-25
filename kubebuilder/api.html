@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>APIの作成 · HonKit</title>
+        <title>APIの雛形作成 · HonKit</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="HonKit 3.5.2">
@@ -33,6 +33,8 @@
     
 
     
+        
+        <link rel="stylesheet" href="../styles/website.css">
         
     
         
@@ -100,6 +102,64 @@
             
 
             
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="../introduction/installation.html">
+            
+                <a href="../introduction/installation.html">
+            
+                    
+                    インストール
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="../introduction/basics.html">
+            
+                <a href="../introduction/basics.html">
+            
+                    
+                    カスタムコントローラの基礎
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3" data-path="../introduction/sample.html">
+            
+                <a href="../introduction/sample.html">
+            
+                    
+                    作成するカスタムコントローラ
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.4" data-path="../introduction/references.html">
+            
+                <a href="../introduction/references.html">
+            
+                    
+                    参考情報
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
         </li>
     
         <li class="chapter " data-level="1.2" data-path="./">
@@ -116,25 +176,12 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.2.1" data-path="installation.html">
-            
-                <a href="installation.html">
-            
-                    
-                    インストール
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.2" data-path="new-project.html">
+        <li class="chapter " data-level="1.2.1" data-path="new-project.html">
             
                 <a href="new-project.html">
             
                     
-                    プロジェクトの作成
+                    プロジェクトの雛形作成
             
                 </a>
             
@@ -142,12 +189,12 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.2.3" data-path="api.html">
+        <li class="chapter active" data-level="1.2.2" data-path="api.html">
             
                 <a href="api.html">
             
                     
-                    APIの作成
+                    APIの雛形作成
             
                 </a>
             
@@ -155,12 +202,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.4" data-path="webhook.html">
+        <li class="chapter " data-level="1.2.3" data-path="webhook.html">
             
                 <a href="webhook.html">
             
                     
-                    Webhookの作成
+                    Webhookの雛形作成
             
                 </a>
             
@@ -168,7 +215,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.5" data-path="kind.html">
+        <li class="chapter " data-level="1.2.4" data-path="kind.html">
             
                 <a href="kind.html">
             
@@ -181,14 +228,27 @@
             
         </li>
     
+        <li class="chapter " data-level="1.2.5" data-path="debug.html">
+            
+                <a href="debug.html">
+            
+                    
+                    make runによるデバッグ
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
         </li>
     
-        <li class="chapter " data-level="1.3" data-path="../controller-gen/">
+        <li class="chapter " data-level="1.3" data-path="../controller-tools/">
             
-                <a href="../controller-gen/">
+                <a href="../controller-tools/">
             
                     
                     controller-tools
@@ -200,12 +260,12 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.3.1" data-path="../controller-gen/crd.html">
+        <li class="chapter " data-level="1.3.1" data-path="../controller-tools/crd.html">
             
-                <a href="../controller-gen/crd.html">
+                <a href="../controller-tools/crd.html">
             
                     
-                    CRDの生成
+                    CRDマニフェストの生成
             
                 </a>
             
@@ -213,12 +273,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.2" data-path="../controller-gen/rbac.html">
+        <li class="chapter " data-level="1.3.2" data-path="../controller-tools/advanced_crd.html">
             
-                <a href="../controller-gen/rbac.html">
+                <a href="../controller-tools/advanced_crd.html">
             
                     
-                    RBACの生成
+                    CRDマニフェストの生成(応用編)
             
                 </a>
             
@@ -226,12 +286,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.3" data-path="../controller-gen/webhook.html">
+        <li class="chapter " data-level="1.3.3" data-path="../controller-tools/rbac.html">
             
-                <a href="../controller-gen/webhook.html">
+                <a href="../controller-tools/rbac.html">
             
                     
-                    Webhookの生成
+                    RBACマニフェストの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="../controller-tools/webhook.html">
+            
+                <a href="../controller-tools/webhook.html">
+            
+                    
+                    Webhookマニフェストの生成
             
                 </a>
             
@@ -258,7 +331,20 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/client.html">
+        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/basics.html">
+            
+                <a href="../controller-runtime/basics.html">
+            
+                    
+                    Kubernetesプログラミングの基礎
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/client.html">
             
                 <a href="../controller-runtime/client.html">
             
@@ -271,7 +357,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/reconcile.html">
             
                 <a href="../controller-runtime/reconcile.html">
             
@@ -284,12 +370,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/deletion.html">
             
                 <a href="../controller-runtime/deletion.html">
             
                     
-                    削除処理
+                    リソースの削除
             
                 </a>
             
@@ -297,7 +383,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/controller_test.html">
+            
+                <a href="../controller-runtime/controller_test.html">
+            
+                    
+                    コントローラのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -310,7 +409,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/manager.html">
+        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/webhook_test.html">
+            
+                <a href="../controller-runtime/webhook_test.html">
+            
+                    
+                    Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/manager.html">
             
                 <a href="../controller-runtime/manager.html">
             
@@ -323,31 +435,12 @@
             
         </li>
     
-
-            </ul>
+        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/metrics.html">
             
-        </li>
-    
-        <li class="chapter " data-level="1.5" data-path="../advanced/">
-            
-                <a href="../advanced/">
+                <a href="../controller-runtime/metrics.html">
             
                     
-                    Advanced
-            
-                </a>
-            
-
-            
-            <ul class="articles">
-                
-    
-        <li class="chapter " data-level="1.5.1" data-path="../advanced/controller_test.html">
-            
-                <a href="../advanced/controller_test.html">
-            
-                    
-                    コントローラのテスト
+                    メトリクスの収集
             
                 </a>
             
@@ -355,25 +448,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5.2" data-path="../advanced/webhook_test.html">
+        <li class="chapter " data-level="1.4.10" data-path="../controller-runtime/versioning.html">
             
-                <a href="../advanced/webhook_test.html">
-            
-                    
-                    Webhookのテスト
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.5.3" data-path="../advanced/conversion.html">
-            
-                <a href="../advanced/conversion.html">
+                <a href="../controller-runtime/versioning.html">
             
                     
-                    Conversion
+                    CRDのバージョニング
             
                 </a>
             
@@ -416,7 +496,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >APIの作成</a>
+        <a href=".." >APIの雛形作成</a>
     </h1>
 </div>
 
@@ -431,9 +511,9 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="api&#x306E;&#x4F5C;&#x6210;">API&#x306E;&#x4F5C;&#x6210;</h1>
-<p><code>kubebuilder create api</code>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3068;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3084;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x5B9F;&#x88C5;&#x306E;&#x96DB;&#x5F62;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x4EE5;&#x4E0B;&#x306E;&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3092;&#x5B9F;&#x884C;&#x3057;&#x3066;&#x3001;Tenant&#x3092;&#x8868;&#x73FE;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x3001;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6271;&#x3046;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;&#x751F;&#x6210;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+                                <h1 id="api&#x306E;&#x96DB;&#x5F62;&#x4F5C;&#x6210;">API&#x306E;&#x96DB;&#x5F62;&#x4F5C;&#x6210;</h1>
+<p><code>kubebuilder create api</code>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3068;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3084;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x5B9F;&#x88C5;&#x306E;&#x96DB;&#x5F62;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x4EE5;&#x4E0B;&#x306E;&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3092;&#x5B9F;&#x884C;&#x3057;&#x3066;&#x3001;Tenant&#x3092;&#x8868;&#x73FE;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6271;&#x3046;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;&#x751F;&#x6210;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
 <pre><code class="lang-console">$ kubebuilder create api --group multitenancy --version v1 --kind Tenant `--namespaced=false`
 Create Resource [y/n]
 y
@@ -442,10 +522,15 @@ y
 $ make manifests
 </code></pre>
 <p><code>--group</code>,<code>--version</code>, <code>--kind</code>&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x306F;&#x3001;&#x751F;&#x6210;&#x3059;&#x308B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;GVK&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<ul>
+<li><code>--kind</code>: &#x4F5C;&#x6210;&#x3059;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x540D;&#x524D;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;</li>
+<li><code>--group</code>: &#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x5C5E;&#x3059;&#x308B;&#x30B0;&#x30EB;&#x30FC;&#x30D7;&#x540D;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;</li>
+<li><code>--version</code>: &#x9069;&#x5207;&#x306A;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;&#x4ECA;&#x5F8C;&#x4ED5;&#x69D8;&#x304C;&#x5909;&#x308F;&#x308B;&#x53EF;&#x80FD;&#x6027;&#x304C;&#x3042;&#x308A;&#x305D;&#x3046;&#x306A;&#x3089;<code>v1alpha1</code>&#x3084;<code>v1beta1</code>&#x3092;&#x6307;&#x5B9A;&#x3057;&#x3001;&#x5B89;&#x5B9A;&#x7248;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3059;&#x308B;&#x306E;&#x3067;&#x3042;&#x308C;&#x3070;<code>v1</code>&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;</li>
+</ul>
 <p><code>--namespace</code>&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x3067;&#x306F;&#x3001;&#x751F;&#x6210;&#x3059;&#x308B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;namespace-scope&#x3068;cluster-scope&#x306E;&#x3069;&#x3061;&#x3089;&#x306B;&#x3059;&#x308B;&#x304B;&#x6307;&#x5B9A;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;
-&#x4ECA;&#x56DE;&#x306E;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;namespace&#x306A;&#x3069;&#x306E;cluster-scope&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6271;&#x3046;&#x305F;&#x3081;&#x3001;cluster-scope&#x3092;&#x6307;&#x5B9A;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<p>Custom Resource&#x3068;Controller&#x306E;&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;&#x304B;&#x3069;&#x3046;&#x304B;&#x805E;&#x304B;&#x308C;&#x308B;&#x306E;&#x3067;&#x3001;&#x4ECA;&#x56DE;&#x306F;&#x3069;&#x3061;&#x3089;&#x3082;<code>y</code>&#x3068;&#x56DE;&#x7B54;&#x3057;&#x307E;&#x3059;&#x3002;
-&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3067;&#x306F;&#x306A;&#x304F;&#x65E2;&#x5B58;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6271;&#x3046;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;&#x5B9F;&#x88C5;&#x3059;&#x308B;&#x5834;&#x5408;&#x306F;&#x3001;<code>Create Resource [y/n]</code>&#x306B;<code>n</code>&#x3068;&#x56DE;&#x7B54;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+&#x4ECA;&#x56DE;&#x306E;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;namespace&#x306A;&#x3069;&#x306E;cluster-scope&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6271;&#x3046;&#x305F;&#x3081;&#x3001;cluster-scope&#x3092;&#x6307;&#x5B9A;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;&#x304B;&#x3069;&#x3046;&#x304B;&#x805E;&#x304B;&#x308C;&#x308B;&#x306E;&#x3067;&#x3001;&#x4ECA;&#x56DE;&#x306F;&#x3069;&#x3061;&#x3089;&#x3082;<code>y</code>&#x3068;&#x56DE;&#x7B54;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x306E;&#x5B9F;&#x884C;&#x306B;&#x6210;&#x529F;&#x3059;&#x308B;&#x3068;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x304C;&#x65B0;&#x305F;&#x306B;&#x751F;&#x6210;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
 <pre><code>&#x251C;&#x2500;&#x2500; api
 &#x2502;    &#x2514;&#x2500;&#x2500; v1
 &#x2502;        &#x251C;&#x2500;&#x2500; groupversion_info.go
@@ -471,7 +556,41 @@ $ make manifests
 &#x2502;    &#x251C;&#x2500;&#x2500; suite_test.go
 &#x2502;    &#x2514;&#x2500;&#x2500; tenant_controller.go
 &#x2514;&#x2500;&#x2500; main.go
+</code></pre><p>&#x305D;&#x308C;&#x305E;&#x308C;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x306E;&#x5185;&#x5BB9;&#x3092;&#x307F;&#x3066;&#x3044;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<h2 id="apiv1">api/v1</h2>
+<p><code>tenant_types.go</code>&#x306F;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;Go&#x8A00;&#x8A9E;&#x306E;struct&#x3067;&#x8868;&#x73FE;&#x3057;&#x305F;&#x3082;&#x306E;&#x3067;&#x3059;&#x3002;
+&#x4ECA;&#x5F8C;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x5B9A;&#x7FA9;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x5834;&#x5408;&#x306B;&#x306F;&#x3053;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x3092;&#x7DE8;&#x96C6;&#x3057;&#x3066;&#x3044;&#x304F;&#x3053;&#x3068;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p><code>groupversion_info.go</code>&#x306F;&#x521D;&#x671F;&#x751F;&#x6210;&#x5F8C;&#x306B;&#x7DE8;&#x96C6;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x306F;&#x3042;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;
+<code>zz_generated.deepcopy.go</code>&#x306F;<code>tenant_types.go</code>&#x306E;&#x5185;&#x5BB9;&#x304B;&#x3089;&#x81EA;&#x52D5;&#x751F;&#x6210;&#x3055;&#x308C;&#x308B;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x306A;&#x306E;&#x3067;&#x7DE8;&#x96C6;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x306F;&#x3042;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;</p>
+<h2 id="controllers">controllers</h2>
+<p><code>tenant_controller.go</code>&#x306F;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30E1;&#x30A4;&#x30F3;&#x30ED;&#x30B8;&#x30C3;&#x30AF;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
+&#x4ECA;&#x5F8C;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x51E6;&#x7406;&#x306F;&#x57FA;&#x672C;&#x7684;&#x306B;&#x3053;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x306B;&#x66F8;&#x3044;&#x3066;&#x3044;&#x304F;&#x3053;&#x3068;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p><code>suite_test.go</code>&#x306F;&#x30C6;&#x30B9;&#x30C8;&#x30B3;&#x30FC;&#x30C9;&#x3067;&#x3059;&#x3002;&#x8A73;&#x7D30;&#x306F;<a href="../controller-runtime/controller_test.html">&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30C6;&#x30B9;&#x30C8;</a>&#x3067;&#x89E3;&#x8AAC;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<h2 id="maingo">main.go</h2>
+<p><code>main.go</code>&#x306B;&#x306F;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x521D;&#x671F;&#x5316;&#x51E6;&#x7406;&#x304C;&#x8FFD;&#x52A0;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">if</span> err = (&amp;controllers.TenantReconciler{
+    Client: mgr.GetClient(),
+    Log:    ctrl.Log.WithName(<span class="hljs-string">&quot;controllers&quot;</span>).WithName(<span class="hljs-string">&quot;Tenant&quot;</span>),
+    Scheme: mgr.GetScheme(),
+}).SetupWithManager(mgr); err != <span class="hljs-literal">nil</span> {
+    setupLog.Error(err, <span class="hljs-string">&quot;unable to create controller&quot;</span>, <span class="hljs-string">&quot;controller&quot;</span>, <span class="hljs-string">&quot;Tenant&quot;</span>)
+    os.Exit(<span class="hljs-number">1</span>)
+}
 </code></pre>
+<h2 id="config">config</h2>
+<p>config&#x30C7;&#x30A3;&#x30EC;&#x30AF;&#x30C8;&#x30EA;&#x4E0B;&#x306B;&#x306F;&#x3001;&#x3044;&#x304F;&#x3064;&#x304B;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x304C;&#x8FFD;&#x52A0;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<h3 id="crd">crd</h3>
+<p>crd&#x30C7;&#x30A3;&#x30EC;&#x30AF;&#x30C8;&#x30EA;&#x306B;&#x306F;CRD(Custom Resource Definition)&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x304C;&#x8FFD;&#x52A0;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x3053;&#x308C;&#x3089;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306F;<code>api/v1/tenant_types.go</code>&#x304B;&#x3089;&#x81EA;&#x52D5;&#x751F;&#x6210;&#x3055;&#x308C;&#x308B;&#x3082;&#x306E;&#x306A;&#x306E;&#x3067;&#x3001;&#x57FA;&#x672C;&#x7684;&#x306B;&#x7DE8;&#x96C6;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x306F;&#x3042;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;
+&#x305F;&#x3060;&#x3057;&#x3001;Conversion Webhook&#x3092;&#x5229;&#x7528;&#x3057;&#x305F;&#x3044;&#x5834;&#x5408;&#x306F;&#x3001;<code>cainjection_in_tenants.yaml</code>&#x3068;<code>webhook_in_tenants.yaml</code>&#x306E;&#x30D1;&#x30C3;&#x30C1;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3088;&#x3046;&#x306B;<code>kustomization.yaml</code>&#x3092;&#x66F8;&#x304D;&#x63DB;&#x3048;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<h3 id="rbac">rbac</h3>
+<p><code>role.yaml</code>&#x3068;<code>role_binding.yaml</code>&#x306F;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6271;&#x3046;&#x305F;&#x3081;&#x306E;&#x6A29;&#x9650;&#x304C;&#x8FFD;&#x52A0;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p><code>tenant_editor_role.yaml</code>&#x3068;<code>tenant_viewer_role.yaml</code>&#x306F;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x7DE8;&#x96C6;&#x30FB;&#x8AAD;&#x307F;&#x53D6;&#x308A;&#x306E;&#x6A29;&#x9650;&#x3067;&#x3059;&#x3002;
+&#x5FC5;&#x8981;&#x306B;&#x5FDC;&#x3058;&#x3066;&#x5229;&#x7528;&#x3057;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<h3 id="samples">samples</h3>
+<p>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x30B5;&#x30F3;&#x30D7;&#x30EB;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3067;&#x3059;&#x3002;
+&#x30C6;&#x30B9;&#x30C8;&#x3067;&#x5229;&#x7528;&#x3057;&#x305F;&#x308A;&#x3001;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x5411;&#x3051;&#x306B;&#x63D0;&#x4F9B;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x8A18;&#x8FF0;&#x3057;&#x3066;&#x304A;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+
                                 
                                 </section>
                             
@@ -498,12 +617,12 @@ $ make manifests
 
             
                 
-                <a href="new-project.html" class="navigation navigation-prev " aria-label="Previous page: プロジェクトの作成">
+                <a href="new-project.html" class="navigation navigation-prev " aria-label="Previous page: プロジェクトの雛形作成">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="webhook.html" class="navigation navigation-next " aria-label="Next page: Webhookの作成">
+                <a href="webhook.html" class="navigation navigation-next " aria-label="Next page: Webhookの雛形作成">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -514,7 +633,7 @@ $ make manifests
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"APIの作成","level":"1.2.3","depth":2,"next":{"title":"Webhookの作成","level":"1.2.4","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},"previous":{"title":"プロジェクトの作成","level":"1.2.2","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"full","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"kubebuilder/api.md","mtime":"2020-07-18T03:19:48.640Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-18T06:13:07.172Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"next":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},"previous":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"kubebuilder/api.md","mtime":"2020-07-23T07:05:47.730Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-25T05:49:45.005Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

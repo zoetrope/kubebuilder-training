@@ -1,0 +1,662 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>カスタムコントローラの基礎 · HonKit</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 3.5.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="../styles/website.css">
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="sample.html" />
+    
+    
+    <link rel="prev" href="installation.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    つくって学ぶKubebuilder
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="installation.html">
+            
+                <a href="installation.html">
+            
+                    
+                    インストール
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.1.2" data-path="basics.html">
+            
+                <a href="basics.html">
+            
+                    
+                    カスタムコントローラの基礎
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3" data-path="sample.html">
+            
+                <a href="sample.html">
+            
+                    
+                    作成するカスタムコントローラ
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.4" data-path="references.html">
+            
+                <a href="references.html">
+            
+                    
+                    参考情報
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../kubebuilder/">
+            
+                <a href="../kubebuilder/">
+            
+                    
+                    Kubebuilder
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../kubebuilder/new-project.html">
+            
+                <a href="../kubebuilder/new-project.html">
+            
+                    
+                    プロジェクトの雛形作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../kubebuilder/api.html">
+            
+                <a href="../kubebuilder/api.html">
+            
+                    
+                    APIの雛形作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../kubebuilder/webhook.html">
+            
+                <a href="../kubebuilder/webhook.html">
+            
+                    
+                    Webhookの雛形作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../kubebuilder/kind.html">
+            
+                <a href="../kubebuilder/kind.html">
+            
+                    
+                    kindで動かしてみよう
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
+            
+                <a href="../kubebuilder/debug.html">
+            
+                    
+                    make runによるデバッグ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../controller-tools/">
+            
+                <a href="../controller-tools/">
+            
+                    
+                    controller-tools
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../controller-tools/crd.html">
+            
+                <a href="../controller-tools/crd.html">
+            
+                    
+                    CRDマニフェストの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../controller-tools/advanced_crd.html">
+            
+                <a href="../controller-tools/advanced_crd.html">
+            
+                    
+                    CRDマニフェストの生成(応用編)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../controller-tools/rbac.html">
+            
+                <a href="../controller-tools/rbac.html">
+            
+                    
+                    RBACマニフェストの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="../controller-tools/webhook.html">
+            
+                <a href="../controller-tools/webhook.html">
+            
+                    
+                    Webhookマニフェストの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../controller-runtime/">
+            
+                <a href="../controller-runtime/">
+            
+                    
+                    controller-runtime
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/basics.html">
+            
+                <a href="../controller-runtime/basics.html">
+            
+                    
+                    Kubernetesプログラミングの基礎
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/client.html">
+            
+                <a href="../controller-runtime/client.html">
+            
+                    
+                    クライアントの使い方
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/reconcile.html">
+            
+                <a href="../controller-runtime/reconcile.html">
+            
+                    
+                    Reconcileの実装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/deletion.html">
+            
+                <a href="../controller-runtime/deletion.html">
+            
+                    
+                    リソースの削除
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/controller_test.html">
+            
+                <a href="../controller-runtime/controller_test.html">
+            
+                    
+                    コントローラのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook.html">
+            
+                <a href="../controller-runtime/webhook.html">
+            
+                    
+                    Webhookの実装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/webhook_test.html">
+            
+                <a href="../controller-runtime/webhook_test.html">
+            
+                    
+                    Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/manager.html">
+            
+                <a href="../controller-runtime/manager.html">
+            
+                    
+                    Manager
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/metrics.html">
+            
+                <a href="../controller-runtime/metrics.html">
+            
+                    
+                    メトリクスの収集
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.10" data-path="../controller-runtime/versioning.html">
+            
+                <a href="../controller-runtime/versioning.html">
+            
+                    
+                    CRDのバージョニング
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >カスタムコントローラの基礎</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x57FA;&#x790E;">&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x57FA;&#x790E;</h1>
+<h2 id="declarative">Declarative</h2>
+<p>Kubernetes&#x306E;&#x6700;&#x3082;&#x57FA;&#x790E;&#x3068;&#x306A;&#x308B;&#x8003;&#x3048;&#x65B9;Declarative(&#x5BA3;&#x8A00;&#x578B;)</p>
+<p>&#x4F8B;&#x3048;&#x3070;&#x3001;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306A;YAML&#x30D5;&#x30A9;&#x30FC;&#x30DE;&#x30C3;&#x30C8;&#x3067;&#x8A18;&#x8FF0;&#x3055;&#x308C;&#x305F;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x3092;&#x7528;&#x610F;&#x3059;&#x308B;&#x3002;</p>
+<p>kube-controller-manager&#x3068;&#x547C;&#x3070;&#x308C;&#x308B;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306F;&#x3001;&#x3053;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x306E;&#x8A18;&#x8FF0;&#x5185;&#x5BB9;&#x306B;&#x5F93;&#x3063;&#x3066;&#x3001;&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x3092;&#x7ACB;&#x3061;&#x4E0A;&#x3052;&#x308B;&#x3088;&#x3046;&#x306B;Kubelet&#x306B;&#x547D;&#x4EE4;&#x3092;&#x51FA;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x7ACB;&#x3061;&#x4E0A;&#x3052;&#x308B;&#x3060;&#x3051;&#x3067;&#x306F;&#x306A;&#x304F;&#x3001;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306B;&#x8A18;&#x8FF0;&#x3055;&#x308C;&#x305F;&#x5185;&#x5BB9;&#x3068;&#x3001;&#x5B9F;&#x969B;&#x306B;&#x8D77;&#x52D5;&#x3057;&#x3066;&#x3044;&#x308B;Pod&#x306E;&#x72B6;&#x614B;&#x3092;&#x5E38;&#x306B;&#x6BD4;&#x8F03;&#x3057;&#x3001;&#x3082;&#x3057;&#x5DEE;&#x5206;&#x304C;&#x767A;&#x751F;&#x3059;&#x308C;&#x3070;&#x305D;&#x306E;&#x5DEE;&#x5206;&#x304C;&#x306A;&#x304F;&#x306A;&#x308B;&#x3088;&#x3046;&#x306A;&#x52D5;&#x304D;&#x3092;&#x3057;&#x307E;&#x3059;&#x3002;
+&#x3069;&#x3046;&#x3044;&#x3046;&#x3053;&#x3068;&#x304B;&#x3068;&#x3044;&#x3046;&#x3068;&#x3001;&#x4F8B;&#x3048;&#x3070;&#x3001;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x304C;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306B;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x66F8;&#x304D;&#x63DB;&#x3048;&#x305F;&#x3068;&#x3057;&#x307E;&#x3059;&#x3002;
+&#x3059;&#x308B;&#x3068;kube-controller-manager&#x306F;&#x5B9F;&#x969B;&#x306B;&#x8D77;&#x52D5;&#x3057;&#x3066;&#x3044;&#x308B;&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x3068;&#x30A4;&#x30E1;&#x30FC;&#x30B8;&#x306E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x304C;&#x7570;&#x306A;&#x308B;&#x3053;&#x3068;&#x3092;&#x691C;&#x77E5;&#x3057;&#x3001;&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x3092;&#x65B0;&#x3057;&#x3044;&#x30A4;&#x30E1;&#x30FC;&#x30B8;&#x3067;&#x7ACB;&#x3061;&#x4E0A;&#x3052;&#x76F4;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x9006;&#x306B;&#x3001;&#x4F55;&#x3089;&#x304B;&#x306E;&#x554F;&#x984C;&#x304C;&#x767A;&#x751F;&#x3057;&#x3066;&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x3066;&#x3057;&#x307E;&#x3063;&#x305F;&#x5834;&#x5408;&#x3001;&#x671F;&#x5F85;&#x3057;&#x305F;&#x72B6;&#x614B;&#x3068;&#x7570;&#x306A;&#x3063;&#x3066;&#x3044;&#x308B;&#x305F;&#x3081;&#x3001;kube-controller-manager&#x306F;&#x518D;&#x5EA6;&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x3092;&#x7ACB;&#x3061;&#x4E0A;&#x3052;&#x308B;&#x51E6;&#x7406;&#x3092;&#x304A;&#x3053;&#x306A;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x5E38;&#x306B;&#x3001;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x304C;&#x671F;&#x5F85;&#x3059;&#x308B;&#x72B6;&#x614B;&#x3068;&#x3001;&#x5B9F;&#x969B;&#x306E;&#x72B6;&#x614B;&#x3092;&#x6BD4;&#x8F03;&#x3057;&#x3066;&#x3001;&#x305D;&#x306E;&#x5DEE;&#x5206;&#x3092;&#x57CB;&#x3081;&#x308B;&#x3088;&#x3046;&#x306A;&#x51E6;&#x7406;&#x3092;&#x5B9F;&#x884C;&#x3059;&#x308B;&#x3002;</p>
+<h2 id="crd&#x3068;cr">CRD&#x3068;CR</h2>
+<p>API&#x3068;Resource&#x306E;&#x95A2;&#x4FC2;
+res</p>
+<p>&#x4E0A;&#x8FF0;&#x3057;&#x305F;&#x3088;&#x3046;&#x306B;&#x3001;Kubernetes&#x306B;&#x306F;Pod&#x3092;&#x59CB;&#x3081;&#x3068;&#x3057;&#x3066;&#x305F;&#x304F;&#x3055;&#x3093;&#x306E;&#x6A19;&#x6E96;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x7528;&#x610F;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+Kubernetes&#x4E0A;&#x3067;&#x8907;&#x96D1;&#x306A;&#x30B7;&#x30B9;&#x30C6;&#x30E0;&#x3092;&#x69CB;&#x7BC9;&#x3057;&#x305F;&#x3044;&#x5834;&#x5408;&#x3001;&#x6A19;&#x6E96;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3060;&#x3051;&#x3067;&#x306F;
+&#x305D;&#x3053;&#x3067;&#x3001;Kubernetes&#x306E;&#x5229;&#x7528;&#x8005;&#x304C;&#x81EA;&#x7531;&#x306B;&#x65B0;&#x3057;&#x3044;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x5B9A;&#x7FA9;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x4ED5;&#x7D44;&#x307F;&#x304C;&#x7528;&#x610F;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p>CRD(Custom Resource Definition)</p>
+<p>&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3067;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6271;&#x3046;&#x305F;&#x3081;&#x306B;&#x306F;&#x3001;&#x305D;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;CRD(Custom Resource Definition)&#x3092;&#x5B9A;&#x7FA9;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;&#x3053;&#x306E;CRD&#x306F;OpenAPI v3.0&#x306E;&#x5F62;&#x5F0F;&#x3067;&#x66F8;&#x304F;</p>
+<ul>
+<li><a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/config/crd/bases/multitenancy.example.com_tenants.yaml" target="_blank">CRD&#x306E;&#x4F8B;</a></li>
+</ul>
+<p>CR&#x306E;&#x4F8B;</p>
+<h2 id="&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;">&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;</h2>
+<ul>
+<li>&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3001;&#x30AA;&#x30DA;&#x30EC;&#x30FC;&#x30BF;</li>
+</ul>
+<p>&#x3042;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x72B6;&#x614B;&#x3092;&#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x3057;&#x3066;&#x3001;&#x305D;&#x308C;&#x3092;&#x3042;&#x308B;&#x3079;&#x304D;&#x59FF;&#x306B;&#x6301;&#x3063;&#x3066;&#x3044;&#x3053;&#x3046;&#x3068;&#x3059;&#x308B;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x306E;&#x3053;&#x3068;&#x3092;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3068;&#x547C;&#x3073;&#x307E;&#x3059;&#x3002;
+&#x5148;&#x306B;&#x7D39;&#x4ECB;&#x3057;&#x305F;kube-controller-manager&#x306F;&#x3001;Pod&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3084;Service&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306A;&#x3069;&#x3001;&#x6A19;&#x6E96;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x7528;&#x306E;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x96C6;&#x5408;&#x304B;&#x3089;&#x69CB;&#x6210;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+&#x4E00;&#x65B9;&#x3067;&#x3001;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x304C;&#x5B9A;&#x7FA9;&#x3057;&#x305F;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x5BFE;&#x8C61;&#x3068;&#x3057;&#x305F;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x3053;&#x3068;&#x3092;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3068;&#x547C;&#x3073;&#x307E;&#x3059;&#x3002;</p>
+<ul>
+<li><p>Reconciliation loop</p>
+</li>
+<li><p>&#x51AA;&#x7B49;</p>
+</li>
+</ul>
+<p>&#x51AA;&#x7B49;&#x3067;&#x306F;&#x306A;&#x3044;&#x4F8B;&#x3002;
+&#x4F8B;&#x3048;&#x3070;&#x3001;&#x5148;&#x7A0B;&#x306E;Pod&#x306E;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3002;
+Pod&#x3092;&#x4F5C;&#x6210;&#x3057;&#x306A;&#x3051;&#x308C;&#x3070;&#x306A;&#x3089;&#x306A;&#x3044;&#x3002;
+Reconcile&#x304C;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x308B;&#x305F;&#x3073;&#x306B;&#x65B0;&#x3057;&#x3044;&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x3092;&#x7ACB;&#x3061;&#x4E0A;&#x3052;&#x3066;&#x3057;&#x307E;&#x3046;
+1&#x5EA6;&#x4F5C;&#x6210;&#x3059;&#x308B;&#x3068;&#x3001;2&#x56DE;&#x76EE;&#x306B;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x305F;&#x3068;&#x304D;&#x306B;&#x51E6;&#x7406;&#x306B;&#x5931;&#x6557;&#x3057;&#x3066;&#x30A8;&#x30E9;&#x30FC;&#x3092;&#x8FD4;&#x3057;&#x3066;&#x3057;&#x307E;&#x3046;</p>
+<ul>
+<li>Edge-Driven Trigger, Level-Driven Trigger</li>
+</ul>
+<p>Edge</p>
+<ul>
+<li>&#x72B6;&#x614B;&#x306E;&#x5909;&#x5316;&#x304C;&#x767A;&#x751F;&#x3057;&#x305F;&#x6642;&#x70B9;&#x3067;&#x51E6;&#x7406;&#x304C;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x308B;</li>
+</ul>
+<p>Level</p>
+<ul>
+<li>&#x72B6;&#x614B;&#x3092;&#x5B9A;&#x671F;&#x7684;&#x306B;&#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x3057;&#x3066;&#x3001;&#x7279;&#x5B9A;&#x306E;&#x6761;&#x4EF6;&#x306B;&#x5165;&#x3063;&#x305F;&#x3068;&#x304D;&#x306B;&#x30C8;&#x30EA;&#x30AC;&#x30FC;&#x3055;&#x308C;&#x308B;</li>
+</ul>
+<p><code>Phase</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x7528;&#x610F;&#x3057;&#x3066;&#x73FE;&#x5728;&#x306E;&#x72B6;&#x614B;&#x306E;&#x307F;&#x3092;&#x683C;&#x7D0D;&#x3059;&#x308B;&#x306E;&#x3067;&#x306F;&#x306A;&#x304F;&#x3001;<code>Conditions</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3067;&#x5404;&#x72B6;&#x614B;&#x3092;
+&#x5224;&#x65AD;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x3057;&#x3066;&#x304A;&#x304F;&#x3053;&#x3068;&#x304C;&#x63A8;&#x5968;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p><a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#typical-status-properties" target="_blank">API Conventions</a></p>
+<pre><code class="lang-yaml"><span class="hljs-attr">status:</span>
+<span class="hljs-attr">  phase:</span> A
+</code></pre>
+<pre><code class="lang-yaml"><span class="hljs-attr">status:</span>
+<span class="hljs-attr">  phase:</span> C
+</code></pre>
+<pre><code class="lang-yaml"><span class="hljs-attr">status:</span>
+<span class="hljs-attr">  conditions:</span>
+<span class="hljs-attr">  - type:</span> A
+<span class="hljs-attr">    status:</span> <span class="hljs-literal">True</span>
+<span class="hljs-attr">  - type:</span> B
+<span class="hljs-attr">    status:</span> <span class="hljs-literal">True</span>
+<span class="hljs-attr">  - type:</span> C
+<span class="hljs-attr">    status:</span> <span class="hljs-literal">False</span>
+</code></pre>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="installation.html" class="navigation navigation-prev " aria-label="Previous page: インストール">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="sample.html" class="navigation navigation-next " aria-label="Next page: 作成するカスタムコントローラ">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"カスタムコントローラの基礎","level":"1.1.2","depth":2,"next":{"title":"作成するカスタムコントローラ","level":"1.1.3","depth":2,"path":"introduction/sample.md","ref":"introduction/sample.md","articles":[]},"previous":{"title":"インストール","level":"1.1.1","depth":2,"path":"introduction/installation.md","ref":"introduction/installation.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"introduction/basics.md","mtime":"2020-07-24T02:57:56.240Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-25T05:49:45.005Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

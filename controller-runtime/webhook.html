@@ -34,6 +34,8 @@
 
     
         
+        <link rel="stylesheet" href="../styles/website.css">
+        
     
         
     
@@ -57,10 +59,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="manager.html" />
+    <link rel="next" href="webhook_test.html" />
     
     
-    <link rel="prev" href="deletion.html" />
+    <link rel="prev" href="controller_test.html" />
     
 
     </head>
@@ -100,6 +102,64 @@
             
 
             
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="../introduction/installation.html">
+            
+                <a href="../introduction/installation.html">
+            
+                    
+                    インストール
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="../introduction/basics.html">
+            
+                <a href="../introduction/basics.html">
+            
+                    
+                    カスタムコントローラの基礎
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3" data-path="../introduction/sample.html">
+            
+                <a href="../introduction/sample.html">
+            
+                    
+                    作成するカスタムコントローラ
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.4" data-path="../introduction/references.html">
+            
+                <a href="../introduction/references.html">
+            
+                    
+                    参考情報
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
         </li>
     
         <li class="chapter " data-level="1.2" data-path="../kubebuilder/">
@@ -116,25 +176,12 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.2.1" data-path="../kubebuilder/installation.html">
-            
-                <a href="../kubebuilder/installation.html">
-            
-                    
-                    インストール
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.2" data-path="../kubebuilder/new-project.html">
+        <li class="chapter " data-level="1.2.1" data-path="../kubebuilder/new-project.html">
             
                 <a href="../kubebuilder/new-project.html">
             
                     
-                    プロジェクトの作成
+                    プロジェクトの雛形作成
             
                 </a>
             
@@ -142,12 +189,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.3" data-path="../kubebuilder/api.html">
+        <li class="chapter " data-level="1.2.2" data-path="../kubebuilder/api.html">
             
                 <a href="../kubebuilder/api.html">
             
                     
-                    APIの作成
+                    APIの雛形作成
             
                 </a>
             
@@ -155,12 +202,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.4" data-path="../kubebuilder/webhook.html">
+        <li class="chapter " data-level="1.2.3" data-path="../kubebuilder/webhook.html">
             
                 <a href="../kubebuilder/webhook.html">
             
                     
-                    Webhookの作成
+                    Webhookの雛形作成
             
                 </a>
             
@@ -168,7 +215,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/kind.html">
+        <li class="chapter " data-level="1.2.4" data-path="../kubebuilder/kind.html">
             
                 <a href="../kubebuilder/kind.html">
             
@@ -181,14 +228,27 @@
             
         </li>
     
+        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
+            
+                <a href="../kubebuilder/debug.html">
+            
+                    
+                    make runによるデバッグ
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
         </li>
     
-        <li class="chapter " data-level="1.3" data-path="../controller-gen/">
+        <li class="chapter " data-level="1.3" data-path="../controller-tools/">
             
-                <a href="../controller-gen/">
+                <a href="../controller-tools/">
             
                     
                     controller-tools
@@ -200,12 +260,12 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.3.1" data-path="../controller-gen/crd.html">
+        <li class="chapter " data-level="1.3.1" data-path="../controller-tools/crd.html">
             
-                <a href="../controller-gen/crd.html">
+                <a href="../controller-tools/crd.html">
             
                     
-                    CRDの生成
+                    CRDマニフェストの生成
             
                 </a>
             
@@ -213,12 +273,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.2" data-path="../controller-gen/rbac.html">
+        <li class="chapter " data-level="1.3.2" data-path="../controller-tools/advanced_crd.html">
             
-                <a href="../controller-gen/rbac.html">
+                <a href="../controller-tools/advanced_crd.html">
             
                     
-                    RBACの生成
+                    CRDマニフェストの生成(応用編)
             
                 </a>
             
@@ -226,12 +286,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.3" data-path="../controller-gen/webhook.html">
+        <li class="chapter " data-level="1.3.3" data-path="../controller-tools/rbac.html">
             
-                <a href="../controller-gen/webhook.html">
+                <a href="../controller-tools/rbac.html">
             
                     
-                    Webhookの生成
+                    RBACマニフェストの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="../controller-tools/webhook.html">
+            
+                <a href="../controller-tools/webhook.html">
+            
+                    
+                    Webhookマニフェストの生成
             
                 </a>
             
@@ -258,7 +331,20 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="client.html">
+        <li class="chapter " data-level="1.4.1" data-path="basics.html">
+            
+                <a href="basics.html">
+            
+                    
+                    Kubernetesプログラミングの基礎
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="client.html">
             
                 <a href="client.html">
             
@@ -271,7 +357,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="reconcile.html">
+        <li class="chapter " data-level="1.4.3" data-path="reconcile.html">
             
                 <a href="reconcile.html">
             
@@ -284,12 +370,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="deletion.html">
+        <li class="chapter " data-level="1.4.4" data-path="deletion.html">
             
                 <a href="deletion.html">
             
                     
-                    削除処理
+                    リソースの削除
             
                 </a>
             
@@ -297,7 +383,20 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.4" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="controller_test.html">
+            
+                <a href="controller_test.html">
+            
+                    
+                    コントローラのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.4.6" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -310,7 +409,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="manager.html">
+        <li class="chapter " data-level="1.4.7" data-path="webhook_test.html">
+            
+                <a href="webhook_test.html">
+            
+                    
+                    Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.8" data-path="manager.html">
             
                 <a href="manager.html">
             
@@ -323,31 +435,12 @@
             
         </li>
     
-
-            </ul>
+        <li class="chapter " data-level="1.4.9" data-path="metrics.html">
             
-        </li>
-    
-        <li class="chapter " data-level="1.5" data-path="../advanced/">
-            
-                <a href="../advanced/">
+                <a href="metrics.html">
             
                     
-                    Advanced
-            
-                </a>
-            
-
-            
-            <ul class="articles">
-                
-    
-        <li class="chapter " data-level="1.5.1" data-path="../advanced/controller_test.html">
-            
-                <a href="../advanced/controller_test.html">
-            
-                    
-                    コントローラのテスト
+                    メトリクスの収集
             
                 </a>
             
@@ -355,25 +448,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5.2" data-path="../advanced/webhook_test.html">
+        <li class="chapter " data-level="1.4.10" data-path="versioning.html">
             
-                <a href="../advanced/webhook_test.html">
-            
-                    
-                    Webhookのテスト
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.5.3" data-path="../advanced/conversion.html">
-            
-                <a href="../advanced/conversion.html">
+                <a href="versioning.html">
             
                     
-                    Conversion
+                    CRDのバージョニング
             
                 </a>
             
@@ -432,10 +512,85 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="webhook&#x306E;&#x5B9F;&#x88C5;">Webhook&#x306E;&#x5B9F;&#x88C5;</h1>
-<p>&#x6A29;&#x9650;&#x306E;&#x78BA;&#x8A8D;</p>
-<pre><code class="lang-console">kubectl get all -n test1 --as=system:serviceaccount:default:default
-</code></pre>
+<p><a href="../controller-tools/webhook.html">Webhook&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306E;&#x751F;&#x6210;</a>&#x3067;&#x89E3;&#x8AAC;&#x3057;&#x305F;&#x3088;&#x3046;&#x306B;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3067;&#x306F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x4F5C;&#x6210;&#x6642;&#x306B;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5024;&#x3092;&#x8A2D;&#x5B9A;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;Webhook&#x3068;&#x3001;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x66F4;&#x65B0;&#x6642;&#x306B;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;Webhook&#x3092;&#x4F5C;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x3053;&#x308C;&#x3089;&#x306E;Webhook&#x306E;&#x5B9F;&#x88C5;&#x306F;&#x975E;&#x5E38;&#x306B;&#x7C21;&#x5358;&#x3067;&#x3001;controller-gen&#x3067;&#x751F;&#x6210;&#x3055;&#x308C;&#x305F;&#x95A2;&#x6570;&#x306B;&#x5FC5;&#x8981;&#x306A;&#x51E6;&#x7406;&#x3092;&#x66F8;&#x3044;&#x3066;&#x3044;&#x304F;&#x3060;&#x3051;&#x3067;&#x3059;&#x3002;</p>
+<h2 id="&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5024;&#x8A2D;&#x5B9A;&#x306E;webhook">&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5024;&#x8A2D;&#x5B9A;&#x306E;Webhook</h2>
+<p>&#x307E;&#x305A;&#x306F;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5024;&#x3092;&#x8A2D;&#x5B9A;&#x3059;&#x308B;Webhook&#x306E;&#x5B9F;&#x88C5;&#x3067;&#x3059;&#x3002;</p>
+<blockquote>
+<p><a id="tenant_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_webhook.go" target="_blank">tenant_webhook.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-comment">// Default implements webhook.Defaulter so a webhook will be registered for the type</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *Tenant)</span> <span class="hljs-title">Default</span><span class="hljs-params">()</span></span> {
+    tenantlog.Info(<span class="hljs-string">&quot;default&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
 
+    <span class="hljs-comment">// TODO(user): fill in your defaulting logic.</span>
+    <span class="hljs-keyword">if</span> r.Spec.NamespacePrefix == <span class="hljs-string">&quot;&quot;</span> {
+        r.Spec.NamespacePrefix = r.Name + <span class="hljs-string">&quot;-&quot;</span>
+    }
+}
+</code></pre>
+<p><code>namespacePrefix</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x304C;&#x7A7A;&#x3060;&#x3063;&#x305F;&#x5834;&#x5408;&#x306F;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x306E;&#x540D;&#x524D;&#x306B;<code>-</code>&#x3092;&#x9023;&#x7D50;&#x3057;&#x305F;&#x6587;&#x5B57;&#x5217;&#x3092;<code>namespacePrefix</code>&#x3068;&#x3057;&#x3066;&#x5229;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<h2 id="&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x306E;webhook">&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x306E;Webhook</h2>
+<p>&#x6B21;&#x306B;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;Webhook&#x306E;&#x5B9F;&#x88C5;&#x3067;&#x3059;&#x3002;</p>
+<blockquote>
+<p><a id="tenant_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_webhook.go" target="_blank">tenant_webhook.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-comment">// ValidateCreate implements webhook.Validator so a webhook will be registered for the type</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *Tenant)</span> <span class="hljs-title">ValidateCreate</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+    tenantlog.Info(<span class="hljs-string">&quot;validate create&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
+
+    <span class="hljs-comment">// TODO(user): fill in your validation logic upon object creation.</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+}
+
+<span class="hljs-comment">// ValidateUpdate implements webhook.Validator so a webhook will be registered for the type</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *Tenant)</span> <span class="hljs-title">ValidateUpdate</span><span class="hljs-params">(old runtime.Object)</span> <span class="hljs-title">error</span></span> {
+    tenantlog.Info(<span class="hljs-string">&quot;validate update&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
+
+    <span class="hljs-comment">// TODO(user): fill in your validation logic upon object update.</span>
+    oldTenant := old.(*Tenant)
+    <span class="hljs-keyword">if</span> r.Spec.NamespacePrefix != oldTenant.Spec.NamespacePrefix {
+        <span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">&quot;spec.namespacePrefix field should not be changed&quot;</span>)
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+}
+
+<span class="hljs-comment">// ValidateDelete implements webhook.Validator so a webhook will be registered for the type</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *Tenant)</span> <span class="hljs-title">ValidateDelete</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+    tenantlog.Info(<span class="hljs-string">&quot;validate delete&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
+
+    <span class="hljs-comment">// TODO(user): fill in your validation logic upon object deletion.</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+}
+</code></pre>
+<p>&#x4ECA;&#x56DE;&#x306F;Create&#x3068;Delete&#x6642;&#x306E;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x3092;&#x304A;&#x3053;&#x306A;&#x308F;&#x306A;&#x3044;&#x305F;&#x3081;&#x3001;<code>ValidateUpdate</code>&#x95A2;&#x6570;&#x306E;&#x307F;&#x3092;&#x5B9F;&#x88C5;&#x3057;&#x307E;&#x3059;&#x3002;
+&#x66F4;&#x65B0;&#x524D;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x5F15;&#x6570;&#x3067;&#x6E21;&#x3063;&#x3066;&#x304F;&#x308B;&#x306E;&#x3067;&#x3001;<code>namespacePrefix</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x304C;&#x5909;&#x66F4;&#x3055;&#x308C;&#x3066;&#x3044;&#x308C;&#x3070;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x30A8;&#x30E9;&#x30FC;&#x3068;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x3053;&#x306E;&#x3088;&#x3046;&#x306A;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x3092;&#x5B9F;&#x88C5;&#x3059;&#x308B;&#x3053;&#x3068;&#x3067;&#x3001;&#x9014;&#x4E2D;&#x3067;<code>namespacePrefix</code>&#x3092;&#x5909;&#x66F4;&#x3067;&#x304D;&#x306A;&#x3044;&#x3088;&#x3046;&#x306B;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x53EF;&#x80FD;&#x3067;&#x3059;&#x3002;</p>
+<h2 id="&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;">&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;</h2>
+<p>Webhook&#x306E;&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;&#x3092;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p>Webhook&#x306E;&#x5B9F;&#x88C5;&#x3092;&#x304A;&#x3053;&#x306A;&#x3063;&#x305F;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;Kubernetes&#x30AF;&#x30E9;&#x30B9;&#x30BF;&#x306B;&#x30C7;&#x30D7;&#x30ED;&#x30A4;&#x3057;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;<code>namespacePrefix</code>&#x3092;&#x6307;&#x5B9A;&#x3057;&#x3066;&#x3044;&#x306A;&#x3044;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x9069;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> multitenancy.example.com/v1
+<span class="hljs-attr">kind:</span> Tenant
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> sample
+<span class="hljs-attr">spec:</span>
+<span class="hljs-attr">  namespaces:</span>
+<span class="hljs-bullet">    -</span> test1
+<span class="hljs-attr">  admin:</span>
+<span class="hljs-attr">    kind:</span> ServiceAccount
+<span class="hljs-attr">    name:</span> default
+<span class="hljs-attr">    namespace:</span> default
+</code></pre>
+<p>&#x4F5C;&#x6210;&#x3055;&#x308C;&#x305F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x78BA;&#x8A8D;&#x3057;&#x3066;&#x3001;<code>namespacePrefix</code>&#x306B;&quot;sample-&quot;&#x3068;&#x3044;&#x3046;&#x6587;&#x5B57;&#x5217;&#x304C;&#x5165;&#x3063;&#x3066;&#x3044;&#x308C;&#x3070;&#x6210;&#x529F;&#x3067;&#x3059;&#x3002;</p>
+<pre><code>$ kubectl get tenant sample
+NAME     ADMIN     PREFIX    READY
+sample   default   sample-   True
+</code></pre><p>&#x7D9A;&#x3044;&#x3066;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;Webhook&#x306E;&#x52D5;&#x4F5C;&#x3082;&#x78BA;&#x8A8D;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p>&#x5148;&#x307B;&#x3069;&#x4F5C;&#x6210;&#x3057;&#x305F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;edit&#x3057;&#x3066;<code>namespacePrefix</code>&#x3092;&#x5225;&#x306E;&#x540D;&#x524D;&#x306B;&#x5909;&#x66F4;&#x3057;&#x3088;&#x3046;&#x3068;&#x3057;&#x305F;&#x3068;&#x304D;&#x306B;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;&#x30A8;&#x30E9;&#x30FC;&#x304C;&#x767A;&#x751F;&#x3059;&#x308C;&#x3070;&#x6210;&#x529F;&#x3067;&#x3059;&#x3002;</p>
+<pre><code>$ kubectl edit tenant sample
+error: tenants.multitenancy.example.com &quot;sample&quot; could not be patched: admission webhook &quot;vtenant.kb.io&quot; denied the request: spec.namespacePrefix field should not be changed
+You can run `kubectl replace -f /tmp/kubectl-edit-bwuei.yaml` to try this update again.
+</code></pre>
                                 
                                 </section>
                             
@@ -462,12 +617,12 @@
 
             
                 
-                <a href="deletion.html" class="navigation navigation-prev " aria-label="Previous page: 削除処理">
+                <a href="controller_test.html" class="navigation navigation-prev " aria-label="Previous page: コントローラのテスト">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="manager.html" class="navigation navigation-next " aria-label="Next page: Manager">
+                <a href="webhook_test.html" class="navigation navigation-next " aria-label="Next page: Webhookのテスト">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -478,7 +633,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookの実装","level":"1.4.4","depth":2,"next":{"title":"Manager","level":"1.4.5","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"previous":{"title":"削除処理","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"full","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/webhook.md","mtime":"2020-07-18T03:19:48.430Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-18T06:13:07.172Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookの実装","level":"1.4.6","depth":2,"next":{"title":"Webhookのテスト","level":"1.4.7","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"previous":{"title":"コントローラのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/webhook.md","mtime":"2020-07-24T09:09:52.770Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-25T05:49:45.005Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>削除処理 · HonKit</title>
+        <title>リソースの削除 · HonKit</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="HonKit 3.5.2">
@@ -34,6 +34,8 @@
 
     
         
+        <link rel="stylesheet" href="../styles/website.css">
+        
     
         
     
@@ -57,7 +59,7 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="webhook.html" />
+    <link rel="next" href="controller_test.html" />
     
     
     <link rel="prev" href="reconcile.html" />
@@ -100,6 +102,64 @@
             
 
             
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="../introduction/installation.html">
+            
+                <a href="../introduction/installation.html">
+            
+                    
+                    インストール
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="../introduction/basics.html">
+            
+                <a href="../introduction/basics.html">
+            
+                    
+                    カスタムコントローラの基礎
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3" data-path="../introduction/sample.html">
+            
+                <a href="../introduction/sample.html">
+            
+                    
+                    作成するカスタムコントローラ
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.4" data-path="../introduction/references.html">
+            
+                <a href="../introduction/references.html">
+            
+                    
+                    参考情報
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
         </li>
     
         <li class="chapter " data-level="1.2" data-path="../kubebuilder/">
@@ -116,25 +176,12 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.2.1" data-path="../kubebuilder/installation.html">
-            
-                <a href="../kubebuilder/installation.html">
-            
-                    
-                    インストール
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.2" data-path="../kubebuilder/new-project.html">
+        <li class="chapter " data-level="1.2.1" data-path="../kubebuilder/new-project.html">
             
                 <a href="../kubebuilder/new-project.html">
             
                     
-                    プロジェクトの作成
+                    プロジェクトの雛形作成
             
                 </a>
             
@@ -142,12 +189,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.3" data-path="../kubebuilder/api.html">
+        <li class="chapter " data-level="1.2.2" data-path="../kubebuilder/api.html">
             
                 <a href="../kubebuilder/api.html">
             
                     
-                    APIの作成
+                    APIの雛形作成
             
                 </a>
             
@@ -155,12 +202,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.4" data-path="../kubebuilder/webhook.html">
+        <li class="chapter " data-level="1.2.3" data-path="../kubebuilder/webhook.html">
             
                 <a href="../kubebuilder/webhook.html">
             
                     
-                    Webhookの作成
+                    Webhookの雛形作成
             
                 </a>
             
@@ -168,7 +215,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/kind.html">
+        <li class="chapter " data-level="1.2.4" data-path="../kubebuilder/kind.html">
             
                 <a href="../kubebuilder/kind.html">
             
@@ -181,14 +228,27 @@
             
         </li>
     
+        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
+            
+                <a href="../kubebuilder/debug.html">
+            
+                    
+                    make runによるデバッグ
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
         </li>
     
-        <li class="chapter " data-level="1.3" data-path="../controller-gen/">
+        <li class="chapter " data-level="1.3" data-path="../controller-tools/">
             
-                <a href="../controller-gen/">
+                <a href="../controller-tools/">
             
                     
                     controller-tools
@@ -200,12 +260,12 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.3.1" data-path="../controller-gen/crd.html">
+        <li class="chapter " data-level="1.3.1" data-path="../controller-tools/crd.html">
             
-                <a href="../controller-gen/crd.html">
+                <a href="../controller-tools/crd.html">
             
                     
-                    CRDの生成
+                    CRDマニフェストの生成
             
                 </a>
             
@@ -213,12 +273,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.2" data-path="../controller-gen/rbac.html">
+        <li class="chapter " data-level="1.3.2" data-path="../controller-tools/advanced_crd.html">
             
-                <a href="../controller-gen/rbac.html">
+                <a href="../controller-tools/advanced_crd.html">
             
                     
-                    RBACの生成
+                    CRDマニフェストの生成(応用編)
             
                 </a>
             
@@ -226,12 +286,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.3" data-path="../controller-gen/webhook.html">
+        <li class="chapter " data-level="1.3.3" data-path="../controller-tools/rbac.html">
             
-                <a href="../controller-gen/webhook.html">
+                <a href="../controller-tools/rbac.html">
             
                     
-                    Webhookの生成
+                    RBACマニフェストの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="../controller-tools/webhook.html">
+            
+                <a href="../controller-tools/webhook.html">
+            
+                    
+                    Webhookマニフェストの生成
             
                 </a>
             
@@ -258,7 +331,20 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="client.html">
+        <li class="chapter " data-level="1.4.1" data-path="basics.html">
+            
+                <a href="basics.html">
+            
+                    
+                    Kubernetesプログラミングの基礎
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="client.html">
             
                 <a href="client.html">
             
@@ -271,7 +357,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="reconcile.html">
+        <li class="chapter " data-level="1.4.3" data-path="reconcile.html">
             
                 <a href="reconcile.html">
             
@@ -284,12 +370,12 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.3" data-path="deletion.html">
+        <li class="chapter active" data-level="1.4.4" data-path="deletion.html">
             
                 <a href="deletion.html">
             
                     
-                    削除処理
+                    リソースの削除
             
                 </a>
             
@@ -297,7 +383,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="controller_test.html">
+            
+                <a href="controller_test.html">
+            
+                    
+                    コントローラのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -310,7 +409,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="manager.html">
+        <li class="chapter " data-level="1.4.7" data-path="webhook_test.html">
+            
+                <a href="webhook_test.html">
+            
+                    
+                    Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.8" data-path="manager.html">
             
                 <a href="manager.html">
             
@@ -323,31 +435,12 @@
             
         </li>
     
-
-            </ul>
+        <li class="chapter " data-level="1.4.9" data-path="metrics.html">
             
-        </li>
-    
-        <li class="chapter " data-level="1.5" data-path="../advanced/">
-            
-                <a href="../advanced/">
+                <a href="metrics.html">
             
                     
-                    Advanced
-            
-                </a>
-            
-
-            
-            <ul class="articles">
-                
-    
-        <li class="chapter " data-level="1.5.1" data-path="../advanced/controller_test.html">
-            
-                <a href="../advanced/controller_test.html">
-            
-                    
-                    コントローラのテスト
+                    メトリクスの収集
             
                 </a>
             
@@ -355,25 +448,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.5.2" data-path="../advanced/webhook_test.html">
+        <li class="chapter " data-level="1.4.10" data-path="versioning.html">
             
-                <a href="../advanced/webhook_test.html">
-            
-                    
-                    Webhookのテスト
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.5.3" data-path="../advanced/conversion.html">
-            
-                <a href="../advanced/conversion.html">
+                <a href="versioning.html">
             
                     
-                    Conversion
+                    CRDのバージョニング
             
                 </a>
             
@@ -416,7 +496,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >削除処理</a>
+        <a href=".." >リソースの削除</a>
     </h1>
 </div>
 
@@ -431,10 +511,109 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="&#x524A;&#x9664;&#x51E6;&#x7406;">&#x524A;&#x9664;&#x51E6;&#x7406;</h1>
-<p>&#x6A29;&#x9650;&#x306E;&#x78BA;&#x8A8D;</p>
-<pre><code class="lang-console">kubectl get all -n test1 --as=system:serviceaccount:default:default
+                                <h1 id="&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;</h1>
+<p>&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306F;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x4F5C;&#x6210;&#x3055;&#x308C;&#x305F;&#x3089;&#x3001;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306B;&#x8A18;&#x8FF0;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x5185;&#x5BB9;&#x306B;&#x57FA;&#x3065;&#x3044;&#x3066;namespace&#x3092;&#x4F5C;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;
+&#x9006;&#x306B;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x305F;&#x3089;&#x3001;&#x4F5C;&#x6210;&#x3057;&#x305F;namespace&#x3082;&#x524A;&#x9664;&#x3057;&#x306A;&#x3051;&#x308C;&#x3070;&#x306A;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;</p>
+<p>&#x3057;&#x304B;&#x3057;&#x3001;Reconcile&#x30EB;&#x30FC;&#x30D7;&#x306B;&#x3088;&#x308B;&#x524A;&#x9664;&#x51E6;&#x7406;&#x306F;&#x96E3;&#x3057;&#x3044;&#x554F;&#x984C;&#x3067;&#x3059;&#x3002;
+&#x306A;&#x305C;&#x306A;&#x3089;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x305F;&#x3068;&#x3044;&#x3046;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x3092;&#x53D6;&#x308A;&#x3053;&#x307C;&#x3057;&#x3066;&#x3057;&#x307E;&#x3046;&#x3068;&#x3001;&#x305D;&#x306E;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x95A2;&#x3059;&#x308B;&#x60C5;&#x5831;&#x306F;&#x6D88;&#x3048;&#x3066;&#x3057;&#x307E;&#x3044;&#x3001;&#x3069;&#x306E;&#x5B50;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3059;&#x3079;&#x304D;&#x304B;&#x5224;&#x65AD;&#x3067;&#x304D;&#x306A;&#x304F;&#x306A;&#x3063;&#x3066;&#x3057;&#x307E;&#x3046;&#x304B;&#x3089;&#x3067;&#x3059;&#x3002;
+&#x3053;&#x306E;&#x3088;&#x3046;&#x306B;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x30C9;&#x30EA;&#x30D6;&#x30F3;&#x306A;&#x30C8;&#x30EA;&#x30AC;&#x30FC;&#x3067;&#x52D5;&#x304F;&#x51E6;&#x7406;&#x306F;&#x3001;Kubernetes&#x306E;&#x30B3;&#x30F3;&#x30BB;&#x30D7;&#x30C8;&#x306B;&#x53CD;&#x3057;&#x3066;&#x3044;&#x308B;&#x3068;&#x8A00;&#x3048;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x305D;&#x3053;&#x3067;Kubernetes&#x3067;&#x306F;&#x3001;ownerReference&#x306B;&#x3088;&#x308B;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x3068;&#x3001;Finalizer&#x3068;&#x3044;&#x3046;2&#x7A2E;&#x985E;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x524A;&#x9664;&#x306E;&#x4ED5;&#x7D44;&#x307F;&#x3092;&#x63D0;&#x4F9B;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<h2 id="ownerreference&#x306B;&#x3088;&#x308B;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;">ownerReference&#x306B;&#x3088;&#x308B;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</h2>
+<p>1&#x3064;&#x3081;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x524A;&#x9664;&#x306E;&#x4ED5;&#x7D44;&#x307F;&#x306F;ownerReference&#x306B;&#x3088;&#x308B;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x306E;&#x4ED5;&#x7D44;&#x307F;&#x3067;&#x3059;&#x3002;(<a href="https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/" target="_blank">&#x53C2;&#x8003;</a>)
+&#x3053;&#x308C;&#x306F;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x308B;&#x3068;&#x3001;&#x305D;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x5B50;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3082;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x306B;&#x3088;&#x308A;&#x81EA;&#x52D5;&#x7684;&#x306B;&#x524A;&#x9664;&#x3055;&#x308C;&#x308B;&#x3068;&#x3044;&#x3046;&#x4ED5;&#x7D44;&#x307F;&#x3067;&#x3059;&#x3002;</p>
+<p>&#x4F8B;&#x3048;&#x3070;&#x3001;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306B;namespace&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3059;&#x308B;&#x969B;&#x306B;&#x3001;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x3057;&#x3066;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;
+&#x305D;&#x306E;&#x305F;&#x3081;&#x306E;&#x95A2;&#x6570;&#x3068;&#x3057;&#x3066;controller-runtime&#x3067;&#x306F;&#x3001;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetControllerReference" target="_blank">controllerutil.SetControllerReference</a>&#x3068;&#x3044;&#x3046;&#x30E6;&#x30FC;&#x30C6;&#x30A3;&#x30EA;&#x30C6;&#x30A3;&#x95A2;&#x6570;&#x3092;&#x7528;&#x610F;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<blockquote>
+<p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang">target := corev1.Namespace{
+    ObjectMeta: metav1.ObjectMeta{
+        Name: name,
+    },
+}
+err = ctrl.SetControllerReference(&amp;tenant, &amp;target, r.Scheme)
 </code></pre>
+<p>&#x3059;&#x308B;&#x3068;&#x3001;&#x4F5C;&#x6210;&#x3055;&#x308C;&#x305F;namespace&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x306F;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306B;<code>ownerReferences</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> v1
+<span class="hljs-attr">kind:</span> Namespace
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> tenant-sample-test1
+<span class="hljs-attr">  ownerReferences:</span>
+<span class="hljs-attr">  - apiVersion:</span> multitenancy.example.com/v1
+<span class="hljs-attr">    blockOwnerDeletion:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">    controller:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">    kind:</span> Tenant
+<span class="hljs-attr">    name:</span> tenant-sample
+<span class="hljs-attr">    uid:</span> c296e7b2<span class="hljs-bullet">-6</span>c92<span class="hljs-bullet">-470</span>b-b110-f62eb43b2bbe
+<span class="hljs-attr">spec:</span>
+<span class="hljs-attr">  finalizers:</span>
+<span class="hljs-bullet">  -</span> kubernetes
+<span class="hljs-attr">status:</span>
+<span class="hljs-attr">  phase:</span> Active
+</code></pre>
+<p>&#x3053;&#x306E;&#x72B6;&#x614B;&#x3067;&#x89AA;&#x306E;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3059;&#x308B;&#x3068;&#x3001;&#x5B50;&#x306E;namespace&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3082;&#x81EA;&#x52D5;&#x7684;&#x306B;&#x524A;&#x9664;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x306A;&#x304A;&#x3001;SetControllerReference&#x3068;&#x4F3C;&#x305F;&#x95A2;&#x6570;&#x3067;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetOwnerReference" target="_blank">controllerutil.SetOwnerReference</a>&#x3082;&#x3042;&#x308A;&#x307E;&#x3059;&#x304C;&#x3001;&#x3053;&#x3061;&#x3089;&#x306F;<code>controller</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;false&#x304C;&#x6307;&#x5B9A;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;
+<code>controller</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;false&#x304C;&#x6307;&#x5B9A;&#x3055;&#x308C;&#x3066;&#x3044;&#x305F;&#x5834;&#x5408;&#x3001;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x3066;&#x3082;&#x5B50;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;&#x524A;&#x9664;&#x3055;&#x308C;&#x306A;&#x3044;&#x306E;&#x3067;&#x6CE8;&#x610F;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<h2 id="finalizer">Finalizer</h2>
+<h3 id="finalizer&#x306E;&#x4ED5;&#x7D44;&#x307F;">Finalizer&#x306E;&#x4ED5;&#x7D44;&#x307F;</h3>
+<p>ownerReference&#x3068;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x306B;&#x3088;&#x308A;&#x3001;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x4E00;&#x7DD2;&#x306B;&#x5B50;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x308B;&#x3068;&#x8AAC;&#x660E;&#x3057;&#x307E;&#x3057;&#x305F;&#x3002;
+&#x3057;&#x304B;&#x3057;&#x3001;&#x3053;&#x306E;&#x4ED5;&#x7D44;&#x3060;&#x3051;&#x3067;&#x306F;&#x524A;&#x9664;&#x3067;&#x304D;&#x306A;&#x3044;&#x30B1;&#x30FC;&#x30B9;&#x3082;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;&#x76F4;&#x63A5;&#x306E;&#x89AA;&#x3067;&#x306F;&#x306A;&#x3044;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3057;&#x305F;&#x3044;&#x30B1;&#x30FC;&#x30B9;&#x3084;&#x3001;Kubernetes&#x3067;&#x7BA1;&#x7406;&#x3057;&#x3066;&#x3044;&#x306A;&#x3044;&#x5916;&#x90E8;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306A;&#x3069;&#x3092;&#x524A;&#x9664;&#x3057;&#x305F;&#x3044;&#x30B1;&#x30FC;&#x30B9;&#x306A;&#x3069;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x4F8B;&#x3048;&#x3070;TopoLVM&#x3067;&#x306F;&#x3001;LogicalVolume&#x3068;&#x3044;&#x3046;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3059;&#x308B;&#x3068;&#x3001;&#x30CE;&#x30FC;&#x30C9;&#x4E0A;&#x306B;LVM(Logical Volume Manager)&#x306E;LV(Logical Volume)&#x3092;&#x4F5C;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;
+Kubernetes&#x4E0A;&#x306E;LogicalVolume&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x305F;&#x3089;&#x3001;&#x305D;&#x308C;&#x306B;&#x5408;&#x308F;&#x305B;&#x3066;&#x30CE;&#x30FC;&#x30C9;&#x4E0A;&#x306E;LV&#x3082;&#x524A;&#x9664;&#x3057;&#x306A;&#x3051;&#x308C;&#x3070;&#x306A;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;</p>
+<p>&#x305D;&#x306E;&#x3088;&#x3046;&#x306A;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;&#x306B;&#x306F;&#x3001;Finalizer&#x3068;&#x3044;&#x3046;&#x4ED5;&#x7D44;&#x307F;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>Finalizer&#x306E;&#x4ED5;&#x7D44;&#x307F;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x306F;&#x3001;&#x307E;&#x305A;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;<code>finalizers</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;Finalizer&#x306E;&#x540D;&#x524D;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;
+&#x306A;&#x304A;&#x3001;&#x3053;&#x306E;&#x540D;&#x524D;&#x306F;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x304C;&#x7BA1;&#x7406;&#x3057;&#x3066;&#x3044;&#x308B;Finalizer&#x3067;&#x3042;&#x308B;&#x3068;&#x8B58;&#x5225;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x3001;&#x4ED6;&#x306E;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3068;&#x885D;&#x7A81;&#x3057;&#x306A;&#x3044;&#x540D;&#x524D;&#x306B;&#x3057;&#x3066;&#x304A;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> multitenancy.example.com/v1
+<span class="hljs-attr">kind:</span> Tenant
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  finalizers:</span>
+<span class="hljs-bullet">  -</span> tenant.finalizers.multitenancy.example.com
+<span class="hljs-comment"># &#x4EE5;&#x4E0B;&#x7701;&#x7565;</span>
+</code></pre>
+<p><code>finalizers</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;&#x3001;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3057;&#x3088;&#x3046;&#x3068;&#x3057;&#x3066;&#x3082;&#x524A;&#x9664;&#x3055;&#x308C;&#x307E;&#x305B;&#x3093;&#x3002;
+&#x4EE3;&#x308F;&#x308A;&#x306B;&#x3001;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306B;<code>deletionTimestamp</code>&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x308B;&#x3060;&#x3051;&#x3067;&#x3059;&#x3002;</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> multitenancy.example.com/v1
+<span class="hljs-attr">kind:</span> Tenant
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  finalizers:</span>
+<span class="hljs-bullet">  -</span> tenant.finalizers.multitenancy.example.com
+<span class="hljs-attr">  deletionTimestamp:</span> <span class="hljs-string">&quot;2020-07-24T15:23:54Z&quot;</span>
+<span class="hljs-comment"># &#x4EE5;&#x4E0B;&#x7701;&#x7565;</span>
+</code></pre>
+<p>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306F;<code>deletionTimestamp</code>&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x3053;&#x3068;&#x3092;&#x767A;&#x898B;&#x3059;&#x308B;&#x3068;&#x3001;&#x305D;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x95A2;&#x9023;&#x3059;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3057;&#x3001;&#x305D;&#x306E;&#x5F8C;&#x306B;<code>finalizers</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x524A;&#x9664;&#x3057;&#x307E;&#x3059;&#x3002;
+<code>finalizers</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x304C;&#x7A7A;&#x306B;&#x306A;&#x308B;&#x3068;&#x3001;Kubernetes&#x304C;&#x3053;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x5B8C;&#x5168;&#x306B;&#x524A;&#x9664;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x3053;&#x306E;&#x3088;&#x3046;&#x306A;&#x4ED5;&#x7D44;&#x307F;&#x306B;&#x3088;&#x308A;&#x3001;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x304C;&#x524A;&#x9664;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x3092;&#x53D6;&#x308A;&#x3053;&#x307C;&#x3057;&#x305F;&#x3068;&#x3057;&#x3066;&#x3082;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x308B;&#x307E;&#x3067;&#x306F;&#x4F55;&#x5EA6;&#x3082;Reconcile&#x304C;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x308B;&#x305F;&#x3081;&#x3001;&#x5B50;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x60C5;&#x5831;&#x304C;&#x5931;&#x308F;&#x308C;&#x3066;&#x524A;&#x9664;&#x3067;&#x304D;&#x306A;&#x304F;&#x306A;&#x308B;&#x3068;&#x3044;&#x3046;&#x554F;&#x984C;&#x3092;&#x56DE;&#x907F;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;
+&#x4E00;&#x65B9;&#x3067;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3088;&#x308A;&#x3082;&#x5148;&#x306B;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;&#x524A;&#x9664;&#x3057;&#x3066;&#x3057;&#x307E;&#x3063;&#x305F;&#x5834;&#x5408;&#x306F;&#x3001;&#x3044;&#x3064;&#x307E;&#x3067;&#x305F;&#x3063;&#x3066;&#x3082;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x306A;&#x3044;&#x3068;&#x3044;&#x3046;&#x554F;&#x984C;&#x304C;&#x767A;&#x751F;&#x3059;&#x308B;&#x3053;&#x3068;&#x306B;&#x306A;&#x308B;&#x306E;&#x3067;&#x6CE8;&#x610F;&#x3057;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<h3 id="finalizer&#x306E;&#x5B9F;&#x88C5;&#x65B9;&#x6CD5;">Finalizer&#x306E;&#x5B9F;&#x88C5;&#x65B9;&#x6CD5;</h3>
+<p>&#x305D;&#x308C;&#x3067;&#x306F;Finalizer&#x3092;&#x5B9F;&#x88C5;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;
+controller-runtime&#x3067;&#x306F;&#x3001;Finalizer&#x3092;&#x6271;&#x3046;&#x305F;&#x3081;&#x306E;&#x30E6;&#x30FC;&#x30C6;&#x30A3;&#x30EA;&#x30C6;&#x30A3;&#x95A2;&#x6570;&#x3068;&#x3057;&#x3066;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#ContainsFinalizer" target="_blank">controllerutil.ContainsFinalizer</a>&#x3001;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#AddFinalizer" target="_blank">controllerutil.AddFinalizer</a>&#x3001;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#RemoveFinalizer" target="_blank">controllerutil.RemoveFinalizer</a>&#x306A;&#x3069;&#x3092;&#x63D0;&#x4F9B;&#x3057;&#x3066;&#x3044;&#x308B;&#x306E;&#x3067;&#x3053;&#x308C;&#x3092;&#x5229;&#x7528;&#x3057;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<blockquote>
+<p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang">tenantFinalizerName := <span class="hljs-string">&quot;tenant.finalizers.multitenancy.example.com&quot;</span>
+<span class="hljs-keyword">if</span> tenant.ObjectMeta.DeletionTimestamp.IsZero() {
+    <span class="hljs-keyword">if</span> !controllerutil.ContainsFinalizer(&amp;tenant, tenantFinalizerName) {
+        controllerutil.AddFinalizer(&amp;tenant, tenantFinalizerName)
+        err = r.Update(ctx, &amp;tenant)
+        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+            <span class="hljs-keyword">return</span> ctrl.Result{}, err
+        }
+    }
+} <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">if</span> controllerutil.ContainsFinalizer(&amp;tenant, tenantFinalizerName) {
+        <span class="hljs-comment">// &#x3053;&#x3053;&#x3067;&#x5916;&#x90E8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3059;&#x308B;</span>
+
+        controllerutil.RemoveFinalizer(&amp;tenant, tenantFinalizerName)
+        err = r.Update(ctx, &amp;tenant)
+        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+            <span class="hljs-keyword">return</span> ctrl.Result{}, err
+        }
+    }
+    <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
+}
+</code></pre>
+<p><code>deletionTimestamp</code>&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x3044;&#x306A;&#x3051;&#x308C;&#x3070;&#x3001;<code>finalizers</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x8FFD;&#x52A0;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p><code>deletionTimestamp</code>&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x3044;&#x305F;&#x5834;&#x5408;&#x306F;&#x3001;<code>finalizers</code>&#x306B;&#x81EA;&#x5206;&#x3067;&#x6307;&#x5B9A;&#x3057;&#x305F;&#x540D;&#x524D;&#x304C;&#x5B58;&#x5728;&#x3057;&#x305F;&#x5834;&#x5408;&#x306F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;&#x3092;&#x304A;&#x3053;&#x306A;&#x3044;&#x3001;&#x305D;&#x306E;&#x5F8C;<code>finalizers</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x30AF;&#x30EA;&#x30A2;&#x3057;&#x307E;&#x3059;&#x3002;</p>
 
                                 
                                 </section>
@@ -467,7 +646,7 @@
                 </a>
                 
                 
-                <a href="webhook.html" class="navigation navigation-next " aria-label="Next page: Webhookの実装">
+                <a href="controller_test.html" class="navigation navigation-next " aria-label="Next page: コントローラのテスト">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -478,7 +657,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"削除処理","level":"1.4.3","depth":2,"next":{"title":"Webhookの実装","level":"1.4.4","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"full","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2020-07-18T03:19:48.520Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-18T06:13:07.172Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"リソースの削除","level":"1.4.4","depth":2,"next":{"title":"コントローラのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"previous":{"title":"Reconcileの実装","level":"1.4.3","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2020-07-24T15:40:57.540Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-25T05:49:45.005Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

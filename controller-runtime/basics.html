@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>controller-runtime · HonKit</title>
+        <title>Kubernetesプログラミングの基礎 · HonKit</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="HonKit 3.5.2">
@@ -59,10 +59,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="basics.html" />
+    <link rel="next" href="client.html" />
     
     
-    <link rel="prev" href="../controller-tools/webhook.html" />
+    <link rel="prev" href="./" />
     
 
     </head>
@@ -317,7 +317,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4" data-path="./">
+        <li class="chapter " data-level="1.4" data-path="./">
             
                 <a href="./">
             
@@ -331,7 +331,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="basics.html">
+        <li class="chapter active" data-level="1.4.1" data-path="basics.html">
             
                 <a href="basics.html">
             
@@ -496,7 +496,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >controller-runtime</a>
+        <a href=".." >Kubernetesプログラミングの基礎</a>
     </h1>
 </div>
 
@@ -511,14 +511,17 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="controller-runtime">controller-runtime</h1>
+                                <h1 id="kubernetes&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;&#x306E;&#x57FA;&#x790E;">Kubernetes&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30DF;&#x30F3;&#x30B0;&#x306E;&#x57FA;&#x790E;</h1>
 <ul>
-<li>Manager</li>
-<li>Controller</li>
-<li>Client</li>
+<li>GVK</li>
+<li>GVR</li>
+<li>Scheme</li>
+<li>Informer</li>
+<li>client-go</li>
+<li>apimachinery</li>
+<li>runtime.Object</li>
+<li>RestMapper/RestMapping</li>
 </ul>
-<p>Cache
-Webhook</p>
 
                                 
                                 </section>
@@ -546,12 +549,12 @@ Webhook</p>
 
             
                 
-                <a href="../controller-tools/webhook.html" class="navigation navigation-prev " aria-label="Previous page: Webhookマニフェストの生成">
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: controller-runtime">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="basics.html" class="navigation navigation-next " aria-label="Next page: Kubernetesプログラミングの基礎">
+                <a href="client.html" class="navigation navigation-next " aria-label="Next page: クライアントの使い方">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -562,7 +565,7 @@ Webhook</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"controller-runtime","level":"1.4","depth":1,"next":{"title":"Kubernetesプログラミングの基礎","level":"1.4.1","depth":2,"path":"controller-runtime/basics.md","ref":"controller-runtime/basics.md","articles":[]},"previous":{"title":"Webhookマニフェストの生成","level":"1.3.4","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/README.md","mtime":"2020-07-18T03:19:48.790Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-25T05:49:45.005Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Kubernetesプログラミングの基礎","level":"1.4.1","depth":2,"next":{"title":"クライアントの使い方","level":"1.4.2","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"previous":{"title":"controller-runtime","level":"1.4","depth":1,"path":"controller-runtime/README.md","ref":"controller-runtime/README.md","articles":[{"title":"Kubernetesプログラミングの基礎","level":"1.4.1","depth":2,"path":"controller-runtime/basics.md","ref":"controller-runtime/basics.md","articles":[]},{"title":"クライアントの使い方","level":"1.4.2","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},{"title":"Reconcileの実装","level":"1.4.3","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},{"title":"リソースの削除","level":"1.4.4","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},{"title":"コントローラのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},{"title":"Webhookの実装","level":"1.4.6","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},{"title":"Webhookのテスト","level":"1.4.7","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},{"title":"Manager","level":"1.4.8","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},{"title":"メトリクスの収集","level":"1.4.9","depth":2,"path":"controller-runtime/metrics.md","ref":"controller-runtime/metrics.md","articles":[]},{"title":"CRDのバージョニング","level":"1.4.10","depth":2,"path":"controller-runtime/versioning.md","ref":"controller-runtime/versioning.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/basics.md","mtime":"2020-07-22T13:38:38.389Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-25T05:49:45.005Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

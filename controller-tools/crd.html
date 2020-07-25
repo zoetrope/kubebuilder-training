@@ -1,0 +1,798 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>CRDマニフェストの生成 · HonKit</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 3.5.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="../styles/website.css">
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="advanced_crd.html" />
+    
+    
+    <link rel="prev" href="./" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    つくって学ぶKubebuilder
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="../introduction/installation.html">
+            
+                <a href="../introduction/installation.html">
+            
+                    
+                    インストール
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="../introduction/basics.html">
+            
+                <a href="../introduction/basics.html">
+            
+                    
+                    カスタムコントローラの基礎
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3" data-path="../introduction/sample.html">
+            
+                <a href="../introduction/sample.html">
+            
+                    
+                    作成するカスタムコントローラ
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.4" data-path="../introduction/references.html">
+            
+                <a href="../introduction/references.html">
+            
+                    
+                    参考情報
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../kubebuilder/">
+            
+                <a href="../kubebuilder/">
+            
+                    
+                    Kubebuilder
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../kubebuilder/new-project.html">
+            
+                <a href="../kubebuilder/new-project.html">
+            
+                    
+                    プロジェクトの雛形作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../kubebuilder/api.html">
+            
+                <a href="../kubebuilder/api.html">
+            
+                    
+                    APIの雛形作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../kubebuilder/webhook.html">
+            
+                <a href="../kubebuilder/webhook.html">
+            
+                    
+                    Webhookの雛形作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../kubebuilder/kind.html">
+            
+                <a href="../kubebuilder/kind.html">
+            
+                    
+                    kindで動かしてみよう
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
+            
+                <a href="../kubebuilder/debug.html">
+            
+                    
+                    make runによるデバッグ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    controller-tools
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter active" data-level="1.3.1" data-path="crd.html">
+            
+                <a href="crd.html">
+            
+                    
+                    CRDマニフェストの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="advanced_crd.html">
+            
+                <a href="advanced_crd.html">
+            
+                    
+                    CRDマニフェストの生成(応用編)
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="rbac.html">
+            
+                <a href="rbac.html">
+            
+                    
+                    RBACマニフェストの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="webhook.html">
+            
+                <a href="webhook.html">
+            
+                    
+                    Webhookマニフェストの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="../controller-runtime/">
+            
+                <a href="../controller-runtime/">
+            
+                    
+                    controller-runtime
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/basics.html">
+            
+                <a href="../controller-runtime/basics.html">
+            
+                    
+                    Kubernetesプログラミングの基礎
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/client.html">
+            
+                <a href="../controller-runtime/client.html">
+            
+                    
+                    クライアントの使い方
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/reconcile.html">
+            
+                <a href="../controller-runtime/reconcile.html">
+            
+                    
+                    Reconcileの実装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/deletion.html">
+            
+                <a href="../controller-runtime/deletion.html">
+            
+                    
+                    リソースの削除
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/controller_test.html">
+            
+                <a href="../controller-runtime/controller_test.html">
+            
+                    
+                    コントローラのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook.html">
+            
+                <a href="../controller-runtime/webhook.html">
+            
+                    
+                    Webhookの実装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/webhook_test.html">
+            
+                <a href="../controller-runtime/webhook_test.html">
+            
+                    
+                    Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/manager.html">
+            
+                <a href="../controller-runtime/manager.html">
+            
+                    
+                    Manager
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/metrics.html">
+            
+                <a href="../controller-runtime/metrics.html">
+            
+                    
+                    メトリクスの収集
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.10" data-path="../controller-runtime/versioning.html">
+            
+                <a href="../controller-runtime/versioning.html">
+            
+                    
+                    CRDのバージョニング
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >CRDマニフェストの生成</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="crd&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306E;&#x751F;&#x6210;">CRD&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306E;&#x751F;&#x6210;</h1>
+<p>&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3067;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6271;&#x3046;&#x305F;&#x3081;&#x306B;&#x306F;&#x3001;&#x305D;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;CRD(Custom Resource Definition)&#x3092;&#x5B9A;&#x7FA9;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;
+&#x4E0B;&#x8A18;&#x306E;&#x4F8B;&#x306E;&#x69D8;&#x306B;CRD&#x306F;&#x9577;&#x304F;&#x306A;&#x308A;&#x304C;&#x3061;&#x3067;&#x3001;&#x4EBA;&#x9593;&#x304C;&#x8A18;&#x8FF0;&#x3059;&#x308B;&#x306B;&#x306F;&#x5C11;&#x3005;&#x5927;&#x5909;&#x3067;&#x3059;&#x3002;</p>
+<ul>
+<li><a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/config/crd/bases/multitenancy.example.com_tenants.yaml" target="_blank">CRD&#x306E;&#x4F8B;</a></li>
+</ul>
+<p>&#x305D;&#x3053;&#x3067;Kubebuilder&#x3067;&#x306F;controller-gen&#x3068;&#x3044;&#x3046;&#x30C4;&#x30FC;&#x30EB;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3001;Go&#x3067;&#x8A18;&#x8FF0;&#x3057;&#x305F;struct&#x304B;&#x3089;CRD&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;&#x65B9;&#x5F0F;&#x3092;&#x63A1;&#x7528;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p><code>kubebuilder create api</code>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3067;&#x751F;&#x6210;&#x3055;&#x308C;&#x305F;<a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/api/v1/tenant_types.go" target="_blank">api/v1/tenant_types.go</a>&#x3092;&#x898B;&#x3066;&#x307F;&#x308B;&#x3068;&#x3001;<code>TenantSpec</code>, <code>TenantStatus</code>, <code>Tenant</code>, <code>TenantList</code>&#x3068;&#x3044;&#x3046;&#x69CB;&#x9020;&#x4F53;&#x304C;&#x5B9A;&#x7FA9;&#x3055;&#x308C;&#x3066;&#x304A;&#x308A;&#x3001;&#x305F;&#x304F;&#x3055;&#x3093;&#x306E;<code>// +kubebuilder:</code>&#x304B;&#x3089;&#x59CB;&#x307E;&#x308B;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x30B3;&#x30E1;&#x30F3;&#x30C8;&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+controller-gen&#x306F;&#x3001;&#x3053;&#x308C;&#x3089;&#x306E;&#x69CB;&#x9020;&#x4F53;&#x3068;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x983C;&#x308A;&#x306B;CRD&#x306E;&#x751F;&#x6210;&#x3092;&#x304A;&#x3053;&#x306A;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p><code>Tenant</code>&#x304C;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x672C;&#x4F53;&#x3068;&#x306A;&#x308B;&#x69CB;&#x9020;&#x4F53;&#x3067;&#x3059;&#x3002;<code>TenantList</code>&#x306F;<code>Tenant</code>&#x306E;&#x30EA;&#x30B9;&#x30C8;&#x3092;&#x8868;&#x3059;&#x69CB;&#x9020;&#x4F53;&#x3067;&#x3059;&#x3002;&#x3053;&#x308C;&#x3089;2&#x3064;&#x306E;&#x69CB;&#x9020;&#x4F53;&#x306F;&#x57FA;&#x672C;&#x7684;&#x306B;&#x5909;&#x66F4;&#x3059;&#x308B;&#x3053;&#x3068;&#x306F;&#x3042;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;
+<code>TenantSpec</code>&#x3068;<code>TenantStatus</code>&#x306F;<code>Tenant</code>&#x69CB;&#x9020;&#x4F53;&#x3092;&#x69CB;&#x6210;&#x3059;&#x308B;&#x8981;&#x7D20;&#x3067;&#x3059;&#x3002;&#x3053;&#x306E;2&#x3064;&#x306E;&#x69CB;&#x9020;&#x4F53;&#x3092;&#x66F8;&#x304D;&#x63DB;&#x3048;&#x3066;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x5B9A;&#x7FA9;&#x3057;&#x3066;&#x3044;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x4E00;&#x822C;&#x7684;&#x306B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;<code>Spec</code>&#x306F;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x304C;&#x8A18;&#x8FF0;&#x3059;&#x308B;&#x3082;&#x306E;&#x3067;&#x3001;&#x30B7;&#x30B9;&#x30C6;&#x30E0;&#x306E;&#x3042;&#x308B;&#x3079;&#x304D;&#x72B6;&#x614B;&#x3092;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x304B;&#x3089;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306B;&#x4F1D;&#x3048;&#x308B;&#x305F;&#x3081;&#x306B;&#x5229;&#x7528;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;
+&#x4E00;&#x65B9;&#x306E;<code>Status</code>&#x306F;&#x3001;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x304C;&#x51E6;&#x7406;&#x3057;&#x305F;&#x7D50;&#x679C;&#x3092;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x3084;&#x4ED6;&#x306E;&#x30B7;&#x30B9;&#x30C6;&#x30E0;&#x306B;&#x4F1D;&#x3048;&#x308B;&#x305F;&#x3081;&#x306B;&#x5229;&#x7528;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
+<h2 id="tenantspec">TenantSpec</h2>
+<p>&#x3055;&#x3063;&#x305D;&#x304F;<code>TenantSpec</code>&#x3092;&#x5B9A;&#x7FA9;&#x3057;&#x3066;&#x3044;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p><a href="../introduction/sample.html">&#x4F5C;&#x6210;&#x3059;&#x308B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;</a>&#x306B;&#x304A;&#x3044;&#x3066;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x304C;&#x6271;&#x3046;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x3057;&#x3066;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x691C;&#x8A0E;&#x3057;&#x307E;&#x3057;&#x305F;&#x3002;</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> multitenancy.example.com/v1
+<span class="hljs-attr">kind:</span> Tenant
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> sample
+<span class="hljs-attr">spec:</span>
+<span class="hljs-attr">  namespaces:</span>
+<span class="hljs-bullet">    -</span> test1
+<span class="hljs-bullet">    -</span> test2
+<span class="hljs-attr">  namespacePrefix:</span> sample-
+<span class="hljs-attr">  admin:</span>
+<span class="hljs-attr">    kind:</span> User
+<span class="hljs-attr">    name:</span> test
+<span class="hljs-attr">    namespace:</span> default
+<span class="hljs-attr">    apiGroup:</span> rbac.authorization.k8s.io
+</code></pre>
+<p>&#x4E0A;&#x8A18;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x53D6;&#x308A;&#x6271;&#x3046;&#x305F;&#x3081;&#x306E;&#x69CB;&#x9020;&#x4F53;&#x3092;&#x7528;&#x610F;&#x3057;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<blockquote>
+<p><a id="tenant_types.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_types.go" target="_blank">tenant_types.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-comment">// TenantSpec defines the desired state of Tenant</span>
+<span class="hljs-keyword">type</span> TenantSpec <span class="hljs-keyword">struct</span> {
+    <span class="hljs-comment">// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster</span>
+    <span class="hljs-comment">// Important: Run &quot;make&quot; to regenerate code after modifying this file</span>
+
+    <span class="hljs-comment">// Namespaces are the names of the namespaces that belong to the tenant</span>
+    <span class="hljs-comment">// +kubebuiler:validation:Required</span>
+    <span class="hljs-comment">// +kubebuiler:validation:MinItems=1</span>
+    Namespaces []<span class="hljs-keyword">string</span> <span class="hljs-string">`json:&quot;namespaces&quot;`</span>
+    <span class="hljs-comment">// NamespacePrefix is the prefix for the name of namespaces</span>
+    <span class="hljs-comment">// +optional</span>
+    NamespacePrefix <span class="hljs-keyword">string</span> <span class="hljs-string">`json:&quot;namespacePrefix,omitempty&quot;`</span>
+    <span class="hljs-comment">// Admin is the identity with admin for the tenant</span>
+    <span class="hljs-comment">// +kubebuiler:validation:Required</span>
+    Admin rbacv1.Subject <span class="hljs-string">`json:&quot;admin&quot;`</span>
+}
+</code></pre>
+<p>&#x307E;&#x305A;&#x4E0B;&#x8A18;&#x306E;3&#x3064;&#x306E;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x5B9A;&#x7FA9;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<ul>
+<li><code>Namespaces</code>: &#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x306B;&#x5C5E;&#x3059;&#x308B;namespace&#x306E;&#x4E00;&#x89A7;&#x3092;&#x6307;&#x5B9A;</li>
+<li><code>NamespacePrefix</code>: namespace&#x540D;&#x306E;&#x30D7;&#x30EA;&#x30D5;&#x30A3;&#x30C3;&#x30AF;&#x30B9;&#x3092;&#x6307;&#x5B9A;</li>
+<li><code>Admin</code>: &#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x306E;&#x7BA1;&#x7406;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x3092;&#x6307;&#x5B9A;</li>
+</ul>
+<p>&#x5404;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306E;&#x4E0A;&#x306B;<code>// +kubebuilder</code>&#x3068;&#x3044;&#x3046;&#x6587;&#x5B57;&#x5217;&#x304B;&#x3089;&#x59CB;&#x307E;&#x308B;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3068;&#x547C;&#x3070;&#x308C;&#x308B;&#x30B3;&#x30E1;&#x30F3;&#x30C8;&#x304C;&#x8A18;&#x8FF0;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+&#x3053;&#x308C;&#x3089;&#x306E;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x306B;&#x3088;&#x3063;&#x3066;&#x3001;&#x751F;&#x6210;&#x3055;&#x308C;&#x308B;CRD&#x306E;&#x5185;&#x5BB9;&#x3092;&#x5236;&#x5FA1;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x4ED8;&#x4E0E;&#x3067;&#x304D;&#x308B;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x306F;<code>controller-gen crd -w</code>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3067;&#x78BA;&#x8A8D;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<h3 id="requiredoptional">Required/Optional</h3>
+<p><code>Namespaces</code>&#x3068;<code>Admin</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;&#x306F;<code>+kubebuiler:validation:Required</code>&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+&#x3053;&#x308C;&#x306F;&#x3053;&#x306E;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x304C;&#x5FC5;&#x9808;&#x9805;&#x76EE;&#x3067;&#x3042;&#x308B;&#x3053;&#x3068;&#x3092;&#x793A;&#x3057;&#x3066;&#x304A;&#x308A;&#x3001;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x304C;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x8A18;&#x8FF0;&#x3059;&#x308B;&#x969B;&#x306B;&#x3053;&#x306E;&#x9805;&#x76EE;&#x3092;&#x7701;&#x7565;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x305B;&#x3093;&#x3002;
+&#x4E00;&#x65B9;&#x306E;<code>NamespacePrefix</code>&#x306B;&#x306F;<code>+optional</code>&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x304A;&#x308A;&#x3001;&#x3053;&#x306E;&#x9805;&#x76EE;&#x304C;&#x7701;&#x7565;&#x53EF;&#x80FD;&#x3067;&#x3042;&#x308B;&#x3053;&#x3068;&#x3092;&#x793A;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x306A;&#x304B;&#x3063;&#x305F;&#x5834;&#x5408;&#x306F;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x3067;Required&#x306A;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
+&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x5185;&#x306B;&#x4E0B;&#x8A18;&#x306E;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x914D;&#x7F6E;&#x3059;&#x308B;&#x3068;&#x3001;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x306E;&#x6319;&#x52D5;&#x3092;Optional&#x306B;&#x5909;&#x66F4;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<pre><code>// +kubebuilder:validation:Optional
+</code></pre><p><code>+optional</code>&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x4ED8;&#x4E0E;&#x3057;&#x306A;&#x304F;&#x3066;&#x3082;&#x3001;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306E;&#x5F8C;&#x308D;&#x306E;JSON&#x30BF;&#x30B0;&#x306B;<code>omitempty</code>&#x3092;&#x4ED8;&#x4E0E;&#x3057;&#x305F;&#x5834;&#x5408;&#x306F;&#x3001;&#x81EA;&#x52D5;&#x7684;&#x306B;Optional&#x306A;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3068;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> SampleSpec <span class="hljs-keyword">struct</span> {
+    Value <span class="hljs-keyword">string</span> <span class="hljs-string">`json:&quot;value,omitempty&quot;`</span>
+}
+</code></pre>
+<p>Optional&#x306A;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306F;&#x3001;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306B;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306E;&#x578B;&#x3092;&#x30DD;&#x30A4;&#x30F3;&#x30BF;&#x306B;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;
+&#x3053;&#x308C;&#x306B;&#x3088;&#x308A;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3067;&#x5024;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x306A;&#x304B;&#x3063;&#x305F;&#x5834;&#x5408;&#x306E;&#x6319;&#x52D5;&#x304C;&#x7570;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
+&#x30DD;&#x30A4;&#x30F3;&#x30BF;&#x578B;&#x306B;&#x3057;&#x305F;&#x5834;&#x5408;&#x306F;null&#x304C;&#x5165;&#x308A;&#x3001;&#x5B9F;&#x4F53;&#x306B;&#x3057;&#x305F;&#x5834;&#x5408;&#x306F;&#x305D;&#x306E;&#x578B;&#x306E;&#x521D;&#x671F;&#x5024;(int&#x306E;&#x5834;&#x5408;&#x306F;0)&#x304C;&#x5165;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> SampleSpec <span class="hljs-keyword">struct</span> {
+    <span class="hljs-comment">// +optional</span>
+    Value1 <span class="hljs-keyword">int</span>  <span class="hljs-string">`json:&quot;value1&quot;`</span>
+    <span class="hljs-comment">// +optional</span>
+    Value2 *<span class="hljs-keyword">int</span> <span class="hljs-string">`json:&quot;value2&quot;`</span>
+}
+</code></pre>
+<h3 id="validation">Validation</h3>
+<p><code>Namespaces</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;&#x306F;<code>// +kubebuiler:validation:MinItems=1</code>&#x3068;&#x3044;&#x3046;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+&#x3053;&#x308C;&#x306F;&#x6700;&#x4F4E;1&#x3064;&#x4EE5;&#x4E0A;&#x306E;namespace&#x3092;&#x8A18;&#x8FF0;&#x3057;&#x306A;&#x3044;&#x3068;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3059;&#x308B;&#x3068;&#x304D;&#x306B;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x30A8;&#x30E9;&#x30FC;&#x3068;&#x306A;&#x308B;&#x3053;&#x3068;&#x3092;&#x793A;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p><code>MinItems</code>&#x4EE5;&#x5916;&#x306B;&#x3082;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x304C;&#x7528;&#x610F;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+&#x8A73;&#x3057;&#x304F;&#x306F;<code>controller-gen crd -w</code>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3067;&#x78BA;&#x8A8D;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<ul>
+<li>&#x30EA;&#x30B9;&#x30C8;&#x306E;&#x6700;&#x5C0F;&#x8981;&#x7D20;&#x6570;&#x3001;&#x6700;&#x5927;&#x8981;&#x7D20;&#x6570;</li>
+<li>&#x6587;&#x5B57;&#x5217;&#x306E;&#x6700;&#x5C0F;&#x9577;&#x3001;&#x6700;&#x5927;&#x9577;</li>
+<li>&#x6570;&#x5024;&#x306E;&#x6700;&#x5C0F;&#x5024;&#x3001;&#x6700;&#x5927;&#x5024;</li>
+<li>&#x6B63;&#x898F;&#x8868;&#x73FE;&#x306B;&#x30DE;&#x30C3;&#x30C1;&#x3059;&#x308B;&#x304B;&#x3069;&#x3046;&#x304B;</li>
+<li>&#x30EA;&#x30B9;&#x30C8;&#x5185;&#x306E;&#x8981;&#x7D20;&#x304C;&#x30E6;&#x30CB;&#x30FC;&#x30AF;&#x304B;&#x3069;&#x3046;&#x304B;</li>
+</ul>
+<h2 id="tenantstatus">TenantStatus</h2>
+<p>&#x6B21;&#x306B;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x72B6;&#x614B;&#x3092;&#x8868;&#x73FE;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;<code>TenantStatus</code>&#x306B;<code>Conditions</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x8FFD;&#x52A0;&#x3057;&#x307E;&#x3059;&#x3002;
+&#x3053;&#x306E;&#x3088;&#x3046;&#x306A;Condition&#x578B;&#x306F;&#x69D8;&#x3005;&#x306A;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3067;&#x5229;&#x7528;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x983B;&#x51FA;&#x30D1;&#x30BF;&#x30FC;&#x30F3;&#x306A;&#x306E;&#x3067;&#x899A;&#x3048;&#x3066;&#x304A;&#x304F;&#x3068;&#x3088;&#x3044;&#x3067;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<blockquote>
+<p><a id="tenant_types.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_types.go" target="_blank">tenant_types.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-comment">// TenantStatus defines the observed state of Tenant</span>
+<span class="hljs-keyword">type</span> TenantStatus <span class="hljs-keyword">struct</span> {
+    <span class="hljs-comment">// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster</span>
+    <span class="hljs-comment">// Important: Run &quot;make&quot; to regenerate code after modifying this file</span>
+
+    <span class="hljs-comment">// Conditions is an array of conditions.</span>
+    <span class="hljs-comment">// +optional</span>
+    Conditions []TenantCondition <span class="hljs-string">`json:&quot;conditions,omitempty&quot;`</span>
+}
+
+<span class="hljs-keyword">type</span> TenantCondition <span class="hljs-keyword">struct</span> {
+    <span class="hljs-comment">// Type is the type fo the condition</span>
+    Type TenantConditionType <span class="hljs-string">`json:&quot;type&quot;`</span>
+    <span class="hljs-comment">// Status is the status of the condition</span>
+    Status corev1.ConditionStatus <span class="hljs-string">`json:&quot;status&quot;`</span>
+    <span class="hljs-comment">// Reason is a one-word CamelCase reason for the condition&apos;s last transition.</span>
+    <span class="hljs-comment">// +optional</span>
+    Reason <span class="hljs-keyword">string</span> <span class="hljs-string">`json:&quot;reason,omitempty&quot;`</span>
+    <span class="hljs-comment">// Message is a human-readable message indicating details about last transition.</span>
+    <span class="hljs-comment">// +optional</span>
+    Message <span class="hljs-keyword">string</span> <span class="hljs-string">`json:&quot;message,omitempty&quot;`</span>
+    <span class="hljs-comment">// Message is a human-readable message indicating details about last transition.</span>
+    LastTransitionTime metav1.Time <span class="hljs-string">`json:&quot;lastTransitionTime&quot;`</span>
+}
+
+<span class="hljs-comment">// TenantConditionType is the type of Tenant condition.</span>
+<span class="hljs-comment">// +kubebuilder:validation:Enum=Ready</span>
+<span class="hljs-keyword">type</span> TenantConditionType <span class="hljs-keyword">string</span>
+
+<span class="hljs-comment">// Valid values for TenantConditionType</span>
+<span class="hljs-keyword">const</span> (
+    ConditionReady TenantConditionType = <span class="hljs-string">&quot;Ready&quot;</span>
+)
+</code></pre>
+<p><code>TenantConditionType</code>&#x306B;&#x306F;<code>// +kubebuilder:validation:Enum=Ready</code>&#x3068;&#x3044;&#x3046;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+&#x3053;&#x308C;&#x306B;&#x3088;&#x308A;<code>TenantConditionType</code>&#x306F;&#x5217;&#x6319;&#x578B;&#x3068;&#x306A;&#x308A;&#x3001;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3067;&#x5217;&#x6319;&#x3057;&#x305F;&#x5024;(&#x3053;&#x3053;&#x3067;&#x306F;&quot;Ready&quot;)&#x4EE5;&#x5916;&#x306E;&#x5024;&#x3092;&#x6307;&#x5B9A;&#x3067;&#x304D;&#x306A;&#x304F;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x3053;&#x306E;Status&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;&#x3088;&#x308A;&#x3001;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x3084;&#x4ED6;&#x306E;&#x30B7;&#x30B9;&#x30C6;&#x30E0;(&#x30E2;&#x30CB;&#x30BF;&#x30EA;&#x30F3;&#x30B0;&#x30B7;&#x30B9;&#x30C6;&#x30E0;&#x306A;&#x3069;)&#x304C;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x72B6;&#x614B;&#x3092;&#x78BA;&#x8A8D;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x306E;&#x4F5C;&#x6210;&#x306B;&#x6210;&#x529F;&#x3057;&#x305F;&#x5834;&#x5408;&#x306B;&#x306F;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;Status&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> multitenancy.example.com/v1
+<span class="hljs-attr">kind:</span> Tenant
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> sample
+<span class="hljs-attr">spec:</span> <span class="hljs-comment"># &#x7701;&#x7565;</span>
+<span class="hljs-attr">status:</span>
+<span class="hljs-attr">  conditions:</span>
+<span class="hljs-attr">  - type:</span> Ready
+<span class="hljs-attr">    status:</span> <span class="hljs-literal">True</span>
+<span class="hljs-attr">    lastTransitionTime:</span> <span class="hljs-string">&quot;2020-07-18T09:01:02Z&quot;</span>
+</code></pre>
+<p>&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x306E;&#x4F5C;&#x6210;&#x306B;&#x5931;&#x6557;&#x3059;&#x308B;&#x3068;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;Status&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> multitenancy.example.com/v1
+<span class="hljs-attr">kind:</span> Tenant
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> sample
+<span class="hljs-attr">spec:</span> <span class="hljs-comment"># &#x7701;&#x7565;</span>
+<span class="hljs-attr">status:</span>
+<span class="hljs-attr">  conditions:</span>
+<span class="hljs-attr">  - type:</span> Ready
+<span class="hljs-attr">    status:</span> <span class="hljs-literal">False</span>
+<span class="hljs-attr">    reason:</span> Failed
+<span class="hljs-attr">    message:</span> <span class="hljs-string">&quot;failed to create &apos;test1&apos; namespace&quot;</span>
+<span class="hljs-attr">    lastTransitionTime:</span> <span class="hljs-string">&quot;2020-07-18T10:15:34&quot;</span>
+</code></pre>
+<h2 id="tenant">Tenant</h2>
+<p>&#x7D9A;&#x3044;&#x3066;<code>Tenant</code>&#x69CB;&#x9020;&#x4F53;&#x306E;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x898B;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<blockquote>
+<p><a id="tenant_types.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_types.go" target="_blank">tenant_types.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-comment">// +kubebuilder:object:root=true</span>
+<span class="hljs-comment">// +kubebuilder:resource:scope=Cluster</span>
+<span class="hljs-comment">// +kubebuilder:subresource:status</span>
+<span class="hljs-comment">// +kubebuilder:printcolumn:name=&quot;ADMIN&quot;,type=&quot;string&quot;,JSONPath=&quot;.spec.admin.name&quot;</span>
+<span class="hljs-comment">// +kubebuilder:printcolumn:name=&quot;PREFIX&quot;,type=&quot;string&quot;,JSONPath=&quot;.spec.namespacePrefix&quot;</span>
+<span class="hljs-comment">// +kubebuilder:printcolumn:name=&quot;READY&quot;,type=&quot;string&quot;,JSONPath=&quot;.status.conditions[?(@.type==&apos;Ready&apos;)].status&quot;</span>
+
+<span class="hljs-comment">// Tenant is the Schema for the tenants API</span>
+<span class="hljs-keyword">type</span> Tenant <span class="hljs-keyword">struct</span> {
+    metav1.TypeMeta   <span class="hljs-string">`json:&quot;,inline&quot;`</span>
+    metav1.ObjectMeta <span class="hljs-string">`json:&quot;metadata,omitempty&quot;`</span>
+
+    Spec   TenantSpec   <span class="hljs-string">`json:&quot;spec,omitempty&quot;`</span>
+    Status TenantStatus <span class="hljs-string">`json:&quot;status,omitempty&quot;`</span>
+}
+</code></pre>
+<ul>
+<li><code>+kubebuilder:object:root=true</code>: <code>Tenant</code>&#x69CB;&#x9020;&#x4F53;&#x304C;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;root&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x3067;&#x3042;&#x308B;&#x3053;&#x3068;&#x3092;&#x8868;&#x3059;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3067;&#x3059;&#x3002;</li>
+<li><code>+kubebuilder:resource:scope=Cluster</code>: <code>Tenant</code>&#x304C;cluster-scope&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3067;&#x3042;&#x308B;&#x3053;&#x3068;&#x3092;&#x8868;&#x3059;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3067;&#x3059;&#x3002;namespaced-scope&#x306E;&#x5834;&#x5408;&#x306F;&quot;scope=Namespaced&quot;&#x3068;&#x3059;&#x308B;&#x304B;&#x3001;&#x3053;&#x306E;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x7701;&#x7565;&#x3057;&#x307E;&#x3059;&#x3002;</li>
+</ul>
+<p>&#x4E0A;&#x8A18;&#x306B;&#x52A0;&#x3048;&#x3066;<code>+kubebuilder:subresource</code>&#x3068;<code>+kubebuilder:printcolumn</code>&#x3092;&#x4ED8;&#x4E0E;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<h3 id="subresource">subresource</h3>
+<p><code>+kubebuilder:subresource:status</code>&#x3068;&#x3044;&#x3046;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x8FFD;&#x52A0;&#x3059;&#x308B;&#x3068;&#x3001;<code>status</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x304C;&#x30B5;&#x30D6;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x3057;&#x3066;&#x6271;&#x308F;&#x308C;&#x308B;&#x3088;&#x3046;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x30B5;&#x30D6;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6709;&#x52B9;&#x306B;&#x3059;&#x308B;&#x3068;<code>status</code>&#x304C;&#x72EC;&#x81EA;&#x306E;&#x30A8;&#x30F3;&#x30C9;&#x30DD;&#x30A4;&#x30F3;&#x30C8;&#x3092;&#x6301;&#x3064;&#x3088;&#x3046;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
+&#x3053;&#x308C;&#x306B;&#x3088;&#x308A;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x5168;&#x4F53;&#x3092;&#x53D6;&#x5F97;&#x30FB;&#x66F4;&#x65B0;&#x3057;&#x306A;&#x304F;&#x3066;&#x3082;&#x3001;<code>status</code>&#x306E;&#x307F;&#x3092;&#x53D6;&#x5F97;&#x3057;&#x305F;&#x308A;&#x66F4;&#x65B0;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x53EF;&#x80FD;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
+&#x305F;&#x3060;&#x3057;&#x3001;&#x3042;&#x304F;&#x307E;&#x3067;&#x3082;&#x30E1;&#x30A4;&#x30F3;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x5C5E;&#x3059;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306A;&#x306E;&#x3067;&#x3001;&#x500B;&#x5225;&#x306B;&#x4F5C;&#x6210;&#x3084;&#x524A;&#x9664;&#x3059;&#x308B;&#x3053;&#x3068;&#x306F;&#x3067;&#x304D;&#x307E;&#x305B;&#x3093;&#x3002;</p>
+<p>&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x304C;<code>spec</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x8A18;&#x8FF0;&#x3057;&#x3001;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x304C;<code>status</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x8A18;&#x8FF0;&#x3059;&#x308B;&#x3068;&#x3044;&#x3046;&#x5F79;&#x5272;&#x5206;&#x62C5;&#x3092;&#x660E;&#x78BA;&#x306B;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x308B;&#x306E;&#x3067;&#x3001;&#x57FA;&#x672C;&#x7684;&#x306B;&#x306F;<code>status</code>&#x306F;&#x30B5;&#x30D6;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x3057;&#x3066;&#x304A;&#x304F;&#x306E;&#x304C;&#x3088;&#x3044;&#x3067;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p>&#x306A;&#x304A;&#x3001;CRD&#x3067;&#x306F;&#x4EFB;&#x610F;&#x306E;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x30B5;&#x30D6;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x3059;&#x308B;&#x3053;&#x3068;&#x306F;&#x3067;&#x304D;&#x305A;&#x3001;<code>status</code>&#x3068;<code>scale</code>&#x306E;2&#x3064;&#x306E;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306E;&#x307F;&#x306B;&#x5BFE;&#x5FDC;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<h3 id="printcolumn">printcolumn</h3>
+<p><code>+kubebuilder:printcolumn</code>&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x4ED8;&#x4E0E;&#x3059;&#x308B;&#x3068;&#x3001;kubectl&#x3067;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x53D6;&#x5F97;&#x3057;&#x305F;&#x3068;&#x304D;&#x306B;&#x8868;&#x793A;&#x3059;&#x308B;&#x9805;&#x76EE;&#x3092;&#x6307;&#x5B9A;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x8868;&#x793A;&#x5BFE;&#x8C61;&#x306E;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306F;JSONPath&#x3067;&#x6307;&#x5B9A;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x53EF;&#x80FD;&#x3067;&#x3059;&#x3002;
+&#x3053;&#x308C;&#x306B;&#x3088;&#x308A;<code>JSONPath=&quot;.status.conditions[?(@.type==&apos;Ready&apos;)].status&quot;</code>&#x3068;&#x8A18;&#x8FF0;&#x3059;&#x308B;&#x3068;&#x3001;<code>status.conditions</code>&#x306E;&#x4E2D;&#x306E;<code>type</code>&#x304C;&quot;Ready&quot;&#x306A;&#x8981;&#x7D20;&#x306E;<code>status</code>&#x306E;&#x5024;&#x3092;&#x8868;&#x793A;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>kubectl&#x3067;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x53D6;&#x5F97;&#x3059;&#x308B;&#x3068;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306B;PREFIX&#x3084;READY&#x306E;&#x5024;&#x304C;&#x8868;&#x793A;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x3053;&#x3068;&#x304C;&#x78BA;&#x8A8D;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<pre><code>$ kubectl get tenant
+NAME            ADMIN     PREFIX           READY
+tenant-sample   default   tenant-sample-   True
+</code></pre>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: controller-tools">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="advanced_crd.html" class="navigation navigation-next " aria-label="Next page: CRDマニフェストの生成(応用編)">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"next":{"title":"CRDマニフェストの生成(応用編)","level":"1.3.2","depth":2,"path":"controller-tools/advanced_crd.md","ref":"controller-tools/advanced_crd.md","articles":[]},"previous":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"CRDマニフェストの生成(応用編)","level":"1.3.2","depth":2,"path":"controller-tools/advanced_crd.md","ref":"controller-tools/advanced_crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.4","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-tools/crd.md","mtime":"2020-07-24T08:09:13.430Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-25T05:49:45.005Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
