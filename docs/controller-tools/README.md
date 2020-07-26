@@ -8,17 +8,26 @@ controller-toolsには下記のツールが含まれていますが、本資料�
 - type-scaffold
 - helpgen
 
-##  controller-genとは
+##  controller-gen
 
-- crd
-- schemapatch
-- webhook
-- rbac
-- object
+`controller-gen`は、GoのソースコードをもとにしてマニフェストやGoのソースコードの生成をおこなうツールです。
 
-`// +kubebuilder:`というマーカーを目印にしてコード生成をおこないます。
+`controller-gen`のヘルプを確認すると、下記の5種類のジェネレータが存在することがわかります。
 
-利用可能なマーカーは下記のコマンドで確認することができます。
+```
+generators
++webhook                                                                                                  package  generates (partial) {Mutating,Validating}WebhookConfiguration objects.
++schemapatch:manifests=<string>[,maxDescLen=<int>]                                                        package  patches existing CRDs with new schemata.
++rbac:roleName=<string>                                                                                   package  generates ClusterRole objects.
++object[:headerFile=<string>][,year=<string>]                                                             package  generates code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
++crd[:crdVersions=<[]string>][,maxDescLen=<int>][,preserveUnknownFields=<bool>][,trivialVersions=<bool>]  package  generates CustomResourceDefinition objects.
+```
+
+`kubebuilder`が生成した[Makefile](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/Makefile)には、`make manifests`と`make generate`というターゲットが用意されており、`make manifests`では`webhook`, `rbac`, `crd`の生成、`make generate`では`object`の生成がおこなわれます。
+
+`controller-gen`がマニフェストの生成をおこなう際には、Goのstructの構成と、ソースコード中に埋め込まれた`// +kubebuilder:`から始まるコメント(マーカーと呼ばれる)を目印にします。
+
+利用可能なマーカーは下記のコマンドで確認することができます。(`-ww`や`-www`を指定するとより詳細な説明が確認できます)
 
 ```console
 $ controller-gen crd -w

@@ -1,6 +1,5 @@
 # Kubebuilder
 
-まずは`kubebuilder`コマンドの利用方法を紹介します。
 `kubebuilder`コマンドは、カスタムコントローラのプロジェクトの雛形を自動生成するためのツールです。
 ソースコードだけでなく、MakefileやDockerfile、各種マニフェストなど数多くのファイルを生成します。
 
@@ -19,6 +18,6 @@ Available Commands:
   version     Print the kubebuilder version
 ```
 
-`kubebuilder`には、プロジェクトの新規作成をおこなう`init`サブコマンド、新しいAPIやWebhookの生成をおこなう`create`サブコマンド、生成したプロジェクトの構成を変更する`edit`サブコマンドがあります。
+`kubebuilder`には、プロジェクトの新規作成をおこなう`init`サブコマンド、新しいAPIやWebhookの生成をおこなう`create`サブコマンド、生成したプロジェクトの設定を変更する`edit`サブコマンドがあります。
 
-以降では、`init`サブコマンドと`create`サブコマンドの使い方を紹介します。
+本資料では、`init`サブコマンドと`create`サブコマンドの使い方を紹介します。

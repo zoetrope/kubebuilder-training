@@ -87,10 +87,10 @@ r.Recorder.Event(&tenant, corev1.EventTypeNormal, "Updated", "the tenant was upd
 r.Recorder.Eventf(&tenant, corev1.EventTypeWarning, "Failed", "failed to reconciled: %s", err.Error())
 ```
 
-このEventリソースは第1引数で指定したリソースに結びいており、namespace-scopeリソースの場合はそのリソースと同じnamespaceにEventリソースが作成されます。
-一方cluster-scopeリソースの場合は、default namespaceにEventリソースが作成されます。
+このEventリソースは第1引数で指定したリソースに結びいており、namespace-scopedリソースの場合はそのリソースと同じnamespaceにEventリソースが作成されます。
+一方cluster-scopedリソースの場合は、default namespaceにEventリソースが作成されます。
 
-テナントリソースはcluster-scopeリソースなのでEventはdefault namespaceに作成されます。
+テナントリソースはcluster-scopedリソースなのでEventはdefault namespaceに作成されます。
 そこで下記のようなRoleとRoleBindingを用意して、テナントコントローラがdefault namespaceにEventリソースを作成できるように設定しておきましょう。
 
 [import, title="event_recorder_rbac.yaml"](../../codes/tenant/config/rbac/event_recorder_rbac.yaml)

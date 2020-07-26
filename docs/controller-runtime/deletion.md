@@ -42,7 +42,10 @@ status:
 
 この状態で親のテナントリソースを削除すると、子のnamespaceリソースも自動的に削除されます。
 
-なお、SetControllerReferenceと似た関数で[controllerutil.SetOwnerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetOwnerReference)もありますが、こちらは`controller`フィールドにfalseが指定されます。
+なお、異なるnamespaceのリソースをownerにしたり、cluster-scopedリソースのownerにnamespace-scopedリソースを指定することはできません。
+今回のテナントコントローラのようにNamespaceやClusterRoleなどのcluster-scopedリソースを扱う場合は、カスタムリソースもcluster-scopedにする必要があります。
+
+また、SetControllerReferenceと似た関数で[controllerutil.SetOwnerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetOwnerReference)もありますが、こちらは`controller`フィールドにfalseが指定されます。
 `controller`フィールドにfalseが指定されていた場合、親リソースが削除されても子リソースは削除されないので注意してください。
 
 ## Finalizer
