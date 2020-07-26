@@ -1,6 +1,6 @@
 # Webhookのテスト
 
-controller-runtime v0.6.0では、[envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest?tab=doc)でwebhookのテストもサポートするようになりました。
+controller-runtime v0.5.1以降では、[envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest?tab=doc)でwebhookのテストもサポートするようになりました。
 
 ## テスト環境のセットアップ
 
