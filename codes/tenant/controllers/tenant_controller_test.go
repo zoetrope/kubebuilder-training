@@ -10,7 +10,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -49,7 +48,7 @@ var _ = Describe("Tenant controller", func() {
 
 			createdTenant := &multitenancyv1.Tenant{}
 			Eventually(func() error {
-				err := k8sClient.Get(ctx, types.NamespacedName{Name: tenantName}, createdTenant)
+				err := k8sClient.Get(ctx, client.ObjectKey{Name: tenantName}, createdTenant)
 				if err != nil {
 					return err
 				}

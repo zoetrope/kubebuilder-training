@@ -106,7 +106,7 @@ CreateOrUpdateを利用すると、リソースが存在しなければ作成し
 
 ## Patch
 
-SSA
+[import:"patch"](../../codes/misc/main.go)
 
 ## Status.Update/Patch
 
@@ -118,6 +118,18 @@ Status更新用のクライアントが用意されているのでそれを使�
 逆にStatusをサブリソース化していない場合、これらの機能は利用できません。通常のUpdate/Patchを利用しましょう。
 
 ## Delete/DeleteOfAll
+
+間違って削除
+そこでUIDとResourceVersionを指定して、確実に
+
+[import:"cond"](../../codes/misc/main.go)
+
+[リソースの削除](deletion.md)で解説するように、Kubernetesでは親リソースを削除するとそのリソースに結びつく子リソースも一緒に削除されます。
+この挙動を変えるためのオプションとして`PropagationPolicy`が用意されています。
+
+下記のようにDeploymentリソースの削除時に`DeletePropagationOrphan`を指定すると、子のリソースであるReplicaSetやPodのリソースが削除されなくなります。
+
+[import:"policy"](../../codes/misc/main.go)
 
 ## ディスカバリーベースのクライアント
 

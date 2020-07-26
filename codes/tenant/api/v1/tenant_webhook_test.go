@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 var _ = Describe("Tenant Webhook", func() {
@@ -38,7 +38,7 @@ var _ = Describe("Tenant Webhook", func() {
 		Expect(err).Should(Succeed())
 
 		mutatedTenant := &Tenant{}
-		err = k8sClient.Get(ctx, types.NamespacedName{Name: "test"}, mutatedTenant)
+		err = k8sClient.Get(ctx, client.ObjectKey{Name: "test"}, mutatedTenant)
 		Expect(err).Should(Succeed())
 		Expect(mutatedTenant.Spec.NamespacePrefix).Should(Equal("test-"))
 	})
