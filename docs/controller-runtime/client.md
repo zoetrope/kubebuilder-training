@@ -133,27 +133,18 @@ Status更新用のクライアントが用意されているのでそれを使�
 
 ## ディスカバリーベースのクライアント
 
-client-goを利用した場合、Kubernetes標準の
+client-goを利用してCRDを扱う場合、[k8s.io/client-go/dynamic](https://pkg.go.dev/k8s.io/client-go/dynamic?tab=doc)や[k8s.io/apimachinery/pkg/apis/meta/v1/unstructured](https://pkg.go.dev/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured?tab=doc)による動的型クライアントを利用するか、[kubernetes/code-generator](https://github.com/kubernetes/code-generator)を利用してコード生成をおこなう必要がありました。
 
-k8s.io/client-go/dynamic
-k8s.io/apimachinery/pkg/apis/meta/v1/unstructured
-
-`/apis/{group}/{version}/namespaces/{namespace}/{resource}/{name}`
-`/apis/{group}/{version}/{resource}/{name}`
-
-`/apis/multitenancy.example.com/v1/tenants/sample`
-
-Clientでは、受け取るための構造体を渡すだけでAPIを呼び分けてくれている。
-どのようにURLを解決できるのでしょう。
-
+しかし、controller-runtimeのClientでは、引数に構造体を渡すだけで標準リソースでもカスタムリソースでもAPIを呼び分けてくれています。
+このClientはどのように仕組みになっているのでしょう。
 まずはリフレクションにより`Tenant`構造体から"Tenant"という文字列を取得します。これがKindになります。
 さらに[api/v1/groupversion_info.go](../../codes/tenant/api/v1/groupversion_info.go)に埋め込まれた情報をもとにGroupとVersionを取得します。
-これでGVKが取得できました。これらはSchemeの仕事です。
+これでGVKが取得できました。
 
 次にREST APIを叩くためにはリソース名やnamespace-scopedかどうかを解決する必要があります。
+REST APIのパスは、namespace-scopedのリソースであれば`/apis/{group}/{version}/namespaces/{namespace}/{resource}/{name}`、cluster-scopeのスコープであれば`/apis/{group}/{version}/{resource}/{name}`のようになります。
 この情報はCRDに記述されているため、APIサーバーに問い合わせる必要があります。
 
-discovery APIというものがあるわけではなく、api以下を何回も叩いてる
 
 ```
 $ kubectl api-resources --api-group="multitenancy.example.com"
