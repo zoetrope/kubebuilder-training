@@ -1,23 +1,7 @@
-# training-kubebuilder
+# つくって学ぶKubebuilder
 
-[つくって学ぶKubebuilder](https://zoetrope.github.io/kubebuilder-training/)
+本資料では、カスタムコントローラをつくりながらKubebuilderの使い方やKubernetesプログラミングを学ぶことができます。
 
-## how to build
-
-### Requirement
-- Node.js LTS version
-
-###  install packages
-```
-npm install
-```
-
-### start a honkit server on localhost
-```console
-npm run serve
-```
-
-### build static pages
-```console
-npm run build
-```
+## コンテンツ
+- [つくって学ぶKubebuilder](https://zoetrope.github.io/kubebuilder-training/)
+- [テナントコントローラ](https://github.com/zoetrope/kubebuilder-training/tree/master/codes/tenant)
