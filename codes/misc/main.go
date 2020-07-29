@@ -174,10 +174,8 @@ func patch(cli client.Client) error {
 		"replicas": 2,
 	}
 
-	force := true
 	err := cli.Patch(context.Background(), patch, client.Apply, &client.PatchOptions{
 		FieldManager: "misc",
-		Force:        &force,
 	})
 
 	return err
