@@ -30,8 +30,8 @@ spec:
     apiGroup: rbac.authorization.k8s.io
 ```
 
-本資料でこれから開発するカスタムコントローラは、上記のカスタムリソースを読み取り、実際のnamespaceを作成したり管理者権限の設定をおこなうことになります。
+本資料でこれから開発するカスタムコントローラは、上記のカスタムリソースを読み取り、namespaceを作成したり管理者権限の設定をおこなうことになります。
 
-ソースコードは以下にありますので参考にしてください。
+ソースコードは以下にあるので参考にしてください。
 
 - https://github.com/zoetrope/kubebuilder-training/tree/master/codes/tenant
