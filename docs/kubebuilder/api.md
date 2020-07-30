@@ -5,7 +5,7 @@
 以下のコマンドを実行して、Tenantを表現するためのカスタムリソースと、テナントリソースを扱うカスタムコントローラを生成してみましょう。
 
 ```console
-$ kubebuilder create api --group multitenancy --version v1 --kind Tenant `--namespaced=false`
+$ kubebuilder create api --group multitenancy --version v1 --kind Tenant --namespaced=false
 Create Resource [y/n]
 y
 Create Controller [y/n]
@@ -18,7 +18,7 @@ $ make manifests
 - `--group`: テナントリソースが属するグループ名を指定します。
 - `--version`: 適切なバージョンを指定します。今後仕様が変わる可能性がありそうなら`v1alpha1`や`v1beta1`を指定し、安定版のリソースを作成するのであれば`v1`を指定します。
 
-`--namespace`オプションでは、生成するカスタムリソースをnamespace-scopedとcluster-scopedのどちらにするか指定できます。
+`--namespaced`オプションでは、生成するカスタムリソースをnamespace-scopedとcluster-scopedのどちらにするか指定できます。
 今回のテナントリソースはnamespaceなどのcluster-scopedのリソースを扱うため、cluster-scopedを指定しています。
 
 カスタムリソースとコントローラのソースコードを生成するかどうか聞かれるので、今回はどちらも`y`と回答します。
