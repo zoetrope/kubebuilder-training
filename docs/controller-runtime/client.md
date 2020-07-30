@@ -18,7 +18,12 @@ SchemeはGoのstructとGroupVersionKindを相互に変換したり、異なる�
 
 このSchemeを利用することで、標準リソースとTenantリソースを扱うことができるクライアントを作成できます。
 
-続いてこのSchemeとConfigを利用してManagerを作成しClientを取得します。
+つぎに[GetConfigOrDie](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client/config?tab=doc#GetConfigOrDie)でクライアントの設定を取得しています。
+この関数はコマンドラインオプションの`--kubeconfig`や、環境変数`KUBECONFIG`で指定された設定ファイルを利用するか、またはKubernetesクラスタ上でPodとして動いているのであれば、Podが持つサービスアカウントの認証情報を利用します。
+通常コントローラはKubernetesクラスタ上で動いているので、サービスアカウントの認証情報が利用されます。
+
+このSchemeとConfigを利用してManagerを作成し、`GetClient()`でクライアントを取得することができます。
+ただし、Managerの`Start()`を呼び出す前にClientを利用することはできないので注意しましょう。
 
 ```
 mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
@@ -26,33 +31,41 @@ mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 })
 client := mgr.GetClient()
 ```
-[GetConfigOrDie](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client/config?tab=doc#GetConfigOrDie)でクライアントの設定を取得しています。
-
-この関数はコマンドラインオプションの`--kubeconfig`や、環境変数`KUBECONFIG`で指定された設定ファイルを利用するか、またはKubernetesクラスタ上でPodとして動いているのであれば、Podが持つサービスアカウントの認証情報を利用します。
-通常コントローラはKubernetesクラスタ上で動いているので、クラスタから割り当てられた設定が利用されます。
-
-Managerから`GetClient()`でクライアントを取得することができます。
-ただし、Managerの`Start()`を呼び出す前にClientを利用することはできないので注意しましょう。
 
 ## Get/List
 
+クライアントを利用して、リソースを取得する方法を見ていきます。
+
 ### Getの使い方
+
+リソースを取得するには、下記のように第2引数で欲しいリソースのnamespaceとnameを指定します。
+そして第3引数に指定した変数で結果を受け取ることができます。
+なお、どの種類のリソースを取得するのかは、第3引数に渡した変数の型で自動的に判別されます。
 
 [import:"get",unindent="true"](../../codes/tenant/controllers/tenant_controller.go)
 
-### キャッシュ
+### クライアントのキャッシュ機構
 
+Kubernetes上ではいくつものコントローラが動いており、そのコントローラはそれぞれたくさんのリソースを扱っています。
+これらのコントローラが毎回APIサーバーにアクセスしてリソースの取得をおこなうと、APIサーバーやそのバックエンドにいるetcdの負荷が高まってしまうという問題があります。
 
-### キャッシュの利用を避ける
+そこで、controller-runtimeの提供するクライアントはキャッシュ機構を備えています。
+このクライアントは`Get()`や`List()`でリソースを取得すると、同一namespace内の同じKindのリソースをすべて取得してインメモリにキャッシュします。
+そして対象のリソースをWatchし、APIサーバー上でリソースの変更が発生した場合にキャッシュの更新をおこないます。
 
-なお後述するように、このクライアントは`Get()`や`List()`でリソースを取得すると、同一namespaceの同じKindのリソースをすべて取得してインメモリにキャッシュします。
-このようなキャッシュの仕組みが必要ない場合は、`GetAPIReader()`でキャッシュを利用しないクライアントを取得することもできます。
-基本的には`GetClient()`で取得するクライアントを利用すれば問題ありません。
+このようなキャッシュの仕組みにより、コントローラからAPIサーバーへのアクセスを大幅に減らすことが可能になっています。
+
+なお、このようなキャッシュ機構を備えているため、実装上はGetしか呼び出していなくても、リソースのアクセス権限としてはListやWatchが必要となります。
+[RBACマニフェストの生成](../controller-tools/rbac.md)で解説したように、リソースの取得をおこなう場合は`get, list, watch`の権限を付与しておきましょう。
+
+キャッシュの仕組みが必要ない場合は、Managerから`GetAPIReader()`でキャッシュを利用しないクライアントを取得することもできます。
 
 ### Listの使い方
 
-LabelSelectorやNamespaceでフィルタリングすることができます。
-Namespaceを指定しなかった場合は、全Namespaceのリソースを取得します。
+Listでは条件を指定して複数のリソースを一度に取得することができます。
+
+下記の例では、LabelSelectorやNamespaceを指定してリソースの取得をおこなっています。
+なお、Namespaceを指定しなかった場合は、全Namespaceのリソースを取得します。
 
 [import:"list"](../../codes/misc/main.go)
 
@@ -66,29 +79,25 @@ Namespaceを指定しなかった場合は、全Namespaceのリソースを取�
 
 ### インデックス
 
-index field: リソースごとに一意になっていればよい。 実態のフィールドの構成と一致していなくても良い。
-informerはgvkごとに作られる。namespaceは自動的にキーに付与されるので、わざわざつけなくてもよい。
-戻り値がスライスになっている、複数の値でインデクシングすることも可能。
+複数のリソースを取得する際にラベルやnamespaceだけでなく、特定のフィールドの値に応じてフィルタリングしたいことがあるかと思います。
+controller-runtimeではインメモリキャッシュにインデックスを張る仕組みが用意されています。
 
-
-リソース一覧を取得する際に、条件でフィルタリングしたいことがあるかと思います。
-ループで回してもいいのですが、
-
-インメモリキャッシュにインデックスを張ることができます。
-インデックスを利用するためには事前に`GetFieldIndexer().IndexField()`を利用して、TenantリソースのConditionReadyの値に応じてインデックスを作成しておきます。
+インデックスを利用するためには事前に`GetFieldIndexer().IndexField()`を利用して、どのフィールドの値に基づいてインデックスを張るのかを指定しておきます。
+下記の例ではnamespaceリソースに対して、ownerReferenceに指定されているTenantリソースの名前に応じてインデックスを作成しています。
 
 [import:"indexer"](../../codes/tenant/controllers/tenant_controller.go)
 [import:"index-field",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
 
-上記のようなインデックスを作成しておくと、`List()`を呼び出す際に特定のフィールドが指定した値と一致するリソースだけを取得することができます。
-例えば以下の例であれば、ConditionReadyが"True"のTenantリソース一覧を取得することが可能です。
-
-[import:"matching-fields",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
-
 フィールド名には、どのフィールドを利用してインデックスを張っているのかを示す文字列を指定します。
 実際にインデックスに利用しているフィールドのパスと一致していなくても問題はないのですが、なるべく一致させたほうが可読性がよくなるのでおすすめです。
-なおinformerはGVKごとに作成されるので、異なるタイプのリソース間でフィールド名が同じになっても問題ありません。
-またnamespaceスコープのリソースの場合は、自動的にフィールド名にnamespace名が付与されるので、明示的にフィールド名にnamespaceを含める必要はありません。
+なおインデックスはGVKごとに作成されるので、異なるタイプのリソース間でフィールド名が同じになっても問題ありません。
+またnamespaceスコープのリソースの場合は、内部的にフィールド名にnamespace名を付与して管理しているので、明示的にフィールド名にnamespaceを含める必要はありません。
+インデクサーが返す値はスライスになっていることから分かるように、複数の値にマッチするようにインデックスを構成することも可能です。
+
+上記のようなインデックスを作成しておくと、`List()`を呼び出す際に特定のフィールドが指定した値と一致するリソースだけを取得することができます。
+例えば以下の例であれば、ownerReferenceに指定したTenantリソースがセットされているnamespaceだけを取得することができます。
+
+[import:"matching-fields",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
 
 ## Create/Update
 
@@ -149,7 +158,10 @@ MergePatch方式ではそのような衝突検知はおこなわれません。
 [import:"patch"](../../codes/misc/main.go)
 
 Server-Side Applyを利用するには、第3引数に`client.Apply`を指定し、オプションには`FieldManager`を指定する必要があります。
-この`FieldManager`がフィールドごとの管理者の名前になるので、他のコントローラ等とは異なるユニークな名前にしましょう。
+この`FieldManager`がフィールドごとの管理者の名前になるので、他のコントローラと被らないようにユニークな名前にしましょう。
+
+なお、リストやマップをどのようにマージするのかは、Goの構造体に付与したマーカーで制御することが可能です。
+詳しくは[Merge strategy](https://kubernetes.io/docs/reference/using-api/api-concepts/#merge-strategy)を参照してください。(TODO: あとで書く)
 
 ## Status.Update/Patch
 
