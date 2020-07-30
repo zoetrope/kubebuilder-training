@@ -40,17 +40,14 @@ $ kind load docker-image controller:v1
 なお、コンテナイメージのタグ名に`latest`を利用すると、`imagePullPolicy: Always`になってしまうため、ロードしたコンテナイメージが利用されない問題があります。([参考](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster))
 
 そのためここではタグ名を`v1`に変更しています。
-それに合わせて`config/manager/manager.yaml`のタグ名も変更しておきましょう。
+それに合わせて`config/manager/kustomization`のタグ名も変更しておきましょう。
 
 ```diff
-         - /manager
-         args:
-         - --enable-leader-election
--        image: controller:latest
-+        image: controller:v1
-         name: manager
-         resources:
-           limits:
+  images:
+  - name: controller
+    newName: controller
+-   newTag: latest
++   newTag: v1
 ```
 
 ## コントローラの動作確認
