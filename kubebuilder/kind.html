@@ -520,12 +520,9 @@
 </code></pre>
 <p>&#x306A;&#x304A;&#x3001;&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x30A4;&#x30E1;&#x30FC;&#x30B8;&#x306E;&#x30BF;&#x30B0;&#x540D;&#x306B;<code>latest</code>&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3068;&#x3001;<code>imagePullPolicy: Always</code>&#x306B;&#x306A;&#x3063;&#x3066;&#x3057;&#x307E;&#x3046;&#x305F;&#x3081;&#x3001;&#x30ED;&#x30FC;&#x30C9;&#x3057;&#x305F;&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x30A4;&#x30E1;&#x30FC;&#x30B8;&#x304C;&#x5229;&#x7528;&#x3055;&#x308C;&#x306A;&#x3044;&#x554F;&#x984C;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;(<a href="https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster" target="_blank">&#x53C2;&#x8003;</a>)</p>
 <p>&#x305D;&#x306E;&#x305F;&#x3081;&#x3053;&#x3053;&#x3067;&#x306F;&#x30BF;&#x30B0;&#x540D;&#x3092;<code>v1</code>&#x306B;&#x5909;&#x66F4;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
-&#x305D;&#x308C;&#x306B;&#x5408;&#x308F;&#x305B;&#x3066;<code>config/manager/kustomization</code>&#x306E;&#x30BF;&#x30B0;&#x540D;&#x3082;&#x5909;&#x66F4;&#x3057;&#x3066;&#x304A;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
-<pre><code class="lang-diff">  images:
-  - name: controller
-    newName: controller
-<span class="hljs-deletion">-   newTag: latest</span>
-<span class="hljs-addition">+   newTag: v1</span>
+&#x305D;&#x308C;&#x306B;&#x5408;&#x308F;&#x305B;&#x3066;<code>Makefile</code>&#x306E;&#x30BF;&#x30B0;&#x540D;&#x3082;&#x5909;&#x66F4;&#x3057;&#x3066;&#x304A;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<pre><code class="lang-diff"><span class="hljs-deletion">- IMG ?= controller:latest</span>
+<span class="hljs-addition">+ IMG ?= controller:v1</span>
 </code></pre>
 <h2 id="&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;">&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;</h2>
 <p>&#x6B21;&#x306B;CRD&#x3092;Kubernetes&#x30AF;&#x30E9;&#x30B9;&#x30BF;&#x306B;&#x9069;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;</p>
