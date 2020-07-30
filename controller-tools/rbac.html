@@ -331,20 +331,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/basics.html">
-            
-                <a href="../controller-runtime/basics.html">
-            
-                    
-                    Kubernetesプログラミングの基礎
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/client.html">
+        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/client.html">
             
                 <a href="../controller-runtime/client.html">
             
@@ -357,7 +344,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
             
                 <a href="../controller-runtime/reconcile.html">
             
@@ -370,7 +357,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/deletion.html">
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
             
                 <a href="../controller-runtime/deletion.html">
             
@@ -383,7 +370,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
@@ -396,7 +383,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -409,7 +396,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
@@ -422,7 +409,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/manager.html">
+        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/manager.html">
             
                 <a href="../controller-runtime/manager.html">
             
@@ -435,7 +422,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/metrics.html">
             
                 <a href="../controller-runtime/metrics.html">
             
@@ -448,7 +435,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.10" data-path="../controller-runtime/versioning.html">
+        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/versioning.html">
             
                 <a href="../controller-runtime/versioning.html">
             
@@ -512,8 +499,10 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="rbac&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306E;&#x751F;&#x6210;">RBAC&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306E;&#x751F;&#x6210;</h1>
-<p>&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x304C;&#x5229;&#x7528;&#x3059;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3078;&#x306E;&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x6A29;&#x9650;&#x3092;&#x9069;&#x5207;&#x306B;&#x8A2D;&#x5B9A;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;
-controller-gen&#x3067;&#x306F;&#x3001;go&#x306E;&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x4E2D;&#x306B;&#x57CB;&#x3081;&#x8FBC;&#x307E;&#x308C;&#x305F;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x5143;&#x306B;RBAC&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>Kubernetes&#x3067;&#x306F;RBAC(Role-based access control)&#x306B;&#x3088;&#x308A;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3078;&#x306E;&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x6A29;&#x3092;&#x5236;&#x5FA1;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;
+&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306B;&#x304A;&#x3044;&#x3066;&#x3082;&#x3001;&#x5229;&#x7528;&#x3059;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x306E;&#x307F;&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x9069;&#x5207;&#x306B;&#x6A29;&#x9650;&#x3092;&#x8A2D;&#x5B9A;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>controller-gen&#x3067;&#x306F;&#x3001;Go&#x306E;&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x4E2D;&#x306B;&#x57CB;&#x3081;&#x8FBC;&#x307E;&#x308C;&#x305F;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x5143;&#x306B;RBAC&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306B;&#x4ED8;&#x4E0E;&#x3057;&#x305F;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x898B;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
 <blockquote>
 <p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
 </blockquote>
@@ -523,10 +512,13 @@ controller-gen&#x3067;&#x306F;&#x3001;go&#x306E;&#x30BD;&#x30FC;&#x30B9;&#x30B3;
 <span class="hljs-comment">// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterroles,verbs=get;list;watch;create;update;patch;delete</span>
 <span class="hljs-comment">// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=rolebindings,verbs=get;list;watch;create;update;patch;delete</span>
 </code></pre>
-<p>&#x307E;&#x305A;&#x306F;&#x3001;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x8A31;&#x53EF;
-&#x307E;&#x305F;&#x3001;status&#x3092;&#x30B5;&#x30D6;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x5316;&#x3057;&#x305F;&#x5834;&#x5408;&#x306F;&#x3001;&#x500B;&#x5225;&#x306B;&#x6A29;&#x9650;&#x3092;&#x8FFD;&#x52A0;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x524D;&#x8FF0;&#x3057;&#x305F;&#x3088;&#x3046;&#x306B;&#x3001;controller-runtime&#x306E;&#x9069;&#x7528;&#x3057;&#x3066;&#x3044;&#x308B;Client&#x306F;&#x3001;Get&#x3067;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x53D6;&#x5F97;&#x3057;&#x305F;&#x5834;&#x5408;&#x306B;&#x3082;&#x88CF;&#x3067;List&#x3084;Watch&#x3092;&#x547C;&#x3073;&#x51FA;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+<p>&#x307E;&#x305A;&#x306F;&#x3001;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x5BFE;&#x3057;&#x3066;<code>get;list;watch;create;update;patch;delete</code>&#x306E;&#x6A29;&#x9650;&#x3092;&#x4E0E;&#x3048;&#x307E;&#x3059;&#x3002;
+status&#x3092;&#x30B5;&#x30D6;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x5316;&#x3057;&#x305F;&#x5834;&#x5408;&#x306F;&#x3001;&#x500B;&#x5225;&#x306B;&#x6A29;&#x9650;&#x3092;&#x8FFD;&#x52A0;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;
+&#x30B5;&#x30D6;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;create&#x3084;delete&#x64CD;&#x4F5C;&#x3092;&#x304A;&#x3053;&#x306A;&#x3048;&#x306A;&#x3044;&#x306E;&#x3067;<code>get;update;patch</code>&#x306E;&#x6A29;&#x9650;&#x3092;&#x4E0E;&#x3048;&#x307E;&#x3059;&#x3002;
+&#x307E;&#x305F;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x304C;&#x7BA1;&#x7406;&#x3059;&#x308B;Namespace, ClusterRole, RoleBinding&#x3092;&#x64CD;&#x4F5C;&#x3059;&#x308B;&#x6A29;&#x9650;&#x3082;&#x8FFD;&#x52A0;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x306A;&#x304A;&#x3001;controller-runtime&#x306E;&#x63D0;&#x4F9B;&#x3059;&#x308B;Client&#x306F;&#x3001;Get&#x3067;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x53D6;&#x5F97;&#x3057;&#x305F;&#x5834;&#x5408;&#x3082;&#x88CF;&#x3067;List&#x3084;Watch&#x3092;&#x547C;&#x3073;&#x51FA;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
 &#x305D;&#x306E;&#x305F;&#x3081;get&#x3057;&#x304B;&#x3057;&#x306A;&#x3044;&#x5834;&#x5408;&#x3067;&#x3082;&#x3001;get, list, watch&#x3092;&#x8A31;&#x53EF;&#x3057;&#x3066;&#x304A;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p><code>make manifests</code>&#x3092;&#x5B9F;&#x884C;&#x3059;&#x308B;&#x3068;<a href="../../codes/tenant/config/rbac/role.yaml">config/rbac/role.yaml</a>&#x304C;&#x66F4;&#x65B0;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
 
                                 
                                 </section>
@@ -570,7 +562,7 @@ controller-gen&#x3067;&#x306F;&#x3001;go&#x306E;&#x30BD;&#x30FC;&#x30B9;&#x30B3;
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"RBACマニフェストの生成","level":"1.3.3","depth":2,"next":{"title":"Webhookマニフェストの生成","level":"1.3.4","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]},"previous":{"title":"CRDマニフェストの生成(応用編)","level":"1.3.2","depth":2,"path":"controller-tools/advanced_crd.md","ref":"controller-tools/advanced_crd.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-tools/rbac.md","mtime":"2020-07-19T03:16:49.960Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-25T05:49:45.005Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"RBACマニフェストの生成","level":"1.3.3","depth":2,"next":{"title":"Webhookマニフェストの生成","level":"1.3.4","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]},"previous":{"title":"CRDマニフェストの生成(応用編)","level":"1.3.2","depth":2,"path":"controller-tools/advanced_crd.md","ref":"controller-tools/advanced_crd.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-tools/rbac.md","mtime":"2020-07-28T13:10:38.590Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-29T13:50:25.872Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

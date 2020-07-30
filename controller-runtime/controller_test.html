@@ -331,20 +331,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="basics.html">
-            
-                <a href="basics.html">
-            
-                    
-                    Kubernetesプログラミングの基礎
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.2" data-path="client.html">
+        <li class="chapter " data-level="1.4.1" data-path="client.html">
             
                 <a href="client.html">
             
@@ -357,7 +344,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="reconcile.html">
             
                 <a href="reconcile.html">
             
@@ -370,7 +357,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="deletion.html">
+        <li class="chapter " data-level="1.4.3" data-path="deletion.html">
             
                 <a href="deletion.html">
             
@@ -383,7 +370,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.5" data-path="controller_test.html">
+        <li class="chapter active" data-level="1.4.4" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
@@ -396,7 +383,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -409,7 +396,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
@@ -422,7 +409,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="manager.html">
+        <li class="chapter " data-level="1.4.7" data-path="manager.html">
             
                 <a href="manager.html">
             
@@ -435,7 +422,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.9" data-path="metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="metrics.html">
             
                 <a href="metrics.html">
             
@@ -448,7 +435,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.10" data-path="versioning.html">
+        <li class="chapter " data-level="1.4.9" data-path="versioning.html">
             
                 <a href="versioning.html">
             
@@ -627,7 +614,6 @@
     corev1 <span class="hljs-string">&quot;k8s.io/api/core/v1&quot;</span>
     rbacv1 <span class="hljs-string">&quot;k8s.io/api/rbac/v1&quot;</span>
     metav1 <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;</span>
-    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/types&quot;</span>
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;</span>
 )
 
@@ -666,7 +652,7 @@
 
             createdTenant := &amp;multitenancyv1.Tenant{}
             Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
-                err := k8sClient.Get(ctx, types.NamespacedName{Name: tenantName}, createdTenant)
+                err := k8sClient.Get(ctx, client.ObjectKey{Name: tenantName}, createdTenant)
                 <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
                     <span class="hljs-keyword">return</span> err
                 }
@@ -756,7 +742,7 @@ ok      github.com/zoetrope/kubebuilder-training/codes/controllers      5.528s
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"コントローラのテスト","level":"1.4.5","depth":2,"next":{"title":"Webhookの実装","level":"1.4.6","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.4","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2020-07-24T08:43:19.200Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-25T05:49:45.005Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"コントローラのテスト","level":"1.4.4","depth":2,"next":{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2020-07-28T13:10:38.590Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-29T13:50:25.872Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

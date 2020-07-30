@@ -331,20 +331,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="basics.html">
-            
-                <a href="basics.html">
-            
-                    
-                    Kubernetesプログラミングの基礎
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.2" data-path="client.html">
+        <li class="chapter " data-level="1.4.1" data-path="client.html">
             
                 <a href="client.html">
             
@@ -357,7 +344,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="reconcile.html">
             
                 <a href="reconcile.html">
             
@@ -370,7 +357,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.4" data-path="deletion.html">
+        <li class="chapter active" data-level="1.4.3" data-path="deletion.html">
             
                 <a href="deletion.html">
             
@@ -383,7 +370,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
@@ -396,7 +383,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -409,7 +396,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
@@ -422,7 +409,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="manager.html">
+        <li class="chapter " data-level="1.4.7" data-path="manager.html">
             
                 <a href="manager.html">
             
@@ -435,7 +422,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.9" data-path="metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="metrics.html">
             
                 <a href="metrics.html">
             
@@ -448,7 +435,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.10" data-path="versioning.html">
+        <li class="chapter " data-level="1.4.9" data-path="versioning.html">
             
                 <a href="versioning.html">
             
@@ -552,7 +539,9 @@ err = ctrl.SetControllerReference(&amp;tenant, &amp;target, r.Scheme)
 <span class="hljs-attr">  phase:</span> Active
 </code></pre>
 <p>&#x3053;&#x306E;&#x72B6;&#x614B;&#x3067;&#x89AA;&#x306E;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3059;&#x308B;&#x3068;&#x3001;&#x5B50;&#x306E;namespace&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3082;&#x81EA;&#x52D5;&#x7684;&#x306B;&#x524A;&#x9664;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x306A;&#x304A;&#x3001;SetControllerReference&#x3068;&#x4F3C;&#x305F;&#x95A2;&#x6570;&#x3067;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetOwnerReference" target="_blank">controllerutil.SetOwnerReference</a>&#x3082;&#x3042;&#x308A;&#x307E;&#x3059;&#x304C;&#x3001;&#x3053;&#x3061;&#x3089;&#x306F;<code>controller</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;false&#x304C;&#x6307;&#x5B9A;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;
+<p>&#x306A;&#x304A;&#x3001;&#x7570;&#x306A;&#x308B;namespace&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;owner&#x306B;&#x3057;&#x305F;&#x308A;&#x3001;cluster-scoped&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;owner&#x306B;namespace-scoped&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6307;&#x5B9A;&#x3059;&#x308B;&#x3053;&#x3068;&#x306F;&#x3067;&#x304D;&#x307E;&#x305B;&#x3093;&#x3002;
+&#x4ECA;&#x56DE;&#x306E;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x3088;&#x3046;&#x306B;Namespace&#x3084;ClusterRole&#x306A;&#x3069;&#x306E;cluster-scoped&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6271;&#x3046;&#x5834;&#x5408;&#x306F;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3082;cluster-scoped&#x306B;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x307E;&#x305F;&#x3001;SetControllerReference&#x3068;&#x4F3C;&#x305F;&#x95A2;&#x6570;&#x3067;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetOwnerReference" target="_blank">controllerutil.SetOwnerReference</a>&#x3082;&#x3042;&#x308A;&#x307E;&#x3059;&#x304C;&#x3001;&#x3053;&#x3061;&#x3089;&#x306F;<code>controller</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;false&#x304C;&#x6307;&#x5B9A;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;
 <code>controller</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;false&#x304C;&#x6307;&#x5B9A;&#x3055;&#x308C;&#x3066;&#x3044;&#x305F;&#x5834;&#x5408;&#x3001;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x3066;&#x3082;&#x5B50;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;&#x524A;&#x9664;&#x3055;&#x308C;&#x306A;&#x3044;&#x306E;&#x3067;&#x6CE8;&#x610F;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
 <h2 id="finalizer">Finalizer</h2>
 <h3 id="finalizer&#x306E;&#x4ED5;&#x7D44;&#x307F;">Finalizer&#x306E;&#x4ED5;&#x7D44;&#x307F;</h3>
@@ -657,7 +646,7 @@ controller-runtime&#x3067;&#x306F;&#x3001;Finalizer&#x3092;&#x6271;&#x3046;&#x30
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"リソースの削除","level":"1.4.4","depth":2,"next":{"title":"コントローラのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"previous":{"title":"Reconcileの実装","level":"1.4.3","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2020-07-24T15:40:57.540Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-25T05:49:45.005Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"リソースの削除","level":"1.4.3","depth":2,"next":{"title":"コントローラのテスト","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"previous":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2020-07-28T13:10:38.590Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-07-29T13:50:25.872Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
