@@ -29,13 +29,15 @@ spec:
         image: quay.io/cybozu/testhttpd:0.1.0
 ```
 
-kube-controller-managerと呼ばれるプログラムは、APIサーバ上にDeploymentリソースが登録されると`spec.replicas`に指定された数のPodをAPIサーバーに登録します。
+kube-controller-managerと呼ばれるプログラムは、APIサーバ上にDeploymentリソースが登録されるとReplicaSetリソースをAPIサーバーに登録し、さらにReplicaSetリソースが登録されると`spec.replicas`に指定された数のPodをAPIサーバーに登録します。
 次にkube-schedulerというプログラムは、APIサーバ上にPodリソースが登録されると、Podを配置するノードを決定しPodの情報を更新します。
 各ノードで動作しているkubeletというプログラムは、自分のノード名が記述されたPodリソースを見つけるとコンテナを立ち上げます。
 
+![Declarative API](./img/declarative.png)
+
 またDeploymentリソースの`spec.replicas`の数を増やすと、それに合わせてPodも追加され新しくコンテナが起動されます。逆に`spec.replicas`を減らすとPodとコンテナも削除されます。
 
-Declarative APIでは、このようにAPIサーバーに登録された情報と実際の状態が一致するように、各プログラム(コントローラと呼びます)が調整していきます。
+このようにKubernetesでは様々なプログラムAPIサーバーに登録された情報をもとに、システムがあるべき状態になるように調整していきます。
 
 ## CRD(Custom Resource Definition)とCR(Custom Resource)
 
@@ -63,6 +65,8 @@ CRDでは下記のようにOpenAPI v3.0の形式でバリデーションを記�
 Reconciliation Loopは、コントローラのメインロジックです。
 あるべき理想の状態と現在の状態を比較し、その差分がなくなるように調整する処理を実行し続けます。
 
+![Reconcile Loop](./img/reconcile_loop.png)
+
 リソースが新しく登録されたり、編集されたり、監視対象のシステムの状態が変更するなどの何らかのイベントが発生すると、Reconciliation Loopは呼び出されます。
 
 ### 冪等
@@ -80,6 +84,8 @@ Podが3つある状態でReconcileが呼び出されたときにさらに3つの
 Reconciliation Loopは、レベルドリブントリガーで動く必要があります。
 
 エッジドリブントリガーとは状態の変化が発生した時点で処理を実行することで、レベルドリブントリガーとは状態を定期的にチェックして特定の条件に入ったときに処理を実行することです。([参考](https://hackernoon.com/level-triggering-and-reconciliation-in-kubernetes-1f17fe30333d))
+
+![Edge-driven vs. Level-driven Trigger](./img/edge_level_trigger.png)
 
 エッジドリブントリガー方式でコントローラを実装すると、もしイベントが発生したときにコントローラが起動していなかったりすると、そのトリガーが発動せず、あるべき状態と現在の状態がずれてしまうことになります。
 
