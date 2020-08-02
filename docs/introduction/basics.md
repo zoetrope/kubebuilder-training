@@ -1,13 +1,13 @@
 # カスタムコントローラの基礎
 
-ここではカスタムコントローラを開発する上で必要となるKubernetesの知識を簡単単に説明します。
+ここではカスタムコントローラを開発する上で必要となるKubernetesの知識を簡単に説明します。
 
 ## Declarative
 
 Kubernetesにおいてもっとも重要なコンセプトがDeclarative(宣言的) APIです。
 
 例えば、以下のようなYAMLフォーマットで記述されたマニフェストファイルを用意して、KubernetesのAPIサーバーに登録します。
-こｎ登録された情報のことをリソースと呼びます。
+この登録された情報のことをリソースと呼びます。
 
 ```yaml
 apiVersion: apps/v1
@@ -115,3 +115,8 @@ status:
   - type: C
     status: False
 ```
+
+[API Conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)
+
+## Admission Webhook
+
