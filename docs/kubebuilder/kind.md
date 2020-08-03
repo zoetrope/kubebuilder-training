@@ -23,29 +23,27 @@ $ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/rel
 
 ## コントローラのコンテナイメージの用意
 
+コンテナイメージのタグ名に`latest`を利用すると、`imagePullPolicy: Always`になってしまうため、kind上にロードしたコンテナイメージが利用されない問題があります。([参考](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster))
+そこでコンテナイメージをビルドする前に、`Makefile`を編集してイメージのタグ名を変更しておきます。
+
+```diff
+- IMG ?= controller:latest
++ IMG ?= controller:v1
+```
+
 コンテナイメージをビルドします。
 
 ```console
-$ make docker-build IMG=controller:v1
+$ make docker-build
 ```
 
 このコンテナイメージを利用するためには、ビルドしたコンテナイメージをDockerHubなどのコンテナレジストリに登録するか、kind環境にロードする必要があります。
-
 ここでは下記のコマンドを利用してkind環境にコンテナイメージをロードしましょう。
 
 ```console
 $ kind load docker-image controller:v1
 ```
 
-なお、コンテナイメージのタグ名に`latest`を利用すると、`imagePullPolicy: Always`になってしまうため、ロードしたコンテナイメージが利用されない問題があります。([参考](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster))
-
-そのためここではタグ名を`v1`に変更しています。
-それに合わせて`Makefile`のタグ名も変更しておきましょう。
-
-```diff
-- IMG ?= controller:latest
-+ IMG ?= controller:v1
-```
 
 ## コントローラの動作確認
 
@@ -64,7 +62,7 @@ $ make deploy
 コントローラのPodがRunningになったことを確認してください。
 
 ```console
-$ kubectl get pod -n tenant-system -l control-plane=controller-manager
+$ kubectl get pod -n tenant-system
 NAME                                         READY   STATUS    RESTARTS   AGE
 tenant-controller-manager-6dd494cc9c-vwbzq   1/1     Running   0          1m
 ```
@@ -72,7 +70,7 @@ tenant-controller-manager-6dd494cc9c-vwbzq   1/1     Running   0          1m
 次にコントローラのログを表示させておきます。
 
 ```console
-$ kubectl logs -n tenant-system -l control-plane=controller-manager -f
+$ kubectl logs -n tenant-system tenant-controller-manager-6dd494cc9c-vwbzq -c manager -f
 ```
 
 サンプルのカスタムリソースを適用します。
