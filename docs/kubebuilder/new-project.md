@@ -91,7 +91,7 @@ Kubebuilder v2.3.1では、controller-runtime v0.5.0を利用するようにな�
 
 ```diff
 -	sigs.k8s.io/controller-runtime v0.5.0
-+	sigs.k8s.io/controller-runtime v0.6.1
++	sigs.k8s.io/controller-runtime v0.6.2
 ```
 
 変更後、下記のコマンドを実行して依存パッケージの更新もおこないましょう。
