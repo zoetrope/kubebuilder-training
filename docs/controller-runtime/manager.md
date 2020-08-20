@@ -61,7 +61,8 @@ StartメソッドはmanagerのStartを呼び出した際に、goroutineとして
 err = mgr.Add(&runners.Runner{})
 ```
 
-また、[LeaderElectionRunnable](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#LeaderElectionRunnable)インタフェースを実装し、NeedLeaderElectionメソッドがtrueを返すようにすると、リーダーとして動作しているときににだけStartメソッドが実行されるようになります。
+`Runnable` インタフェースを実装しただけだと、リーダーとして動作している Manager でしか動かないようになります。
+リーダーでなくても常時動かしたい処理である場合、[LeaderElectionRunnable](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#LeaderElectionRunnable)インタフェースを実装し、NeedLeaderElectionメソッドで `false` を返すようにします。
 
 ## recorderProvider
 
