@@ -211,9 +211,7 @@ client-goを利用してCRDを扱う場合、[k8s.io/client-go/dynamic](https://
 しかし、controller-runtimeのClientでは、引数に構造体を渡すだけで標準リソースでもカスタムリソースでもAPIを呼び分けてくれています。
 このClientはどのように仕組みになっているのでしょうか。
 
-まずはリフレクションにより`Tenant`構造体から"Tenant"という文字列を取得します。これがKindになります。
-さらに[api/v1/groupversion_info.go](../../codes/tenant/api/v1/groupversion_info.go)に埋め込まれた情報をもとにGroupとVersionを取得します。
-これでGVKが取得できました。
+まずは渡された構造体の型を Scheme に登録された情報から探します。そうすると GVK が得られます。
 
 次にREST APIを叩くためにはREST APIのパスを解決する必要があります。
 REST APIのパスは、namespace-scopedのリソースであれば`/apis/{group}/{version}/namespaces/{namespace}/{resource}/{name}`、cluster-scopeのスコープであれば`/apis/{group}/{version}/{resource}/{name}`のようになります。
