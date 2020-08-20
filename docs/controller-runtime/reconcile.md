@@ -30,7 +30,8 @@ Reconcileが呼ばれるタイミングを制御するために、`NewController
 
 ### イベントのフィルタリング
 
-`WithEventFilter`では、`For`, `Owns`, `Watches`で監視対象としたリソースの変更イベントをフィルタリングすることができます。
+`WithEventFilter`では、`For`, `Owns`, `Watches`で監視対象としたリソースの変更イベントをまとめてフィルタリングすることができます。
+後述しますが、`For` や `Owns` 個々に、より細かくフィルタリングすることもできます。
 
 下記のような[predicate.Funcs](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/predicate?tab=doc#Funcs)を用意して、`WithEventFilter`関数で指定します。
 
@@ -38,6 +39,9 @@ Reconcileが呼ばれるタイミングを制御するために、`NewController
 
 例えば`CreateFunc`でtrueを返し、`DeleteFunc`,`UpdateFunc`でfalseを返すようにすれば、リソースが作成されたときのみReconcileが呼び出されるようにできます。また、引数でイベントの詳細な情報が渡ってくるので、それを利用してより複雑なフィルタリングをおこなうことも可能です。
 なお、`GenericFunc`は後述の外部イベントのフィルタリングに利用します。
+
+重要な注意点として、kube-apiserver に発行した CREATE/UPDATE/PATCH 操作が一対一でイベントにはなりません。
+たとえば CREATE 直後に UPDATE すると、イベントとしては CreateFunc しか呼び出されないことがあります。
 
 `WithEventFilter`を利用すると`For`や`Owns`,`Watches`で指定したすべての監視対象にフィルターが適用されますが、下記のように`For`や`Owns`,`Watches`のオプションとして個別にフィルターを指定することも可能です。
 
