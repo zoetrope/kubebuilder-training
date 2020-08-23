@@ -80,7 +80,7 @@ Kubebuilder v2.3.1では、controller-gen v0.2.5を利用するようになっ�
 
 ```diff
 -	go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.2.5 ;\
-+	go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.3.0 ;\
++	go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.4.0 ;\
 ```
 
 ## go.mod
