@@ -169,6 +169,7 @@ Statusをサブリソース化している場合、これまで紹介した`Upda
 Status更新用のクライアントを利用することになります。
 
 `Status.Update()`と`Status.Path()`は、メインリソースの`Update()`、`Patch()`と使い方は同じです。
+ただし、現状カスタムリソースの Status サブリソースは Server-Side Apply による Patch をサポートされていません。
 
 ```go
 tenant.Status = multitenancyv1.TenantStatus{
