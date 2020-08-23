@@ -110,6 +110,10 @@ type SampleSpec struct {
 
 [import:"status"](../../codes/tenant/api/v1/tenant_types.go)
 
+汎用的な Condition 型が Go 1.19 で追加されるので、こちらを使っていくのも良いです。
+
+- https://pkg.go.dev/k8s.io/apimachinery@v0.19.0-rc.4/pkg/apis/meta/v1?tab=doc#Condition
+
 `TenantConditionType`には`// +kubebuilder:validation:Enum=Ready`というマーカーが付与されています。
 これにより`TenantConditionType`は列挙型となり、マーカーで列挙した値(ここでは"Ready")以外の値を指定できなくなります。
 
