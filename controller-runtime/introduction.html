@@ -1,0 +1,741 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>コントローラ実装入門 · HonKit</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="HonKit 3.5.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="../styles/website.css">
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="client.html" />
+    
+    
+    <link rel="prev" href="./" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    つくって学ぶKubebuilder
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="../introduction/installation.html">
+            
+                <a href="../introduction/installation.html">
+            
+                    
+                    インストール
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" data-path="../introduction/basics.html">
+            
+                <a href="../introduction/basics.html">
+            
+                    
+                    カスタムコントローラの基礎
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3" data-path="../introduction/sample.html">
+            
+                <a href="../introduction/sample.html">
+            
+                    
+                    作成するカスタムコントローラ
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.4" data-path="../introduction/references.html">
+            
+                <a href="../introduction/references.html">
+            
+                    
+                    参考情報
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../kubebuilder/">
+            
+                <a href="../kubebuilder/">
+            
+                    
+                    Kubebuilder
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../kubebuilder/new-project.html">
+            
+                <a href="../kubebuilder/new-project.html">
+            
+                    
+                    プロジェクトの雛形作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../kubebuilder/api.html">
+            
+                <a href="../kubebuilder/api.html">
+            
+                    
+                    APIの雛形作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.3" data-path="../kubebuilder/webhook.html">
+            
+                <a href="../kubebuilder/webhook.html">
+            
+                    
+                    Webhookの雛形作成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.4" data-path="../kubebuilder/kind.html">
+            
+                <a href="../kubebuilder/kind.html">
+            
+                    
+                    kindで動かしてみよう
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
+            
+                <a href="../kubebuilder/debug.html">
+            
+                    
+                    make runによるデバッグ
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="../controller-tools/">
+            
+                <a href="../controller-tools/">
+            
+                    
+                    controller-tools
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="../controller-tools/crd.html">
+            
+                <a href="../controller-tools/crd.html">
+            
+                    
+                    CRDマニフェストの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="../controller-tools/rbac.html">
+            
+                <a href="../controller-tools/rbac.html">
+            
+                    
+                    RBACマニフェストの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="../controller-tools/webhook.html">
+            
+                <a href="../controller-tools/webhook.html">
+            
+                    
+                    Webhookマニフェストの生成
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    controller-runtime
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter active" data-level="1.4.1" data-path="introduction.html">
+            
+                <a href="introduction.html">
+            
+                    
+                    コントローラ実装入門
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="client.html">
+            
+                <a href="client.html">
+            
+                    
+                    クライアントの使い方
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="reconcile.html">
+            
+                <a href="reconcile.html">
+            
+                    
+                    Reconcileの実装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.4" data-path="deletion.html">
+            
+                <a href="deletion.html">
+            
+                    
+                    リソースの削除
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.5" data-path="controller_test.html">
+            
+                <a href="controller_test.html">
+            
+                    
+                    コントローラのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="webhook.html">
+            
+                <a href="webhook.html">
+            
+                    
+                    Webhookの実装
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.7" data-path="webhook_test.html">
+            
+                <a href="webhook_test.html">
+            
+                    
+                    Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.8" data-path="manager.html">
+            
+                <a href="manager.html">
+            
+                    
+                    Manager
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.9" data-path="metrics.html">
+            
+                <a href="metrics.html">
+            
+                    
+                    メトリクスの収集
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://github.com/honkit/honkit" target="blank" class="gitbook-link">
+            Published with HonKit
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >コントローラ実装入門</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x5B9F;&#x88C5;&#x5165;&#x9580;">&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x5B9F;&#x88C5;&#x5165;&#x9580;</h1>
+<p>controller-runtime&#x306F;&#x975E;&#x5E38;&#x306B;&#x305F;&#x304F;&#x3055;&#x3093;&#x306E;&#x6A5F;&#x80FD;&#x3092;&#x63D0;&#x4F9B;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+&#x3053;&#x3053;&#x3067;&#x306F;&#x307E;&#x305A;controller-runtime&#x306E;&#x57FA;&#x672C;&#x7684;&#x306A;&#x6A5F;&#x80FD;&#x306B;&#x89E6;&#x308C;&#x3001;&#x7C21;&#x5358;&#x306A;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x5B9F;&#x88C5;&#x65B9;&#x6CD5;&#x3092;&#x5B66;&#x3093;&#x3067;&#x3044;&#x304D;&#x307E;&#x3059;&#x3002;
+&#x3088;&#x308A;&#x8A73;&#x7D30;&#x3092;&#x77E5;&#x308A;&#x305F;&#x3044;&#x65B9;&#x306F;&#x6B21;&#x30DA;&#x30FC;&#x30B8;&#x4EE5;&#x964D;&#x3092;&#x3054;&#x89A7;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<h2 id="reconcile&#x306E;&#x5B9F;&#x88C5;">Reconcile&#x306E;&#x5B9F;&#x88C5;</h2>
+<p>&#x307E;&#x305A;&#x306F;Kubebuilder&#x306B;&#x3088;&#x3063;&#x3066;&#x751F;&#x6210;&#x3055;&#x308C;&#x305F;<code>controllers/tenant_controller.go</code>&#x3092;&#x958B;&#x3044;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;
+&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306A;<code>Reconcile</code>&#x3068;&#x3044;&#x3046;&#x95A2;&#x6570;&#x304C;&#x307F;&#x3064;&#x304B;&#x308B;&#x3068;&#x601D;&#x3044;&#x307E;&#x3059;&#x3002;
+&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x5B9F;&#x88C5;&#x306F;&#x3001;&#x3053;&#x306E;<code>Reconcile</code>&#x95A2;&#x6570;&#x306E;&#x4E2D;&#x306B;&#x66F8;&#x3044;&#x3066;&#x3044;&#x304F;&#x3053;&#x3068;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *TenantReconciler)</span> <span class="hljs-title">Reconcile</span><span class="hljs-params">(req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
+    _ = context.Background()
+    _ = r.Log.WithValues(<span class="hljs-string">&quot;tenant&quot;</span>, req.NamespacedName)
+
+    <span class="hljs-comment">// your logic here</span>
+
+    <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
+}
+</code></pre>
+<p>&#x3053;&#x306E;<code>Reconcile</code>&#x95A2;&#x6570;&#x306F;&#x3001;Tenant&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3057;&#x305F;&#x308A;&#x3001;&#x66F4;&#x65B0;&#x30FB;&#x524A;&#x9664;&#x3092;&#x304A;&#x3053;&#x306A;&#x3063;&#x305F;&#x30BF;&#x30A4;&#x30DF;&#x30F3;&#x30B0;&#x3067;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;
+Kubernetes&#x30AF;&#x30E9;&#x30B9;&#x30BF;&#x306E;&#x72B6;&#x614B;&#x3092;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3067;&#x6307;&#x5B9A;&#x3055;&#x308C;&#x305F;&#x5185;&#x5BB9;&#x3068;&#x4E00;&#x81F4;&#x3055;&#x305B;&#x308B;&#x305F;&#x3081;&#x306E;&#x51E6;&#x7406;&#x3092;<code>Reconcile</code>&#x95A2;&#x6570;&#x306B;&#x5B9F;&#x88C5;&#x3057;&#x3066;&#x3044;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<h2 id="&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x53D6;&#x5F97;">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x53D6;&#x5F97;</h2>
+<p><code>Reconcile</code>&#x95A2;&#x6570;&#x306E;&#x5F15;&#x6570;&#x3067;&#x3042;&#x308B;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Request" target="_blank">reconcile.Request</a>&#x306B;&#x306F;&#x3001;&#x3053;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x7BA1;&#x7406;&#x5BFE;&#x8C61;&#x3067;&#x3042;&#x308B;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;Namespace&#x3068;Name&#x304C;&#x542B;&#x307E;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+&#x3053;&#x306E;&#x60C5;&#x5831;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3001;API&#x30B5;&#x30FC;&#x30D0;&#x30FC;&#x304B;&#x3089;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x60C5;&#x5831;&#x3092;&#x53D6;&#x5F97;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<pre><code class="lang-go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *TenantReconciler)</span> <span class="hljs-title">Reconcile</span><span class="hljs-params">(req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
+    ctx := context.Background()
+    log := r.Log.WithValues(<span class="hljs-string">&quot;tenant&quot;</span>, req.NamespacedName)
+
+    <span class="hljs-keyword">var</span> tenant multitenancyv1.Tenant
+    err := r.Get(ctx, req.NamespacedName, &amp;tenant)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
+    }
+    log.Info(<span class="hljs-string">&quot;got tenant&quot;</span>, <span class="hljs-string">&quot;tenant&quot;</span>, tenant)
+
+    <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
+}
+</code></pre>
+<p><code>make run</code>&#x306A;&#x3069;&#x3067;&#x5B9F;&#x884C;&#x3057;&#x3066;&#x307F;&#x308B;&#x3068;&#x3001;&#x53D6;&#x5F97;&#x3057;&#x305F;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x5185;&#x5BB9;&#x304C;&#x30ED;&#x30B0;&#x306B;&#x51FA;&#x529B;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x3053;&#x3068;&#x304C;&#x308F;&#x304B;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<h2 id="&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x4F5C;&#x6210;">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x4F5C;&#x6210;</h2>
+<p>&#x3064;&#x304E;&#x306B;&#x3001;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x8A18;&#x8FF0;&#x3055;&#x308C;&#x305F;&#x5185;&#x5BB9;&#x306B;&#x5FDC;&#x3058;&#x3066;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x4F5C;&#x6210;&#x3092;&#x304A;&#x3053;&#x306A;&#x3063;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p>&#x524D;&#x8FF0;&#x3057;&#x305F;&#x3088;&#x3046;&#x306B;<code>Reconcile</code>&#x95A2;&#x6570;&#x306F;&#x51AA;&#x7B49;&#x3001;&#x3059;&#x306A;&#x308F;&#x3061;&#x4F55;&#x5EA6;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x3066;&#x3082;&#x540C;&#x3058;&#x7D50;&#x679C;&#x306B;&#x306A;&#x308B;&#x3088;&#x3046;&#x306B;&#x5B9F;&#x88C5;&#x3057;&#x306A;&#x3051;&#x308C;&#x3070;&#x306A;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;
+&#x305D;&#x3053;&#x3067;controller-runtime&#x306B;&#x306F;&#x3001;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x5B58;&#x5728;&#x3057;&#x306A;&#x3051;&#x308C;&#x3070;&#x4F5C;&#x6210;&#x3057;&#x3001;&#x5B58;&#x5728;&#x3059;&#x308C;&#x3070;&#x66F4;&#x65B0;&#x3059;&#x308B;<code>CreateOrUpdate()</code>&#x3068;&#x3044;&#x3046;&#x4FBF;&#x5229;&#x306A;&#x95A2;&#x6570;&#x304C;&#x7528;&#x610F;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x3053;&#x306E;&#x95A2;&#x6570;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3001;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;Namespaces&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;&#x6307;&#x5B9A;&#x3055;&#x308C;&#x305F;&#x540D;&#x524D;&#x306E;Namespace&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;
+&#x306A;&#x304A;&#x3001;<code>CreateOrUpdate</code>&#x95A2;&#x6570;&#x306E;&#x7B2C;4&#x5F15;&#x6570;&#x306B;&#x306F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x66F4;&#x65B0;&#x51E6;&#x7406;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x305F;&#x3081;&#x306E;&#x95A2;&#x6570;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *TenantReconciler)</span> <span class="hljs-title">Reconcile</span><span class="hljs-params">(req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
+    ctx := context.Background()
+    log := r.Log.WithValues(<span class="hljs-string">&quot;tenant&quot;</span>, req.NamespacedName)
+
+    <span class="hljs-keyword">var</span> tenant multitenancyv1.Tenant
+    err := r.Get(ctx, req.NamespacedName, &amp;tenant)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
+    }
+    log.Info(<span class="hljs-string">&quot;got tenant&quot;</span>, <span class="hljs-string">&quot;tenant&quot;</span>, tenant)
+
+    <span class="hljs-keyword">for</span> _, name := <span class="hljs-keyword">range</span> tenant.Spec.Namespaces {
+        ns := &amp;corev1.Namespace{
+            ObjectMeta: metav1.ObjectMeta{
+                Name: name,
+            },
+        }
+        _, err = ctrl.CreateOrUpdate(ctx, r, ns, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+        })
+        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+            <span class="hljs-keyword">return</span> ctrl.Result{}, err
+        }
+    }
+
+    <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
+}
+</code></pre>
+<p>&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;Kubernetes&#x30AF;&#x30E9;&#x30B9;&#x30BF;&#x306B;&#x9069;&#x7528;&#x3057;&#x3001;&#x4E0A;&#x8A18;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;&#x5B9F;&#x884C;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;
+<code>sample1</code>, <code>sample2</code>&#x3068;&#x3044;&#x3046;&#x540D;&#x524D;&#x306E;Namespace&#x304C;&#x4F5C;&#x6210;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x3053;&#x3068;&#x304C;&#x78BA;&#x8A8D;&#x3067;&#x304D;&#x308B;&#x3067;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> multitenancy.example.com/v1
+<span class="hljs-attr">kind:</span> Tenant
+<span class="hljs-attr">metadata:</span>
+<span class="hljs-attr">  name:</span> tenant-sample
+<span class="hljs-attr">spec:</span>
+<span class="hljs-attr">  namespaces:</span>
+<span class="hljs-bullet">    -</span> sample1
+<span class="hljs-bullet">    -</span> sample2
+</code></pre>
+<h2 id="&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;</h2>
+<p>&#x4F5C;&#x6210;&#x3057;&#x305F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;1&#x3064;1&#x3064;<code>Delete</code>&#x95A2;&#x6570;&#x3092;&#x547C;&#x3073;&#x51FA;&#x3057;&#x3066;&#x524A;&#x9664;&#x3059;&#x308B;&#x3053;&#x3068;&#x3082;&#x3067;&#x304D;&#x307E;&#x3059;&#x304C;&#x3001;Kubernetes&#x306B;&#x306F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x6A5F;&#x80FD;&#x304C;&#x7528;&#x610F;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+&#x8A73;&#x7D30;&#x306F;<a href="deletion.html">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;</a>&#x3067;&#x89E3;&#x8AAC;&#x3057;&#x307E;&#x3059;&#x304C;&#x3001;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x6A5F;&#x80FD;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3068;&#x3001;&#x3042;&#x308B;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x308B;&#x3068;&#x305D;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x89AA;&#x306B;&#x6301;&#x3064;&#x5B50;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x81EA;&#x52D5;&#x7684;&#x306B;&#x524A;&#x9664;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
+<p>controller-runtime&#x3067;&#x306F;&#x3001;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6307;&#x5B9A;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetControllerReference" target="_blank">controllerutil.SetControllerReference</a>&#x3068;&#x3044;&#x3046;&#x95A2;&#x6570;&#x304C;&#x7528;&#x610F;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306B;&#x3001;<code>CreateOrUpdate</code>&#x306E;&#x7B2C;4&#x5F15;&#x6570;&#x306B;&#x6307;&#x5B9A;&#x3057;&#x305F;&#x95A2;&#x6570;&#x5185;&#x3067;<code>controllerutil.SetControllerReference</code>&#x3092;&#x547C;&#x3093;&#x3067;&#x307F;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *TenantReconciler)</span> <span class="hljs-title">Reconcile</span><span class="hljs-params">(req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
+    ctx := context.Background()
+    log := r.Log.WithValues(<span class="hljs-string">&quot;tenant&quot;</span>, req.NamespacedName)
+
+    <span class="hljs-keyword">var</span> tenant multitenancyv1.Tenant
+    err := r.Get(ctx, req.NamespacedName, &amp;tenant)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
+    }
+    log.Info(<span class="hljs-string">&quot;got tenant&quot;</span>, <span class="hljs-string">&quot;tenant&quot;</span>, tenant)
+
+    <span class="hljs-keyword">for</span> _, name := <span class="hljs-keyword">range</span> tenant.Spec.Namespaces {
+        ns := &amp;corev1.Namespace{
+            ObjectMeta: metav1.ObjectMeta{
+                Name: name,
+            },
+        }
+        _, err = ctrl.CreateOrUpdate(ctx, r, ns, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+            <span class="hljs-keyword">return</span> ctrl.SetControllerReference(&amp;tenant, ns, r.Scheme)
+        })
+        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+            <span class="hljs-keyword">return</span> ctrl.Result{}, err
+        }
+    }
+
+    <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
+}
+</code></pre>
+<p>&#x3053;&#x306E;&#x72B6;&#x614B;&#x3067;&#x5148;&#x307B;&#x3069;&#x4F5C;&#x6210;&#x3057;&#x305F;<code>tenant-sample</code>&#x3068;&#x3044;&#x3046;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;
+&#x3059;&#x308B;&#x3068;&#x3001;&#x305D;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x89AA;&#x306B;&#x6301;&#x3064;<code>sample1</code>, <code>sample2</code>&#x3068;&#x3044;&#x3046;Namespace&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3082;&#x81EA;&#x52D5;&#x7684;&#x306B;&#x524A;&#x9664;&#x3055;&#x308C;&#x308B;&#x3053;&#x3068;&#x304C;&#x78BA;&#x8A8D;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<h2 id="&#x30B9;&#x30C6;&#x30FC;&#x30BF;&#x30B9;&#x306E;&#x66F4;&#x65B0;">&#x30B9;&#x30C6;&#x30FC;&#x30BF;&#x30B9;&#x306E;&#x66F4;&#x65B0;</h2>
+<p>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x304C;&#x4F55;&#x3089;&#x304B;&#x306E;&#x51E6;&#x7406;&#x3092;&#x304A;&#x3053;&#x306A;&#x3063;&#x305F;&#x3089;&#x3001;&#x305D;&#x306E;&#x7D50;&#x679C;&#x3092;&#x5229;&#x7528;&#x8005;&#x306B;&#x77E5;&#x3089;&#x305B;&#x308B;&#x3053;&#x3068;&#x306F;&#x91CD;&#x8981;&#x3067;&#x3059;&#x3002;
+&#x305D;&#x306E;&#x3088;&#x3046;&#x306A;&#x60C5;&#x5831;&#x3092;&#x4F1D;&#x3048;&#x308B;&#x305F;&#x3081;&#x306B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x30B9;&#x30C6;&#x30FC;&#x30BF;&#x30B9;&#x3092;&#x5229;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x5148;&#x307B;&#x3069;&#x5229;&#x7528;&#x3057;&#x305F;<code>CreateOrUpdate</code>&#x95A2;&#x6570;&#x306F;&#x3001;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x4F5C;&#x6210;&#x3084;&#x66F4;&#x65B0;&#x3092;&#x304A;&#x3053;&#x306A;&#x3063;&#x305F;&#x306E;&#x304B;&#x3001;&#x305D;&#x308C;&#x3068;&#x3082;&#x4F55;&#x3082;&#x304A;&#x3053;&#x306A;&#x308F;&#x306A;&#x304B;&#x3063;&#x305F;&#x306E;&#x304B;&#x3092;&#x623B;&#x308A;&#x5024;&#x3067;&#x8FD4;&#x3057;&#x307E;&#x3059;&#x3002;
+&#x3053;&#x308C;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3001;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x4F5C;&#x6210;&#x3084;&#x66F4;&#x65B0;&#x51E6;&#x7406;&#x304C;&#x304A;&#x3053;&#x306A;&#x308F;&#x308C;&#x305F;&#x5834;&#x5408;&#x306B;&#x30B9;&#x30C6;&#x30FC;&#x30BF;&#x30B9;&#x3092;&#x66F4;&#x65B0;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<pre><code class="lang-go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *TenantReconciler)</span> <span class="hljs-title">Reconcile</span><span class="hljs-params">(req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
+    ctx := context.Background()
+    log := r.Log.WithValues(<span class="hljs-string">&quot;tenant&quot;</span>, req.NamespacedName)
+
+    <span class="hljs-keyword">var</span> tenant multitenancyv1.Tenant
+    err := r.Get(ctx, req.NamespacedName, &amp;tenant)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
+    }
+    log.Info(<span class="hljs-string">&quot;got tenant&quot;</span>, <span class="hljs-string">&quot;tenant&quot;</span>, tenant)
+
+    updated := <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">for</span> _, name := <span class="hljs-keyword">range</span> tenant.Spec.Namespaces {
+        ns := &amp;corev1.Namespace{
+            ObjectMeta: metav1.ObjectMeta{
+                Name: name,
+            },
+        }
+        op, err := ctrl.CreateOrUpdate(ctx, r, ns, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+            <span class="hljs-keyword">return</span> ctrl.SetControllerReference(&amp;tenant, ns, r.Scheme)
+        })
+        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+            <span class="hljs-keyword">return</span> ctrl.Result{}, err
+        }
+        <span class="hljs-keyword">if</span> op != controllerutil.OperationResultNone {
+            updated = <span class="hljs-literal">true</span>
+        }
+    }
+    <span class="hljs-keyword">if</span> updated {
+        tenant.Status = multitenancyv1.TenantStatus{
+            Conditions: []multitenancyv1.TenantCondition{
+                {
+                    Type:               multitenancyv1.ConditionReady,
+                    Status:             corev1.ConditionTrue,
+                    LastTransitionTime: metav1.NewTime(time.Now()),
+                },
+            },
+        }
+        err := r.Status().Update(ctx, &amp;tenant)
+        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+            <span class="hljs-keyword">return</span> ctrl.Result{}, err
+        }
+    }
+
+    <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
+}
+</code></pre>
+<p>&#x518D;&#x5EA6;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;
+&#x6210;&#x529F;&#x3059;&#x308B;&#x3068;&#x3001;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x30B9;&#x30C6;&#x30FC;&#x30BF;&#x30B9;&#x304C;&#x66F4;&#x65B0;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x3053;&#x3068;&#x304C;&#x78BA;&#x8A8D;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x4EE5;&#x4E0A;&#x304C;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x5B9F;&#x88C5;&#x306E;&#x57FA;&#x672C;&#x3068;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
+Kubernetes&#x3084;controller-runtime&#x306B;&#x306F;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;&#x5B9F;&#x88C5;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x5FC5;&#x8981;&#x306A;&#x6A5F;&#x80FD;&#x304C;&#x4ED6;&#x306B;&#x3082;&#x305F;&#x304F;&#x3055;&#x3093;&#x7528;&#x610F;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+&#x4EE5;&#x964D;&#x306E;&#x30DA;&#x30FC;&#x30B8;&#x3067;&#x306F;&#x305D;&#x308C;&#x3089;&#x306E;&#x8A73;&#x7D30;&#x306B;&#x3064;&#x3044;&#x3066;&#x89E3;&#x8AAC;&#x3057;&#x3066;&#x3044;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: controller-runtime">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="client.html" class="navigation navigation-next " aria-label="Next page: クライアントの使い方">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"コントローラ実装入門","level":"1.4.1","depth":2,"next":{"title":"クライアントの使い方","level":"1.4.2","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"previous":{"title":"controller-runtime","level":"1.4","depth":1,"path":"controller-runtime/README.md","ref":"controller-runtime/README.md","articles":[{"title":"コントローラ実装入門","level":"1.4.1","depth":2,"path":"controller-runtime/introduction.md","ref":"controller-runtime/introduction.md","articles":[]},{"title":"クライアントの使い方","level":"1.4.2","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},{"title":"Reconcileの実装","level":"1.4.3","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},{"title":"リソースの削除","level":"1.4.4","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},{"title":"コントローラのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},{"title":"Webhookの実装","level":"1.4.6","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},{"title":"Webhookのテスト","level":"1.4.7","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},{"title":"Manager","level":"1.4.8","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},{"title":"メトリクスの収集","level":"1.4.9","depth":2,"path":"controller-runtime/metrics.md","ref":"controller-runtime/metrics.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/introduction.md","mtime":"2020-08-24T13:41:27.000Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-08-24T13:42:54.761Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

@@ -62,7 +62,7 @@
     <link rel="next" href="reconcile.html" />
     
     
-    <link rel="prev" href="./" />
+    <link rel="prev" href="introduction.html" />
     
 
     </head>
@@ -273,20 +273,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.2" data-path="../controller-tools/advanced_crd.html">
-            
-                <a href="../controller-tools/advanced_crd.html">
-            
-                    
-                    CRDマニフェストの生成(応用編)
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.3" data-path="../controller-tools/rbac.html">
+        <li class="chapter " data-level="1.3.2" data-path="../controller-tools/rbac.html">
             
                 <a href="../controller-tools/rbac.html">
             
@@ -299,7 +286,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.4" data-path="../controller-tools/webhook.html">
+        <li class="chapter " data-level="1.3.3" data-path="../controller-tools/webhook.html">
             
                 <a href="../controller-tools/webhook.html">
             
@@ -331,7 +318,20 @@
             <ul class="articles">
                 
     
-        <li class="chapter active" data-level="1.4.1" data-path="client.html">
+        <li class="chapter " data-level="1.4.1" data-path="introduction.html">
+            
+                <a href="introduction.html">
+            
+                    
+                    コントローラ実装入門
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.4.2" data-path="client.html">
             
                 <a href="client.html">
             
@@ -344,7 +344,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="reconcile.html">
+        <li class="chapter " data-level="1.4.3" data-path="reconcile.html">
             
                 <a href="reconcile.html">
             
@@ -357,7 +357,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="deletion.html">
+        <li class="chapter " data-level="1.4.4" data-path="deletion.html">
             
                 <a href="deletion.html">
             
@@ -370,7 +370,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="controller_test.html">
+        <li class="chapter " data-level="1.4.5" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
@@ -383,7 +383,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.6" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -396,7 +396,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.7" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
@@ -409,7 +409,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="manager.html">
+        <li class="chapter " data-level="1.4.8" data-path="manager.html">
             
                 <a href="manager.html">
             
@@ -422,25 +422,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="metrics.html">
+        <li class="chapter " data-level="1.4.9" data-path="metrics.html">
             
                 <a href="metrics.html">
             
                     
                     メトリクスの収集
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.9" data-path="versioning.html">
-            
-                <a href="versioning.html">
-            
-                    
-                    CRDのバージョニング
             
                 </a>
             
@@ -670,7 +657,7 @@ err = r.Create(ctx, &amp;target, &amp;client.CreateOptions{})
 <p>&#x306A;&#x304A;&#x3001;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x5B58;&#x5728;&#x3059;&#x308B;&#x72B6;&#x614B;&#x3067;<code>Create()</code>&#x3092;&#x547C;&#x3093;&#x3060;&#x308A;&#x3001;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x5B58;&#x5728;&#x3057;&#x306A;&#x3044;&#x72B6;&#x614B;&#x3067;<code>Update()</code>&#x3092;&#x547C;&#x3073;&#x51FA;&#x3059;&#x3068;&#x30A8;&#x30E9;&#x30FC;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
 <h2 id="createorupdate">CreateOrUpdate</h2>
 <p><code>Get()</code>&#x3067;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x53D6;&#x5F97;&#x3057;&#x3066;&#x3001;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x5B58;&#x5728;&#x3057;&#x306A;&#x3051;&#x308C;&#x3070;<code>Create()</code>&#x3001;&#x5B58;&#x5728;&#x3059;&#x308C;&#x3070;<code>Update()</code>&#x3092;&#x547C;&#x3073;&#x51FA;&#x3059;&#x3068;&#x3044;&#x3046;&#x51E6;&#x7406;&#x306F;&#x983B;&#x51FA;&#x30D1;&#x30BF;&#x30FC;&#x30F3;&#x3067;&#x3059;&#x3002;
-&#x305D;&#x3053;&#x3067;&#x3001;Client&#x306B;&#x306F;<code>CreateOrUpdate()</code>&#x3068;&#x3044;&#x3046;&#x4FBF;&#x5229;&#x306A;&#x95A2;&#x6570;&#x304C;&#x7528;&#x610F;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+&#x305D;&#x3053;&#x3067;&#x3001;controller-runtime&#x306B;&#x306F;<code>CreateOrUpdate()</code>&#x3068;&#x3044;&#x3046;&#x4FBF;&#x5229;&#x306A;&#x95A2;&#x6570;&#x304C;&#x7528;&#x610F;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
 <blockquote>
 <p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
 </blockquote>
@@ -754,12 +741,14 @@ MergePatch&#x65B9;&#x5F0F;&#x3067;&#x306F;&#x305D;&#x306E;&#x3088;&#x3046;&#x306
 <h2 id="statusupdatepatch">Status.Update/Patch</h2>
 <p>Status&#x3092;&#x30B5;&#x30D6;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x5316;&#x3057;&#x3066;&#x3044;&#x308B;&#x5834;&#x5408;&#x3001;&#x3053;&#x308C;&#x307E;&#x3067;&#x7D39;&#x4ECB;&#x3057;&#x305F;<code>Update()</code>&#x3084;<code>Patch()</code>&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3082;&#x30B9;&#x30C6;&#x30FC;&#x30BF;&#x30B9;&#x3092;&#x66F4;&#x65B0;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x305B;&#x3093;&#x3002;
 Status&#x66F4;&#x65B0;&#x7528;&#x306E;&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3053;&#x3068;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
-<p><code>Status.Update()</code>&#x3068;<code>Status.Path()</code>&#x306F;&#x3001;&#x30E1;&#x30A4;&#x30F3;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;<code>Update()</code>&#x3001;<code>Patch()</code>&#x3068;&#x4F7F;&#x3044;&#x65B9;&#x306F;&#x540C;&#x3058;&#x3067;&#x3059;&#x3002;</p>
+<p><code>Status.Update()</code>&#x3068;<code>Status.Path()</code>&#x306F;&#x3001;&#x30E1;&#x30A4;&#x30F3;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;<code>Update()</code>&#x3001;<code>Patch()</code>&#x3068;&#x4F7F;&#x3044;&#x65B9;&#x306F;&#x540C;&#x3058;&#x3067;&#x3059;&#x3002;
+&#x305F;&#x3060;&#x3057;&#x3001;&#x73FE;&#x72B6;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E; Status &#x30B5;&#x30D6;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F; Server-Side Apply &#x306B;&#x3088;&#x308B; Patch &#x3092;&#x30B5;&#x30DD;&#x30FC;&#x30C8;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x305B;&#x3093;&#x3002;</p>
 <pre><code class="lang-go">tenant.Status = multitenancyv1.TenantStatus{
     Conditions: []multitenancyv1.TenantCondition{
         {
-            Type: multitenancyv1.ConditionReady, 
-            Status: corev1.ConditionTrue,
+            Type:               multitenancyv1.ConditionReady, 
+            Status:             corev1.ConditionTrue,
+            LastTransitionTime: metav1.NewTime(time.Now()),
         },
     },
 }
@@ -822,9 +811,7 @@ err := r.Status().Update(ctx, &amp;tenant)
 <p>client-go&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;CRD&#x3092;&#x6271;&#x3046;&#x5834;&#x5408;&#x3001;<a href="https://pkg.go.dev/k8s.io/client-go/dynamic?tab=doc" target="_blank">k8s.io/client-go/dynamic</a>&#x3084;<a href="https://pkg.go.dev/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured?tab=doc" target="_blank">k8s.io/apimachinery/pkg/apis/meta/v1/unstructured</a>&#x306B;&#x3088;&#x308B;&#x52D5;&#x7684;&#x578B;&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x304B;&#x3001;<a href="https://github.com/kubernetes/code-generator" target="_blank">kubernetes/code-generator</a>&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x30B3;&#x30FC;&#x30C9;&#x751F;&#x6210;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x5FC5;&#x8981;&#x304C;&#x3042;&#x308A;&#x307E;&#x3057;&#x305F;&#x3002;</p>
 <p>&#x3057;&#x304B;&#x3057;&#x3001;controller-runtime&#x306E;Client&#x3067;&#x306F;&#x3001;&#x5F15;&#x6570;&#x306B;&#x69CB;&#x9020;&#x4F53;&#x3092;&#x6E21;&#x3059;&#x3060;&#x3051;&#x3067;&#x6A19;&#x6E96;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3067;&#x3082;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3067;&#x3082;API&#x3092;&#x547C;&#x3073;&#x5206;&#x3051;&#x3066;&#x304F;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
 &#x3053;&#x306E;Client&#x306F;&#x3069;&#x306E;&#x3088;&#x3046;&#x306B;&#x4ED5;&#x7D44;&#x307F;&#x306B;&#x306A;&#x3063;&#x3066;&#x3044;&#x308B;&#x306E;&#x3067;&#x3057;&#x3087;&#x3046;&#x304B;&#x3002;</p>
-<p>&#x307E;&#x305A;&#x306F;&#x30EA;&#x30D5;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x306B;&#x3088;&#x308A;<code>Tenant</code>&#x69CB;&#x9020;&#x4F53;&#x304B;&#x3089;&quot;Tenant&quot;&#x3068;&#x3044;&#x3046;&#x6587;&#x5B57;&#x5217;&#x3092;&#x53D6;&#x5F97;&#x3057;&#x307E;&#x3059;&#x3002;&#x3053;&#x308C;&#x304C;Kind&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
-&#x3055;&#x3089;&#x306B;<a href="../../codes/tenant/api/v1/groupversion_info.go">api/v1/groupversion_info.go</a>&#x306B;&#x57CB;&#x3081;&#x8FBC;&#x307E;&#x308C;&#x305F;&#x60C5;&#x5831;&#x3092;&#x3082;&#x3068;&#x306B;Group&#x3068;Version&#x3092;&#x53D6;&#x5F97;&#x3057;&#x307E;&#x3059;&#x3002;
-&#x3053;&#x308C;&#x3067;GVK&#x304C;&#x53D6;&#x5F97;&#x3067;&#x304D;&#x307E;&#x3057;&#x305F;&#x3002;</p>
+<p>&#x307E;&#x305A;&#x306F;&#x6E21;&#x3055;&#x308C;&#x305F;&#x69CB;&#x9020;&#x4F53;&#x306E;&#x578B;&#x3092; Scheme &#x306B;&#x767B;&#x9332;&#x3055;&#x308C;&#x305F;&#x60C5;&#x5831;&#x304B;&#x3089;&#x63A2;&#x3057;&#x307E;&#x3059;&#x3002;&#x305D;&#x3046;&#x3059;&#x308B;&#x3068; GVK &#x304C;&#x5F97;&#x3089;&#x308C;&#x307E;&#x3059;&#x3002;</p>
 <p>&#x6B21;&#x306B;REST API&#x3092;&#x53E9;&#x304F;&#x305F;&#x3081;&#x306B;&#x306F;REST API&#x306E;&#x30D1;&#x30B9;&#x3092;&#x89E3;&#x6C7A;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;
 REST API&#x306E;&#x30D1;&#x30B9;&#x306F;&#x3001;namespace-scoped&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3067;&#x3042;&#x308C;&#x3070;<code>/apis/{group}/{version}/namespaces/{namespace}/{resource}/{name}</code>&#x3001;cluster-scope&#x306E;&#x30B9;&#x30B3;&#x30FC;&#x30D7;&#x3067;&#x3042;&#x308C;&#x3070;<code>/apis/{group}/{version}/{resource}/{name}</code>&#x306E;&#x3088;&#x3046;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
 &#x3053;&#x306E;&#x60C5;&#x5831;&#x306F;CRD&#x306B;&#x8A18;&#x8FF0;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x305F;&#x3081;&#x3001;API&#x30B5;&#x30FC;&#x30D0;&#x30FC;&#x306B;&#x554F;&#x3044;&#x5408;&#x308F;&#x305B;&#x308B;&#x5FC5;&#x8981;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;</p>
@@ -862,7 +849,7 @@ tenants                multitenancy.example.com   false        Tenant
 
             
                 
-                <a href="./" class="navigation navigation-prev " aria-label="Previous page: controller-runtime">
+                <a href="introduction.html" class="navigation navigation-prev " aria-label="Previous page: コントローラ実装入門">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
@@ -878,7 +865,7 @@ tenants                multitenancy.example.com   false        Tenant
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"next":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"previous":{"title":"controller-runtime","level":"1.4","depth":1,"path":"controller-runtime/README.md","ref":"controller-runtime/README.md","articles":[{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},{"title":"コントローラのテスト","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},{"title":"Webhookのテスト","level":"1.4.6","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},{"title":"メトリクスの収集","level":"1.4.8","depth":2,"path":"controller-runtime/metrics.md","ref":"controller-runtime/metrics.md","articles":[]},{"title":"CRDのバージョニング","level":"1.4.9","depth":2,"path":"controller-runtime/versioning.md","ref":"controller-runtime/versioning.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/client.md","mtime":"2020-08-01T08:02:45.270Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-08-03T14:53:21.019Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"クライアントの使い方","level":"1.4.2","depth":2,"next":{"title":"Reconcileの実装","level":"1.4.3","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"previous":{"title":"コントローラ実装入門","level":"1.4.1","depth":2,"path":"controller-runtime/introduction.md","ref":"controller-runtime/introduction.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/client.md","mtime":"2020-08-23T04:33:52.250Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-08-24T13:42:54.761Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -886,6 +873,10 @@ tenants                multitenancy.example.com   false        Tenant
         
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

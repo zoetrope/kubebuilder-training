@@ -59,7 +59,7 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="advanced_crd.html" />
+    <link rel="next" href="rbac.html" />
     
     
     <link rel="prev" href="./" />
@@ -273,20 +273,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.2" data-path="advanced_crd.html">
-            
-                <a href="advanced_crd.html">
-            
-                    
-                    CRDマニフェストの生成(応用編)
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.3" data-path="rbac.html">
+        <li class="chapter " data-level="1.3.2" data-path="rbac.html">
             
                 <a href="rbac.html">
             
@@ -299,7 +286,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.4" data-path="webhook.html">
+        <li class="chapter " data-level="1.3.3" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -331,7 +318,20 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/client.html">
+        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/introduction.html">
+            
+                <a href="../controller-runtime/introduction.html">
+            
+                    
+                    コントローラ実装入門
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/client.html">
             
                 <a href="../controller-runtime/client.html">
             
@@ -344,7 +344,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/reconcile.html">
             
                 <a href="../controller-runtime/reconcile.html">
             
@@ -357,7 +357,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/deletion.html">
             
                 <a href="../controller-runtime/deletion.html">
             
@@ -370,7 +370,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
@@ -383,7 +383,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -396,7 +396,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
@@ -409,7 +409,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/manager.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/manager.html">
             
                 <a href="../controller-runtime/manager.html">
             
@@ -422,25 +422,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/metrics.html">
             
                 <a href="../controller-runtime/metrics.html">
             
                     
                     メトリクスの収集
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/versioning.html">
-            
-                <a href="../controller-runtime/versioning.html">
-            
-                    
-                    CRDのバージョニング
             
                 </a>
             
@@ -633,6 +620,10 @@ controller-gen&#x306F;&#x3001;&#x3053;&#x308C;&#x3089;&#x306E;&#x69CB;&#x9020;&#
     ConditionReady TenantConditionType = <span class="hljs-string">&quot;Ready&quot;</span>
 )
 </code></pre>
+<p>&#x6C4E;&#x7528;&#x7684;&#x306A; Condition &#x578B;&#x304C; Go 1.19 &#x3067;&#x8FFD;&#x52A0;&#x3055;&#x308C;&#x308B;&#x306E;&#x3067;&#x3001;&#x3053;&#x3061;&#x3089;&#x3092;&#x4F7F;&#x3063;&#x3066;&#x3044;&#x304F;&#x306E;&#x3082;&#x826F;&#x3044;&#x3067;&#x3059;&#x3002;</p>
+<ul>
+<li><a href="https://pkg.go.dev/k8s.io/apimachinery@v0.19.0-rc.4/pkg/apis/meta/v1?tab=doc#Condition" target="_blank">https://pkg.go.dev/k8s.io/apimachinery@v0.19.0-rc.4/pkg/apis/meta/v1?tab=doc#Condition</a></li>
+</ul>
 <p><code>TenantConditionType</code>&#x306B;&#x306F;<code>// +kubebuilder:validation:Enum=Ready</code>&#x3068;&#x3044;&#x3046;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
 &#x3053;&#x308C;&#x306B;&#x3088;&#x308A;<code>TenantConditionType</code>&#x306F;&#x5217;&#x6319;&#x578B;&#x3068;&#x306A;&#x308A;&#x3001;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3067;&#x5217;&#x6319;&#x3057;&#x305F;&#x5024;(&#x3053;&#x3053;&#x3067;&#x306F;&quot;Ready&quot;)&#x4EE5;&#x5916;&#x306E;&#x5024;&#x3092;&#x6307;&#x5B9A;&#x3067;&#x304D;&#x306A;&#x304F;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
 <p>&#x3053;&#x306E;Status&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;&#x3088;&#x308A;&#x3001;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x3084;&#x4ED6;&#x306E;&#x30B7;&#x30B9;&#x30C6;&#x30E0;(&#x30E2;&#x30CB;&#x30BF;&#x30EA;&#x30F3;&#x30B0;&#x30B7;&#x30B9;&#x30C6;&#x30E0;&#x306A;&#x3069;)&#x304C;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x72B6;&#x614B;&#x3092;&#x78BA;&#x8A8D;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
@@ -735,7 +726,7 @@ tenant-sample   default   tenant-sample-   True
                 </a>
                 
                 
-                <a href="advanced_crd.html" class="navigation navigation-next " aria-label="Next page: CRDマニフェストの生成(応用編)">
+                <a href="rbac.html" class="navigation navigation-next " aria-label="Next page: RBACマニフェストの生成">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -746,7 +737,7 @@ tenant-sample   default   tenant-sample-   True
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"next":{"title":"CRDマニフェストの生成(応用編)","level":"1.3.2","depth":2,"path":"controller-tools/advanced_crd.md","ref":"controller-tools/advanced_crd.md","articles":[]},"previous":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"CRDマニフェストの生成(応用編)","level":"1.3.2","depth":2,"path":"controller-tools/advanced_crd.md","ref":"controller-tools/advanced_crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.4","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-tools/crd.md","mtime":"2020-08-01T08:02:45.270Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-08-03T14:53:21.019Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"next":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},"previous":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-tools/crd.md","mtime":"2020-08-23T04:33:52.250Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-08-24T13:42:54.761Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -754,6 +745,10 @@ tenant-sample   default   tenant-sample-   True
         
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
