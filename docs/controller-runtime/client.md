@@ -110,7 +110,7 @@ controller-runtimeではインメモリキャッシュにインデックスを�
 ## CreateOrUpdate
 
 `Get()`でリソースを取得して、リソースが存在しなければ`Create()`、存在すれば`Update()`を呼び出すという処理は頻出パターンです。
-そこで、Clientには`CreateOrUpdate()`という便利な関数が用意されています。
+そこで、controller-runtimeには`CreateOrUpdate()`という便利な関数が用意されています。
 
 [import:"create-or-update",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
 
@@ -175,8 +175,9 @@ Status更新用のクライアントを利用することになります。
 tenant.Status = multitenancyv1.TenantStatus{
 	Conditions: []multitenancyv1.TenantCondition{
 		{
-			Type: multitenancyv1.ConditionReady, 
-			Status: corev1.ConditionTrue,
+			Type:               multitenancyv1.ConditionReady, 
+			Status:             corev1.ConditionTrue,
+			LastTransitionTime: metav1.NewTime(time.Now()),
 		},
 	},
 }

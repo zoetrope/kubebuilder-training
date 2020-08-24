@@ -124,5 +124,3 @@ status:
 
 [API Conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)
 
-## Admission Webhook
-

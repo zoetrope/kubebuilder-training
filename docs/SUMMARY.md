@@ -13,10 +13,11 @@
   * [make runによるデバッグ](kubebuilder/debug.md)
 * [controller-tools](controller-tools/README.md)
   * [CRDマニフェストの生成](controller-tools/crd.md)
-  * [CRDマニフェストの生成(応用編)](controller-tools/advanced_crd.md)
+  <!-- * [CRDマニフェストの生成(応用編)](controller-tools/advanced_crd.md) -->
   * [RBACマニフェストの生成](controller-tools/rbac.md)
   * [Webhookマニフェストの生成](controller-tools/webhook.md)
 * [controller-runtime](controller-runtime/README.md)
+  * [コントローラ実装入門](controller-runtime/introduction.md)
   * [クライアントの使い方](controller-runtime/client.md)
   * [Reconcileの実装](controller-runtime/reconcile.md)
   * [リソースの削除](controller-runtime/deletion.md)
@@ -25,4 +26,4 @@
   * [Webhookのテスト](controller-runtime/webhook_test.md)
   * [Manager](controller-runtime/manager.md)
   * [メトリクスの収集](controller-runtime/metrics.md)
-  * [CRDのバージョニング](controller-runtime/versioning.md)
+  <!-- * [CRDのバージョニング](controller-runtime/versioning.md) -->
