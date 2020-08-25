@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"os"
+	"path/filepath"
 
 	multitenancyv1 "github.com/zoetrope/kubebuilder-training/codes/api/v1"
 	"github.com/zoetrope/kubebuilder-training/codes/controllers"
@@ -43,6 +44,14 @@ func main() {
 
 	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
 
+	//! [telepresence]
+	certDir := filepath.Join(os.TempDir(), "k8s-webhook-server", "serving-certs")
+	root := os.Getenv("TELEPRESENCE_ROOT")
+	if len(root) != 0 {
+		certDir = filepath.Join(root, certDir)
+	}
+	//! [telepresence]
+
 	//! [new-manager]
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
@@ -51,6 +60,7 @@ func main() {
 		LeaderElection:         enableLeaderElection,
 		LeaderElectionID:       "27475f02.example.com",
 		HealthProbeBindAddress: probeAddr,
+		CertDir:                certDir,
 	})
 	//! [new-manager]
 	if err != nil {

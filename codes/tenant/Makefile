@@ -85,7 +85,7 @@ start:
 	docker build . -t ${IMG}
 	kind load docker-image ${IMG}
 
-	kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.1/cert-manager.yaml
+	kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.16.1/cert-manager.yaml
 	kubectl wait pod --all -n cert-manager --for condition=Ready
 
 	kubectl create ns prometheus

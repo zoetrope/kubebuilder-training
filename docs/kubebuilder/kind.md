@@ -18,7 +18,7 @@ Webhook用の証明書を発行するためにcert-managerが必要となりま�
 下記のコマンドを実行してcert-managerのデプロイをおこないます。([参考](https://cert-manager.io/docs/installation/kubernetes/))
 
 ```console
-$ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.1/cert-manager.yaml
+$ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.16.1/cert-manager.yaml
 ```
 
 ## コントローラのコンテナイメージの用意
