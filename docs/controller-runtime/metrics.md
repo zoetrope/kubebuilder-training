@@ -167,4 +167,4 @@ Explore画面を開いて以下のようなPromQLを入力してみましょう�
 ```
 histogram_quantile(0.99, sum(rate(controller_runtime_reconcile_time_seconds_bucket[5m])) by (le))
 ```
-![grafana](./grafana.png)
+![grafana](./img/grafana.png)
