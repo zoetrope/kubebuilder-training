@@ -233,7 +233,7 @@
                 <a href="../kubebuilder/debug.html">
             
                     
-                    デバッグ
+                    make runによるデバッグ
             
                 </a>
             
@@ -505,7 +505,6 @@
     LeaderElection:         enableLeaderElection,
     LeaderElectionID:       <span class="hljs-string">&quot;27475f02.example.com&quot;</span>,
     HealthProbeBindAddress: probeAddr,
-    CertDir:                certDir,
 })
 </code></pre>
 <p>&#x305D;&#x308C;&#x3067;&#x306F;&#x3001;<a href="../../codes/tenant/config/manager/manager.yaml">config/manager/manager.yaml</a>&#x306E;<code>replicas</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;2&#x306B;&#x5909;&#x66F4;&#x3057;&#x3066;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;&#x30C7;&#x30D7;&#x30ED;&#x30A4;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
@@ -641,7 +640,6 @@ LAST SEEN   TYPE     REASON    OBJECT                 MESSAGE
     LeaderElection:         enableLeaderElection,
     LeaderElectionID:       <span class="hljs-string">&quot;27475f02.example.com&quot;</span>,
     HealthProbeBindAddress: probeAddr,
-    CertDir:                certDir,
 })
 </code></pre>
 <p>&#x305D;&#x3057;&#x3066;&#x3001;<code>AddHealthzCheck</code>&#x3068;<code>AddReadyzCheck</code>&#x3067;&#x3001;&#x30CF;&#x30F3;&#x30C9;&#x30E9;&#x306E;&#x767B;&#x9332;&#x3092;&#x304A;&#x3053;&#x306A;&#x3044;&#x307E;&#x3059;&#x3002;
@@ -762,7 +760,7 @@ Kubernetes&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x3084;&#x30ED;&#x30A
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.8","depth":2,"next":{"title":"メトリクスの収集","level":"1.4.9","depth":2,"path":"controller-runtime/metrics.md","ref":"controller-runtime/metrics.md","articles":[]},"previous":{"title":"Webhookのテスト","level":"1.4.7","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2020-08-23T04:33:52.250Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-08-25T12:47:38.814Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.8","depth":2,"next":{"title":"メトリクスの収集","level":"1.4.9","depth":2,"path":"controller-runtime/metrics.md","ref":"controller-runtime/metrics.md","articles":[]},"previous":{"title":"Webhookのテスト","level":"1.4.7","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2020-08-25T00:47:27.627Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-09-09T00:34:52.584Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -770,10 +768,6 @@ Kubernetes&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x3084;&#x30ED;&#x30A
         
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
-    
-        
-        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
-        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

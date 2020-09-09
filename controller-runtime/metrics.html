@@ -231,7 +231,7 @@
                 <a href="../kubebuilder/debug.html">
             
                     
-                    デバッグ
+                    make runによるデバッグ
             
                 </a>
             
@@ -499,7 +499,6 @@
     LeaderElection:         enableLeaderElection,
     LeaderElectionID:       <span class="hljs-string">&quot;27475f02.example.com&quot;</span>,
     HealthProbeBindAddress: probeAddr,
-    CertDir:                certDir,
 })
 </code></pre>
 <p>&#x3053;&#x308C;&#x3060;&#x3051;&#x3067;CPU&#x3084;&#x30E1;&#x30E2;&#x30EA;&#x306E;&#x4F7F;&#x7528;&#x91CF;&#x306A;&#x3069;&#x306E;&#x57FA;&#x672C;&#x7684;&#x306A;&#x30E1;&#x30C8;&#x30EA;&#x30AF;&#x30B9;&#x3068;&#x3001;Reconcile&#x306B;&#x304B;&#x304B;&#x3063;&#x305F;&#x6642;&#x9593;&#x3084;Kubernetes&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x306E;&#x30EC;&#x30A4;&#x30C6;&#x30F3;&#x30B7;&#x30FC;&#x306A;&#x3069;&#x3001;controller-runtime&#x95A2;&#x9023;&#x306E;&#x30E1;&#x30C8;&#x30EA;&#x30AF;&#x30B9;&#x304C;&#x53CE;&#x96C6;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
@@ -714,7 +713,7 @@ kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
 </ul>
 <p>Explore&#x753B;&#x9762;&#x3092;&#x958B;&#x3044;&#x3066;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306A;PromQL&#x3092;&#x5165;&#x529B;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;&#x3053;&#x308C;&#x306B;&#x3088;&#x308A;Reconcile&#x306B;&#x304B;&#x304B;&#x3063;&#x3066;&#x3044;&#x308B;&#x51E6;&#x7406;&#x6642;&#x9593;&#x3092;&#x30E2;&#x30CB;&#x30BF;&#x30EA;&#x30F3;&#x30B0;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
 <pre><code>histogram_quantile(0.99, sum(rate(controller_runtime_reconcile_time_seconds_bucket[5m])) by (le))
-</code></pre><p><img src="grafana.png" alt="grafana"></p>
+</code></pre><p><img src="img/grafana.png" alt="grafana"></p>
 
                                 
                                 </section>
@@ -754,7 +753,7 @@ kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"メトリクスの収集","level":"1.4.9","depth":2,"previous":{"title":"Manager","level":"1.4.8","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/metrics.md","mtime":"2020-08-01T08:02:45.270Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-08-25T12:47:38.814Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"メトリクスの収集","level":"1.4.9","depth":2,"previous":{"title":"Manager","level":"1.4.8","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/metrics.md","mtime":"2020-08-25T01:14:22.427Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-09-09T00:34:52.584Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -762,10 +761,6 @@ kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
         
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
-    
-        
-        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
-        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
