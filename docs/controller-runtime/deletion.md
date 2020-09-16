@@ -45,8 +45,12 @@ status:
 なお、異なるnamespaceのリソースをownerにしたり、cluster-scopedリソースのownerにnamespace-scopedリソースを指定することはできません。
 今回のテナントコントローラのようにNamespaceやClusterRoleなどのcluster-scopedリソースを扱う場合は、カスタムリソースもcluster-scopedにする必要があります。
 
-また、SetControllerReferenceと似た関数で[controllerutil.SetOwnerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetOwnerReference)もありますが、こちらは`controller`フィールドにfalseが指定されます。
-`controller`フィールドにfalseが指定されていた場合、親リソースが削除されても子リソースは削除されないので注意してください。
+また、`SetControllerReference`と似た関数で[controllerutil.SetOwnerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetOwnerReference)もあります。
+
+`SetControllerReference`は、`controller`フィールドと`blockOwnerDeletion`フィールドにtrueが指定されており、1つのリソースに1つのオーナーのみしか指定することができません。また子リソースが削除されるまで親リソースの削除がブロックされます。
+
+一方の`SetOwnerReference`は1つのリソースに複数のオーナーを指定することができ、子リソースの削除はブロックされずバックグラウンドで実施されます。
+
 
 ## Finalizer
 
@@ -101,4 +105,3 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
 `deletionTimestamp`が付与されていなければ、`finalizers`フィールドを追加します。
 
 `deletionTimestamp`が付与されていた場合は、`finalizers`に自分で指定した名前が存在した場合はリソースの削除をおこない、その後`finalizers`フィールドをクリアします。
-
