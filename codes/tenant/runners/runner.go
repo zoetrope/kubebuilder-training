@@ -1,6 +1,7 @@
 package runners
 
 import (
+	"context"
 	"fmt"
 	"time"
 )
@@ -8,13 +9,13 @@ import (
 type Runner struct {
 }
 
-func (r Runner) Start(ch <-chan struct{}) error {
+func (r Runner) Start(ctx context.Context) error {
 	ticker := time.NewTicker(10 * time.Second)
 	defer ticker.Stop()
 	for {
 		select {
-		case <-ch:
-			return nil
+		case <-ctx.Done():
+			return ctx.Err()
 		case <-ticker.C:
 			fmt.Println("run something")
 		}

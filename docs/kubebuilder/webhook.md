@@ -22,6 +22,7 @@ $ make manifests
 ├── api
 │    └── v1
 │        ├── tenant_webhook.go
+│        ├── webhook_suite_test.go
 │        └── zz_generated.deepcopy.go
 ├── config
 │    └── webhook
@@ -29,6 +30,9 @@ $ make manifests
 │        ├── kustomizeconfig.yaml
 │        ├── manifests.yaml
 │        └── service.yaml
+├── default
+│    ├── manager_webhook_patch.yaml
+│    └── webhookcainjection_patch.yaml
 └── main.go
 ```
 

@@ -7,15 +7,21 @@
 
 ```console
 $ kubebuilder -h
-Usage:
-  kubebuilder [command]
+
+(中略)
 
 Available Commands:
-  create      Scaffold a Kubernetes API or webhook.
+  completion  Load completions for the specified shell
+  create      Scaffold a Kubernetes API or webhook
   edit        This command will edit the project configuration
   help        Help about any command
   init        Initialize a new project
   version     Print the kubebuilder version
+
+Flags:
+  -h, --help   help for kubebuilder
+
+Use "kubebuilder [command] --help" for more information about a command.
 ```
 
 `kubebuilder`には、プロジェクトの新規作成をおこなう`init`サブコマンド、新しいAPIやWebhookの生成をおこなう`create`サブコマンド、生成したプロジェクトの設定を変更する`edit`サブコマンドがあります。

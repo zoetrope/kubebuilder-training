@@ -25,19 +25,27 @@ type TenantReconciler struct {
 	Log      logr.Logger
 	Scheme   *runtime.Scheme
 	Recorder record.EventRecorder
-	stopCh   <-chan struct{}
 }
 
 //! [rbac]
 // +kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants/finalizers,verbs=update
 // +kubebuilder:rbac:groups=core,resources=namespaces,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterroles,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=rolebindings,verbs=get;list;watch;create;update;patch;delete
 //! [rbac]
 
-func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := contextFromStopChannel(r.stopCh)
+// Reconcile is part of the main kubernetes reconciliation loop which aims to
+// move the current state of the cluster closer to the desired state.
+// TODO(user): Modify the Reconcile function to compare the state specified by
+// the Tenant object against the actual cluster state, and then
+// perform operations to make the cluster state reflect the state specified by
+// the user.
+//
+// For more details, check Reconcile and its Result here:
+// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.7.0/pkg/reconcile
+func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := r.Log.WithValues("tenant", req.NamespacedName)
 
 	// your logic here
@@ -261,7 +269,7 @@ func (r *TenantReconciler) reconcileRBAC(ctx context.Context, log logr.Logger, t
 //! [indexer]
 const ownerControllerField = ".metadata.ownerReference.controller"
 
-func indexByOwnerTenant(obj runtime.Object) []string {
+func indexByOwnerTenant(obj client.Object) []string {
 	namespace := obj.(*corev1.Namespace)
 	owner := metav1.GetControllerOf(namespace)
 	if owner == nil {
@@ -277,7 +285,7 @@ func indexByOwnerTenant(obj runtime.Object) []string {
 
 const conditionReadyField = ".status.conditions.ready"
 
-func indexByConditionReady(obj runtime.Object) []string {
+func indexByConditionReady(obj client.Object) []string {
 	tenant := obj.(*multitenancyv1.Tenant)
 	cond := findCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
 	if cond == nil {
@@ -286,6 +294,7 @@ func indexByConditionReady(obj runtime.Object) []string {
 	return []string{string(cond.Status)}
 }
 
+// SetupWithManager sets up the controller with the Manager.
 func (r *TenantReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	ctx := context.Background()
 	//! [index-field]

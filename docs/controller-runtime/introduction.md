@@ -11,8 +11,7 @@ controller-runtimeは非常にたくさんの機能を提供しています。
 カスタムコントローラの実装は、この`Reconcile`関数の中に書いていくことになります。
 
 ```go
-func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	_ = context.Background()
+func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = r.Log.WithValues("tenant", req.NamespacedName)
 
 	// your logic here
@@ -30,8 +29,7 @@ Kubernetesクラスタの状態をTenantリソースで指定された内容と�
 この情報を利用して、APIサーバーからテナントリソースの情報を取得してみましょう。
 
 ```go
-func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
+func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := r.Log.WithValues("tenant", req.NamespacedName)
 
 	var tenant multitenancyv1.Tenant
@@ -58,8 +56,7 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 なお、`CreateOrUpdate`関数の第4引数にはリソースの更新処理をおこなうための関数を指定します。
 
 ```go
-func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
+func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := r.Log.WithValues("tenant", req.NamespacedName)
 
 	var tenant multitenancyv1.Tenant
@@ -111,8 +108,7 @@ controller-runtimeでは、リソースに親リソースを指定するため�
 下記のように、`CreateOrUpdate`の第4引数に指定した関数内で`controllerutil.SetControllerReference`を呼んでみます。
 
 ```go
-func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
+func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := r.Log.WithValues("tenant", req.NamespacedName)
 
 	var tenant multitenancyv1.Tenant
@@ -152,8 +148,7 @@ func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 これを利用して、リソースの作成や更新処理がおこなわれた場合にステータスを更新してみましょう。
 
 ```go
-func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
+func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := r.Log.WithValues("tenant", req.NamespacedName)
 
 	var tenant multitenancyv1.Tenant

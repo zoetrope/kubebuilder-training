@@ -1,14 +1,11 @@
 # Webhookのテスト
 
-controller-runtime v0.5.1以降では、[envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest?tab=doc)でwebhookのテストもサポートするようになりました。
-
 ## テスト環境のセットアップ
 
-コントローラ用のテスト環境を用意するコードはcontroller-genが自動生成してくれますが、Webhook用のコードはまだ生成してくれません(controller-gen 0.3.0の場合)。
+Kubebuilder v3から、WebHookのテストをセットアップするコードが生成されるようになりました。
+[api/v1/webhook_suite_test.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/api/v1/webhook_suite_test.go)を見てみましょう。
 
-そこで[api/v1/suite_test.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/api/v1/suite_test.go)のようなコードを自分で用意する必要があります。
-
-[import, title="api/v1/suite_test.go"](../../codes/tenant/api/v1/suite_test.go)
+[import, title="api/v1/webhook_suite_test.go"](../../codes/tenant/api/v1/webhook_suite_test.go)
 
 基本的にはコントローラのテストコードと似ていますが、`envtest.Environment`を作成する際に、Webhook用のマニフェストのパスを指定したり、`ctrl.NewManager`を呼び出す際に`Host`,`Port`,`CertDir`のパラメータをtestEnvのパラメータで上書きする必要があります。
 

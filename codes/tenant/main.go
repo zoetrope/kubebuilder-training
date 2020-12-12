@@ -5,14 +5,20 @@ import (
 	"os"
 	"path/filepath"
 
-	multitenancyv1 "github.com/zoetrope/kubebuilder-training/codes/api/v1"
-	"github.com/zoetrope/kubebuilder-training/codes/controllers"
-	"github.com/zoetrope/kubebuilder-training/codes/runners"
+	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
+	// to ensure that exec-entrypoint and run can make use of them.
+	_ "k8s.io/client-go/plugin/pkg/client/auth"
+
 	"k8s.io/apimachinery/pkg/runtime"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+
+	multitenancyv1 "github.com/zoetrope/kubebuilder-training/codes/api/v1"
+	"github.com/zoetrope/kubebuilder-training/codes/controllers"
+	"github.com/zoetrope/kubebuilder-training/codes/runners"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -23,9 +29,10 @@ var (
 )
 
 func init() {
-	_ = clientgoscheme.AddToScheme(scheme)
+	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
-	_ = multitenancyv1.AddToScheme(scheme)
+	utilruntime.Must(multitenancyv1.AddToScheme(scheme))
+
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -33,16 +40,20 @@ func init() {
 
 func main() {
 	var metricsAddr string
-	var probeAddr string
 	var enableLeaderElection bool
-	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
-	flag.StringVar(&probeAddr, "probe-addr", ":9090", "The address the liveness probe and readiness probe endpoints bind to.")
-	flag.BoolVar(&enableLeaderElection, "enable-leader-election", false,
+	var probeAddr string
+	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
+	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoints bind to.")
+	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
 			"Enabling this will ensure there is only one active controller manager.")
+	opts := zap.Options{
+		Development: true,
+	}
+	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
 
-	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
+	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
 	//! [telepresence]
 	certDir := filepath.Join("tmp", "k8s-webhook-server", "serving-certs")
@@ -59,9 +70,9 @@ func main() {
 		Scheme:                 scheme,
 		MetricsBindAddress:     metricsAddr,
 		Port:                   9443,
+		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
 		LeaderElectionID:       "27475f02.example.com",
-		HealthProbeBindAddress: probeAddr,
 		CertDir:                certDir,
 	})
 	//! [new-manager]
@@ -92,14 +103,12 @@ func main() {
 	}
 
 	//! [health]
-	err = mgr.AddHealthzCheck("ping", healthz.Ping)
-	if err != nil {
-		setupLog.Error(err, "unable to add healthz check")
+	if err := mgr.AddHealthzCheck("health", healthz.Ping); err != nil {
+		setupLog.Error(err, "unable to set up health check")
 		os.Exit(1)
 	}
-	err = mgr.AddReadyzCheck("ping", healthz.Ping)
-	if err != nil {
-		setupLog.Error(err, "unable to add readyz check")
+	if err := mgr.AddReadyzCheck("check", healthz.Ping); err != nil {
+		setupLog.Error(err, "unable to set up ready check")
 		os.Exit(1)
 	}
 	//! [health]

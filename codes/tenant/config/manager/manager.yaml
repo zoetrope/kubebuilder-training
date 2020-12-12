@@ -22,14 +22,32 @@ spec:
       labels:
         control-plane: controller-manager
     spec:
+      securityContext:
+        runAsUser: 65532
       containers:
       - command:
         - /manager
         args:
-        - --enable-leader-election
+        - --leader-elect
         image: controller:v1
         imagePullPolicy: IfNotPresent
         name: manager
+        securityContext:
+          allowPrivilegeEscalation: false
+        #! [probe]
+        livenessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        #! [probe]
         resources:
           limits:
             cpu: 4000m
@@ -37,18 +55,4 @@ spec:
           requests:
             cpu: 1000m
             memory: 512Mi
-        #! [probe]
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 9090
-          initialDelaySeconds: 3
-          periodSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: /readyz
-            port: 9090
-          initialDelaySeconds: 5
-          periodSeconds: 10
-        #! [probe]
       terminationGracePeriodSeconds: 10

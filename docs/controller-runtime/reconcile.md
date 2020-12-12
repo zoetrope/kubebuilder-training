@@ -83,7 +83,7 @@ Reconcileは[reconcile.Reconciler](https://pkg.go.dev/sigs.k8s.io/controller-run
 
 ```go
 type Reconciler interface {
-	Reconcile(Request) (Result, error)
+	Reconcile(context.Context, Request) (Result, error)
 }
 ```
 

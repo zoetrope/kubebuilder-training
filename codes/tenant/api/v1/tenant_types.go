@@ -68,8 +68,8 @@ const (
 
 //! [tenant]
 // +kubebuilder:object:root=true
-// +kubebuilder:resource:scope=Cluster
 // +kubebuilder:subresource:status
+// +kubebuilder:resource:scope=Cluster
 // +kubebuilder:printcolumn:name="ADMIN",type="string",JSONPath=".spec.admin.name"
 // +kubebuilder:printcolumn:name="PREFIX",type="string",JSONPath=".spec.namespacePrefix"
 // +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"

@@ -1,7 +1,11 @@
 domain: example.com
+layout: go.kubebuilder.io/v3-alpha
+projectName: tenant
 repo: github.com/zoetrope/kubebuilder-training/codes
 resources:
-- group: multitenancy
+- crdVersion: v1
+  group: multitenancy
   kind: Tenant
   version: v1
-version: "2"
+  webhookVersion: v1
+version: 3-alpha

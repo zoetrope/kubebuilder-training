@@ -107,45 +107,18 @@ LAST SEEN   TYPE     REASON    OBJECT                 MESSAGE
 ## healthProbeListener
 
 Managerには、ヘルスチェック用のAPIのエンドポイントを作成する機能が用意されています。
+Kubebuilder v3からはデフォルトでヘルスチェック機構が有効になっています。
 
-まずは、Managerの作成時に`HealthProbeBindAddress`でエンドポイントのアドレスを指定します。
+ヘルスチェック機能を利用するには、Managerの作成時に`HealthProbeBindAddress`でエンドポイントのアドレスを指定します。
 
 [import:"new-manager",unindent:"true"](../../codes/tenant/main.go)
 
 そして、`AddHealthzCheck`と`AddReadyzCheck`で、ハンドラの登録をおこないます。
-ここでは`healthz.Ping`という何もしない関数を利用していますが、独自の関数を登録することも可能です。
+デフォルトでは`healthz.Ping`という何もしない関数を利用していますが、独自の関数を登録することも可能です。
 
 [import:"health",unindent:"true"](../../codes/tenant/main.go)
 
-これでコントローラにヘルスチェック用のAPIが実装できました。
-マニフェストに`livenessProbe`や`readinessProbe`の設定を追加しておきましょう。
+カスタムコントローラのマニフェストでは、このヘルスチェックAPIを`livenessProbe`と`readinessProbe`として利用するように指定されています。
 
 [import:"probe"](../../codes/tenant/config/manager/manager.yaml)
 
-## Inject
-
-Managerには、ReconcilerやRunnerなどに特定のオブジェクトをインジェクトする機能があります。
-InjectClientやInjectLoggerなどのインタフェースを実装すると、managerのStartメソッドを実行したタイミングで、
-Kubernetesクライアントやロガーのオブジェクトを受け取ることが可能です。
-
-利用可能なインタフェースについては下記のパッケージを参照してください。
-- [inject](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/runtime/inject?tab=doc)
-
-これらのオブジェクトのほとんどは、Getメソッドで取得することができるため、injectの使いみちはそれほど多くありません。
-しかし、StopChannelだけはinjectでしか取得することができないため、Reconcilerの中でmanagerからの
-終了通知を受け取りたい場合は、以下のようにInjectStopChannelを利用することになります。
-
-[import, title="inject.go"](../../codes/tenant/controllers/inject.go)
-
-このStopChannelから`context.Context`を作成しておけば、Reconcile Loopの中でmanagerからの終了通知を受け取れます。
-
-```go
-type TenantReconciler struct {
-	stopCh   <-chan struct{}
-}
-
-func (r *TenantReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := contextFromStopChannel(r.stopCh)
-```
-
-ただし、Reconcileは短時間で終了することが望ましいとされていますので、長時間ブロックするような処理はなるべく記述しないようにしましょう。
