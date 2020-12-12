@@ -3,11 +3,10 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>プロジェクトの雛形作成 · HonKit</title>
+        <title>プロジェクトの雛形作成 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.5.2">
+        <meta name="generator" content="HonKit 3.6.15">
         
         
         
@@ -68,7 +67,7 @@
     </head>
     <body>
         
-<div class="book">
+<div class="book honkit-cloak">
     <div class="book-summary">
         
             
@@ -485,155 +484,155 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="&#x30D7;&#x30ED;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x96DB;&#x5F62;&#x4F5C;&#x6210;">&#x30D7;&#x30ED;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x96DB;&#x5F62;&#x4F5C;&#x6210;</h1>
-<p>&#x305D;&#x308C;&#x3067;&#x306F;&#x3055;&#x3063;&#x305D;&#x304F;<code>kubebuilder init</code>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3001;&#x30D7;&#x30ED;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x96DB;&#x5F62;&#x3092;&#x751F;&#x6210;&#x3057;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
-<pre><code class="lang-console">$ mkdir tenant
-$ cd tenant
-$ kubebuilder init --domain example.com --repo github.com/zoetrope/tenant
+                                <h1 id="プロジェクトの雛形作成">プロジェクトの雛形作成</h1>
+<p>それではさっそく<code>kubebuilder init</code>コマンドを利用して、プロジェクトの雛形を生成しましょう。</p>
+<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> mkdir tenant</span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> tenant</span>
+<span class="hljs-meta">$</span><span class="bash"> kubebuilder init --domain example.com --repo github.com/zoetrope/tenant</span>
 </code></pre>
-<p><code>--domain</code>&#x3067;&#x6307;&#x5B9A;&#x3057;&#x305F;&#x540D;&#x524D;&#x306F;CRD&#x306E;&#x30B0;&#x30EB;&#x30FC;&#x30D7;&#x540D;&#x306B;&#x4F7F;&#x308F;&#x308C;&#x307E;&#x3059;&#x3002;
-&#x3042;&#x306A;&#x305F;&#x306E;&#x6240;&#x5C5E;&#x3059;&#x308B;&#x7D44;&#x7E54;&#x304C;&#x4FDD;&#x6301;&#x3059;&#x308B;&#x30C9;&#x30E1;&#x30A4;&#x30F3;&#x306A;&#x3069;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3001;&#x30E6;&#x30CB;&#x30FC;&#x30AF;&#x3067;valid&#x306A;&#x540D;&#x524D;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
-<p><code>--repo</code>&#x306B;&#x306F;go modules&#x306E;module&#x540D;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;&#x901A;&#x5E38;&#x306F;<code>github.com/&lt;user_name&gt;/&lt;product_name&gt;</code>&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x306E;&#x5B9F;&#x884C;&#x306B;&#x6210;&#x529F;&#x3059;&#x308B;&#x3068;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x304C;&#x751F;&#x6210;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
-<pre><code>&#x251C;&#x2500;&#x2500; Dockerfile
-&#x251C;&#x2500;&#x2500; Makefile
-&#x251C;&#x2500;&#x2500; PROJECT
-&#x251C;&#x2500;&#x2500; bin
-&#x2502;    &#x2514;&#x2500;&#x2500; manager
-&#x251C;&#x2500;&#x2500; config
-&#x2502;    &#x251C;&#x2500;&#x2500; certmanager
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; certificate.yaml
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; kustomization.yaml
-&#x2502;    &#x2502;    &#x2514;&#x2500;&#x2500; kustomizeconfig.yaml
-&#x2502;    &#x251C;&#x2500;&#x2500; default
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; kustomization.yaml
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; manager_auth_proxy_patch.yaml
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; manager_webhook_patch.yaml
-&#x2502;    &#x2502;    &#x2514;&#x2500;&#x2500; webhookcainjection_patch.yaml
-&#x2502;    &#x251C;&#x2500;&#x2500; manager
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; kustomization.yaml
-&#x2502;    &#x2502;    &#x2514;&#x2500;&#x2500; manager.yaml
-&#x2502;    &#x251C;&#x2500;&#x2500; prometheus
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; kustomization.yaml
-&#x2502;    &#x2502;    &#x2514;&#x2500;&#x2500; monitor.yaml
-&#x2502;    &#x251C;&#x2500;&#x2500; rbac
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; auth_proxy_client_clusterrole.yaml
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; auth_proxy_role.yaml
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; auth_proxy_role_binding.yaml
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; auth_proxy_service.yaml
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; kustomization.yaml
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; leader_election_role.yaml
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; leader_election_role_binding.yaml
-&#x2502;    &#x2502;    &#x2514;&#x2500;&#x2500; role_binding.yaml
-&#x2502;    &#x2514;&#x2500;&#x2500; webhook
-&#x2502;        &#x251C;&#x2500;&#x2500; kustomization.yaml
-&#x2502;        &#x251C;&#x2500;&#x2500; kustomizeconfig.yaml
-&#x2502;        &#x2514;&#x2500;&#x2500; service.yaml
-&#x251C;&#x2500;&#x2500; go.mod
-&#x251C;&#x2500;&#x2500; go.sum
-&#x251C;&#x2500;&#x2500; hack
-&#x2502;    &#x2514;&#x2500;&#x2500; boilerplate.go.txt
-&#x2514;&#x2500;&#x2500; main.go
-</code></pre><p>&#x751F;&#x6210;&#x3055;&#x308C;&#x305F;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x3092;&#x305D;&#x308C;&#x305E;&#x308C;&#x898B;&#x3066;&#x3044;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p><code>--domain</code>で指定した名前はCRDのグループ名に使われます。
+あなたの所属する組織が保持するドメインなどを利用して、ユニークでvalidな名前を指定してください。</p>
+<p><code>--repo</code>にはgo modulesのmodule名を指定します。通常は<code>github.com/&lt;user_name&gt;/&lt;product_name&gt;</code>を指定します。</p>
+<p>コマンドの実行に成功すると、下記のようなファイルが生成されます。</p>
+<pre><code>├── Dockerfile
+├── Makefile
+├── PROJECT
+├── bin
+│    └── manager
+├── config
+│    ├── certmanager
+│    │    ├── certificate.yaml
+│    │    ├── kustomization.yaml
+│    │    └── kustomizeconfig.yaml
+│    ├── default
+│    │    ├── kustomization.yaml
+│    │    ├── manager_auth_proxy_patch.yaml
+│    │    ├── manager_webhook_patch.yaml
+│    │    └── webhookcainjection_patch.yaml
+│    ├── manager
+│    │    ├── kustomization.yaml
+│    │    └── manager.yaml
+│    ├── prometheus
+│    │    ├── kustomization.yaml
+│    │    └── monitor.yaml
+│    ├── rbac
+│    │    ├── auth_proxy_client_clusterrole.yaml
+│    │    ├── auth_proxy_role.yaml
+│    │    ├── auth_proxy_role_binding.yaml
+│    │    ├── auth_proxy_service.yaml
+│    │    ├── kustomization.yaml
+│    │    ├── leader_election_role.yaml
+│    │    ├── leader_election_role_binding.yaml
+│    │    └── role_binding.yaml
+│    └── webhook
+│        ├── kustomization.yaml
+│        ├── kustomizeconfig.yaml
+│        └── service.yaml
+├── go.mod
+├── go.sum
+├── hack
+│    └── boilerplate.go.txt
+└── main.go
+</code></pre><p>生成されたファイルをそれぞれ見ていきましょう。</p>
 <h2 id="makefile">Makefile</h2>
-<p>&#x30B3;&#x30FC;&#x30C9;&#x751F;&#x6210;&#x3084;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30D3;&#x30EB;&#x30C9;&#x306A;&#x3069;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x305F;&#x3081;&#x306E;Makefile&#x3067;&#x3059;&#x3002;</p>
-<p>&#x3088;&#x304F;&#x5229;&#x7528;&#x3059;&#x308B;&#x30BF;&#x30FC;&#x30B2;&#x30C3;&#x30C8;&#x3068;&#x3057;&#x3066;&#x306F;&#x4EE5;&#x4E0B;&#x306E;&#x3082;&#x306E;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>コード生成やコントローラのビルドなどをおこなうためのMakefileです。</p>
+<p>よく利用するターゲットとしては以下のものがあります。</p>
 <table>
 <thead>
 <tr>
 <th style="text-align:left">target</th>
-<th style="text-align:left">&#x51E6;&#x7406;&#x5185;&#x5BB9;</th>
+<th style="text-align:left">処理内容</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left">manifests</td>
-<td style="text-align:left">go&#x306E;&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x304B;&#x3089;CRD&#x3084;RBAC&#x7B49;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;</td>
+<td style="text-align:left">goのソースコードからCRDやRBAC等のマニフェストを生成する</td>
 </tr>
 <tr>
 <td style="text-align:left">generate</td>
-<td style="text-align:left">DeepCopy&#x95A2;&#x6570;&#x306A;&#x3069;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;</td>
+<td style="text-align:left">DeepCopy関数などを生成する</td>
 </tr>
 <tr>
 <td style="text-align:left">docker-build</td>
-<td style="text-align:left">Docker&#x30A4;&#x30E1;&#x30FC;&#x30B8;&#x306E;&#x30D3;&#x30EB;&#x30C9;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;</td>
+<td style="text-align:left">Dockerイメージのビルドをおこなう</td>
 </tr>
 <tr>
 <td style="text-align:left">install</td>
-<td style="text-align:left">Kubernetes&#x30AF;&#x30E9;&#x30B9;&#x30BF;&#x306B;CRD&#x3092;&#x9069;&#x7528;&#x3059;&#x308B;</td>
+<td style="text-align:left">KubernetesクラスタにCRDを適用する</td>
 </tr>
 <tr>
 <td style="text-align:left">deploy</td>
-<td style="text-align:left">Kubernetes&#x30AF;&#x30E9;&#x30B9;&#x30BF;&#x306B;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;&#x9069;&#x7528;&#x3059;&#x308B;</td>
+<td style="text-align:left">Kubernetesクラスタにコントローラを適用する</td>
 </tr>
 <tr>
 <td style="text-align:left">manager</td>
-<td style="text-align:left">&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30D3;&#x30EB;&#x30C9;</td>
+<td style="text-align:left">コントローラのビルド</td>
 </tr>
 <tr>
 <td style="text-align:left">run</td>
-<td style="text-align:left">&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;&#x30ED;&#x30FC;&#x30AB;&#x30EB;&#x74B0;&#x5883;&#x3067;&#x5B9F;&#x884C;&#x3059;&#x308B;</td>
+<td style="text-align:left">コントローラをローカル環境で実行する</td>
 </tr>
 <tr>
 <td style="text-align:left">test</td>
-<td style="text-align:left">&#x30C6;&#x30B9;&#x30C8;&#x3092;&#x5B9F;&#x884C;&#x3059;&#x308B;</td>
+<td style="text-align:left">テストを実行する</td>
 </tr>
 </tbody>
 </table>
-<p>Kubebuilder v2.3.1&#x3067;&#x306F;&#x3001;controller-gen v0.2.5&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3088;&#x3046;&#x306B;&#x306A;&#x3063;&#x3066;&#x3044;&#x307E;&#x3059;&#x304C;&#x3001;Webhook&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x751F;&#x6210;&#x90E8;&#x5206;&#x3067;&#x554F;&#x984C;&#x304C;&#x3042;&#x308B;&#x305F;&#x3081;&#x3001;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306B;Makefile&#x5185;&#x306E;controller-gen&#x306E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x3092;&#x6700;&#x65B0;&#x306B;&#x3042;&#x3052;&#x3066;&#x304A;&#x304F;&#x3053;&#x3068;&#x3092;&#x63A8;&#x5968;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>Kubebuilder v2.3.1では、controller-gen v0.2.5を利用するようになっていますが、Webhookのマニフェスト生成部分で問題があるため、以下のようにMakefile内のcontroller-genのバージョンを最新にあげておくことを推奨します。</p>
 <pre><code class="lang-diff"><span class="hljs-deletion">-    go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.2.5 ;\</span>
 <span class="hljs-addition">+    go get sigs.k8s.io/controller-tools/cmd/controller-gen@v0.4.0 ;\</span>
 </code></pre>
 <h2 id="gomod">go.mod</h2>
-<p>go&#x306E;&#x4F9D;&#x5B58;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;&#x3092;&#x7BA1;&#x7406;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x3067;&#x3059;&#x3002;</p>
-<p>Kubebuilder v2.3.1&#x3067;&#x306F;&#x3001;controller-runtime v0.5.0&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3088;&#x3046;&#x306B;&#x306A;&#x3063;&#x3066;&#x3044;&#x307E;&#x3059;&#x304C;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306B;&#x6700;&#x65B0;&#x306E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x306B;&#x5909;&#x66F4;&#x3057;&#x3066;&#x304A;&#x304F;&#x3053;&#x3068;&#x3092;&#x63A8;&#x5968;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>goの依存ライブラリを管理するためのファイルです。</p>
+<p>Kubebuilder v2.3.1では、controller-runtime v0.5.0を利用するようになっていますが、下記のように最新のバージョンに変更しておくことを推奨します。</p>
 <pre><code class="lang-diff"><span class="hljs-deletion">-    sigs.k8s.io/controller-runtime v0.5.0</span>
 <span class="hljs-addition">+    sigs.k8s.io/controller-runtime v0.6.2</span>
 </code></pre>
-<p>&#x5909;&#x66F4;&#x5F8C;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3092;&#x5B9F;&#x884C;&#x3057;&#x3066;&#x4F9D;&#x5B58;&#x30D1;&#x30C3;&#x30B1;&#x30FC;&#x30B8;&#x306E;&#x66F4;&#x65B0;&#x3082;&#x304A;&#x3053;&#x306A;&#x3044;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
-<pre><code class="lang-console">$ go mod tidy
+<p>変更後、下記のコマンドを実行して依存パッケージの更新もおこないましょう。</p>
+<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> go mod tidy</span>
 </code></pre>
 <h2 id="project">PROJECT</h2>
-<p>&#x30C9;&#x30E1;&#x30A4;&#x30F3;&#x540D;&#x3084;&#x30EA;&#x30DD;&#x30B8;&#x30C8;&#x30EA;&#x306E;URL&#x3084;&#x751F;&#x6210;&#x3057;&#x305F;API&#x306E;&#x60C5;&#x5831;&#x306A;&#x3069;&#x304C;&#x8A18;&#x8FF0;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
-&#x57FA;&#x672C;&#x7684;&#x306B;&#x3053;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x3092;&#x7DE8;&#x96C6;&#x3059;&#x308B;&#x3053;&#x3068;&#x306F;&#x3042;&#x307E;&#x308A;&#x306A;&#x3044;&#x3067;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p>ドメイン名やリポジトリのURLや生成したAPIの情報などが記述されています。
+基本的にこのファイルを編集することはあまりないでしょう。</p>
 <h2 id="hackboilerplategotxt">hack/boilerplate.go.txt</h2>
-<p>&#x81EA;&#x52D5;&#x751F;&#x6210;&#x3055;&#x308C;&#x308B;&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x306E;&#x5148;&#x982D;&#x306B;&#x633F;&#x5165;&#x3055;&#x308C;&#x308B;&#x30DC;&#x30A4;&#x30E9;&#x30FC;&#x30D7;&#x30EC;&#x30FC;&#x30C8;&#x3067;&#x3059;&#x3002;</p>
-<p>&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x3067;&#x306F;Apache 2 License&#x306E;&#x6587;&#x9762;&#x304C;&#x8A18;&#x8FF0;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x306E;&#x3067;&#x3001;&#x5FC5;&#x8981;&#x306B;&#x5FDC;&#x3058;&#x3066;&#x66F8;&#x304D;&#x63DB;&#x3048;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<p>自動生成されるソースコードの先頭に挿入されるボイラープレートです。</p>
+<p>デフォルトではApache 2 Licenseの文面が記述されているので、必要に応じて書き換えてください。</p>
 <h2 id="maingo">main.go</h2>
-<p>&#x3053;&#x308C;&#x304B;&#x3089;&#x4F5C;&#x6210;&#x3059;&#x308B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30A8;&#x30F3;&#x30C8;&#x30EA;&#x30FC;&#x30DD;&#x30A4;&#x30F3;&#x30C8;&#x3068;&#x306A;&#x308B;&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3067;&#x3059;&#x3002;</p>
-<p>&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x4E2D;&#x306B;<code>// +kubebuilder:scaffold:imports</code>, <code>// +kubebuilder:scaffold:scheme</code>, <code>// +kubebuilder:scaffold:builder</code>&#x306A;&#x3069;&#x306E;&#x30B3;&#x30E1;&#x30F3;&#x30C8;&#x304C;&#x8A18;&#x8FF0;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
-Kubebuilder&#x306F;&#x3053;&#x308C;&#x3089;&#x306E;&#x30B3;&#x30E1;&#x30F3;&#x30C8;&#x3092;&#x76EE;&#x5370;&#x306B;&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x306E;&#x81EA;&#x52D5;&#x751F;&#x6210;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x306E;&#x3067;&#x3001;&#x6C7A;&#x3057;&#x3066;&#x524A;&#x9664;&#x3057;&#x306A;&#x3044;&#x3088;&#x3046;&#x306B;&#x6CE8;&#x610F;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<p>これから作成するカスタムコントローラのエントリーポイントとなるソースコードです。</p>
+<p>ソースコード中に<code>// +kubebuilder:scaffold:imports</code>, <code>// +kubebuilder:scaffold:scheme</code>, <code>// +kubebuilder:scaffold:builder</code>などのコメントが記述されています。
+Kubebuilderはこれらのコメントを目印にソースコードの自動生成をおこなうので、決して削除しないように注意してください。</p>
 <h2 id="config">config</h2>
-<p>config&#x30C7;&#x30A3;&#x30EC;&#x30AF;&#x30C8;&#x30EA;&#x914D;&#x4E0B;&#x306B;&#x306F;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;Kubernetes&#x30AF;&#x30E9;&#x30B9;&#x30BF;&#x306B;&#x30C7;&#x30D7;&#x30ED;&#x30A4;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x304C;&#x751F;&#x6210;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x5B9F;&#x88C5;&#x3059;&#x308B;&#x6A5F;&#x80FD;&#x306B;&#x3088;&#x3063;&#x3066;&#x306F;&#x5FC5;&#x8981;&#x306E;&#x306A;&#x3044;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3082;&#x542B;&#x307E;&#x308C;&#x3066;&#x3044;&#x308B;&#x306E;&#x3067;&#x3001;&#x9069;&#x5207;&#x306B;&#x53D6;&#x6368;&#x9078;&#x629E;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<p>configディレクトリ配下には、カスタムコントローラをKubernetesクラスタにデプロイするためのマニフェストが生成されます。</p>
+<p>実装する機能によっては必要のないマニフェストも含まれているので、適切に取捨選択してください。</p>
 <h3 id="manager">manager</h3>
-<p>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;Deployment&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3067;&#x3059;&#x3002;
-&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x30E9;&#x30A4;&#x30F3;&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x306E;&#x5909;&#x66F4;&#x3092;&#x304A;&#x3053;&#x306A;&#x3063;&#x305F;&#x5834;&#x5408;&#x306A;&#x3069;&#x3001;&#x5FC5;&#x8981;&#x306B;&#x5FDC;&#x3058;&#x3066;&#x66F8;&#x304D;&#x63DB;&#x3048;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<p>カスタムコントローラのDeploymentリソースのマニフェストです。
+カスタムコントローラのコマンドラインオプションの変更をおこなった場合など、必要に応じて書き換えてください。</p>
 <h3 id="rbac">rbac</h3>
-<p>&#x5404;&#x7A2E;&#x6A29;&#x9650;&#x3092;&#x8A2D;&#x5B9A;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3067;&#x3059;&#x3002;</p>
-<p><code>auth_proxy_</code>&#x304B;&#x3089;&#x59CB;&#x307E;&#x308B;4&#x3064;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x306F;&#x3001;<a href="https://github.com/brancz/kube-rbac-proxy" target="_blank">kube-auth-proxy</a>&#x7528;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3067;&#x3059;&#x3002;
-kube-auth-proxy&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3068;&#x30E1;&#x30C8;&#x30EA;&#x30AF;&#x30B9;&#x30A8;&#x30F3;&#x30C9;&#x30DD;&#x30A4;&#x30F3;&#x30C8;&#x3078;&#x306E;&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x3092;RBAC&#x3067;&#x5236;&#x9650;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
-<p><code>leader_election_role.yaml</code>&#x3068;<code>leader_election_role_binding.yaml</code>&#x306F;&#x3001;&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x30A8;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x6A5F;&#x80FD;
-&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x5FC5;&#x8981;&#x306A;&#x6A29;&#x9650;&#x3067;&#x3059;&#x3002;</p>
-<p><code>role.yaml</code>&#x3068;<code>role_binding.yaml</code>&#x306F;&#x3001;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x304C;&#x5404;&#x7A2E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;
-&#x6A29;&#x9650;&#x3092;&#x8A2D;&#x5B9A;&#x3059;&#x308B;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3067;&#x3059;&#x3002;
-&#x3053;&#x306E;2&#x3064;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x306F;&#x57FA;&#x672C;&#x7684;&#x306B;&#x81EA;&#x52D5;&#x751F;&#x6210;&#x3055;&#x308C;&#x308B;&#x3082;&#x306E;&#x306A;&#x306E;&#x3067;&#x3001;&#x958B;&#x767A;&#x8005;&#x304C;&#x7DE8;&#x96C6;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x306F;&#x3042;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;</p>
-<p>&#x5FC5;&#x8981;&#x306E;&#x306A;&#x3044;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x3092;&#x524A;&#x9664;&#x3057;&#x305F;&#x5834;&#x5408;&#x306F;&#x3001;<code>kustomization.yaml</code>&#x3082;&#x7DE8;&#x96C6;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<p>各種権限を設定するためのマニフェストです。</p>
+<p><code>auth_proxy_</code>から始まる4つのファイルは、<a href="https://github.com/brancz/kube-rbac-proxy" target="_blank">kube-auth-proxy</a>用のマニフェストです。
+kube-auth-proxyを利用するとメトリクスエンドポイントへのアクセスをRBACで制限することができます。</p>
+<p><code>leader_election_role.yaml</code>と<code>leader_election_role_binding.yaml</code>は、リーダーエレクション機能
+を利用するために必要な権限です。</p>
+<p><code>role.yaml</code>と<code>role_binding.yaml</code>は、コントローラが各種リソースにアクセスするための
+権限を設定するマニフェストです。
+この2つのファイルは基本的に自動生成されるものなので、開発者が編集する必要はありません。</p>
+<p>必要のないファイルを削除した場合は、<code>kustomization.yaml</code>も編集してください。</p>
 <h3 id="prometheus">prometheus</h3>
-<p>Prometheus Operator&#x7528;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3067;&#x3059;&#x3002;
-Prometheus Operator&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3044;&#x308B;&#x5834;&#x5408;&#x3001;&#x3053;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x9069;&#x7528;&#x3059;&#x308B;&#x3068;Prometheus&#x304C;&#x81EA;&#x52D5;&#x7684;&#x306B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30E1;&#x30C8;&#x30EA;&#x30AF;&#x30B9;&#x3092;&#x53CE;&#x96C6;&#x3057;&#x3066;&#x304F;&#x308C;&#x308B;&#x3088;&#x3046;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>Prometheus Operator用のカスタムリソースのマニフェストです。
+Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的にカスタムコントローラのメトリクスを収集してくれるようになります。</p>
 <h3 id="webhook">webhook</h3>
-<p>Admission Webhook&#x6A5F;&#x80FD;&#x3092;&#x63D0;&#x4F9B;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3067;&#x3059;&#x3002;</p>
+<p>Admission Webhook機能を提供するためのマニフェストです。</p>
 <h3 id="certmanager">certmanager</h3>
-<p>Admission Webhook&#x6A5F;&#x80FD;&#x3092;&#x63D0;&#x4F9B;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x306F;&#x8A3C;&#x660E;&#x66F8;&#x304C;&#x5FC5;&#x8981;&#x3068;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
-certmanager&#x30C7;&#x30A3;&#x30EC;&#x30AF;&#x30C8;&#x30EA;&#x4E0B;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x9069;&#x7528;&#x3059;&#x308B;&#x3068;&#x3001;<a href="https://github.com/jetstack/cert-manager" target="_blank">cert-manager</a>&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x8A3C;&#x660E;&#x66F8;&#x3092;&#x767A;&#x884C;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>Admission Webhook機能を提供するためには証明書が必要となります。
+certmanagerディレクトリ下のマニフェストを適用すると、<a href="https://github.com/jetstack/cert-manager" target="_blank">cert-manager</a>を利用して証明書を発行することができます。</p>
 <h3 id="default">default</h3>
-<p>&#x4E0A;&#x8A18;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x307E;&#x3068;&#x3081;&#x3066;&#x5229;&#x7528;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x8A2D;&#x5B9A;&#x304C;&#x8A18;&#x8FF0;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<p><code>manager_auth_proxy_patch.yaml</code>&#x306F;&#x3001;<a href="https://github.com/brancz/kube-rbac-proxy" target="_blank">kube-auth-proxy</a>&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x5FC5;&#x8981;&#x306A;&#x30D1;&#x30C3;&#x30C1;&#x3067;&#x3059;&#x3002;
-kube-auth-proxy&#x3092;&#x5229;&#x7528;&#x3057;&#x306A;&#x3044;&#x5834;&#x5408;&#x306F;&#x524A;&#x9664;&#x3057;&#x3066;&#x3082;&#x554F;&#x984C;&#x3042;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;</p>
-<p><code>manager_webhook-patch.yaml</code>&#x3068;<code>webhookcainjection_patch.yaml</code>&#x306F;&#x3001;Admission Webhook&#x6A5F;&#x80FD;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x5834;&#x5408;&#x306B;
-&#x5FC5;&#x8981;&#x3068;&#x306A;&#x308B;&#x30D1;&#x30C3;&#x30C1;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x3067;&#x3059;&#x3002;</p>
-<p>&#x5229;&#x7528;&#x3059;&#x308B;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306B;&#x5FDC;&#x3058;&#x3066;&#x3001;<code>kustomization.yaml</code>&#x3092;&#x7DE8;&#x96C6;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<p>上記のマニフェストをまとめて利用するための設定が記述されています。</p>
+<p><code>manager_auth_proxy_patch.yaml</code>は、<a href="https://github.com/brancz/kube-rbac-proxy" target="_blank">kube-auth-proxy</a>を利用するために必要なパッチです。
+kube-auth-proxyを利用しない場合は削除しても問題ありません。</p>
+<p><code>manager_webhook-patch.yaml</code>と<code>webhookcainjection_patch.yaml</code>は、Admission Webhook機能を利用する場合に
+必要となるパッチファイルです。</p>
+<p>利用するマニフェストに応じて、<code>kustomization.yaml</code>を編集してください。</p>
 
                                 
                                 </section>
@@ -677,12 +676,56 @@ kube-auth-proxy&#x3092;&#x5229;&#x7528;&#x3057;&#x306A;&#x3044;&#x5834;&#x5408;&
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"next":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"previous":{"title":"Kubebuilder","level":"1.2","depth":1,"path":"kubebuilder/README.md","ref":"kubebuilder/README.md","articles":[{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},{"title":"kindで動かしてみよう","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},{"title":"手軽な動作確認","level":"1.2.5","depth":2,"path":"kubebuilder/debug.md","ref":"kubebuilder/debug.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"kubebuilder/new-project.md","mtime":"2020-08-25T00:47:27.627Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-09-16T07:46:26.776Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"next":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"previous":{"title":"Kubebuilder","level":"1.2","depth":1,"path":"kubebuilder/README.md","ref":"kubebuilder/README.md","articles":[{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},{"title":"kindで動かしてみよう","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},{"title":"手軽な動作確認","level":"1.2.5","depth":2,"path":"kubebuilder/debug.md","ref":"kubebuilder/debug.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/new-project.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
 
         
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
     

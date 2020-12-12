@@ -3,11 +3,10 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>作成するカスタムコントローラ · HonKit</title>
+        <title>作成するカスタムコントローラ · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.5.2">
+        <meta name="generator" content="HonKit 3.6.15">
         
         
         
@@ -68,7 +67,7 @@
     </head>
     <body>
         
-<div class="book">
+<div class="book honkit-cloak">
     <div class="book-summary">
         
             
@@ -485,35 +484,35 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="&#x4F5C;&#x6210;&#x3059;&#x308B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;">&#x4F5C;&#x6210;&#x3059;&#x308B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;</h1>
-<p>&#x672C;&#x8CC7;&#x6599;&#x3067;&#x306F;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x5B9F;&#x88C5;&#x4F8B;&#x3068;&#x3057;&#x3066;&#x3001;Kubernetes&#x3067;&#x30DE;&#x30EB;&#x30C1;&#x30C6;&#x30CA;&#x30F3;&#x30B7;&#x30FC;&#x3092;&#x5B9F;&#x73FE;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;&#x5B9F;&#x88C5;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<p>Kubernetes&#x3067;&#x306F;&#x3001;namespace&#x3068;&#x3044;&#x3046;&#x4ED5;&#x7D44;&#x307F;&#x306B;&#x3088;&#x308A;&#x5404;&#x7A2E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x5206;&#x96E2;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x3053;&#x3068;&#x304C;&#x53EF;&#x80FD;&#x306B;&#x306A;&#x3063;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
-&#x3057;&#x304B;&#x3057;&#x8907;&#x6570;&#x306E;&#x30C1;&#x30FC;&#x30E0;&#x304C;Kubernetes&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x30E6;&#x30FC;&#x30B9;&#x30B1;&#x30FC;&#x30B9;&#x3067;&#x306F;&#x3001;namespace&#x3060;&#x3051;&#x3067;&#x306F;&#x6A5F;&#x80FD;&#x304C;&#x4E0D;&#x8DB3;&#x3059;&#x308B;&#x5834;&#x5408;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;
-&#x4F8B;&#x3048;&#x3070;1&#x3064;&#x306E;&#x30C1;&#x30FC;&#x30E0;&#x304C;&#x8907;&#x6570;&#x306E;namespace&#x3092;&#x5229;&#x7528;&#x3057;&#x305F;&#x3044;&#x3068;&#x601D;&#x3063;&#x3066;&#x3082;&#x3001;namespace&#x306E;&#x4F5C;&#x6210;&#x306B;&#x306F;&#x5F37;&#x3044;&#x6A29;&#x9650;&#x304C;&#x5FC5;&#x8981;&#x3068;&#x306A;&#x308B;&#x305F;&#x3081;&#x3001;&#x30C1;&#x30FC;&#x30E0;&#x306E;&#x30E1;&#x30F3;&#x30D0;&#x30FC;&#x304C;namespace&#x3092;&#x81EA;&#x7531;&#x306B;&#x8FFD;&#x52A0;&#x3059;&#x308B;&#x3053;&#x3068;&#x306F;&#x3067;&#x304D;&#x307E;&#x305B;&#x3093;&#x3002;</p>
-<p>&#x305D;&#x3053;&#x3067;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x3068;&#x3044;&#x3046;&#x4ED5;&#x7D44;&#x307F;&#x3092;&#x8003;&#x3048;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+                                <h1 id="作成するカスタムコントローラ">作成するカスタムコントローラ</h1>
+<p>本資料ではカスタムコントローラの実装例として、Kubernetesでマルチテナンシーを実現するためのテナントコントローラを実装します。</p>
+<p>Kubernetesでは、namespaceという仕組みにより各種リソースの分離をおこなうことが可能になっています。
+しかし複数のチームがKubernetesを利用するユースケースでは、namespaceだけでは機能が不足する場合があります。
+例えば1つのチームが複数のnamespaceを利用したいと思っても、namespaceの作成には強い権限が必要となるため、チームのメンバーがnamespaceを自由に追加することはできません。</p>
+<p>そこでテナントという仕組みを考えてみましょう。</p>
 <ul>
-<li>&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x306F;&#x8907;&#x6570;&#x306E;namespace&#x304B;&#x3089;&#x69CB;&#x6210;&#x3055;&#x308C;&#x308B;</li>
-<li>&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x306E;&#x7BA1;&#x7406;&#x8005;&#x306B;&#x6307;&#x5B9A;&#x3055;&#x308C;&#x305F;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x306F;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x306B;&#x65B0;&#x3057;&#x3044;namespace&#x3092;&#x81EA;&#x7531;&#x306B;&#x8FFD;&#x52A0;&#x30FB;&#x524A;&#x9664;&#x3067;&#x304D;&#x308B;</li>
+<li>テナントは複数のnamespaceから構成される</li>
+<li>テナントの管理者に指定されたユーザーはテナントに新しいnamespaceを自由に追加・削除できる</li>
 </ul>
-<p>&#x6B21;&#x306B;&#x3053;&#x306E;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x3092;&#x8868;&#x73FE;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x8003;&#x3048;&#x3066;&#x307F;&#x307E;&#x3059;&#x3002;
-&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306B;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x3092;&#x69CB;&#x6210;&#x3059;&#x308B;namespace&#x540D;&#x306E;&#x4E00;&#x89A7;&#x3068;&#x3001;namespace&#x540D;&#x306E;&#x30D7;&#x30EA;&#x30D5;&#x30A3;&#x30C3;&#x30AF;&#x30B9;&#x3001;&#x7BA1;&#x7406;&#x8005;&#x3092;&#x6307;&#x5B9A;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x3057;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> multitenancy.example.com/v1
-<span class="hljs-attr">kind:</span> Tenant
+<p>次にこのテナントを表現するためのカスタムリソースを考えてみます。
+下記のようにテナントを構成するnamespace名の一覧と、namespace名のプリフィックス、管理者を指定できるようにしましょう。</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">multitenancy.example.com/v1</span>
+<span class="hljs-attr">kind:</span> <span class="hljs-string">Tenant</span>
 <span class="hljs-attr">metadata:</span>
-<span class="hljs-attr">  name:</span> sample
+  <span class="hljs-attr">name:</span> <span class="hljs-string">sample</span>
 <span class="hljs-attr">spec:</span>
-<span class="hljs-attr">  namespaces:</span>
-<span class="hljs-bullet">    -</span> test1
-<span class="hljs-bullet">    -</span> test2
-<span class="hljs-attr">  namespacePrefix:</span> sample-
-<span class="hljs-attr">  admin:</span>
-<span class="hljs-attr">    kind:</span> User
-<span class="hljs-attr">    name:</span> test
-<span class="hljs-attr">    namespace:</span> default
-<span class="hljs-attr">    apiGroup:</span> rbac.authorization.k8s.io
+  <span class="hljs-attr">namespaces:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">test1</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">test2</span>
+  <span class="hljs-attr">namespacePrefix:</span> <span class="hljs-string">sample-</span>
+  <span class="hljs-attr">admin:</span>
+    <span class="hljs-attr">kind:</span> <span class="hljs-string">User</span>
+    <span class="hljs-attr">name:</span> <span class="hljs-string">test</span>
+    <span class="hljs-attr">namespace:</span> <span class="hljs-string">default</span>
+    <span class="hljs-attr">apiGroup:</span> <span class="hljs-string">rbac.authorization.k8s.io</span>
 </code></pre>
-<p>&#x672C;&#x8CC7;&#x6599;&#x3067;&#x3053;&#x308C;&#x304B;&#x3089;&#x958B;&#x767A;&#x3059;&#x308B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306F;&#x3001;&#x4E0A;&#x8A18;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x8AAD;&#x307F;&#x53D6;&#x308A;&#x3001;namespace&#x3092;&#x4F5C;&#x6210;&#x3057;&#x305F;&#x308A;&#x7BA1;&#x7406;&#x8005;&#x6A29;&#x9650;&#x306E;&#x8A2D;&#x5B9A;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x3053;&#x3068;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x306F;&#x4EE5;&#x4E0B;&#x306B;&#x3042;&#x308B;&#x306E;&#x3067;&#x53C2;&#x8003;&#x306B;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<p>本資料でこれから開発するカスタムコントローラは、上記のカスタムリソースを読み取り、namespaceを作成したり管理者権限の設定をおこなうことになります。</p>
+<p>ソースコードは以下にあるので参考にしてください。</p>
 <ul>
 <li><a href="https://github.com/zoetrope/kubebuilder-training/tree/master/codes/tenant" target="_blank">https://github.com/zoetrope/kubebuilder-training/tree/master/codes/tenant</a></li>
 </ul>
@@ -560,12 +559,56 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"作成するカスタムコントローラ","level":"1.1.3","depth":2,"next":{"title":"参考情報","level":"1.1.4","depth":2,"path":"introduction/references.md","ref":"introduction/references.md","articles":[]},"previous":{"title":"カスタムコントローラの基礎","level":"1.1.2","depth":2,"path":"introduction/basics.md","ref":"introduction/basics.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"introduction/sample.md","mtime":"2020-07-29T13:46:59.020Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-09-16T07:46:26.776Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"作成するカスタムコントローラ","level":"1.1.3","depth":2,"next":{"title":"参考情報","level":"1.1.4","depth":2,"path":"introduction/references.md","ref":"introduction/references.md","articles":[]},"previous":{"title":"カスタムコントローラの基礎","level":"1.1.2","depth":2,"path":"introduction/basics.md","ref":"introduction/basics.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"introduction/sample.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
 
         
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
     

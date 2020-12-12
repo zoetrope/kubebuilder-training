@@ -3,11 +3,10 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Webhookの雛形作成 · HonKit</title>
+        <title>Webhookの雛形作成 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.5.2">
+        <meta name="generator" content="HonKit 3.6.15">
         
         
         
@@ -68,7 +67,7 @@
     </head>
     <body>
         
-<div class="book">
+<div class="book honkit-cloak">
     <div class="book-summary">
         
             
@@ -485,96 +484,96 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="webhook&#x306E;&#x751F;&#x6210;">Webhook&#x306E;&#x751F;&#x6210;</h1>
-<p>Kubernetes&#x306B;&#x306F;&#x3001;Admission Webhook&#x3068;&#x547C;&#x3070;&#x308C;&#x308B;&#x62E1;&#x5F35;&#x6A5F;&#x80FD;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;
-&#x3053;&#x308C;&#x306F;&#x7279;&#x5B9A;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x30FB;&#x66F4;&#x65B0;&#x3059;&#x308B;&#x969B;&#x306B;Webhook API&#x3092;&#x547C;&#x3073;&#x51FA;&#x3057;&#x3001;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x3084;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x66F8;&#x304D;&#x63DB;&#x3048;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x305F;&#x3081;&#x306E;&#x6A5F;&#x80FD;&#x3067;&#x3059;&#x3002;</p>
-<p><code>kubebuilder</code>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3067;&#x306F;&#x3001;&#x4EE5;&#x4E0B;&#x306E;3&#x7A2E;&#x985E;&#x306E;&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x3067;&#x751F;&#x6210;&#x3059;&#x308B;Webhook&#x3092;&#x6307;&#x5B9A;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+                                <h1 id="webhookの生成">Webhookの生成</h1>
+<p>Kubernetesには、Admission Webhookと呼ばれる拡張機能があります。
+これは特定のリソースを作成・更新する際にWebhook APIを呼び出し、バリデーションやリソースの書き換えをおこなうための機能です。</p>
+<p><code>kubebuilder</code>コマンドでは、以下の3種類のオプションで生成するWebhookを指定することができます。</p>
 <ul>
-<li><code>--programmatic-validation</code>: &#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x305F;&#x3081;&#x306E;Webhook</li>
-<li><code>--defaulting</code>: &#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5024;&#x3092;&#x8A2D;&#x5B9A;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;Webhook</li>
-<li><code>--conversion</code>: &#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x30A2;&#x30C3;&#x30D7;&#x6642;&#x306B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x5909;&#x63DB;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x305F;&#x3081;&#x306E;Webhook</li>
+<li><code>--programmatic-validation</code>: リソースのバリデーションをおこなうためのWebhook</li>
+<li><code>--defaulting</code>: リソースのフィールドにデフォルト値を設定するためのWebhook</li>
+<li><code>--conversion</code>: カスタムリソースのバージョンアップ時にリソースの変換をおこなうためのWebhook</li>
 </ul>
-<p>&#x3053;&#x3053;&#x3067;&#x306F;<code>--programmatic-validation</code>&#x3068;<code>--defaulting</code>&#x3092;&#x6307;&#x5B9A;&#x3057;&#x3066;&#x3001;Tenant&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x7528;&#x306E;Webhook&#x3092;&#x751F;&#x6210;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
-<pre><code class="lang-console">$ kubebuilder create webhook --group multitenancy --version v1 --kind Tenant --programmatic-validation --defaulting
-$ make manifests
+<p>ここでは<code>--programmatic-validation</code>と<code>--defaulting</code>を指定して、Tenantリソース用のWebhookを生成してみましょう。</p>
+<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> kubebuilder create webhook --group multitenancy --version v1 --kind Tenant --programmatic-validation --defaulting</span>
+<span class="hljs-meta">$</span><span class="bash"> make manifests</span>
 </code></pre>
-<p>&#x4EE5;&#x4E0B;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x304C;&#x65B0;&#x305F;&#x306B;&#x8FFD;&#x52A0;&#x3055;&#x308C;&#x307E;&#x3057;&#x305F;&#x3002;</p>
-<pre><code>&#x251C;&#x2500;&#x2500; api
-&#x2502;    &#x2514;&#x2500;&#x2500; v1
-&#x2502;        &#x251C;&#x2500;&#x2500; tenant_webhook.go
-&#x2502;        &#x2514;&#x2500;&#x2500; zz_generated.deepcopy.go
-&#x251C;&#x2500;&#x2500; config
-&#x2502;    &#x2514;&#x2500;&#x2500; webhook
-&#x2502;        &#x251C;&#x2500;&#x2500; kustomization.yaml
-&#x2502;        &#x251C;&#x2500;&#x2500; kustomizeconfig.yaml
-&#x2502;        &#x251C;&#x2500;&#x2500; manifests.yaml
-&#x2502;        &#x2514;&#x2500;&#x2500; service.yaml
-&#x2514;&#x2500;&#x2500; main.go
+<p>以下のファイルが新たに追加されました。</p>
+<pre><code>├── api
+│    └── v1
+│        ├── tenant_webhook.go
+│        └── zz_generated.deepcopy.go
+├── config
+│    └── webhook
+│        ├── kustomization.yaml
+│        ├── kustomizeconfig.yaml
+│        ├── manifests.yaml
+│        └── service.yaml
+└── main.go
 </code></pre><h2 id="apiv1">api/v1</h2>
-<p><code>tenant_webhook.go</code>&#x304C;Webhook&#x5B9F;&#x88C5;&#x306E;&#x96DB;&#x5F62;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
-&#x3053;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x306B;Webhook&#x306E;&#x5B9F;&#x88C5;&#x3092;&#x8FFD;&#x52A0;&#x3057;&#x3066;&#x3044;&#x304F;&#x3053;&#x3068;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
-<p><code>zz_generated.deepcopy.go</code>&#x306F;&#x81EA;&#x52D5;&#x751F;&#x6210;&#x3055;&#x308C;&#x308B;&#x30B3;&#x30FC;&#x30C9;&#x306A;&#x306E;&#x3067;&#x7DE8;&#x96C6;&#x3057;&#x306A;&#x3044;&#x3088;&#x3046;&#x306B;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<p><code>tenant_webhook.go</code>がWebhook実装の雛形になります。
+このファイルにWebhookの実装を追加していくことになります。</p>
+<p><code>zz_generated.deepcopy.go</code>は自動生成されるコードなので編集しないようにしてください。</p>
 <h2 id="configwebhook">config/webhook</h2>
-<p><code>config/webhook</code>&#x4E0B;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x306F;&#x3001;Webhook&#x6A5F;&#x80FD;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x5FC5;&#x8981;&#x306A;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
-&#x57FA;&#x672C;&#x7684;&#x306B;&#x7DE8;&#x96C6;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x306F;&#x3042;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;</p>
+<p><code>config/webhook</code>下のファイルは、Webhook機能を利用するために必要なマニフェストになります。
+基本的に編集する必要はありません。</p>
 <h2 id="maingo">main.go</h2>
-<p><code>main.go</code>&#x306B;&#x306F;&#x3001;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306A;Webhook&#x306E;&#x521D;&#x671F;&#x5316;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x305F;&#x3081;&#x306E;&#x30B3;&#x30FC;&#x30C9;&#x304C;&#x8FFD;&#x52A0;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p><code>main.go</code>には、以下のようなWebhookの初期化をおこなうためのコードが追加されています。</p>
 <pre><code class="lang-go"><span class="hljs-keyword">if</span> err = (&amp;multitenancyv1.Tenant{}).SetupWebhookWithManager(mgr); err != <span class="hljs-literal">nil</span> {
     setupLog.Error(err, <span class="hljs-string">&quot;unable to create webhook&quot;</span>, <span class="hljs-string">&quot;webhook&quot;</span>, <span class="hljs-string">&quot;Tenant&quot;</span>)
     os.Exit(<span class="hljs-number">1</span>)
 }
 </code></pre>
-<h2 id="kustomizationyaml&#x306E;&#x7DE8;&#x96C6;">kustomization.yaml&#x306E;&#x7DE8;&#x96C6;</h2>
-<p>kubebuilder&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3067;&#x751F;&#x6210;&#x3057;&#x305F;&#x76F4;&#x5F8C;&#x306E;&#x72B6;&#x614B;&#x3067;&#x306F;&#x3001;<code>make manifests</code>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3067;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x751F;&#x6210;&#x3057;&#x3066;&#x3082;&#x3001;Webhook&#x6A5F;&#x80FD;&#x304C;&#x5229;&#x7528;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x306F;&#x306A;&#x3063;&#x3066;&#x3044;&#x307E;&#x305B;&#x3093;&#x3002;</p>
-<p><a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/config/default/kustomization.yaml" target="_blank">config/default/kustomization.yaml</a>&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x3092;&#x7DE8;&#x96C6;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x751F;&#x6210;&#x76F4;&#x5F8C;&#x306F;<code>bases</code>&#x306E;<code>../webhook</code>&#x3068;<code>../certmanager</code>&#x3001;<code>patchesStrategicMerge</code>&#x306E;<code>manager_webhook_patch.yaml</code>&#x3068;<code>webhookcainjection_patch.yaml</code>&#x3001;<code>vars</code>&#x304C;&#x30B3;&#x30E1;&#x30F3;&#x30C8;&#x30A2;&#x30A6;&#x30C8;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x304C;&#x3001;&#x3053;&#x308C;&#x3089;&#x306E;&#x30B3;&#x30E1;&#x30F3;&#x30C8;&#x3092;&#x5916;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<h2 id="kustomizationyamlの編集">kustomization.yamlの編集</h2>
+<p>kubebuilderコマンドで生成した直後の状態では、<code>make manifests</code>コマンドでマニフェストを生成しても、Webhook機能が利用できるようにはなっていません。</p>
+<p><a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/config/default/kustomization.yaml" target="_blank">config/default/kustomization.yaml</a>ファイルを編集する必要があります。</p>
+<p>生成直後は<code>bases</code>の<code>../webhook</code>と<code>../certmanager</code>、<code>patchesStrategicMerge</code>の<code>manager_webhook_patch.yaml</code>と<code>webhookcainjection_patch.yaml</code>、<code>vars</code>がコメントアウトされていますが、これらのコメントを外します。</p>
 <blockquote>
 <p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
 </blockquote>
 <pre><code class="lang-yaml"><span class="hljs-attr">bases:</span>
 <span class="hljs-comment"># [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in</span>
 <span class="hljs-comment"># crd/kustomization.yaml</span>
-<span class="hljs-bullet">-</span> ../webhook
+<span class="hljs-bullet">-</span> <span class="hljs-string">../webhook</span>
 <span class="hljs-comment"># [CERTMANAGER] To enable cert-manager, uncomment all sections with &apos;CERTMANAGER&apos;. &apos;WEBHOOK&apos; components are required.</span>
-<span class="hljs-bullet">-</span> ../certmanager
+<span class="hljs-bullet">-</span> <span class="hljs-string">../certmanager</span>
 <span class="hljs-attr">patchesStrategicMerge:</span>
 <span class="hljs-comment"># [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in</span>
 <span class="hljs-comment"># crd/kustomization.yaml</span>
-<span class="hljs-bullet">-</span> manager_webhook_patch.yaml
+<span class="hljs-bullet">-</span> <span class="hljs-string">manager_webhook_patch.yaml</span>
 
 <span class="hljs-comment"># [CERTMANAGER] To enable cert-manager, uncomment all sections with &apos;CERTMANAGER&apos;.</span>
 <span class="hljs-comment"># Uncomment &apos;CERTMANAGER&apos; sections in crd/kustomization.yaml to enable the CA injection in the admission webhooks.</span>
 <span class="hljs-comment"># &apos;CERTMANAGER&apos; needs to be enabled to use ca injection</span>
-<span class="hljs-bullet">-</span> webhookcainjection_patch.yaml
+<span class="hljs-bullet">-</span> <span class="hljs-string">webhookcainjection_patch.yaml</span>
 <span class="hljs-comment"># the following config is for teaching kustomize how to do var substitution</span>
 <span class="hljs-attr">vars:</span>
 <span class="hljs-comment"># [CERTMANAGER] To enable cert-manager, uncomment all sections with &apos;CERTMANAGER&apos; prefix.</span>
-<span class="hljs-attr">- name:</span> CERTIFICATE_NAMESPACE <span class="hljs-comment"># namespace of the certificate CR</span>
-<span class="hljs-attr">  objref:</span>
-<span class="hljs-attr">    kind:</span> Certificate
-<span class="hljs-attr">    group:</span> cert-manager.io
-<span class="hljs-attr">    version:</span> v1alpha2
-<span class="hljs-attr">    name:</span> serving-cert <span class="hljs-comment"># this name should match the one in certificate.yaml</span>
-<span class="hljs-attr">  fieldref:</span>
-<span class="hljs-attr">    fieldpath:</span> metadata.namespace
-<span class="hljs-attr">- name:</span> CERTIFICATE_NAME
-<span class="hljs-attr">  objref:</span>
-<span class="hljs-attr">    kind:</span> Certificate
-<span class="hljs-attr">    group:</span> cert-manager.io
-<span class="hljs-attr">    version:</span> v1alpha2
-<span class="hljs-attr">    name:</span> serving-cert <span class="hljs-comment"># this name should match the one in certificate.yaml</span>
-<span class="hljs-attr">- name:</span> SERVICE_NAMESPACE <span class="hljs-comment"># namespace of the service</span>
-<span class="hljs-attr">  objref:</span>
-<span class="hljs-attr">    kind:</span> Service
-<span class="hljs-attr">    version:</span> v1
-<span class="hljs-attr">    name:</span> webhook-service
-<span class="hljs-attr">  fieldref:</span>
-<span class="hljs-attr">    fieldpath:</span> metadata.namespace
-<span class="hljs-attr">- name:</span> SERVICE_NAME
-<span class="hljs-attr">  objref:</span>
-<span class="hljs-attr">    kind:</span> Service
-<span class="hljs-attr">    version:</span> v1
-<span class="hljs-attr">    name:</span> webhook-service
+<span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">CERTIFICATE_NAMESPACE</span> <span class="hljs-comment"># namespace of the certificate CR</span>
+  <span class="hljs-attr">objref:</span>
+    <span class="hljs-attr">kind:</span> <span class="hljs-string">Certificate</span>
+    <span class="hljs-attr">group:</span> <span class="hljs-string">cert-manager.io</span>
+    <span class="hljs-attr">version:</span> <span class="hljs-string">v1alpha2</span>
+    <span class="hljs-attr">name:</span> <span class="hljs-string">serving-cert</span> <span class="hljs-comment"># this name should match the one in certificate.yaml</span>
+  <span class="hljs-attr">fieldref:</span>
+    <span class="hljs-attr">fieldpath:</span> <span class="hljs-string">metadata.namespace</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">CERTIFICATE_NAME</span>
+  <span class="hljs-attr">objref:</span>
+    <span class="hljs-attr">kind:</span> <span class="hljs-string">Certificate</span>
+    <span class="hljs-attr">group:</span> <span class="hljs-string">cert-manager.io</span>
+    <span class="hljs-attr">version:</span> <span class="hljs-string">v1alpha2</span>
+    <span class="hljs-attr">name:</span> <span class="hljs-string">serving-cert</span> <span class="hljs-comment"># this name should match the one in certificate.yaml</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">SERVICE_NAMESPACE</span> <span class="hljs-comment"># namespace of the service</span>
+  <span class="hljs-attr">objref:</span>
+    <span class="hljs-attr">kind:</span> <span class="hljs-string">Service</span>
+    <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
+    <span class="hljs-attr">name:</span> <span class="hljs-string">webhook-service</span>
+  <span class="hljs-attr">fieldref:</span>
+    <span class="hljs-attr">fieldpath:</span> <span class="hljs-string">metadata.namespace</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">SERVICE_NAME</span>
+  <span class="hljs-attr">objref:</span>
+    <span class="hljs-attr">kind:</span> <span class="hljs-string">Service</span>
+    <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
+    <span class="hljs-attr">name:</span> <span class="hljs-string">webhook-service</span>
 </code></pre>
 
                                 
@@ -619,12 +618,56 @@ $ make manifests
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"next":{"title":"kindで動かしてみよう","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"previous":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"kubebuilder/webhook.md","mtime":"2020-07-28T13:10:38.590Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-09-16T07:46:26.776Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"next":{"title":"kindで動かしてみよう","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"previous":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/webhook.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
 
         
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
     

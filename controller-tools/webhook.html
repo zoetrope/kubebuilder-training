@@ -3,11 +3,10 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Webhookマニフェストの生成 · HonKit</title>
+        <title>Webhookマニフェストの生成 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.5.2">
+        <meta name="generator" content="HonKit 3.6.15">
         
         
         
@@ -68,7 +67,7 @@
     </head>
     <body>
         
-<div class="book">
+<div class="book honkit-cloak">
     <div class="book-summary">
         
             
@@ -485,10 +484,10 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="webhook&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306E;&#x751F;&#x6210;">Webhook&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306E;&#x751F;&#x6210;</h1>
-<p>AdmissionWebhook&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x306F;&#x3001;<code>MutatingWebhookConfiguration</code>&#x3084;<code>ValidatingWebhookConfiguration</code>&#x306A;&#x3069;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x7528;&#x610F;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;
-controller-gen&#x3067;&#x306F;<code>// +kubebuilder:webhook</code>&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x306E;&#x8A18;&#x8FF0;&#x306B;&#x57FA;&#x3065;&#x3044;&#x3066;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x307E;&#x305A;&#x306F;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5024;&#x3092;&#x8A2D;&#x5B9A;&#x3059;&#x308B;Webhook&#x306E;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x898B;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+                                <h1 id="webhookマニフェストの生成">Webhookマニフェストの生成</h1>
+<p>AdmissionWebhookを利用するためには、<code>MutatingWebhookConfiguration</code>や<code>ValidatingWebhookConfiguration</code>などのマニフェストを用意する必要があります。
+controller-genでは<code>// +kubebuilder:webhook</code>マーカーの記述に基づいてマニフェストを生成することができます。</p>
+<p>まずはデフォルト値を設定するWebhookのマーカーを見てみましょう。</p>
 <blockquote>
 <p><a id="tenant_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_webhook.go" target="_blank">tenant_webhook.go</a></p>
 </blockquote>
@@ -496,13 +495,13 @@ controller-gen&#x3067;&#x306F;<code>// +kubebuilder:webhook</code>&#x30DE;&#x30F
 
 <span class="hljs-keyword">var</span> _ webhook.Defaulter = &amp;Tenant{}
 </code></pre>
-<p><code>groups</code>,<code>versions</code>,<code>resource</code>&#x306B;&#x306F;&#x3001;Webhook&#x306E;&#x5BFE;&#x8C61;&#x3068;&#x306A;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;GVK&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;
-<code>path</code>&#x306F;Webhook&#x306E;&#x30D1;&#x30B9;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x304C;&#x3001;&#x3053;&#x308C;&#x306F;controller-runtime&#x304C;&#x81EA;&#x52D5;&#x7684;&#x306B;&#x751F;&#x6210;&#x3059;&#x308B;&#x30D1;&#x30B9;&#x306A;&#x306E;&#x3067;&#x57FA;&#x672C;&#x7684;&#x306B;&#x306F;&#x5909;&#x66F4;&#x305B;&#x305A;&#x306B;&#x5229;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;
-<code>mutating</code>&#x306B;&#x306F;MutatingWebhook&#x304B;&#x3069;&#x3046;&#x304B;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;
-<code>failurePolicy</code>&#x306F;&#x3001;Webhook&#x306E;API&#x306B;&#x63A5;&#x7D9A;&#x3067;&#x304D;&#x306A;&#x3044;&#x5834;&#x5408;&#x306A;&#x3069;&#x547C;&#x3073;&#x51FA;&#x3057;&#x306B;&#x5931;&#x6557;&#x3057;&#x305F;&#x3068;&#x304D;&#x306E;&#x6319;&#x52D5;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;
-<code>verbs</code>&#x306F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x5BFE;&#x3057;&#x3066;&#x3069;&#x306E;&#x64CD;&#x4F5C;&#x3092;&#x304A;&#x3053;&#x306A;&#x3063;&#x305F;&#x3068;&#x304D;&#x306B;Webhook&#x3092;&#x547C;&#x3073;&#x51FA;&#x3059;&#x304B;&#x3092;&#x6307;&#x5B9A;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x4ECA;&#x56DE;&#x306F;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x4F5C;&#x6210;&#x3055;&#x308C;&#x305F;&#x3068;&#x304D;&#x3060;&#x3051;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5024;&#x3092;&#x8A2D;&#x5B9A;&#x3059;&#x308B;&#x3088;&#x3046;&#x306B;&#x3001;<code>verbs</code>&#x3092;create&#x306E;&#x307F;&#x306B;&#x5909;&#x66F4;&#x3057;&#x307E;&#x3057;&#x305F;&#x3002;</p>
-<p>&#x6B21;&#x306B;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;Webhook&#x306E;&#x30DE;&#x30FC;&#x30AB;&#x30FC;&#x3092;&#x898B;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p><code>groups</code>,<code>versions</code>,<code>resource</code>には、Webhookの対象となるリソースのGVKを指定します。
+<code>path</code>はWebhookのパスを指定しますが、これはcontroller-runtimeが自動的に生成するパスなので基本的には変更せずに利用します。
+<code>mutating</code>にはMutatingWebhookかどうかを指定します。
+<code>failurePolicy</code>は、WebhookのAPIに接続できない場合など呼び出しに失敗したときの挙動を指定します。
+<code>verbs</code>はリソースに対してどの操作をおこなったときにWebhookを呼び出すかを指定できます。</p>
+<p>今回はテナントリソースが作成されたときだけデフォルト値を設定するように、<code>verbs</code>をcreateのみに変更しました。</p>
+<p>次にバリデーションWebhookのマーカーを見てみましょう。</p>
 <blockquote>
 <p><a id="tenant_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_webhook.go" target="_blank">tenant_webhook.go</a></p>
 </blockquote>
@@ -511,8 +510,8 @@ controller-gen&#x3067;&#x306F;<code>// +kubebuilder:webhook</code>&#x30DE;&#x30F
 
 <span class="hljs-keyword">var</span> _ webhook.Validator = &amp;Tenant{}
 </code></pre>
-<p>&#x4ECA;&#x56DE;&#x306F;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x66F4;&#x65B0;&#x3055;&#x308C;&#x305F;&#x3068;&#x304D;&#x3060;&#x3051;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x3088;&#x3046;&#x306B;&#x3001;<code>verbs</code>&#x3092;update&#x306E;&#x307F;&#x306B;&#x5909;&#x66F4;&#x3057;&#x307E;&#x3057;&#x305F;&#x3002;</p>
-<p><code>make manifests</code>&#x3092;&#x5B9F;&#x884C;&#x3059;&#x308B;&#x3068;<a href="../../codes/tenant/config/webhook/manifests.yaml">config/webhook/manifests.yaml</a>&#x304C;&#x66F4;&#x65B0;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
+<p>今回はテナントリソースが更新されたときだけバリデーションをおこなうように、<code>verbs</code>をupdateのみに変更しました。</p>
+<p><code>make manifests</code>を実行すると<a href="../../codes/tenant/config/webhook/manifests.yaml">config/webhook/manifests.yaml</a>が更新されます。</p>
 
                                 
                                 </section>
@@ -556,12 +555,56 @@ controller-gen&#x3067;&#x306F;<code>// +kubebuilder:webhook</code>&#x30DE;&#x30F
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"next":{"title":"controller-runtime","level":"1.4","depth":1,"path":"controller-runtime/README.md","ref":"controller-runtime/README.md","articles":[{"title":"コントローラ実装入門","level":"1.4.1","depth":2,"path":"controller-runtime/introduction.md","ref":"controller-runtime/introduction.md","articles":[]},{"title":"クライアントの使い方","level":"1.4.2","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},{"title":"Reconcileの実装","level":"1.4.3","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},{"title":"リソースの削除","level":"1.4.4","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},{"title":"コントローラのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},{"title":"Webhookの実装","level":"1.4.6","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},{"title":"Webhookのテスト","level":"1.4.7","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},{"title":"Manager","level":"1.4.8","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},{"title":"メトリクスの収集","level":"1.4.9","depth":2,"path":"controller-runtime/metrics.md","ref":"controller-runtime/metrics.md","articles":[]}]},"previous":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-tools/webhook.md","mtime":"2020-07-28T13:10:38.590Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-09-16T07:46:26.776Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"next":{"title":"controller-runtime","level":"1.4","depth":1,"path":"controller-runtime/README.md","ref":"controller-runtime/README.md","articles":[{"title":"コントローラ実装入門","level":"1.4.1","depth":2,"path":"controller-runtime/introduction.md","ref":"controller-runtime/introduction.md","articles":[]},{"title":"クライアントの使い方","level":"1.4.2","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},{"title":"Reconcileの実装","level":"1.4.3","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},{"title":"リソースの削除","level":"1.4.4","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},{"title":"コントローラのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},{"title":"Webhookの実装","level":"1.4.6","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},{"title":"Webhookのテスト","level":"1.4.7","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},{"title":"Manager","level":"1.4.8","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},{"title":"メトリクスの収集","level":"1.4.9","depth":2,"path":"controller-runtime/metrics.md","ref":"controller-runtime/metrics.md","articles":[]}]},"previous":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/webhook.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
 
         
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
     

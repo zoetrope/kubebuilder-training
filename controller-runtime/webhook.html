@@ -3,11 +3,10 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Webhookの実装 · HonKit</title>
+        <title>Webhookの実装 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.5.2">
+        <meta name="generator" content="HonKit 3.6.15">
         
         
         
@@ -68,7 +67,7 @@
     </head>
     <body>
         
-<div class="book">
+<div class="book honkit-cloak">
     <div class="book-summary">
         
             
@@ -485,11 +484,11 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="webhook&#x306E;&#x5B9F;&#x88C5;">Webhook&#x306E;&#x5B9F;&#x88C5;</h1>
-<p><a href="../controller-tools/webhook.html">Webhook&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306E;&#x751F;&#x6210;</a>&#x3067;&#x89E3;&#x8AAC;&#x3057;&#x305F;&#x3088;&#x3046;&#x306B;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3067;&#x306F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x4F5C;&#x6210;&#x6642;&#x306B;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5024;&#x3092;&#x8A2D;&#x5B9A;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;Webhook&#x3068;&#x3001;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x66F4;&#x65B0;&#x6642;&#x306B;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;Webhook&#x3092;&#x4F5C;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x3053;&#x308C;&#x3089;&#x306E;Webhook&#x306E;&#x5B9F;&#x88C5;&#x306F;&#x975E;&#x5E38;&#x306B;&#x7C21;&#x5358;&#x3067;&#x3001;controller-gen&#x3067;&#x751F;&#x6210;&#x3055;&#x308C;&#x305F;&#x95A2;&#x6570;&#x306B;&#x5FC5;&#x8981;&#x306A;&#x51E6;&#x7406;&#x3092;&#x66F8;&#x3044;&#x3066;&#x3044;&#x304F;&#x3060;&#x3051;&#x3067;&#x3059;&#x3002;</p>
-<h2 id="&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5024;&#x8A2D;&#x5B9A;&#x306E;webhook">&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5024;&#x8A2D;&#x5B9A;&#x306E;Webhook</h2>
-<p>&#x307E;&#x305A;&#x306F;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x5024;&#x3092;&#x8A2D;&#x5B9A;&#x3059;&#x308B;Webhook&#x306E;&#x5B9F;&#x88C5;&#x3067;&#x3059;&#x3002;</p>
+                                <h1 id="webhookの実装">Webhookの実装</h1>
+<p><a href="../controller-tools/webhook.html">Webhookマニフェストの生成</a>で解説したように、テナントコントローラではリソースの作成時にデフォルト値を設定するためのWebhookと、リソースの更新時にバリデーションするためのWebhookを作成します。</p>
+<p>これらのWebhookの実装は非常に簡単で、controller-genで生成された関数に必要な処理を書いていくだけです。</p>
+<h2 id="デフォルト値設定のwebhook">デフォルト値設定のWebhook</h2>
+<p>まずはデフォルト値を設定するWebhookの実装です。</p>
 <blockquote>
 <p><a id="tenant_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_webhook.go" target="_blank">tenant_webhook.go</a></p>
 </blockquote>
@@ -503,9 +502,9 @@
     }
 }
 </code></pre>
-<p><code>namespacePrefix</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x304C;&#x7A7A;&#x3060;&#x3063;&#x305F;&#x5834;&#x5408;&#x306F;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x306E;&#x540D;&#x524D;&#x306B;<code>-</code>&#x3092;&#x9023;&#x7D50;&#x3057;&#x305F;&#x6587;&#x5B57;&#x5217;&#x3092;<code>namespacePrefix</code>&#x3068;&#x3057;&#x3066;&#x5229;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<h2 id="&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x306E;webhook">&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x306E;Webhook</h2>
-<p>&#x6B21;&#x306B;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;Webhook&#x306E;&#x5B9F;&#x88C5;&#x3067;&#x3059;&#x3002;</p>
+<p><code>namespacePrefix</code>フィールドが空だった場合は、テナントの名前に<code>-</code>を連結した文字列を<code>namespacePrefix</code>として利用します。</p>
+<h2 id="バリデーションのwebhook">バリデーションのWebhook</h2>
+<p>次にバリデーションWebhookの実装です。</p>
 <blockquote>
 <p><a id="tenant_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_webhook.go" target="_blank">tenant_webhook.go</a></p>
 </blockquote>
@@ -537,30 +536,30 @@
     <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
 }
 </code></pre>
-<p>&#x4ECA;&#x56DE;&#x306F;Create&#x3068;Delete&#x6642;&#x306E;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x3092;&#x304A;&#x3053;&#x306A;&#x308F;&#x306A;&#x3044;&#x305F;&#x3081;&#x3001;<code>ValidateUpdate</code>&#x95A2;&#x6570;&#x306E;&#x307F;&#x3092;&#x5B9F;&#x88C5;&#x3057;&#x307E;&#x3059;&#x3002;
-&#x66F4;&#x65B0;&#x524D;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x5F15;&#x6570;&#x3067;&#x6E21;&#x3063;&#x3066;&#x304F;&#x308B;&#x306E;&#x3067;&#x3001;<code>namespacePrefix</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x304C;&#x5909;&#x66F4;&#x3055;&#x308C;&#x3066;&#x3044;&#x308C;&#x3070;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x30A8;&#x30E9;&#x30FC;&#x3068;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x3053;&#x306E;&#x3088;&#x3046;&#x306A;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x3092;&#x5B9F;&#x88C5;&#x3059;&#x308B;&#x3053;&#x3068;&#x3067;&#x3001;&#x9014;&#x4E2D;&#x3067;<code>namespacePrefix</code>&#x3092;&#x5909;&#x66F4;&#x3067;&#x304D;&#x306A;&#x3044;&#x3088;&#x3046;&#x306B;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x53EF;&#x80FD;&#x3067;&#x3059;&#x3002;</p>
-<h2 id="&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;">&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;</h2>
-<p>Webhook&#x306E;&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;&#x3092;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
-<p>Webhook&#x306E;&#x5B9F;&#x88C5;&#x3092;&#x304A;&#x3053;&#x306A;&#x3063;&#x305F;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;Kubernetes&#x30AF;&#x30E9;&#x30B9;&#x30BF;&#x306B;&#x30C7;&#x30D7;&#x30ED;&#x30A4;&#x3057;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;<code>namespacePrefix</code>&#x3092;&#x6307;&#x5B9A;&#x3057;&#x3066;&#x3044;&#x306A;&#x3044;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x9069;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> multitenancy.example.com/v1
-<span class="hljs-attr">kind:</span> Tenant
+<p>今回はCreateとDelete時のバリデーションをおこなわないため、<code>ValidateUpdate</code>関数のみを実装します。
+更新前のリソースが引数で渡ってくるので、<code>namespacePrefix</code>フィールドが変更されていればバリデーションエラーとします。</p>
+<p>このようなバリデーションを実装することで、途中で<code>namespacePrefix</code>を変更できないようにすることが可能です。</p>
+<h2 id="動作確認">動作確認</h2>
+<p>Webhookの動作確認をしてみましょう。</p>
+<p>Webhookの実装をおこなったカスタムコントローラをKubernetesクラスタにデプロイし、下記のような<code>namespacePrefix</code>を指定していないマニフェストを適用します。</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">multitenancy.example.com/v1</span>
+<span class="hljs-attr">kind:</span> <span class="hljs-string">Tenant</span>
 <span class="hljs-attr">metadata:</span>
-<span class="hljs-attr">  name:</span> sample
+  <span class="hljs-attr">name:</span> <span class="hljs-string">sample</span>
 <span class="hljs-attr">spec:</span>
-<span class="hljs-attr">  namespaces:</span>
-<span class="hljs-bullet">    -</span> test1
-<span class="hljs-attr">  admin:</span>
-<span class="hljs-attr">    kind:</span> ServiceAccount
-<span class="hljs-attr">    name:</span> default
-<span class="hljs-attr">    namespace:</span> default
+  <span class="hljs-attr">namespaces:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">test1</span>
+  <span class="hljs-attr">admin:</span>
+    <span class="hljs-attr">kind:</span> <span class="hljs-string">ServiceAccount</span>
+    <span class="hljs-attr">name:</span> <span class="hljs-string">default</span>
+    <span class="hljs-attr">namespace:</span> <span class="hljs-string">default</span>
 </code></pre>
-<p>&#x4F5C;&#x6210;&#x3055;&#x308C;&#x305F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x78BA;&#x8A8D;&#x3057;&#x3066;&#x3001;<code>namespacePrefix</code>&#x306B;&quot;sample-&quot;&#x3068;&#x3044;&#x3046;&#x6587;&#x5B57;&#x5217;&#x304C;&#x5165;&#x3063;&#x3066;&#x3044;&#x308C;&#x3070;&#x6210;&#x529F;&#x3067;&#x3059;&#x3002;</p>
+<p>作成されたリソースを確認して、<code>namespacePrefix</code>に&quot;sample-&quot;という文字列が入っていれば成功です。</p>
 <pre><code>$ kubectl get tenant sample
 NAME     ADMIN     PREFIX    READY
 sample   default   sample-   True
-</code></pre><p>&#x7D9A;&#x3044;&#x3066;&#x30D0;&#x30EA;&#x30C7;&#x30FC;&#x30B7;&#x30E7;&#x30F3;Webhook&#x306E;&#x52D5;&#x4F5C;&#x3082;&#x78BA;&#x8A8D;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
-<p>&#x5148;&#x307B;&#x3069;&#x4F5C;&#x6210;&#x3057;&#x305F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;edit&#x3057;&#x3066;<code>namespacePrefix</code>&#x3092;&#x5225;&#x306E;&#x540D;&#x524D;&#x306B;&#x5909;&#x66F4;&#x3057;&#x3088;&#x3046;&#x3068;&#x3057;&#x305F;&#x3068;&#x304D;&#x306B;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;&#x30A8;&#x30E9;&#x30FC;&#x304C;&#x767A;&#x751F;&#x3059;&#x308C;&#x3070;&#x6210;&#x529F;&#x3067;&#x3059;&#x3002;</p>
+</code></pre><p>続いてバリデーションWebhookの動作も確認してみましょう。</p>
+<p>先ほど作成したリソースをeditして<code>namespacePrefix</code>を別の名前に変更しようとしたときに、下記のようなエラーが発生すれば成功です。</p>
 <pre><code>$ kubectl edit tenant sample
 error: tenants.multitenancy.example.com &quot;sample&quot; could not be patched: admission webhook &quot;vtenant.kb.io&quot; denied the request: spec.namespacePrefix field should not be changed
 You can run `kubectl replace -f /tmp/kubectl-edit-bwuei.yaml` to try this update again.
@@ -607,12 +606,56 @@ You can run `kubectl replace -f /tmp/kubectl-edit-bwuei.yaml` to try this update
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookの実装","level":"1.4.6","depth":2,"next":{"title":"Webhookのテスト","level":"1.4.7","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"previous":{"title":"コントローラのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/webhook.md","mtime":"2020-07-28T13:10:38.590Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-09-16T07:46:26.776Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookの実装","level":"1.4.6","depth":2,"next":{"title":"Webhookのテスト","level":"1.4.7","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"previous":{"title":"コントローラのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/webhook.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
 
         
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
     

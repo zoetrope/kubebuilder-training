@@ -3,11 +3,10 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>コントローラのテスト · HonKit</title>
+        <title>コントローラのテスト · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.5.2">
+        <meta name="generator" content="HonKit 3.6.15">
         
         
         
@@ -68,7 +67,7 @@
     </head>
     <body>
         
-<div class="book">
+<div class="book honkit-cloak">
     <div class="book-summary">
         
             
@@ -485,14 +484,14 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30C6;&#x30B9;&#x30C8;">&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30C6;&#x30B9;&#x30C8;</h1>
-<p>controller-runtime&#x3067;&#x306F;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest?tab=doc" target="_blank">envtest</a>&#x30D1;&#x30C3;&#x30B1;&#x30FC;&#x30B8;&#x3092;&#x63D0;&#x4F9B;&#x3057;&#x3066;&#x304A;&#x308A;&#x3001;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3084;Webhook&#x306E;&#x7C21;&#x6613;&#x7684;&#x306A;&#x30C6;&#x30B9;&#x30C8;&#x3092;&#x5B9F;&#x65BD;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x53EF;&#x80FD;&#x3067;&#x3059;&#x3002;</p>
-<p>envtest&#x306F;etcd&#x3068;kube-apiserver&#x3092;&#x7ACB;&#x3061;&#x4E0A;&#x3052;&#x3066;&#x30C6;&#x30B9;&#x30C8;&#x7528;&#x306E;&#x74B0;&#x5883;&#x3092;&#x69CB;&#x7BC9;&#x3057;&#x307E;&#x3059;&#x3002;
-&#x74B0;&#x5883;&#x5909;&#x6570;<code>USE_EXISTING_CLUSTER</code>&#x3092;&#x6307;&#x5B9A;&#x3059;&#x308C;&#x3070;&#x3001;&#x65E2;&#x5B58;&#x306E;Kubernetes&#x30AF;&#x30E9;&#x30B9;&#x30BF;&#x3092;&#x5229;&#x7528;&#x3057;&#x305F;&#x30C6;&#x30B9;&#x30C8;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x3053;&#x3068;&#x3082;&#x53EF;&#x80FD;&#x3067;&#x3059;&#x3002;</p>
-<p>&#x306A;&#x304A;controller-gen&#x304C;&#x751F;&#x6210;&#x3059;&#x308B;&#x30C6;&#x30B9;&#x30C8;&#x30B3;&#x30FC;&#x30C9;&#x3067;&#x306F;&#x3001;<a href="https://github.com/onsi/ginkgo" target="_blank">Ginkgo</a>&#x3068;&#x3044;&#x3046;&#x30C6;&#x30B9;&#x30C8;&#x30D5;&#x30EC;&#x30FC;&#x30E0;&#x30EF;&#x30FC;&#x30AF;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
-&#x3053;&#x306E;&#x30D5;&#x30EC;&#x30FC;&#x30E0;&#x30EF;&#x30FC;&#x30AF;&#x306E;&#x5229;&#x7528;&#x65B9;&#x6CD5;&#x306B;&#x3064;&#x3044;&#x3066;&#x306F;<a href="https://onsi.github.io/ginkgo/" target="_blank">Ginkgono&#x306E;&#x30C9;&#x30AD;&#x30E5;&#x30E1;&#x30F3;&#x30C8;</a>&#x3092;&#x5FA1;&#x89A7;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
-<h2 id="&#x30C6;&#x30B9;&#x30C8;&#x74B0;&#x5883;&#x306E;&#x30BB;&#x30C3;&#x30C8;&#x30A2;&#x30C3;&#x30D7;">&#x30C6;&#x30B9;&#x30C8;&#x74B0;&#x5883;&#x306E;&#x30BB;&#x30C3;&#x30C8;&#x30A2;&#x30C3;&#x30D7;</h2>
-<p>controller-gen&#x306B;&#x3088;&#x3063;&#x3066;&#x81EA;&#x52D5;&#x751F;&#x6210;&#x3055;&#x308C;&#x305F;<a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/controllers/suite_test.go" target="_blank">controllers/suite_test.go</a>&#x3092;&#x898B;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+                                <h1 id="コントローラのテスト">コントローラのテスト</h1>
+<p>controller-runtimeでは<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest?tab=doc" target="_blank">envtest</a>パッケージを提供しており、コントローラやWebhookの簡易的なテストを実施することが可能です。</p>
+<p>envtestはetcdとkube-apiserverを立ち上げてテスト用の環境を構築します。
+環境変数<code>USE_EXISTING_CLUSTER</code>を指定すれば、既存のKubernetesクラスタを利用したテストをおこなうことも可能です。</p>
+<p>なおcontroller-genが生成するテストコードでは、<a href="https://github.com/onsi/ginkgo" target="_blank">Ginkgo</a>というテストフレームワークを利用しています。
+このフレームワークの利用方法については<a href="https://onsi.github.io/ginkgo/" target="_blank">Ginkgonoのドキュメント</a>を御覧ください。</p>
+<h2 id="テスト環境のセットアップ">テスト環境のセットアップ</h2>
+<p>controller-genによって自動生成された<a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/controllers/suite_test.go" target="_blank">controllers/suite_test.go</a>を見てみましょう。</p>
 <blockquote>
 <p><a id="controllers/suite_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/suite_test.go" target="_blank">controllers/suite_test.go</a></p>
 </blockquote>
@@ -579,13 +578,13 @@
     Expect(err).ToNot(HaveOccurred())
 })
 </code></pre>
-<p>&#x307E;&#x305A;<code>envtest.Environment</code>&#x3067;&#x30C6;&#x30B9;&#x30C8;&#x7528;&#x306E;&#x74B0;&#x5883;&#x8A2D;&#x5B9A;&#x3092;&#x304A;&#x3053;&#x306A;&#x3044;&#x307E;&#x3059;&#x3002;
-&#x3053;&#x3053;&#x3067;&#x306F;&#x3001;<code>CRDDirectoryPaths</code>&#x3067;&#x9069;&#x7528;&#x3059;&#x308B;CRD&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306E;&#x30D1;&#x30B9;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<p><code>testEnv.Start()</code>&#x3092;&#x547C;&#x3073;&#x51FA;&#x3059;&#x3068;etcd&#x3068;kube-apiserver&#x304C;&#x8D77;&#x52D5;&#x3057;&#x307E;&#x3059;&#x3002;
-&#x3042;&#x3068;&#x306F;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30E1;&#x30A4;&#x30F3;&#x95A2;&#x6570;&#x3068;&#x540C;&#x69D8;&#x306B;&#x521D;&#x671F;&#x5316;&#x51E6;&#x7406;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;&#x3060;&#x3051;&#x3067;&#x3059;&#x3002;</p>
-<p>&#x30C6;&#x30B9;&#x30C8;&#x7D42;&#x4E86;&#x6642;&#x306B;&#x306F;etcd&#x3068;kube-apiserver&#x3092;&#x7D42;&#x4E86;&#x3059;&#x308B;&#x3088;&#x3046;&#x306B;<code>testEnv.Stop()</code>&#x3092;&#x547C;&#x3073;&#x51FA;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<h2 id="&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30C6;&#x30B9;&#x30C8;">&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30C6;&#x30B9;&#x30C8;</h2>
-<p>&#x305D;&#x308C;&#x3067;&#x306F;&#x5B9F;&#x969B;&#x306E;&#x30C6;&#x30B9;&#x30C8;&#x3092;&#x66F8;&#x3044;&#x3066;&#x3044;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p>まず<code>envtest.Environment</code>でテスト用の環境設定をおこないます。
+ここでは、<code>CRDDirectoryPaths</code>で適用するCRDのマニフェストのパスを指定しています。</p>
+<p><code>testEnv.Start()</code>を呼び出すとetcdとkube-apiserverが起動します。
+あとはコントローラのメイン関数と同様に初期化処理をおこなうだけです。</p>
+<p>テスト終了時にはetcdとkube-apiserverを終了するように<code>testEnv.Stop()</code>を呼び出します。</p>
+<h2 id="コントローラのテスト">コントローラのテスト</h2>
+<p>それでは実際のテストを書いていきましょう。</p>
 <blockquote>
 <p><a id="controllers/tenant_controller_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller_test.go" target="_blank">controllers/tenant_controller_test.go</a></p>
 </blockquote>
@@ -668,12 +667,12 @@
     })
 })
 </code></pre>
-<p>&#x3053;&#x306E;&#x30C6;&#x30B9;&#x30C8;&#x3067;&#x306F;&#x307E;&#x305A;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x306E;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x3092;&#x7528;&#x610F;&#x3057;&#x3066;&#x3001;<code>k8sClient</code>&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;Kubernetes&#x30AF;&#x30E9;&#x30B9;&#x30BF;&#x306B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x4F5C;&#x6210;&#x3092;&#x304A;&#x3053;&#x306A;&#x3063;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
-&#x6B21;&#x306B;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x53D6;&#x5F97;&#x3057;&#x3066;&#x3001;&#x30B9;&#x30C6;&#x30FC;&#x30BF;&#x30B9;&#x304C;Ready&#x306B;&#x306A;&#x3063;&#x305F;&#x3053;&#x3068;&#x3092;&#x78BA;&#x8A8D;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
-&#x6700;&#x5F8C;&#x306B;&#x6307;&#x5B9A;&#x3057;&#x305F;&#x901A;&#x308A;&#x306E;namespace&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x4F5C;&#x6210;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x3053;&#x3068;&#x3092;&#x78BA;&#x8A8D;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<h2 id="&#x30C6;&#x30B9;&#x30C8;&#x306E;&#x5B9F;&#x884C;">&#x30C6;&#x30B9;&#x30C8;&#x306E;&#x5B9F;&#x884C;</h2>
-<p><code>make test</code>&#x3084;<code>go test</code>&#x3067;&#x30C6;&#x30B9;&#x30C8;&#x3092;&#x5B9F;&#x884C;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
-<pre><code class="lang-console">$ go test -v ./controllers/
+<p>このテストではまずテナントのオブジェクトを用意して、<code>k8sClient</code>を利用してKubernetesクラスタにリソースの作成をおこなっています。
+次にテナントリソースを取得して、ステータスがReadyになったことを確認しています。
+最後に指定した通りのnamespaceリソースが作成されていることを確認しています。</p>
+<h2 id="テストの実行">テストの実行</h2>
+<p><code>make test</code>や<code>go test</code>でテストを実行してみましょう。</p>
+<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> go <span class="hljs-built_in">test</span> -v ./controllers/</span>
 === RUN   TestAPIs
 Running Suite: Controller Suite
 ===============================
@@ -729,12 +728,56 @@ ok      github.com/zoetrope/kubebuilder-training/codes/controllers      5.528s
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"コントローラのテスト","level":"1.4.5","depth":2,"next":{"title":"Webhookの実装","level":"1.4.6","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.4","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2020-07-28T13:10:38.590Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-09-16T07:46:26.776Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"コントローラのテスト","level":"1.4.5","depth":2,"next":{"title":"Webhookの実装","level":"1.4.6","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.4","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
 
         
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
     

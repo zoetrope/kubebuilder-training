@@ -3,11 +3,10 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Manager · HonKit</title>
+        <title>Manager · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.5.2">
+        <meta name="generator" content="HonKit 3.6.15">
         
         
         
@@ -68,7 +67,7 @@
     </head>
     <body>
         
-<div class="book">
+<div class="book honkit-cloak">
     <div class="book-summary">
         
             
@@ -486,15 +485,15 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="manager">Manager</h1>
-<p><a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#Manager" target="_blank">Manager</a>&#x306F;&#x3001;&#x8907;&#x6570;&#x306E;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;&#x7BA1;&#x7406;&#x3057;&#x3001;&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x9078;&#x51FA;&#x6A5F;&#x80FD;&#x3084;&#x3001;&#x30E1;&#x30C8;&#x30EA;&#x30AF;&#x30B9;&#x3084;&#x30D8;&#x30EB;&#x30B9;&#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x30B5;&#x30FC;&#x30D0;&#x30FC;&#x3068;&#x3057;&#x3066;&#x306E;&#x6A5F;&#x80FD;&#x306A;&#x3069;&#x3092;&#x63D0;&#x4F9B;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x3059;&#x3067;&#x306B;&#x3053;&#x308C;&#x307E;&#x3067;Manager&#x306E;&#x3044;&#x304F;&#x3064;&#x304B;&#x306E;&#x6A5F;&#x80FD;&#x3092;&#x7D39;&#x4ECB;&#x3057;&#x3066;&#x304D;&#x307E;&#x3057;&#x305F;&#x304C;&#x3001;&#x4ED6;&#x306B;&#x3082;&#x305F;&#x304F;&#x3055;&#x3093;&#x306E;&#x4FBF;&#x5229;&#x306A;&#x6A5F;&#x80FD;&#x3092;&#x6301;&#x3063;&#x3066;&#x308B;&#x306E;&#x3067;&#x3053;&#x3053;&#x3067;&#x7D39;&#x4ECB;&#x3057;&#x3066;&#x3044;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p><a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#Manager" target="_blank">Manager</a>は、複数のコントローラを管理し、リーダー選出機能や、メトリクスやヘルスチェックサーバーとしての機能などを提供します。</p>
+<p>すでにこれまでManagerのいくつかの機能を紹介してきましたが、他にもたくさんの便利な機能を持ってるのでここで紹介していきます。</p>
 <h2 id="leader-election">Leader Election</h2>
-<p>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x53EF;&#x7528;&#x6027;&#x3092;&#x5411;&#x4E0A;&#x3055;&#x305B;&#x305F;&#x3044;&#x5834;&#x5408;&#x3001;Deployment&#x306E;&#x6A5F;&#x80FD;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;Pod&#x3092;&#x8907;&#x6570;&#x500B;&#x7ACB;&#x3061;&#x4E0A;&#x3052;&#x307E;&#x3059;&#x3002;
-&#x3057;&#x304B;&#x3057;&#x3001;Reconcile&#x51E6;&#x7406;&#x304C;&#x540C;&#x3058;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x5BFE;&#x3057;&#x3066;&#x4F55;&#x3089;&#x304B;&#x306E;&#x51E6;&#x7406;&#x3092;&#x5B9F;&#x884C;&#x3057;&#x305F;&#x5834;&#x5408;&#x3001;&#x7AF6;&#x5408;&#x304C;&#x767A;&#x751F;&#x3057;&#x3066;&#x3057;&#x307E;&#x3046;&#x304B;&#x3082;&#x3057;&#x308C;&#x307E;&#x305B;&#x3093;&#x3002;</p>
-<p>&#x305D;&#x3053;&#x3067;&#x3001;Manager&#x306F;&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x9078;&#x51FA;&#x6A5F;&#x80FD;&#x3092;&#x63D0;&#x4F9B;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
-&#x3053;&#x308C;&#x306B;&#x3088;&#x308A;&#x8907;&#x6570;&#x306E;&#x30D7;&#x30ED;&#x30BB;&#x30B9;&#x306E;&#x4E2D;&#x304B;&#x3089;1&#x3064;&#x3060;&#x3051;&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x3092;&#x9078;&#x51FA;&#x3057;&#x3001;&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x306B;&#x9078;&#x3070;&#x308C;&#x305F;&#x30D7;&#x30ED;&#x30BB;&#x30B9;&#x3060;&#x3051;&#x304C;Reconcile&#x51E6;&#x7406;&#x3092;&#x5B9F;&#x884C;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x9078;&#x51FA;&#x306E;&#x5229;&#x7528;&#x65B9;&#x6CD5;&#x306F;&#x975E;&#x5E38;&#x306B;&#x7C21;&#x5358;&#x3067;&#x3001;<code>NewManager</code>&#x306E;&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x306E;<code>LeaderElection</code>&#x306B;true&#x3092;&#x6307;&#x5B9A;&#x3057;&#x3001;<code>LeaderElectionID</code>&#x306B;&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x9078;&#x51FA;&#x7528;&#x306E;ID&#x3092;&#x6307;&#x5B9A;&#x3059;&#x308B;&#x3060;&#x3051;&#x3067;&#x3059;&#x3002;
-&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x9078;&#x51FA;&#x306F;&#x3001;&#x540C;&#x3058;<code>LeaderElectionID</code>&#x3092;&#x6307;&#x5B9A;&#x3057;&#x305F;&#x30D7;&#x30ED;&#x30BB;&#x30B9;&#x306E;&#x4E2D;&#x304B;&#x3089;&#x4E00;&#x3064;&#x3060;&#x3051;&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x3092;&#x9078;&#x3076;&#x3068;&#x3044;&#x3046;&#x6319;&#x52D5;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>カスタムコントローラの可用性を向上させたい場合、Deploymentの機能を利用してカスタムコントローラのPodを複数個立ち上げます。
+しかし、Reconcile処理が同じリソースに対して何らかの処理を実行した場合、競合が発生してしまうかもしれません。</p>
+<p>そこで、Managerはリーダー選出機能を提供しています。
+これにより複数のプロセスの中から1つだけリーダーを選出し、リーダーに選ばれたプロセスだけがReconcile処理を実行できるようになります。</p>
+<p>リーダー選出の利用方法は非常に簡単で、<code>NewManager</code>のオプションの<code>LeaderElection</code>にtrueを指定し、<code>LeaderElectionID</code>にリーダー選出用のIDを指定するだけです。
+リーダー選出は、同じ<code>LeaderElectionID</code>を指定したプロセスの中から一つだけリーダーを選ぶという挙動になります。</p>
 <blockquote>
 <p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/main.go" target="_blank">main.go</a></p>
 </blockquote>
@@ -505,12 +504,13 @@
     LeaderElection:         enableLeaderElection,
     LeaderElectionID:       <span class="hljs-string">&quot;27475f02.example.com&quot;</span>,
     HealthProbeBindAddress: probeAddr,
+    CertDir:                certDir,
 })
 </code></pre>
-<p>&#x305D;&#x308C;&#x3067;&#x306F;&#x3001;<a href="../../codes/tenant/config/manager/manager.yaml">config/manager/manager.yaml</a>&#x306E;<code>replicas</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;2&#x306B;&#x5909;&#x66F4;&#x3057;&#x3066;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x3092;&#x30C7;&#x30D7;&#x30ED;&#x30A4;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
-<p>&#x30C7;&#x30D7;&#x30ED;&#x30A4;&#x3055;&#x308C;&#x305F;2&#x3064;&#x306E;Pod&#x306E;&#x30ED;&#x30B0;&#x3092;&#x8868;&#x793A;&#x3055;&#x305B;&#x3066;&#x307F;&#x308B;&#x3068;&#x3001;&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x306B;&#x9078;&#x51FA;&#x3055;&#x308C;&#x305F;&#x65B9;&#x306E;Pod&#x3060;&#x3051;&#x304C;Reconcile&#x51E6;&#x7406;&#x3092;&#x304A;&#x3053;&#x306A;&#x3063;&#x3066;&#x3044;&#x308B;&#x69D8;&#x5B50;&#x304C;&#x78BA;&#x8A8D;&#x3067;&#x304D;&#x308B;&#x3068;&#x601D;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x9078;&#x51FA;&#x306E;&#x6A5F;&#x80FD;&#x306B;&#x306F;ConfigMap&#x304C;&#x5229;&#x7528;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
-&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306B;ConfigMap&#x3092;&#x8868;&#x793A;&#x3055;&#x305B;&#x3066;&#x307F;&#x308B;&#x3068;&#x3001;<code>metadata.annotations[&quot;control-plane.alpha.kubernetes.io/leader&quot;]</code>&#x306B;&#x3001;&#x73FE;&#x5728;&#x306E;&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x306E;&#x60C5;&#x5831;&#x304C;&#x4FDD;&#x5B58;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x3053;&#x3068;&#x304C;&#x308F;&#x304B;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>それでは、<a href="../../codes/tenant/config/manager/manager.yaml">config/manager/manager.yaml</a>の<code>replicas</code>フィールドを2に変更して、テナントコントローラをデプロイしてみましょう。</p>
+<p>デプロイされた2つのPodのログを表示させてみると、リーダーに選出された方のPodだけがReconcile処理をおこなっている様子が確認できると思います。</p>
+<p>リーダー選出の機能にはConfigMapが利用されています。
+下記のようにConfigMapを表示させてみると、<code>metadata.annotations[&quot;control-plane.alpha.kubernetes.io/leader&quot;]</code>に、現在のリーダーの情報が保存されていることがわかります。</p>
 <pre><code>$ kubectl get -n tenant-system configmap 27475f02.example.com -o yaml
 apiVersion: v1
 kind: ConfigMap
@@ -523,15 +523,15 @@ metadata:
   resourceVersion: &quot;1206094&quot;
   selfLink: /api/v1/namespaces/tenant-system/configmaps/27475f02.example.com
   uid: bb91b084-8c8e-4361-9454-071930a1d67c
-</code></pre><p>&#x306A;&#x304A;&#x3001;Admission Webhook&#x51E6;&#x7406;&#x306F;&#x7AF6;&#x5408;&#x306E;&#x5FC3;&#x914D;&#x304C;&#x306A;&#x3044;&#x305F;&#x3081;&#x3001;&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x3067;&#x306F;&#x306A;&#x3044;&#x30D7;&#x30ED;&#x30BB;&#x30B9;&#x306E;&#x5834;&#x5408;&#x3067;&#x3082;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
+</code></pre><p>なお、Admission Webhook処理は競合の心配がないため、リーダーではないプロセスの場合でも呼び出されます。</p>
 <h2 id="runnable">Runnable</h2>
-<p>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x5B9F;&#x88C5;&#x306B;&#x304A;&#x3044;&#x3066;&#x3001;Reconcile Loop&#x4EE5;&#x5916;&#x306B;&#x3082;goroutine&#x3092;&#x7ACB;&#x3061;&#x4E0A;&#x3052;&#x3066;&#x5B9A;&#x671F;&#x7684;&#x306B;&#x5B9F;&#x884C;&#x3057;&#x305F;&#x308A;&#x3001;&#x4F55;&#x3089;&#x304B;&#x306E;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x3092;&#x5F85;&#x3061;&#x53D7;&#x3051;&#x305F;&#x308A;&#x3057;&#x305F;&#x3044;&#x5834;&#x5408;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;
-Manager&#x3067;&#x306F;&#x305D;&#x306E;&#x3088;&#x3046;&#x306A;&#x51E6;&#x7406;&#x3092;&#x5B9F;&#x73FE;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x4ED5;&#x7D44;&#x307F;&#x3092;&#x63D0;&#x4F9B;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x4F8B;&#x3048;&#x3070;TopoLVM&#x3067;&#x306F;&#x3001;&#x5B9A;&#x671F;&#x7684;&#x306A;&#x30E1;&#x30C8;&#x30EA;&#x30AF;&#x30B9;&#x306E;&#x53CE;&#x96C6;&#x3084;gRPC&#x30B5;&#x30FC;&#x30D0;&#x306E;&#x8D77;&#x52D5;&#x7528;&#x306B;Runnable&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p>カスタムコントローラの実装において、Reconcile Loop以外にもgoroutineを立ち上げて定期的に実行したり、何らかのイベントを待ち受けたりしたい場合があります。
+Managerではそのような処理を実現するための仕組みを提供しています。</p>
+<p>例えばTopoLVMでは、定期的なメトリクスの収集やgRPCサーバの起動用にRunnableを利用しています。</p>
 <ul>
 <li><a href="https://github.com/topolvm/topolvm/tree/master/runners" target="_blank">https://github.com/topolvm/topolvm/tree/master/runners</a></li>
 </ul>
-<p>Runnable&#x6A5F;&#x80FD;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x306F;&#x3001;&#x307E;&#x305A;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#Runnable" target="_blank">Runnable</a>&#x30A4;&#x30F3;&#x30BF;&#x30D5;&#x30A7;&#x30FC;&#x30B9;&#x3092;&#x5B9F;&#x88C5;&#x3057;&#x305F;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306A;&#x30B3;&#x30FC;&#x30C9;&#x3092;&#x7528;&#x610F;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>Runnable機能を利用するためには、まず<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#Runnable" target="_blank">Runnable</a>インタフェースを実装した以下のようなコードを用意します。</p>
 <blockquote>
 <p><a id="runner.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/runners/runner.go" target="_blank">runner.go</a></p>
 </blockquote>
@@ -562,74 +562,74 @@ Manager&#x3067;&#x306F;&#x305D;&#x306E;&#x3088;&#x3046;&#x306A;&#x51E6;&#x7406;&
     <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
 }
 </code></pre>
-<p>Start&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x306F;manager&#x306E;Start&#x3092;&#x547C;&#x3073;&#x51FA;&#x3057;&#x305F;&#x969B;&#x306B;&#x3001;goroutine&#x3068;&#x3057;&#x3066;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;
-&#x5F15;&#x6570;&#x306E;ch&#x306B;&#x3088;&#x308A;manager&#x304B;&#x3089;&#x306E;&#x7D42;&#x4E86;&#x901A;&#x77E5;&#x3092;&#x53D7;&#x3051;&#x53D6;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>StartメソッドはmanagerのStartを呼び出した際に、goroutineとして呼び出されます。
+引数のchによりmanagerからの終了通知を受け取ることができます。</p>
 <pre><code class="lang-go">err = mgr.Add(&amp;runners.Runner{})
 </code></pre>
-<p><code>Runnable</code> &#x30A4;&#x30F3;&#x30BF;&#x30D5;&#x30A7;&#x30FC;&#x30B9;&#x3092;&#x5B9F;&#x88C5;&#x3057;&#x305F;&#x3060;&#x3051;&#x3060;&#x3068;&#x3001;&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x3068;&#x3057;&#x3066;&#x52D5;&#x4F5C;&#x3057;&#x3066;&#x3044;&#x308B; Manager &#x3067;&#x3057;&#x304B;&#x52D5;&#x304B;&#x306A;&#x3044;&#x3088;&#x3046;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
-&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x3067;&#x306A;&#x304F;&#x3066;&#x3082;&#x5E38;&#x6642;&#x52D5;&#x304B;&#x3057;&#x305F;&#x3044;&#x51E6;&#x7406;&#x3067;&#x3042;&#x308B;&#x5834;&#x5408;&#x3001;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#LeaderElectionRunnable" target="_blank">LeaderElectionRunnable</a>&#x30A4;&#x30F3;&#x30BF;&#x30D5;&#x30A7;&#x30FC;&#x30B9;&#x3092;&#x5B9F;&#x88C5;&#x3057;&#x3001;NeedLeaderElection&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3067; <code>false</code> &#x3092;&#x8FD4;&#x3059;&#x3088;&#x3046;&#x306B;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p><code>Runnable</code> インタフェースを実装しただけだと、リーダーとして動作している Manager でしか動かないようになります。
+リーダーでなくても常時動かしたい処理である場合、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#LeaderElectionRunnable" target="_blank">LeaderElectionRunnable</a>インタフェースを実装し、NeedLeaderElectionメソッドで <code>false</code> を返すようにします。</p>
 <h2 id="recorderprovider">recorderProvider</h2>
-<p>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;Status&#x306B;&#x306F;&#x3001;&#x73FE;&#x5728;&#x306E;&#x72B6;&#x614B;&#x304C;&#x4FDD;&#x5B58;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
-&#x4E00;&#x65B9;&#x3001;&#x3053;&#x308C;&#x307E;&#x3067;&#x3069;&#x306E;&#x3088;&#x3046;&#x306A;&#x51E6;&#x7406;&#x304C;&#x5B9F;&#x65BD;&#x3055;&#x308C;&#x3066;&#x304D;&#x305F;&#x306E;&#x304B;&#x3092;&#x8A18;&#x9332;&#x3057;&#x305F;&#x3044;&#x5834;&#x5408;&#x3001;Kubernetes&#x304C;&#x63D0;&#x4F9B;&#x3059;&#x308B;<a href="https://pkg.go.dev/k8s.io/api/core/v1?tab=doc#Event" target="_blank">Event</a>&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
-<p>Manager&#x306F;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x3092;&#x8A18;&#x9332;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x6A5F;&#x80FD;&#x3092;&#x63D0;&#x4F9B;&#x3057;&#x3066;&#x304A;&#x308A;&#x3001;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306B;&#x53D6;&#x5F97;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>カスタムリソースのStatusには、現在の状態が保存されています。
+一方、これまでどのような処理が実施されてきたのかを記録したい場合、Kubernetesが提供する<a href="https://pkg.go.dev/k8s.io/api/core/v1?tab=doc#Event" target="_blank">Event</a>リソースを利用することができます。</p>
+<p>Managerはイベントを記録するための機能を提供しており、以下のように取得することができます。</p>
 <pre><code class="lang-go">recorder := mgr.GetEventRecorderFor(<span class="hljs-string">&quot;tenant-controller&quot;</span>)
 </code></pre>
-<p>&#x3053;&#x306E;<a href="https://pkg.go.dev/k8s.io/client-go/tools/record?tab=doc#EventRecorder" target="_blank">EventRecorder</a>&#x3092;Reconciler&#x306B;&#x6E21;&#x3057;&#x3066;&#x5229;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<p>Event&#x3092;&#x8A18;&#x9332;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x95A2;&#x6570;&#x3068;&#x3057;&#x3066;&#x3001;<code>Event</code>, <code>Eventf</code>, <code>AnnotatedEventf</code>&#x306A;&#x3069;&#x304C;&#x7528;&#x610F;&#x3055;&#x308C;&#x3066;&#x304A;&#x308A;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306B;&#x5229;&#x7528;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;
-&#x306A;&#x304A;&#x3001;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x30BF;&#x30A4;&#x30D7;&#x306B;&#x306F;<code>EventTypeNormal</code>, <code>EventTypeWarning</code>&#x306E;&#x307F;&#x6307;&#x5B9A;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
-<pre><code class="lang-go"><span class="hljs-comment">// Reconcile&#x306B;&#x3088;&#x308B;&#x66F4;&#x65B0;&#x51E6;&#x7406;&#x304C;&#x6210;&#x529F;&#x3057;&#x305F;&#x5834;&#x5408;&#x306B;&#x3001;Normal&#x30BF;&#x30A4;&#x30D7;&#x306E;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x3092;&#x8A18;&#x9332;</span>
+<p>この<a href="https://pkg.go.dev/k8s.io/client-go/tools/record?tab=doc#EventRecorder" target="_blank">EventRecorder</a>をReconcilerに渡して利用します。</p>
+<p>Eventを記録するための関数として、<code>Event</code>, <code>Eventf</code>, <code>AnnotatedEventf</code>などが用意されており、下記のように利用することができます。
+なお、イベントタイプには<code>EventTypeNormal</code>, <code>EventTypeWarning</code>のみ指定することができます。</p>
+<pre><code class="lang-go"><span class="hljs-comment">// Reconcileによる更新処理が成功した場合に、Normalタイプのイベントを記録</span>
 r.Recorder.Event(&amp;tenant, corev1.EventTypeNormal, <span class="hljs-string">&quot;Updated&quot;</span>, <span class="hljs-string">&quot;the tenant was updated&quot;</span>)
 
-<span class="hljs-comment">// Reconcile&#x306B;&#x3088;&#x308B;&#x51E6;&#x7406;&#x304C;&#x5931;&#x6557;&#x3057;&#x305F;&#x5834;&#x5408;&#x306B;&#x3001;Warning&#x30BF;&#x30A4;&#x30D7;&#x306E;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x3092;&#x8A18;&#x9332;</span>
+<span class="hljs-comment">// Reconcileによる処理が失敗した場合に、Warningタイプのイベントを記録</span>
 r.Recorder.Eventf(&amp;tenant, corev1.EventTypeWarning, <span class="hljs-string">&quot;Failed&quot;</span>, <span class="hljs-string">&quot;failed to reconciled: %s&quot;</span>, err.Error())
 </code></pre>
-<p>&#x3053;&#x306E;Event&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;&#x7B2C;1&#x5F15;&#x6570;&#x3067;&#x6307;&#x5B9A;&#x3057;&#x305F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x7D50;&#x3073;&#x3044;&#x3066;&#x304A;&#x308A;&#x3001;namespace-scoped&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x5834;&#x5408;&#x306F;&#x305D;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x540C;&#x3058;namespace&#x306B;Event&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x4F5C;&#x6210;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;
-&#x4E00;&#x65B9;cluster-scoped&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x5834;&#x5408;&#x306F;&#x3001;default namespace&#x306B;Event&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x4F5C;&#x6210;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;cluster-scoped&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306A;&#x306E;&#x3067;Event&#x306F;default namespace&#x306B;&#x4F5C;&#x6210;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;
-&#x305D;&#x3053;&#x3067;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;Role&#x3068;RoleBinding&#x3092;&#x7528;&#x610F;&#x3057;&#x3066;&#x3001;&#x30C6;&#x30CA;&#x30F3;&#x30C8;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x304C;default namespace&#x306B;Event&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x8A2D;&#x5B9A;&#x3057;&#x3066;&#x304A;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p>このEventリソースは第1引数で指定したリソースに結びいており、namespace-scopedリソースの場合はそのリソースと同じnamespaceにEventリソースが作成されます。
+一方cluster-scopedリソースの場合は、default namespaceにEventリソースが作成されます。</p>
+<p>テナントリソースはcluster-scopedリソースなのでEventはdefault namespaceに作成されます。
+そこで下記のようなRoleとRoleBindingを用意して、テナントコントローラがdefault namespaceにEventリソースを作成できるように設定しておきましょう。</p>
 <blockquote>
 <p><a id="event_recorder_rbac.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/config/rbac/event_recorder_rbac.yaml" target="_blank">event_recorder_rbac.yaml</a></p>
 </blockquote>
-<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> rbac.authorization.k8s.io/v1
-<span class="hljs-attr">kind:</span> Role
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">rbac.authorization.k8s.io/v1</span>
+<span class="hljs-attr">kind:</span> <span class="hljs-string">Role</span>
 <span class="hljs-attr">metadata:</span>
-<span class="hljs-attr">  name:</span> eventrecorder-role
-<span class="hljs-attr">  namespace:</span> default
+  <span class="hljs-attr">name:</span> <span class="hljs-string">eventrecorder-role</span>
+  <span class="hljs-attr">namespace:</span> <span class="hljs-string">default</span>
 <span class="hljs-attr">rules:</span>
-<span class="hljs-attr">  - apiGroups:</span>
-<span class="hljs-bullet">      -</span> <span class="hljs-string">&quot;&quot;</span>
-<span class="hljs-attr">    resources:</span>
-<span class="hljs-bullet">      -</span> events
-<span class="hljs-attr">    verbs:</span>
-<span class="hljs-bullet">      -</span> create
-<span class="hljs-bullet">      -</span> delete
-<span class="hljs-bullet">      -</span> get
-<span class="hljs-bullet">      -</span> list
-<span class="hljs-bullet">      -</span> patch
-<span class="hljs-bullet">      -</span> update
-<span class="hljs-bullet">      -</span> watch
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">apiGroups:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;&quot;</span>
+    <span class="hljs-attr">resources:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">events</span>
+    <span class="hljs-attr">verbs:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">create</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">delete</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">get</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">list</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">patch</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">update</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">watch</span>
 <span class="hljs-meta">---</span>
-<span class="hljs-attr">apiVersion:</span> rbac.authorization.k8s.io/v1
-<span class="hljs-attr">kind:</span> RoleBinding
+<span class="hljs-attr">apiVersion:</span> <span class="hljs-string">rbac.authorization.k8s.io/v1</span>
+<span class="hljs-attr">kind:</span> <span class="hljs-string">RoleBinding</span>
 <span class="hljs-attr">metadata:</span>
-<span class="hljs-attr">  name:</span> eventrecorder-rolebinding
-<span class="hljs-attr">  namespace:</span> default
+  <span class="hljs-attr">name:</span> <span class="hljs-string">eventrecorder-rolebinding</span>
+  <span class="hljs-attr">namespace:</span> <span class="hljs-string">default</span>
 <span class="hljs-attr">roleRef:</span>
-<span class="hljs-attr">  apiGroup:</span> rbac.authorization.k8s.io
-<span class="hljs-attr">  kind:</span> Role
-<span class="hljs-attr">  name:</span> eventrecorder-role
+  <span class="hljs-attr">apiGroup:</span> <span class="hljs-string">rbac.authorization.k8s.io</span>
+  <span class="hljs-attr">kind:</span> <span class="hljs-string">Role</span>
+  <span class="hljs-attr">name:</span> <span class="hljs-string">eventrecorder-role</span>
 <span class="hljs-attr">subjects:</span>
-<span class="hljs-attr">  - kind:</span> ServiceAccount
-<span class="hljs-attr">    name:</span> default
-<span class="hljs-attr">    namespace:</span> tenant-system
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">kind:</span> <span class="hljs-string">ServiceAccount</span>
+    <span class="hljs-attr">name:</span> <span class="hljs-string">default</span>
+    <span class="hljs-attr">namespace:</span> <span class="hljs-string">tenant-system</span>
 </code></pre>
-<p>&#x305D;&#x308C;&#x3067;&#x306F;&#x3001;&#x4F5C;&#x6210;&#x3055;&#x308C;&#x305F;Event&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x78BA;&#x8A8D;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;&#x306A;&#x304A;&#x3001;Event&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x3067;1&#x6642;&#x9593;&#x7D4C;&#x3064;&#x3068;&#x6D88;&#x3048;&#x3066;&#x3057;&#x307E;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p>それでは、作成されたEventリソースを確認してみましょう。なお、Eventリソースはデフォルトで1時間経つと消えてしまいます。</p>
 <pre><code>$ kubectl get events -n default
 LAST SEEN   TYPE     REASON    OBJECT                 MESSAGE
 6s          Normal   Updated   tenant/tenant-sample   the tenant was updated
 </code></pre><h2 id="healthprobelistener">healthProbeListener</h2>
-<p>Manager&#x306B;&#x306F;&#x3001;&#x30D8;&#x30EB;&#x30B9;&#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x7528;&#x306E;API&#x306E;&#x30A8;&#x30F3;&#x30C9;&#x30DD;&#x30A4;&#x30F3;&#x30C8;&#x3092;&#x4F5C;&#x6210;&#x3059;&#x308B;&#x6A5F;&#x80FD;&#x304C;&#x7528;&#x610F;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x307E;&#x305A;&#x306F;&#x3001;Manager&#x306E;&#x4F5C;&#x6210;&#x6642;&#x306B;<code>HealthProbeBindAddress</code>&#x3067;&#x30A8;&#x30F3;&#x30C9;&#x30DD;&#x30A4;&#x30F3;&#x30C8;&#x306E;&#x30A2;&#x30C9;&#x30EC;&#x30B9;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>Managerには、ヘルスチェック用のAPIのエンドポイントを作成する機能が用意されています。</p>
+<p>まずは、Managerの作成時に<code>HealthProbeBindAddress</code>でエンドポイントのアドレスを指定します。</p>
 <blockquote>
 <p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/main.go" target="_blank">main.go</a></p>
 </blockquote>
@@ -640,10 +640,11 @@ LAST SEEN   TYPE     REASON    OBJECT                 MESSAGE
     LeaderElection:         enableLeaderElection,
     LeaderElectionID:       <span class="hljs-string">&quot;27475f02.example.com&quot;</span>,
     HealthProbeBindAddress: probeAddr,
+    CertDir:                certDir,
 })
 </code></pre>
-<p>&#x305D;&#x3057;&#x3066;&#x3001;<code>AddHealthzCheck</code>&#x3068;<code>AddReadyzCheck</code>&#x3067;&#x3001;&#x30CF;&#x30F3;&#x30C9;&#x30E9;&#x306E;&#x767B;&#x9332;&#x3092;&#x304A;&#x3053;&#x306A;&#x3044;&#x307E;&#x3059;&#x3002;
-&#x3053;&#x3053;&#x3067;&#x306F;<code>healthz.Ping</code>&#x3068;&#x3044;&#x3046;&#x4F55;&#x3082;&#x3057;&#x306A;&#x3044;&#x95A2;&#x6570;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x304C;&#x3001;&#x72EC;&#x81EA;&#x306E;&#x95A2;&#x6570;&#x3092;&#x767B;&#x9332;&#x3059;&#x308B;&#x3053;&#x3068;&#x3082;&#x53EF;&#x80FD;&#x3067;&#x3059;&#x3002;</p>
+<p>そして、<code>AddHealthzCheck</code>と<code>AddReadyzCheck</code>で、ハンドラの登録をおこないます。
+ここでは<code>healthz.Ping</code>という何もしない関数を利用していますが、独自の関数を登録することも可能です。</p>
 <blockquote>
 <p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/main.go" target="_blank">main.go</a></p>
 </blockquote>
@@ -658,35 +659,35 @@ err = mgr.AddReadyzCheck(<span class="hljs-string">&quot;ping&quot;</span>, heal
     os.Exit(<span class="hljs-number">1</span>)
 }
 </code></pre>
-<p>&#x3053;&#x308C;&#x3067;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306B;&#x30D8;&#x30EB;&#x30B9;&#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x7528;&#x306E;API&#x304C;&#x5B9F;&#x88C5;&#x3067;&#x304D;&#x307E;&#x3057;&#x305F;&#x3002;
-&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306B;<code>livenessProbe</code>&#x3084;<code>readinessProbe</code>&#x306E;&#x8A2D;&#x5B9A;&#x3092;&#x8FFD;&#x52A0;&#x3057;&#x3066;&#x304A;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p>これでコントローラにヘルスチェック用のAPIが実装できました。
+マニフェストに<code>livenessProbe</code>や<code>readinessProbe</code>の設定を追加しておきましょう。</p>
 <blockquote>
 <p><a id="manager.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/config/manager/manager.yaml" target="_blank">manager.yaml</a></p>
 </blockquote>
-<pre><code class="lang-yaml"><span class="hljs-attr">        livenessProbe:</span>
-<span class="hljs-attr">          httpGet:</span>
-<span class="hljs-attr">            path:</span> /healthz
-<span class="hljs-attr">            port:</span> <span class="hljs-number">9090</span>
-<span class="hljs-attr">          initialDelaySeconds:</span> <span class="hljs-number">3</span>
-<span class="hljs-attr">          periodSeconds:</span> <span class="hljs-number">3</span>
-<span class="hljs-attr">        readinessProbe:</span>
-<span class="hljs-attr">          httpGet:</span>
-<span class="hljs-attr">            path:</span> /readyz
-<span class="hljs-attr">            port:</span> <span class="hljs-number">9090</span>
-<span class="hljs-attr">          initialDelaySeconds:</span> <span class="hljs-number">5</span>
-<span class="hljs-attr">          periodSeconds:</span> <span class="hljs-number">10</span>
+<pre><code class="lang-yaml">        <span class="hljs-attr">livenessProbe:</span>
+          <span class="hljs-attr">httpGet:</span>
+            <span class="hljs-attr">path:</span> <span class="hljs-string">/healthz</span>
+            <span class="hljs-attr">port:</span> <span class="hljs-number">9090</span>
+          <span class="hljs-attr">initialDelaySeconds:</span> <span class="hljs-number">3</span>
+          <span class="hljs-attr">periodSeconds:</span> <span class="hljs-number">3</span>
+        <span class="hljs-attr">readinessProbe:</span>
+          <span class="hljs-attr">httpGet:</span>
+            <span class="hljs-attr">path:</span> <span class="hljs-string">/readyz</span>
+            <span class="hljs-attr">port:</span> <span class="hljs-number">9090</span>
+          <span class="hljs-attr">initialDelaySeconds:</span> <span class="hljs-number">5</span>
+          <span class="hljs-attr">periodSeconds:</span> <span class="hljs-number">10</span>
 </code></pre>
 <h2 id="inject">Inject</h2>
-<p>Manager&#x306B;&#x306F;&#x3001;Reconciler&#x3084;Runner&#x306A;&#x3069;&#x306B;&#x7279;&#x5B9A;&#x306E;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x3092;&#x30A4;&#x30F3;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x3059;&#x308B;&#x6A5F;&#x80FD;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;
-InjectClient&#x3084;InjectLogger&#x306A;&#x3069;&#x306E;&#x30A4;&#x30F3;&#x30BF;&#x30D5;&#x30A7;&#x30FC;&#x30B9;&#x3092;&#x5B9F;&#x88C5;&#x3059;&#x308B;&#x3068;&#x3001;manager&#x306E;Start&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3092;&#x5B9F;&#x884C;&#x3057;&#x305F;&#x30BF;&#x30A4;&#x30DF;&#x30F3;&#x30B0;&#x3067;&#x3001;
-Kubernetes&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x3084;&#x30ED;&#x30AC;&#x30FC;&#x306E;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x3092;&#x53D7;&#x3051;&#x53D6;&#x308B;&#x3053;&#x3068;&#x304C;&#x53EF;&#x80FD;&#x3067;&#x3059;&#x3002;</p>
-<p>&#x5229;&#x7528;&#x53EF;&#x80FD;&#x306A;&#x30A4;&#x30F3;&#x30BF;&#x30D5;&#x30A7;&#x30FC;&#x30B9;&#x306B;&#x3064;&#x3044;&#x3066;&#x306F;&#x4E0B;&#x8A18;&#x306E;&#x30D1;&#x30C3;&#x30B1;&#x30FC;&#x30B8;&#x3092;&#x53C2;&#x7167;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<p>Managerには、ReconcilerやRunnerなどに特定のオブジェクトをインジェクトする機能があります。
+InjectClientやInjectLoggerなどのインタフェースを実装すると、managerのStartメソッドを実行したタイミングで、
+Kubernetesクライアントやロガーのオブジェクトを受け取ることが可能です。</p>
+<p>利用可能なインタフェースについては下記のパッケージを参照してください。</p>
 <ul>
 <li><a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/runtime/inject?tab=doc" target="_blank">inject</a></li>
 </ul>
-<p>&#x3053;&#x308C;&#x3089;&#x306E;&#x30AA;&#x30D6;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x307B;&#x3068;&#x3093;&#x3069;&#x306F;&#x3001;Get&#x30E1;&#x30BD;&#x30C3;&#x30C9;&#x3067;&#x53D6;&#x5F97;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x308B;&#x305F;&#x3081;&#x3001;inject&#x306E;&#x4F7F;&#x3044;&#x307F;&#x3061;&#x306F;&#x305D;&#x308C;&#x307B;&#x3069;&#x591A;&#x304F;&#x3042;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;
-&#x3057;&#x304B;&#x3057;&#x3001;StopChannel&#x3060;&#x3051;&#x306F;inject&#x3067;&#x3057;&#x304B;&#x53D6;&#x5F97;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x3067;&#x304D;&#x306A;&#x3044;&#x305F;&#x3081;&#x3001;Reconciler&#x306E;&#x4E2D;&#x3067;manager&#x304B;&#x3089;&#x306E;
-&#x7D42;&#x4E86;&#x901A;&#x77E5;&#x3092;&#x53D7;&#x3051;&#x53D6;&#x308A;&#x305F;&#x3044;&#x5834;&#x5408;&#x306F;&#x3001;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306B;InjectStopChannel&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3053;&#x3068;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>これらのオブジェクトのほとんどは、Getメソッドで取得することができるため、injectの使いみちはそれほど多くありません。
+しかし、StopChannelだけはinjectでしか取得することができないため、Reconcilerの中でmanagerからの
+終了通知を受け取りたい場合は、以下のようにInjectStopChannelを利用することになります。</p>
 <blockquote>
 <p><a id="inject.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/inject.go" target="_blank">inject.go</a></p>
 </blockquote>
@@ -708,7 +709,7 @@ Kubernetes&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x3084;&#x30ED;&#x30A
     <span class="hljs-keyword">return</span> ctx
 }
 </code></pre>
-<p>&#x3053;&#x306E;StopChannel&#x304B;&#x3089;<code>context.Context</code>&#x3092;&#x4F5C;&#x6210;&#x3057;&#x3066;&#x304A;&#x3051;&#x3070;&#x3001;Reconcile Loop&#x306E;&#x4E2D;&#x3067;manager&#x304B;&#x3089;&#x306E;&#x7D42;&#x4E86;&#x901A;&#x77E5;&#x3092;&#x53D7;&#x3051;&#x53D6;&#x308C;&#x307E;&#x3059;&#x3002;</p>
+<p>このStopChannelから<code>context.Context</code>を作成しておけば、Reconcile Loopの中でmanagerからの終了通知を受け取れます。</p>
 <pre><code class="lang-go"><span class="hljs-keyword">type</span> TenantReconciler <span class="hljs-keyword">struct</span> {
     stopCh   &lt;-<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>{}
 }
@@ -716,7 +717,7 @@ Kubernetes&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x3084;&#x30ED;&#x30A
 <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *TenantReconciler)</span> <span class="hljs-title">Reconcile</span><span class="hljs-params">(req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
     ctx := contextFromStopChannel(r.stopCh)
 </code></pre>
-<p>&#x305F;&#x3060;&#x3057;&#x3001;Reconcile&#x306F;&#x77ED;&#x6642;&#x9593;&#x3067;&#x7D42;&#x4E86;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x671B;&#x307E;&#x3057;&#x3044;&#x3068;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x306E;&#x3067;&#x3001;&#x9577;&#x6642;&#x9593;&#x30D6;&#x30ED;&#x30C3;&#x30AF;&#x3059;&#x308B;&#x3088;&#x3046;&#x306A;&#x51E6;&#x7406;&#x306F;&#x306A;&#x308B;&#x3079;&#x304F;&#x8A18;&#x8FF0;&#x3057;&#x306A;&#x3044;&#x3088;&#x3046;&#x306B;&#x3057;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p>ただし、Reconcileは短時間で終了することが望ましいとされていますので、長時間ブロックするような処理はなるべく記述しないようにしましょう。</p>
 
                                 
                                 </section>
@@ -760,12 +761,56 @@ Kubernetes&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x3084;&#x30ED;&#x30A
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.8","depth":2,"next":{"title":"メトリクスの収集","level":"1.4.9","depth":2,"path":"controller-runtime/metrics.md","ref":"controller-runtime/metrics.md","articles":[]},"previous":{"title":"Webhookのテスト","level":"1.4.7","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2020-08-25T00:47:27.627Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2020-09-16T07:46:26.776Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.8","depth":2,"next":{"title":"メトリクスの収集","level":"1.4.9","depth":2,"path":"controller-runtime/metrics.md","ref":"controller-runtime/metrics.md","articles":[]},"previous":{"title":"Webhookのテスト","level":"1.4.7","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
 
         
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
     
