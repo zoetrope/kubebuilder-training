@@ -81,7 +81,7 @@ $ kubectl apply -f config/samples/multitenancy_v1_tenant.yaml
 
 以下のようにWebhookやReconcileのメッセージがコントローラのログに表示されていれば成功です。
 
-```consle
+```console
 2020-07-03T09:57:11.980Z        DEBUG   controller-runtime.webhook.webhooks     received request        {"webhook": "/mutate-multitenancy-example-com-v1-tenant", "UID": "1bc1074e-a16d-4fe7-a302-6be2b6ded099", "kind": "multitenancy.example.com/v1, Kind=tenant", "resource": {"group":"multitenancy.example.com","version":"v1","resource":"tenant"}}
 2020-07-03T09:57:11.981Z        INFO    tenant-resource      default {"name": "tenant-sample"}
 2020-07-03T09:57:11.981Z        DEBUG   controller-runtime.webhook.webhooks     wrote response  {"webhook": "/mutate-multitenancy-example-com-v1-tenant", "UID": "1bc1074e-a16d-4fe7-a302-6be2b6ded099", "allowed": true, "result": {}, "resultError": "got runtime.Object without object metadata: &Status{ListMeta:ListMeta{SelfLink:,ResourceVersion:,Continue:,RemainingItemCount:nil,},Status:,Message:,Reason:,Details:nil,Code:200,}"}

@@ -2,6 +2,7 @@ const path = require("path")
 const fs = require("fs")
 module.exports = {
     "root": "./docs",
+    "title": "つくって学ぶKubebuilder",
     "plugins": [
         "include-codeblock"
     ],
