@@ -45,10 +45,12 @@ func main() {
 	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
 
 	//! [telepresence]
-	certDir := filepath.Join(os.TempDir(), "k8s-webhook-server", "serving-certs")
+	certDir := filepath.Join("tmp", "k8s-webhook-server", "serving-certs")
 	root := os.Getenv("TELEPRESENCE_ROOT")
 	if len(root) != 0 {
 		certDir = filepath.Join(root, certDir)
+	} else {
+		certDir = filepath.Join("/", certDir)
 	}
 	//! [telepresence]
 
