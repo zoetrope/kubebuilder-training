@@ -35,7 +35,7 @@ Kubebuilderで生成したカスタムコントローラでは、Webhookの証�
 最後に下記のコマンドで、Kubernetes上で動いているコントローラをローカルで動いているプロセスと置き換えます。
 
 ```console
-telepresence --namespace tenant-system --swap-deployment tenant-controller-manager --run make run
+telepresence --namespace tenant-system --swap-deployment tenant-controller-manager:manager --run make run
 ```
 
 なお、kubebuilderが生成したコントローラのマニフェスト(`config/manager/manager.yaml`)には以下のように非常に小さなサイズのResourcesが指定されています。
