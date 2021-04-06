@@ -93,8 +93,7 @@ spec:
                 items:
                   properties:
                     lastTransitionTime:
-                      description: Message is a human-readable message indicating
-                        details about last transition.
+                      description: LastTransitionTime is the time of the last transition.
                       format: date-time
                       type: string
                     message:
@@ -109,7 +108,7 @@ spec:
                       description: Status is the status of the condition
                       type: string
                     type:
-                      description: Type is the type fo the condition
+                      description: Type is the type for the condition
                       enum:
                       - Ready
                       type: string

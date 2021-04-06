@@ -41,7 +41,7 @@ type TenantStatus struct {
 }
 
 type TenantCondition struct {
-	// Type is the type fo the condition
+	// Type is the type for the condition
 	Type TenantConditionType `json:"type"`
 	// Status is the status of the condition
 	Status corev1.ConditionStatus `json:"status"`
@@ -51,7 +51,7 @@ type TenantCondition struct {
 	// Message is a human-readable message indicating details about last transition.
 	// +optional
 	Message string `json:"message,omitempty"`
-	// Message is a human-readable message indicating details about last transition.
+	// LastTransitionTime is the time of the last transition.
 	LastTransitionTime metav1.Time `json:"lastTransitionTime"`
 }
 

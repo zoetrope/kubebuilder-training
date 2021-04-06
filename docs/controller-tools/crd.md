@@ -110,7 +110,7 @@ type SampleSpec struct {
 
 [import:"status"](../../codes/tenant/api/v1/tenant_types.go)
 
-汎用的な Condition 型が Go 1.19 で追加されるので、こちらを使っていくのも良いです。
+汎用的な Condition 型が Kubernetes 1.19 で追加されるので、こちらを使っていくのも良いです。
 
 - https://pkg.go.dev/k8s.io/apimachinery@v0.19.0-rc.4/pkg/apis/meta/v1?tab=doc#Condition
 
@@ -188,4 +188,3 @@ $ kubectl get tenant
 NAME            ADMIN     PREFIX           READY
 tenant-sample   default   tenant-sample-   True
 ```
-
