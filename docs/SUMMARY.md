@@ -17,7 +17,6 @@
   * [RBACマニフェストの生成](controller-tools/rbac.md)
   * [Webhookマニフェストの生成](controller-tools/webhook.md)
 * [controller-runtime](controller-runtime/README.md)
-  * [コントローラ実装入門](controller-runtime/introduction.md)
   * [クライアントの使い方](controller-runtime/client.md)
   * [Reconcileの実装](controller-runtime/reconcile.md)
   * [リソースの削除](controller-runtime/deletion.md)

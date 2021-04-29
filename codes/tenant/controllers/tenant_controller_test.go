@@ -9,6 +9,7 @@ import (
 	multitenancyv1 "github.com/zoetrope/kubebuilder-training/codes/api/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -52,18 +53,18 @@ var _ = Describe("Tenant controller", func() {
 				if err != nil {
 					return err
 				}
-				cond := findCondition(createdTenant.Status.Conditions, multitenancyv1.ConditionReady)
+				cond := meta.FindStatusCondition(createdTenant.Status.Conditions, multitenancyv1.ConditionReady)
 				if cond == nil {
 					return errors.New("condition not found")
 				}
-				if cond.Status != corev1.ConditionTrue {
+				if cond.Status != metav1.ConditionTrue {
 					return errors.New(cond.Reason)
 				}
 				return nil
 			}).Should(Succeed())
 
 			nsList := &corev1.NamespaceList{}
-			err = k8sClient.List(ctx, nsList, client.MatchingFields(map[string]string{ownerControllerField: tenant.Name}))
+			err = k8sClient.List(ctx, nsList)
 			Expect(err).Should(Succeed())
 
 			var namespaces []string
@@ -72,7 +73,6 @@ var _ = Describe("Tenant controller", func() {
 			}
 			Expect(namespaces).Should(ContainElement("test1"))
 			Expect(namespaces).Should(ContainElement("test2"))
-
 		})
 	})
 })

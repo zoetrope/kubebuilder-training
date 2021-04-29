@@ -29,7 +29,8 @@ spec:
         image: quay.io/cybozu/testhttpd:0.1.0
 ```
 
-kube-controller-managerと呼ばれるプログラムは、APIサーバ上にDeploymentリソースが登録されるとReplicaSetリソースをAPIサーバーに登録し、さらにReplicaSetリソースが登録されると`spec.replicas`に指定された数のPodをAPIサーバーに登録します。
+kube-controller-managerと呼ばれるプログラムは、APIサーバ上にDeploymentリソースが登録されるとReplicaSetリソースをAPIサーバーに登録し、
+さらにReplicaSetリソースが登録されると`spec.replicas`に指定された数のPodをAPIサーバーに登録します。
 次にkube-schedulerというプログラムは、APIサーバ上にPodリソースが登録されると、Podを配置するノードを決定しPodの情報を更新します。
 各ノードで動作しているkubeletというプログラムは、自分のノード名が記述されたPodリソースを見つけるとコンテナを立ち上げます。
 
@@ -81,15 +82,13 @@ Podが3つある状態でReconcileが呼び出されたときにさらに3つの
 
 ### エッジドリブントリガーとレベルドリブントリガー
 
-Reconciliation Loopは、レベルドリブントリガーで動く必要があります。
-
-エッジドリブントリガーとは状態の変化が発生した時点で処理を実行することで、レベルドリブントリガーとは状態を定期的にチェックして特定の条件に入ったときに処理を実行することです。([参考](https://hackernoon.com/level-triggering-and-reconciliation-in-kubernetes-1f17fe30333d))
+エッジドリブントリガーとは状態の変化が発生した時点で処理を実行することで、レベルドリブントリガーとは状態を定期的にチェックし現在の状態に応じて処理を実行することです。
+([参考](https://hackernoon.com/level-triggering-and-reconciliation-in-kubernetes-1f17fe30333d))
 
 ![Edge-driven vs. Level-driven Trigger](./img/edge_level_trigger.png)
 
-エッジドリブントリガー方式でコントローラを実装すると、もしイベントが発生したときにコントローラが起動していなかったりすると、そのトリガーが発動せず、あるべき状態と現在の状態がずれてしまうことになります。
-
-基本的にKubebuilderを利用してコントローラを実装するとレベルドリブンになるのですが、状態のもたせ方によってはエッジドリブンになってしまうケースがあります。
+Reconciliation Loopがエッジドリブントリガーのみで実行される場合、もしイベントが発生したときにコントローラが起動していなかったりすると、
+そのトリガーが発動せずあるべき状態と現在の状態がずれてしまうことになります。
 
 例えば`status.phase`フィールドで状態を保持し、その状態に応じて動作するコントローラを考えてみましょう。
 

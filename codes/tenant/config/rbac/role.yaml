@@ -33,6 +33,12 @@ rules:
 - apiGroups:
   - multitenancy.example.com
   resources:
+  - tenants/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - multitenancy.example.com
+  resources:
   - tenants/status
   verbs:
   - get

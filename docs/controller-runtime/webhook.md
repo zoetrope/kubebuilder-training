@@ -1,6 +1,7 @@
 # Webhookの実装
 
-[Webhookマニフェストの生成](../controller-tools/webhook.md)で解説したように、テナントコントローラではリソースの作成時にデフォルト値を設定するためのWebhookと、リソースの更新時にバリデーションするためのWebhookを作成します。
+[Webhookマニフェストの生成](../controller-tools/webhook.md)で解説したように、テナントコントローラではリソースの作成時に
+デフォルト値を設定するためのWebhookと、リソースの更新時にバリデーションするためのWebhookを作成します。
 
 これらのWebhookの実装は非常に簡単で、controller-genで生成された関数に必要な処理を書いていくだけです。
 

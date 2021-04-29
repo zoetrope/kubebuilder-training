@@ -26,7 +26,6 @@
 - [local-pv-provisioner](https://github.com/cybozu/neco-containers/tree/master/local-pv-provisioner)
   - 指定した条件にマッチしたデバイスから自動的にlocal Persistent Volumeリソースを作成するコントローラ
 - [MOCO](https://github.com/cybozu-go/moco)
-  - MySQLクラスタの構築を自動化するオペレータ(実装中)
+  - MySQLクラスタの構築を自動化するオペレータ
 - [Coil](https://github.com/cybozu-go/coil)
   - CNIプラグイン
-  - v2(実装中)ではKubebuilderを利用して実装を全面的に書き換えています。

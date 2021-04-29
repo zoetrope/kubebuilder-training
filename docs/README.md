@@ -24,10 +24,11 @@ Kubebuilderは、下記のツールとライブラリから構成されていま
 
 ## 対応バージョン
 
-* kubebuilder: 2.3.1
-* controller-tools: 0.4.0
-* controller-runtime: 0.6.2
+* kubebuilder: v3.0.0
+* controller-tools: v0.5.0
+* controller-runtime: v0.8.3
 
 ## 更新履歴
 
 * 2020/07/30: 初版公開
+* 2021/04/29: Kubebuilder v3対応

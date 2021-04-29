@@ -21,13 +21,14 @@ func (r *Tenant) SetupWebhookWithManager(mgr ctrl.Manager) error {
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 
 //! [webhook-defaulter]
-// +kubebuilder:webhook:path=/mutate-multitenancy-example-com-v1-tenant,mutating=true,failurePolicy=fail,groups=multitenancy.example.com,resources=tenants,verbs=create,versions=v1,name=mtenant.kb.io
+//+kubebuilder:webhook:path=/mutate-multitenancy-example-com-v1-tenant,mutating=true,failurePolicy=fail,sideEffects=None,groups=multitenancy.example.com,resources=tenants,verbs=create,versions=v1,name=mtenant.kb.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Defaulter = &Tenant{}
 
 //! [webhook-defaulter]
 
 //! [default]
+
 // Default implements webhook.Defaulter so a webhook will be registered for the type
 func (r *Tenant) Default() {
 	tenantlog.Info("default", "name", r.Name)
@@ -42,13 +43,14 @@ func (r *Tenant) Default() {
 
 //! [webhook-validator]
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
-// +kubebuilder:webhook:verbs=update,path=/validate-multitenancy-example-com-v1-tenant,mutating=false,failurePolicy=fail,groups=multitenancy.example.com,resources=tenants,versions=v1,name=vtenant.kb.io
+//+kubebuilder:webhook:path=/validate-multitenancy-example-com-v1-tenant,mutating=false,failurePolicy=fail,sideEffects=None,groups=multitenancy.example.com,resources=tenants,verbs=update,versions=v1,name=vtenant.kb.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Validator = &Tenant{}
 
 //! [webhook-validator]
 
 //! [validate]
+
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (r *Tenant) ValidateCreate() error {
 	tenantlog.Info("validate create", "name", r.Name)

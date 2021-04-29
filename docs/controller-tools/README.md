@@ -16,6 +16,7 @@ controller-toolsには下記のツールが含まれていますが、本資料�
 
 ```
 generators
+
 +webhook                                                                                                  package  generates (partial) {Mutating,Validating}WebhookConfiguration objects.
 +schemapatch:manifests=<string>[,maxDescLen=<int>]                                                        package  patches existing CRDs with new schemata.
 +rbac:roleName=<string>                                                                                   package  generates ClusterRole objects.

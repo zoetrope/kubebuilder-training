@@ -39,13 +39,17 @@ Reconcileが呼ばれるタイミングを制御するために、`NewController
 
 [import:"pred",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
 
-例えば`CreateFunc`でtrueを返し、`DeleteFunc`,`UpdateFunc`でfalseを返すようにすれば、リソースが作成されたときのみReconcileが呼び出されるようにできます。また、引数でイベントの詳細な情報が渡ってくるので、それを利用してより複雑なフィルタリングをおこなうことも可能です。
+例えば`CreateFunc`でtrueを返し、`DeleteFunc`,`UpdateFunc`でfalseを返すようにすれば、リソースが作成されたときのみReconcileが呼び出されるようにできます。
+また、引数でイベントの詳細な情報が渡ってくるので、それを利用してより複雑なフィルタリングをおこなうことも可能です。
 なお、`GenericFunc`は後述の外部イベントのフィルタリングに利用します。
 
 重要な注意点として、kube-apiserver に発行した CREATE/UPDATE/PATCH 操作が一対一でイベントにはなりません。
 たとえば CREATE 直後に UPDATE すると、イベントとしては CreateFunc しか呼び出されないことがあります。
+また、実際にはリソースが更新されていなくても、コントローラの起動直後は CREATE イベントが発火されます。
+このような挙動をするため、イベントをフィルタリングして CREATE と UPDATE で異なる更新処理をおこなう実装はおすすめしません。
 
-`WithEventFilter`を利用すると`For`や`Owns`,`Watches`で指定したすべての監視対象にフィルターが適用されますが、下記のように`For`や`Owns`,`Watches`のオプションとして個別にフィルターを指定することも可能です。
+なお`WithEventFilter`を利用すると`For`や`Owns`,`Watches`で指定したすべての監視対象にフィルターが適用されますが、
+下記のように`For`や`Owns`,`Watches`のオプションとして個別にフィルターを指定することも可能です。
 
 ```go
 return ctrl.NewControllerManagedBy(mgr).
@@ -83,7 +87,7 @@ Reconcileは[reconcile.Reconciler](https://pkg.go.dev/sigs.k8s.io/controller-run
 
 ```go
 type Reconciler interface {
-	Reconcile(Request) (Result, error)
+	Reconcile(context.Context, Request) (Result, error)
 }
 ```
 
@@ -93,7 +97,8 @@ type Reconciler interface {
 
 [import:"get",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
 
-なお、`Owns`でnamespaceやClusterRole, RoleBindingを監視対象に設定しましたが、これらのリソースの変更によってReconcileが呼び出された場合でも、RequestのNamespacedNameにはこれらのリソースのownerであるテナントリソースの名前が入っています。
+なお、`Owns`でnamespaceやClusterRole, RoleBindingを監視対象に設定しましたが、これらのリソースの変更によってReconcileが呼び出された場合でも、
+RequestのNamespacedNameにはこれらのリソースのownerであるテナントリソースの名前が入っています。
 
 戻り値の[reconcile.Result](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Result)には、`Requeue`, `RequeueAfter`というフィールドが含まれています。
 この戻り値を利用すると、指定した時間が経過したあとに再度Reconcileを呼び出させることが可能になります。
@@ -118,16 +123,17 @@ ClusterRoleとRoleBindingを作成し、テナントの管理対象のnamespace�
 
 ### ステータスの更新
 
-最初にステータスを更新するためのヘルパー関数を用意しておきます。
-
-[import](../../codes/tenant/controllers/status.go)
+最後に、テナントリソースの状況をユーザーに知らせるためにステータスの更新をおこないます。
 
 コントローラが扱うリソースに何も変更が加えられなかった場合は、ステータスを更新する必要もないでしょう。
-そこで下記のような関数を用意し、namespaceとRBACのどちらかに変更が加えられたことをわかるようにしておきます。
+そこで下記のように更新をおこなったかどうかをフラグで返すようにしておきます。
 
 [import:"reconcile"](../../codes/tenant/controllers/tenant_controller.go)
 
 上記の関数の戻り値に応じてステータスの更新をおこないます。
+Conditionsの更新には、`meta.SetStatusCondition()`という関数が用意されています。
+この関数を利用すると、同じタイプのConditionがすでに存在する場合は値を更新し、存在しない場合は追加してくれます。
+また、Condition.Statusの値が変化したときだけ`LastTransitionTime`が現在の時刻で更新されます。
 
 [import:"status",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
 
