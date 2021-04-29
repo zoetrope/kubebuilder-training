@@ -6,7 +6,7 @@
         <title>Reconcileの実装 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.15">
+        <meta name="generator" content="HonKit 3.6.20">
         
         
         
@@ -317,20 +317,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="introduction.html">
-            
-                <a href="introduction.html">
-            
-                    
-                    コントローラ実装入門
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.2" data-path="client.html">
+        <li class="chapter " data-level="1.4.1" data-path="client.html">
             
                 <a href="client.html">
             
@@ -343,7 +330,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.3" data-path="reconcile.html">
+        <li class="chapter active" data-level="1.4.2" data-path="reconcile.html">
             
                 <a href="reconcile.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="deletion.html">
+        <li class="chapter " data-level="1.4.3" data-path="deletion.html">
             
                 <a href="deletion.html">
             
@@ -369,7 +356,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
@@ -382,7 +369,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -395,7 +382,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
@@ -408,7 +395,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="manager.html">
+        <li class="chapter " data-level="1.4.7" data-path="manager.html">
             
                 <a href="manager.html">
             
@@ -421,7 +408,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.9" data-path="metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="metrics.html">
             
                 <a href="metrics.html">
             
@@ -531,11 +518,15 @@
     GenericFunc: <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(event.GenericEvent)</span> <span class="hljs-title">bool</span></span> { <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span> },
 }
 </code></pre>
-<p>例えば<code>CreateFunc</code>でtrueを返し、<code>DeleteFunc</code>,<code>UpdateFunc</code>でfalseを返すようにすれば、リソースが作成されたときのみReconcileが呼び出されるようにできます。また、引数でイベントの詳細な情報が渡ってくるので、それを利用してより複雑なフィルタリングをおこなうことも可能です。
+<p>例えば<code>CreateFunc</code>でtrueを返し、<code>DeleteFunc</code>,<code>UpdateFunc</code>でfalseを返すようにすれば、リソースが作成されたときのみReconcileが呼び出されるようにできます。
+また、引数でイベントの詳細な情報が渡ってくるので、それを利用してより複雑なフィルタリングをおこなうことも可能です。
 なお、<code>GenericFunc</code>は後述の外部イベントのフィルタリングに利用します。</p>
 <p>重要な注意点として、kube-apiserver に発行した CREATE/UPDATE/PATCH 操作が一対一でイベントにはなりません。
-たとえば CREATE 直後に UPDATE すると、イベントとしては CreateFunc しか呼び出されないことがあります。</p>
-<p><code>WithEventFilter</code>を利用すると<code>For</code>や<code>Owns</code>,<code>Watches</code>で指定したすべての監視対象にフィルターが適用されますが、下記のように<code>For</code>や<code>Owns</code>,<code>Watches</code>のオプションとして個別にフィルターを指定することも可能です。</p>
+たとえば CREATE 直後に UPDATE すると、イベントとしては CreateFunc しか呼び出されないことがあります。
+また、実際にはリソースが更新されていなくても、コントローラの起動直後は CREATE イベントが発火されます。
+このような挙動をするため、イベントをフィルタリングして CREATE と UPDATE で異なる更新処理をおこなう実装はおすすめしません。</p>
+<p>なお<code>WithEventFilter</code>を利用すると<code>For</code>や<code>Owns</code>,<code>Watches</code>で指定したすべての監視対象にフィルターが適用されますが、
+下記のように<code>For</code>や<code>Owns</code>,<code>Watches</code>のオプションとして個別にフィルターを指定することも可能です。</p>
 <pre><code class="lang-go"><span class="hljs-keyword">return</span> ctrl.NewControllerManagedBy(mgr).
     For(&amp;multitenancyv1.Tenant{}, builder.WithPredicates(pred1)).
     Owns(&amp;corev1.Namespace{}, builder.WithPredicates(pred2)).
@@ -554,11 +545,11 @@
 <pre><code class="lang-golang"><span class="hljs-keyword">package</span> controllers
 
 <span class="hljs-keyword">import</span> (
+    <span class="hljs-string">&quot;context&quot;</span>
     <span class="hljs-string">&quot;time&quot;</span>
 
     multitenancyv1 <span class="hljs-string">&quot;github.com/zoetrope/kubebuilder-training/codes/api/v1&quot;</span>
     corev1 <span class="hljs-string">&quot;k8s.io/api/core/v1&quot;</span>
-    metav1 <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;</span>
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;</span>
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/event&quot;</span>
 )
@@ -581,15 +572,14 @@
     client  client.Client
 }
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r externalEventWatcher)</span> <span class="hljs-title">Start</span><span class="hljs-params">(ch &lt;-<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>{})</span> <span class="hljs-title">error</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r externalEventWatcher)</span> <span class="hljs-title">Start</span><span class="hljs-params">(ctx context.Context)</span> <span class="hljs-title">error</span></span> {
     ticker := time.NewTicker(<span class="hljs-number">10</span> * time.Second)
-    ctx := contextFromStopChannel(ch)
 
     <span class="hljs-keyword">defer</span> ticker.Stop()
     <span class="hljs-keyword">for</span> {
         <span class="hljs-keyword">select</span> {
-        <span class="hljs-keyword">case</span> &lt;-ch:
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+        <span class="hljs-keyword">case</span> &lt;-ctx.Done():
+            <span class="hljs-keyword">return</span> ctx.Err()
         <span class="hljs-keyword">case</span> &lt;-ticker.C:
             <span class="hljs-keyword">var</span> tenants multitenancyv1.TenantList
             err := r.client.List(ctx, &amp;tenants, client.MatchingFields(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{conditionReadyField: <span class="hljs-keyword">string</span>(corev1.ConditionTrue)}))
@@ -598,9 +588,7 @@
             }
             <span class="hljs-keyword">for</span> _, tenant := <span class="hljs-keyword">range</span> tenants.Items {
                 r.channel &lt;- event.GenericEvent{
-                    Meta: &amp;metav1.ObjectMeta{
-                        Name: tenant.Name,
-                    },
+                    Object: &amp;tenant,
                 }
             }
         }
@@ -634,7 +622,7 @@ src := source.Channel{
 <h3 id="reconciler">Reconciler</h3>
 <p>Reconcileは<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Reconciler" target="_blank">reconcile.Reconciler</a>インタフェースを実装することになります。</p>
 <pre><code class="lang-go"><span class="hljs-keyword">type</span> Reconciler <span class="hljs-keyword">interface</span> {
-    Reconcile(Request) (Result, error)
+    Reconcile(context.Context, Request) (Result, error)
 }
 </code></pre>
 <p>引数として渡ってくる<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Request" target="_blank">reconcile.Request</a>には、<code>For</code>で指定した監視対象のNamespacedNameが含まれています。</p>
@@ -645,7 +633,8 @@ src := source.Channel{
 <pre><code class="lang-golang"><span class="hljs-keyword">var</span> tenant multitenancyv1.Tenant
 err := r.Get(ctx, req.NamespacedName, &amp;tenant)
 </code></pre>
-<p>なお、<code>Owns</code>でnamespaceやClusterRole, RoleBindingを監視対象に設定しましたが、これらのリソースの変更によってReconcileが呼び出された場合でも、RequestのNamespacedNameにはこれらのリソースのownerであるテナントリソースの名前が入っています。</p>
+<p>なお、<code>Owns</code>でnamespaceやClusterRole, RoleBindingを監視対象に設定しましたが、これらのリソースの変更によってReconcileが呼び出された場合でも、
+RequestのNamespacedNameにはこれらのリソースのownerであるテナントリソースの名前が入っています。</p>
 <p>戻り値の<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Result" target="_blank">reconcile.Result</a>には、<code>Requeue</code>, <code>RequeueAfter</code>というフィールドが含まれています。
 この戻り値を利用すると、指定した時間が経過したあとに再度Reconcileを呼び出させることが可能になります。
 例えば何らかの時間がかかる処理(コンテナの起動など)を待つ場合に利用できます。</p>
@@ -783,48 +772,9 @@ err := r.Get(ctx, req.NamespacedName, &amp;tenant)
 }
 </code></pre>
 <h3 id="ステータスの更新">ステータスの更新</h3>
-<p>最初にステータスを更新するためのヘルパー関数を用意しておきます。</p>
-<blockquote>
-<p><a id="status.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/status.go" target="_blank">status.go</a></p>
-</blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">package</span> controllers
-
-<span class="hljs-keyword">import</span> (
-    <span class="hljs-string">&quot;time&quot;</span>
-
-    multitenancyv1 <span class="hljs-string">&quot;github.com/zoetrope/kubebuilder-training/codes/api/v1&quot;</span>
-    metav1 <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;</span>
-)
-
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">setCondition</span><span class="hljs-params">(conditions *[]multitenancyv1.TenantCondition, newCondition multitenancyv1.TenantCondition)</span></span> {
-    <span class="hljs-keyword">if</span> conditions == <span class="hljs-literal">nil</span> {
-        conditions = &amp;[]multitenancyv1.TenantCondition{}
-    }
-    current := findCondition(*conditions, newCondition.Type)
-    <span class="hljs-keyword">if</span> current == <span class="hljs-literal">nil</span> {
-        newCondition.LastTransitionTime = metav1.NewTime(time.Now())
-        *conditions = <span class="hljs-built_in">append</span>(*conditions, newCondition)
-        <span class="hljs-keyword">return</span>
-    }
-    <span class="hljs-keyword">if</span> current.Status != newCondition.Status {
-        current.Status = newCondition.Status
-        current.LastTransitionTime = metav1.NewTime(time.Now())
-    }
-    current.Reason = newCondition.Reason
-    current.Message = newCondition.Message
-}
-
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">findCondition</span><span class="hljs-params">(conditions []multitenancyv1.TenantCondition, conditionType multitenancyv1.TenantConditionType)</span> *<span class="hljs-title">multitenancyv1</span>.<span class="hljs-title">TenantCondition</span></span> {
-    <span class="hljs-keyword">for</span> _, c := <span class="hljs-keyword">range</span> conditions {
-        <span class="hljs-keyword">if</span> c.Type == conditionType {
-            <span class="hljs-keyword">return</span> &amp;c
-        }
-    }
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
-}
-</code></pre>
+<p>最後に、テナントリソースの状況をユーザーに知らせるためにステータスの更新をおこないます。</p>
 <p>コントローラが扱うリソースに何も変更が加えられなかった場合は、ステータスを更新する必要もないでしょう。
-そこで下記のような関数を用意し、namespaceとRBACのどちらかに変更が加えられたことをわかるようにしておきます。</p>
+そこで下記のように更新をおこなったかどうかをフラグで返すようにしておきます。</p>
 <blockquote>
 <p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
 </blockquote>
@@ -840,7 +790,10 @@ err := r.Get(ctx, req.NamespacedName, &amp;tenant)
     <span class="hljs-keyword">return</span> nsUpdated || rbUpdated, <span class="hljs-literal">nil</span>
 }
 </code></pre>
-<p>上記の関数の戻り値に応じてステータスの更新をおこないます。</p>
+<p>上記の関数の戻り値に応じてステータスの更新をおこないます。
+Conditionsの更新には、<code>meta.SetStatusCondition()</code>という関数が用意されています。
+この関数を利用すると、同じタイプのConditionがすでに存在する場合は値を更新し、存在しない場合は追加してくれます。
+また、Condition.Statusの値が変化したときだけ<code>LastTransitionTime</code>が現在の時刻で更新されます。</p>
 <blockquote>
 <p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
 </blockquote>
@@ -848,9 +801,9 @@ err := r.Get(ctx, req.NamespacedName, &amp;tenant)
 <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
     log.Error(err, <span class="hljs-string">&quot;unable to reconcile&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, tenant.Name)
     r.Recorder.Eventf(&amp;tenant, corev1.EventTypeWarning, <span class="hljs-string">&quot;Failed&quot;</span>, <span class="hljs-string">&quot;failed to reconcile: %s&quot;</span>, err.Error())
-    setCondition(&amp;tenant.Status.Conditions, multitenancyv1.TenantCondition{
+    meta.SetStatusCondition(&amp;tenant.Status.Conditions, metav1.Condition{
         Type:    multitenancyv1.ConditionReady,
-        Status:  corev1.ConditionFalse,
+        Status:  metav1.ConditionFalse,
         Reason:  <span class="hljs-string">&quot;Failed&quot;</span>,
         Message: err.Error(),
     })
@@ -861,12 +814,13 @@ err := r.Get(ctx, req.NamespacedName, &amp;tenant)
     <span class="hljs-keyword">return</span> ctrl.Result{}, err
 }
 
-currentCond := findCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
-<span class="hljs-keyword">if</span> updated || currentCond == <span class="hljs-literal">nil</span> || currentCond.Status != corev1.ConditionTrue {
+currentCond := meta.FindStatusCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
+<span class="hljs-keyword">if</span> updated || currentCond == <span class="hljs-literal">nil</span> || currentCond.Status != metav1.ConditionTrue {
     r.Recorder.Event(&amp;tenant, corev1.EventTypeNormal, <span class="hljs-string">&quot;Updated&quot;</span>, <span class="hljs-string">&quot;the tenant was updated&quot;</span>)
-    setCondition(&amp;tenant.Status.Conditions, multitenancyv1.TenantCondition{
+    meta.SetStatusCondition(&amp;tenant.Status.Conditions, metav1.Condition{
         Type:   multitenancyv1.ConditionReady,
-        Status: corev1.ConditionTrue,
+        Reason: <span class="hljs-string">&quot;OK&quot;</span>,
+        Status: metav1.ConditionTrue,
     })
     err = r.Status().Update(ctx, &amp;tenant)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
@@ -919,7 +873,7 @@ currentCond := findCondition(tenant.Status.Conditions, multitenancyv1.ConditionR
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Reconcileの実装","level":"1.4.3","depth":2,"next":{"title":"リソースの削除","level":"1.4.4","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"previous":{"title":"クライアントの使い方","level":"1.4.2","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/reconcile.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"next":{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"previous":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/reconcile.md","mtime":"2021-04-29T10:17:23.660Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

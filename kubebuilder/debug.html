@@ -6,7 +6,7 @@
         <title>手軽な動作確認 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.15">
+        <meta name="generator" content="HonKit 3.6.20">
         
         
         
@@ -317,20 +317,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/introduction.html">
-            
-                <a href="../controller-runtime/introduction.html">
-            
-                    
-                    コントローラ実装入門
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/client.html">
+        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/client.html">
             
                 <a href="../controller-runtime/client.html">
             
@@ -343,7 +330,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
             
                 <a href="../controller-runtime/reconcile.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/deletion.html">
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
             
                 <a href="../controller-runtime/deletion.html">
             
@@ -369,7 +356,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
@@ -382,7 +369,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -395,7 +382,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
@@ -408,7 +395,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/manager.html">
+        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/manager.html">
             
                 <a href="../controller-runtime/manager.html">
             
@@ -421,7 +408,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/metrics.html">
             
                 <a href="../controller-runtime/metrics.html">
             
@@ -509,15 +496,17 @@ Kubebuilderで生成したカスタムコントローラでは、Webhookの証�
 <blockquote>
 <p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/main.go" target="_blank">main.go</a></p>
 </blockquote>
-<pre><code class="lang-golang">certDir := filepath.Join(os.TempDir(), <span class="hljs-string">&quot;k8s-webhook-server&quot;</span>, <span class="hljs-string">&quot;serving-certs&quot;</span>)
+<pre><code class="lang-golang">certDir := filepath.Join(<span class="hljs-string">&quot;tmp&quot;</span>, <span class="hljs-string">&quot;k8s-webhook-server&quot;</span>, <span class="hljs-string">&quot;serving-certs&quot;</span>)
 root := os.Getenv(<span class="hljs-string">&quot;TELEPRESENCE_ROOT&quot;</span>)
 <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(root) != <span class="hljs-number">0</span> {
     certDir = filepath.Join(root, certDir)
+} <span class="hljs-keyword">else</span> {
+    certDir = filepath.Join(<span class="hljs-string">&quot;/&quot;</span>, certDir)
 }
 </code></pre>
 <p>次に<a href="kind.html">Kindで動かしてみよう</a>の手順通りにコントローラをデプロイします。</p>
 <p>最後に下記のコマンドで、Kubernetes上で動いているコントローラをローカルで動いているプロセスと置き換えます。</p>
-<pre><code class="lang-console">telepresence --namespace tenant-system --swap-deployment tenant-controller-manager --run make run
+<pre><code class="lang-console">telepresence --namespace tenant-system --swap-deployment tenant-controller-manager:manager --run make run
 </code></pre>
 <p>なお、kubebuilderが生成したコントローラのマニフェスト(<code>config/manager/manager.yaml</code>)には以下のように非常に小さなサイズのResourcesが指定されています。
 これが原因でTelepresenceのProxyがOOM Killerに終了させられることがあるので、メモリサイズを増やしておくとよいでしょう。</p>
@@ -572,7 +561,7 @@ root := os.Getenv(<span class="hljs-string">&quot;TELEPRESENCE_ROOT&quot;</span>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"手軽な動作確認","level":"1.2.5","depth":2,"next":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"previous":{"title":"kindで動かしてみよう","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/debug.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"手軽な動作確認","level":"1.2.5","depth":2,"next":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"previous":{"title":"kindで動かしてみよう","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/debug.md","mtime":"2021-04-29T07:22:19.230Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -6,7 +6,7 @@
         <title>CRDマニフェストの生成 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.15">
+        <meta name="generator" content="HonKit 3.6.20">
         
         
         
@@ -317,20 +317,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/introduction.html">
-            
-                <a href="../controller-runtime/introduction.html">
-            
-                    
-                    コントローラ実装入門
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/client.html">
+        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/client.html">
             
                 <a href="../controller-runtime/client.html">
             
@@ -343,7 +330,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
             
                 <a href="../controller-runtime/reconcile.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/deletion.html">
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
             
                 <a href="../controller-runtime/deletion.html">
             
@@ -369,7 +356,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
@@ -382,7 +369,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -395,7 +382,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
@@ -408,7 +395,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/manager.html">
+        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/manager.html">
             
                 <a href="../controller-runtime/manager.html">
             
@@ -421,7 +408,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/metrics.html">
             
                 <a href="../controller-runtime/metrics.html">
             
@@ -491,7 +478,7 @@
 <li><a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/config/crd/bases/multitenancy.example.com_tenants.yaml" target="_blank">CRDの例</a></li>
 </ul>
 <p>そこでKubebuilderではcontroller-genというツールを利用して、Goで記述したstructからCRDを生成する方式を採用しています。</p>
-<p><code>kubebuilder create api</code>コマンドで生成された<a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/api/v1/tenant_types.go" target="_blank">api/v1/tenant_types.go</a>を見てみると、<code>TenantSpec</code>, <code>TenantStatus</code>, <code>Tenant</code>, <code>TenantList</code>という構造体が定義されており、たくさんの<code>// +kubebuilder:</code>から始まるマーカーコメントが付与されています。
+<p><code>kubebuilder create api</code>コマンドで生成された<a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/api/v1/tenant_types.go" target="_blank">api/v1/tenant_types.go</a>を見てみると、<code>TenantSpec</code>, <code>TenantStatus</code>, <code>Tenant</code>, <code>TenantList</code>という構造体が定義されており、たくさんの<code>//+kubebuilder:</code>から始まるマーカーコメントが付与されています。
 controller-genは、これらの構造体とマーカーを頼りにCRDの生成をおこないます。</p>
 <p><code>Tenant</code>がカスタムリソースの本体となる構造体です。<code>TenantList</code>は<code>Tenant</code>のリストを表す構造体です。これら2つの構造体は基本的に変更することはありません。
 <code>TenantSpec</code>と<code>TenantStatus</code>は<code>Tenant</code>構造体を構成する要素です。この2つの構造体を書き換えてカスタムリソースを定義していきます。</p>
@@ -525,14 +512,14 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
     <span class="hljs-comment">// Important: Run &quot;make&quot; to regenerate code after modifying this file</span>
 
     <span class="hljs-comment">// Namespaces are the names of the namespaces that belong to the tenant</span>
-    <span class="hljs-comment">// +kubebuiler:validation:Required</span>
-    <span class="hljs-comment">// +kubebuiler:validation:MinItems=1</span>
+    <span class="hljs-comment">//+kubebuiler:validation:Required</span>
+    <span class="hljs-comment">//+kubebuiler:validation:MinItems=1</span>
     Namespaces []<span class="hljs-keyword">string</span> <span class="hljs-string">`json:&quot;namespaces&quot;`</span>
     <span class="hljs-comment">// NamespacePrefix is the prefix for the name of namespaces</span>
-    <span class="hljs-comment">// +optional</span>
+    <span class="hljs-comment">//+optional</span>
     NamespacePrefix <span class="hljs-keyword">string</span> <span class="hljs-string">`json:&quot;namespacePrefix,omitempty&quot;`</span>
     <span class="hljs-comment">// Admin is the identity with admin for the tenant</span>
-    <span class="hljs-comment">// +kubebuiler:validation:Required</span>
+    <span class="hljs-comment">//+kubebuiler:validation:Required</span>
     Admin rbacv1.Subject <span class="hljs-string">`json:&quot;admin&quot;`</span>
 }
 </code></pre>
@@ -591,41 +578,19 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
     <span class="hljs-comment">// Important: Run &quot;make&quot; to regenerate code after modifying this file</span>
 
     <span class="hljs-comment">// Conditions is an array of conditions.</span>
-    <span class="hljs-comment">// +optional</span>
-    Conditions []TenantCondition <span class="hljs-string">`json:&quot;conditions,omitempty&quot;`</span>
+    <span class="hljs-comment">// Known .status.conditions.type are: &quot;Ready&quot;</span>
+    <span class="hljs-comment">//+patchMergeKey=type</span>
+    <span class="hljs-comment">//+patchStrategy=merge</span>
+    <span class="hljs-comment">//+listType=map</span>
+    <span class="hljs-comment">//+listMapKey=type</span>
+    Conditions []metav1.Condition <span class="hljs-string">`json:&quot;conditions,omitempty&quot;`</span>
 }
 
-<span class="hljs-keyword">type</span> TenantCondition <span class="hljs-keyword">struct</span> {
-    <span class="hljs-comment">// Type is the type fo the condition</span>
-    Type TenantConditionType <span class="hljs-string">`json:&quot;type&quot;`</span>
-    <span class="hljs-comment">// Status is the status of the condition</span>
-    Status corev1.ConditionStatus <span class="hljs-string">`json:&quot;status&quot;`</span>
-    <span class="hljs-comment">// Reason is a one-word CamelCase reason for the condition&apos;s last transition.</span>
-    <span class="hljs-comment">// +optional</span>
-    Reason <span class="hljs-keyword">string</span> <span class="hljs-string">`json:&quot;reason,omitempty&quot;`</span>
-    <span class="hljs-comment">// Message is a human-readable message indicating details about last transition.</span>
-    <span class="hljs-comment">// +optional</span>
-    Message <span class="hljs-keyword">string</span> <span class="hljs-string">`json:&quot;message,omitempty&quot;`</span>
-    <span class="hljs-comment">// Message is a human-readable message indicating details about last transition.</span>
-    LastTransitionTime metav1.Time <span class="hljs-string">`json:&quot;lastTransitionTime&quot;`</span>
-}
-
-<span class="hljs-comment">// TenantConditionType is the type of Tenant condition.</span>
-<span class="hljs-comment">// +kubebuilder:validation:Enum=Ready</span>
-<span class="hljs-keyword">type</span> TenantConditionType <span class="hljs-keyword">string</span>
-
-<span class="hljs-comment">// Valid values for TenantConditionType</span>
 <span class="hljs-keyword">const</span> (
-    ConditionReady TenantConditionType = <span class="hljs-string">&quot;Ready&quot;</span>
+    ConditionReady <span class="hljs-keyword">string</span> = <span class="hljs-string">&quot;Ready&quot;</span>
 )
 </code></pre>
-<p>汎用的な Condition 型が Go 1.19 で追加されるので、こちらを使っていくのも良いです。</p>
-<ul>
-<li><a href="https://pkg.go.dev/k8s.io/apimachinery@v0.19.0-rc.4/pkg/apis/meta/v1?tab=doc#Condition" target="_blank">https://pkg.go.dev/k8s.io/apimachinery@v0.19.0-rc.4/pkg/apis/meta/v1?tab=doc#Condition</a></li>
-</ul>
-<p><code>TenantConditionType</code>には<code>// +kubebuilder:validation:Enum=Ready</code>というマーカーが付与されています。
-これにより<code>TenantConditionType</code>は列挙型となり、マーカーで列挙した値(ここでは&quot;Ready&quot;)以外の値を指定できなくなります。</p>
-<p>このStatusフィールドにより、ユーザーや他のシステム(モニタリングシステムなど)がテナントリソースの状態を確認することができるようになります。</p>
+<p>Statusフィールドにより、ユーザーや他のシステム(モニタリングシステムなど)がテナントリソースの状態を確認することができるようになります。</p>
 <p>テナントの作成に成功した場合には下記のようなStatusになります。</p>
 <pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">multitenancy.example.com/v1</span>
 <span class="hljs-attr">kind:</span> <span class="hljs-string">Tenant</span>
@@ -657,12 +622,12 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 <blockquote>
 <p><a id="tenant_types.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_types.go" target="_blank">tenant_types.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-comment">// +kubebuilder:object:root=true</span>
-<span class="hljs-comment">// +kubebuilder:resource:scope=Cluster</span>
-<span class="hljs-comment">// +kubebuilder:subresource:status</span>
-<span class="hljs-comment">// +kubebuilder:printcolumn:name=&quot;ADMIN&quot;,type=&quot;string&quot;,JSONPath=&quot;.spec.admin.name&quot;</span>
-<span class="hljs-comment">// +kubebuilder:printcolumn:name=&quot;PREFIX&quot;,type=&quot;string&quot;,JSONPath=&quot;.spec.namespacePrefix&quot;</span>
-<span class="hljs-comment">// +kubebuilder:printcolumn:name=&quot;READY&quot;,type=&quot;string&quot;,JSONPath=&quot;.status.conditions[?(@.type==&apos;Ready&apos;)].status&quot;</span>
+<pre><code class="lang-golang"><span class="hljs-comment">//+kubebuilder:object:root=true</span>
+<span class="hljs-comment">//+kubebuilder:subresource:status</span>
+<span class="hljs-comment">//+kubebuilder:resource:scope=Cluster</span>
+<span class="hljs-comment">//+kubebuilder:printcolumn:name=&quot;ADMIN&quot;,type=&quot;string&quot;,JSONPath=&quot;.spec.admin.name&quot;</span>
+<span class="hljs-comment">//+kubebuilder:printcolumn:name=&quot;PREFIX&quot;,type=&quot;string&quot;,JSONPath=&quot;.spec.namespacePrefix&quot;</span>
+<span class="hljs-comment">//+kubebuilder:printcolumn:name=&quot;READY&quot;,type=&quot;string&quot;,JSONPath=&quot;.status.conditions[?(@.type==&apos;Ready&apos;)].status&quot;</span>
 
 <span class="hljs-comment">// Tenant is the Schema for the tenants API</span>
 <span class="hljs-keyword">type</span> Tenant <span class="hljs-keyword">struct</span> {
@@ -683,7 +648,8 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 <p>サブリソースを有効にすると<code>status</code>が独自のエンドポイントを持つようになります。
 これによりTenantリソース全体を取得・更新しなくても、<code>status</code>のみを取得したり更新することが可能になります。
 ただし、あくまでもメインのリソースに属するリソースなので、個別に作成や削除することはできません。</p>
-<p>ユーザーが<code>spec</code>フィールドを記述し、コントローラが<code>status</code>フィールドを記述するという役割分担を明確にすることができるので、基本的には<code>status</code>はサブリソースにしておくのがよいでしょう。</p>
+<p>ユーザーが<code>spec</code>フィールドを記述し、コントローラが<code>status</code>フィールドを記述するという役割分担を明確にすることができるので、基本的には<code>status</code>はサブリソースにしておくのがよいでしょう。
+なおKubebuilder v3では、<code>status</code>フィールドがサブリソースに指定するマーカーが最初から指定されるようになりました。</p>
 <p>なお、CRDでは任意のフィールドをサブリソースにすることはできず、<code>status</code>と<code>scale</code>の2つのフィールドのみに対応しています。</p>
 <h3 id="printcolumn">printcolumn</h3>
 <p><code>+kubebuilder:printcolumn</code>マーカーを付与すると、kubectlでカスタムリソースを取得したときに表示する項目を指定することができます。</p>
@@ -736,7 +702,7 @@ tenant-sample   default   tenant-sample-   True
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"next":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},"previous":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/crd.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"next":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},"previous":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/crd.md","mtime":"2021-04-29T09:25:41.630Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

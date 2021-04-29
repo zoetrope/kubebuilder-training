@@ -6,7 +6,7 @@
         <title>メトリクスの収集 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.15">
+        <meta name="generator" content="HonKit 3.6.20">
         
         
         
@@ -315,20 +315,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="introduction.html">
-            
-                <a href="introduction.html">
-            
-                    
-                    コントローラ実装入門
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.2" data-path="client.html">
+        <li class="chapter " data-level="1.4.1" data-path="client.html">
             
                 <a href="client.html">
             
@@ -341,7 +328,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="reconcile.html">
             
                 <a href="reconcile.html">
             
@@ -354,7 +341,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="deletion.html">
+        <li class="chapter " data-level="1.4.3" data-path="deletion.html">
             
                 <a href="deletion.html">
             
@@ -367,7 +354,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
@@ -380,7 +367,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -393,7 +380,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
@@ -406,7 +393,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="manager.html">
+        <li class="chapter " data-level="1.4.7" data-path="manager.html">
             
                 <a href="manager.html">
             
@@ -419,7 +406,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.9" data-path="metrics.html">
+        <li class="chapter active" data-level="1.4.8" data-path="metrics.html">
             
                 <a href="metrics.html">
             
@@ -495,9 +482,9 @@
     Scheme:                 scheme,
     MetricsBindAddress:     metricsAddr,
     Port:                   <span class="hljs-number">9443</span>,
+    HealthProbeBindAddress: probeAddr,
     LeaderElection:         enableLeaderElection,
     LeaderElectionID:       <span class="hljs-string">&quot;27475f02.example.com&quot;</span>,
-    HealthProbeBindAddress: probeAddr,
     CertDir:                certDir,
 })
 </code></pre>
@@ -619,15 +606,21 @@ kube-rbac-proxyを利用すると、メトリクスのエンドポイントに�
 <p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
 </blockquote>
 <pre><code class="lang-yaml"><span class="hljs-attr">patchesStrategicMerge:</span>
-  <span class="hljs-comment"># Protect the /metrics endpoint by putting it behind auth.</span>
-  <span class="hljs-comment"># If you want your controller-manager to expose the /metrics</span>
-  <span class="hljs-comment"># endpoint w/o any authn/z, please comment the following line.</span>
+<span class="hljs-comment"># Protect the /metrics endpoint by putting it behind auth.</span>
+<span class="hljs-comment"># If you want your controller-manager to expose the /metrics</span>
+<span class="hljs-comment"># endpoint w/o any authn/z, please comment the following line.</span>
 <span class="hljs-bullet">-</span> <span class="hljs-string">manager_auth_proxy_patch.yaml</span>
 </code></pre>
 <blockquote>
 <p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/config/rbac/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
 </blockquote>
 <pre><code class="lang-yaml"><span class="hljs-attr">resources:</span>
+<span class="hljs-comment"># All RBAC will be applied under this service account in</span>
+<span class="hljs-comment"># the deployment namespace. You may comment out this resource</span>
+<span class="hljs-comment"># if your manager will use a service account that exists at</span>
+<span class="hljs-comment"># runtime. Be sure to update RoleBinding and ClusterRoleBinding</span>
+<span class="hljs-comment"># subjects if changing service account names.</span>
+<span class="hljs-bullet">-</span> <span class="hljs-string">service_account.yaml</span>
 <span class="hljs-bullet">-</span> <span class="hljs-string">role.yaml</span>
 <span class="hljs-bullet">-</span> <span class="hljs-string">role_binding.yaml</span>
 <span class="hljs-bullet">-</span> <span class="hljs-string">leader_election_role.yaml</span>
@@ -651,40 +644,17 @@ kube-rbac-proxyを利用すると、メトリクスのエンドポイントに�
 <span class="hljs-comment"># [PROMETHEUS] To enable prometheus monitor, uncomment all sections with &apos;PROMETHEUS&apos;.</span>
 <span class="hljs-bullet">-</span> <span class="hljs-string">../prometheus</span>
 </code></pre>
-<p>prometheus/monitor.yamlは、Kubebuilderが生成した内容では動作しないため、設定を以下のように書き換えます。</p>
-<blockquote>
-<p><a id="monitor.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/config/prometheus/monitor.yaml" target="_blank">monitor.yaml</a></p>
-</blockquote>
-<pre><code class="lang-yaml"><span class="hljs-comment"># Prometheus Monitor Service (Metrics)</span>
-<span class="hljs-attr">apiVersion:</span> <span class="hljs-string">monitoring.coreos.com/v1</span>
-<span class="hljs-attr">kind:</span> <span class="hljs-string">ServiceMonitor</span>
-<span class="hljs-attr">metadata:</span>
-  <span class="hljs-attr">labels:</span>
-    <span class="hljs-attr">control-plane:</span> <span class="hljs-string">controller-manager</span>
-  <span class="hljs-attr">name:</span> <span class="hljs-string">controller-manager-metrics-monitor</span>
-  <span class="hljs-attr">namespace:</span> <span class="hljs-string">system</span>
-<span class="hljs-attr">spec:</span>
-  <span class="hljs-attr">endpoints:</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">path:</span> <span class="hljs-string">/metrics</span>
-      <span class="hljs-attr">port:</span> <span class="hljs-string">https</span>
-      <span class="hljs-attr">scheme:</span> <span class="hljs-string">https</span>
-      <span class="hljs-attr">bearerTokenFile:</span> <span class="hljs-string">/var/run/secrets/kubernetes.io/serviceaccount/token</span>
-      <span class="hljs-attr">tlsConfig:</span>
-        <span class="hljs-attr">insecureSkipVerify:</span> <span class="hljs-literal">true</span>
-  <span class="hljs-attr">selector:</span>
-    <span class="hljs-attr">matchLabels:</span>
-      <span class="hljs-attr">control-plane:</span> <span class="hljs-string">controller-manager</span>
-</code></pre>
 <p><code>make manifests</code>を実行してマニフェストを生成し、Kubernetesクラスタに適用しておきます。</p>
 <p>Prometheus Operatorをセットアップするために、下記の手順に従ってHelmをインストールします。</p>
 <ul>
 <li><a href="https://helm.sh/docs/intro/install/" target="_blank">https://helm.sh/docs/intro/install/</a></li>
 </ul>
 <p>つぎにHelmのリポジトリの登録をおこないます。</p>
-<pre><code>helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+<pre><code>helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
 </code></pre><p>Prometheus Operatorをセットアップします。完了まで少し時間がかかるので待ちましょう。</p>
 <pre><code>kubectl create ns prometheus
-helm install prometheus stable/prometheus-operator --namespace=prometheus --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+helm install prometheus prometheus-community/kube-prometheus-stack --namespace=prometheus --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
 kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
 </code></pre><p>起動したPrometheusにメトリクスを読み取る権限を付与する必要があるので、下記のマニフェストを適用します。</p>
 <blockquote>
@@ -753,7 +723,7 @@ kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"メトリクスの収集","level":"1.4.9","depth":2,"previous":{"title":"Manager","level":"1.4.8","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/metrics.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"メトリクスの収集","level":"1.4.8","depth":2,"previous":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/metrics.md","mtime":"2021-04-29T10:17:23.600Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

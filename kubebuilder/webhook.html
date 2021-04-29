@@ -6,7 +6,7 @@
         <title>Webhookの雛形作成 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.15">
+        <meta name="generator" content="HonKit 3.6.20">
         
         
         
@@ -317,20 +317,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/introduction.html">
-            
-                <a href="../controller-runtime/introduction.html">
-            
-                    
-                    コントローラ実装入門
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/client.html">
+        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/client.html">
             
                 <a href="../controller-runtime/client.html">
             
@@ -343,7 +330,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
             
                 <a href="../controller-runtime/reconcile.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/deletion.html">
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
             
                 <a href="../controller-runtime/deletion.html">
             
@@ -369,7 +356,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
@@ -382,7 +369,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -395,7 +382,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
@@ -408,7 +395,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/manager.html">
+        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/manager.html">
             
                 <a href="../controller-runtime/manager.html">
             
@@ -421,7 +408,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/metrics.html">
             
                 <a href="../controller-runtime/metrics.html">
             
@@ -501,18 +488,34 @@
 <pre><code>├── api
 │    └── v1
 │        ├── tenant_webhook.go
-│        └── zz_generated.deepcopy.go
+│        └── webhook_suite_test.go
 ├── config
+│    ├── certmanager
+│    │   ├── certificate.yaml
+│    │   ├── kustomization.yaml
+│    │   └── kus
+│    ├── crd
+│    │   └── patches
+│    │       ├── cainjection_in_tenants.yaml
+│    │       └── webhook_in_tenants.yaml
+│    ├── default
+│    │   ├── manager_webhook_patch.yaml
+│    │   └── webhookcainjection_patch.yaml
 │    └── webhook
 │        ├── kustomization.yaml
 │        ├── kustomizeconfig.yaml
 │        ├── manifests.yaml
 │        └── service.yaml
+├── default
+│    ├── manager_webhook_patch.yaml
+│    └── webhookcainjection_patch.yaml
 └── main.go
 </code></pre><h2 id="apiv1">api/v1</h2>
 <p><code>tenant_webhook.go</code>がWebhook実装の雛形になります。
 このファイルにWebhookの実装を追加していくことになります。</p>
-<p><code>zz_generated.deepcopy.go</code>は自動生成されるコードなので編集しないようにしてください。</p>
+<h3 id="configcertmanager">config/certmanager</h3>
+<p>Admission Webhook機能を提供するためには証明書が必要となります。
+certmanagerディレクトリ下のマニフェストを適用すると、<a href="https://github.com/jetstack/cert-manager" target="_blank">cert-manager</a>を利用して証明書を発行することができます。</p>
 <h2 id="configwebhook">config/webhook</h2>
 <p><code>config/webhook</code>下のファイルは、Webhook機能を利用するために必要なマニフェストになります。
 基本的に編集する必要はありません。</p>
@@ -552,7 +555,7 @@
   <span class="hljs-attr">objref:</span>
     <span class="hljs-attr">kind:</span> <span class="hljs-string">Certificate</span>
     <span class="hljs-attr">group:</span> <span class="hljs-string">cert-manager.io</span>
-    <span class="hljs-attr">version:</span> <span class="hljs-string">v1alpha2</span>
+    <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
     <span class="hljs-attr">name:</span> <span class="hljs-string">serving-cert</span> <span class="hljs-comment"># this name should match the one in certificate.yaml</span>
   <span class="hljs-attr">fieldref:</span>
     <span class="hljs-attr">fieldpath:</span> <span class="hljs-string">metadata.namespace</span>
@@ -560,7 +563,7 @@
   <span class="hljs-attr">objref:</span>
     <span class="hljs-attr">kind:</span> <span class="hljs-string">Certificate</span>
     <span class="hljs-attr">group:</span> <span class="hljs-string">cert-manager.io</span>
-    <span class="hljs-attr">version:</span> <span class="hljs-string">v1alpha2</span>
+    <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
     <span class="hljs-attr">name:</span> <span class="hljs-string">serving-cert</span> <span class="hljs-comment"># this name should match the one in certificate.yaml</span>
 <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">SERVICE_NAMESPACE</span> <span class="hljs-comment"># namespace of the service</span>
   <span class="hljs-attr">objref:</span>
@@ -618,7 +621,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"next":{"title":"kindで動かしてみよう","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"previous":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/webhook.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"next":{"title":"kindで動かしてみよう","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"previous":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/webhook.md","mtime":"2021-04-29T08:42:24.190Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

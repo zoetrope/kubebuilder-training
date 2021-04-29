@@ -6,7 +6,7 @@
         <title>カスタムコントローラの基礎 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.15">
+        <meta name="generator" content="HonKit 3.6.20">
         
         
         
@@ -317,20 +317,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/introduction.html">
-            
-                <a href="../controller-runtime/introduction.html">
-            
-                    
-                    コントローラ実装入門
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/client.html">
+        <li class="chapter " data-level="1.4.1" data-path="../controller-runtime/client.html">
             
                 <a href="../controller-runtime/client.html">
             
@@ -343,7 +330,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
             
                 <a href="../controller-runtime/reconcile.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/deletion.html">
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
             
                 <a href="../controller-runtime/deletion.html">
             
@@ -369,7 +356,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
@@ -382,7 +369,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -395,7 +382,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
@@ -408,7 +395,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/manager.html">
+        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/manager.html">
             
                 <a href="../controller-runtime/manager.html">
             
@@ -421,7 +408,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/metrics.html">
             
                 <a href="../controller-runtime/metrics.html">
             
@@ -508,7 +495,8 @@
       <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">httpd</span>
         <span class="hljs-attr">image:</span> <span class="hljs-string">quay.io/cybozu/testhttpd:0.1.0</span>
 </code></pre>
-<p>kube-controller-managerと呼ばれるプログラムは、APIサーバ上にDeploymentリソースが登録されるとReplicaSetリソースをAPIサーバーに登録し、さらにReplicaSetリソースが登録されると<code>spec.replicas</code>に指定された数のPodをAPIサーバーに登録します。
+<p>kube-controller-managerと呼ばれるプログラムは、APIサーバ上にDeploymentリソースが登録されるとReplicaSetリソースをAPIサーバーに登録し、
+さらにReplicaSetリソースが登録されると<code>spec.replicas</code>に指定された数のPodをAPIサーバーに登録します。
 次にkube-schedulerというプログラムは、APIサーバ上にPodリソースが登録されると、Podを配置するノードを決定しPodの情報を更新します。
 各ノードで動作しているkubeletというプログラムは、自分のノード名が記述されたPodリソースを見つけるとコンテナを立ち上げます。</p>
 <p><img src="img/declarative.png" alt="Declarative API"></p>
@@ -540,11 +528,11 @@ CRDでは下記のようにOpenAPI v3.0の形式でバリデーションを記�
 Podが3つある状態でReconcileが呼び出されたときにさらに3つのPodをつくってしまったり、エラーを出してしまったりしてはいけないのです。</p>
 <p>これは当たり前のことのように感じられるかもしれませんが、Kubernetes登場前のインフラ自動化ツールでは、冪等性を備えていないものもよく見かけられました。</p>
 <h3 id="エッジドリブントリガーとレベルドリブントリガー">エッジドリブントリガーとレベルドリブントリガー</h3>
-<p>Reconciliation Loopは、レベルドリブントリガーで動く必要があります。</p>
-<p>エッジドリブントリガーとは状態の変化が発生した時点で処理を実行することで、レベルドリブントリガーとは状態を定期的にチェックして特定の条件に入ったときに処理を実行することです。(<a href="https://hackernoon.com/level-triggering-and-reconciliation-in-kubernetes-1f17fe30333d" target="_blank">参考</a>)</p>
+<p>エッジドリブントリガーとは状態の変化が発生した時点で処理を実行することで、レベルドリブントリガーとは状態を定期的にチェックし現在の状態に応じて処理を実行することです。
+(<a href="https://hackernoon.com/level-triggering-and-reconciliation-in-kubernetes-1f17fe30333d" target="_blank">参考</a>)</p>
 <p><img src="img/edge_level_trigger.png" alt="Edge-driven vs. Level-driven Trigger"></p>
-<p>エッジドリブントリガー方式でコントローラを実装すると、もしイベントが発生したときにコントローラが起動していなかったりすると、そのトリガーが発動せず、あるべき状態と現在の状態がずれてしまうことになります。</p>
-<p>基本的にKubebuilderを利用してコントローラを実装するとレベルドリブンになるのですが、状態のもたせ方によってはエッジドリブンになってしまうケースがあります。</p>
+<p>Reconciliation Loopがエッジドリブントリガーのみで実行される場合、もしイベントが発生したときにコントローラが起動していなかったりすると、
+そのトリガーが発動せずあるべき状態と現在の状態がずれてしまうことになります。</p>
 <p>例えば<code>status.phase</code>フィールドで状態を保持し、その状態に応じて動作するコントローラを考えてみましょう。</p>
 <p>最初にコントローラのReconcileが実行されたときには状態はAでした。</p>
 <pre><code class="lang-yaml"><span class="hljs-attr">status:</span>
@@ -609,7 +597,7 @@ Podが3つある状態でReconcileが呼び出されたときにさらに3つの
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"カスタムコントローラの基礎","level":"1.1.2","depth":2,"next":{"title":"作成するカスタムコントローラ","level":"1.1.3","depth":2,"path":"introduction/sample.md","ref":"introduction/sample.md","articles":[]},"previous":{"title":"インストール","level":"1.1.1","depth":2,"path":"introduction/installation.md","ref":"introduction/installation.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"introduction/basics.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"カスタムコントローラの基礎","level":"1.1.2","depth":2,"next":{"title":"作成するカスタムコントローラ","level":"1.1.3","depth":2,"path":"introduction/sample.md","ref":"introduction/sample.md","articles":[]},"previous":{"title":"インストール","level":"1.1.1","depth":2,"path":"introduction/installation.md","ref":"introduction/installation.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"introduction/basics.md","mtime":"2021-04-29T07:34:20.880Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

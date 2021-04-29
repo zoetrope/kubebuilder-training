@@ -6,7 +6,7 @@
         <title>コントローラのテスト · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.15">
+        <meta name="generator" content="HonKit 3.6.20">
         
         
         
@@ -317,20 +317,7 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.4.1" data-path="introduction.html">
-            
-                <a href="introduction.html">
-            
-                    
-                    コントローラ実装入門
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.2" data-path="client.html">
+        <li class="chapter " data-level="1.4.1" data-path="client.html">
             
                 <a href="client.html">
             
@@ -343,7 +330,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="reconcile.html">
             
                 <a href="reconcile.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="deletion.html">
+        <li class="chapter " data-level="1.4.3" data-path="deletion.html">
             
                 <a href="deletion.html">
             
@@ -369,7 +356,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.5" data-path="controller_test.html">
+        <li class="chapter active" data-level="1.4.4" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
@@ -382,7 +369,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -395,7 +382,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
@@ -408,7 +395,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="manager.html">
+        <li class="chapter " data-level="1.4.7" data-path="manager.html">
             
                 <a href="manager.html">
             
@@ -421,7 +408,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.9" data-path="metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="metrics.html">
             
                 <a href="metrics.html">
             
@@ -489,7 +476,7 @@
 <p>envtestはetcdとkube-apiserverを立ち上げてテスト用の環境を構築します。
 環境変数<code>USE_EXISTING_CLUSTER</code>を指定すれば、既存のKubernetesクラスタを利用したテストをおこなうことも可能です。</p>
 <p>なおcontroller-genが生成するテストコードでは、<a href="https://github.com/onsi/ginkgo" target="_blank">Ginkgo</a>というテストフレームワークを利用しています。
-このフレームワークの利用方法については<a href="https://onsi.github.io/ginkgo/" target="_blank">Ginkgonoのドキュメント</a>を御覧ください。</p>
+このフレームワークの利用方法については<a href="https://onsi.github.io/ginkgo/" target="_blank">Ginkgoのドキュメント</a>を御覧ください。</p>
 <h2 id="テスト環境のセットアップ">テスト環境のセットアップ</h2>
 <p>controller-genによって自動生成された<a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/controllers/suite_test.go" target="_blank">controllers/suite_test.go</a>を見てみましょう。</p>
 <blockquote>
@@ -512,7 +499,7 @@
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/envtest/printer&quot;</span>
     logf <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log&quot;</span>
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log/zap&quot;</span>
-    <span class="hljs-comment">// +kubebuilder:scaffold:imports</span>
+    <span class="hljs-comment">//+kubebuilder:scaffold:imports</span>
 )
 
 <span class="hljs-comment">// These tests use Ginkgo (BDD-style Go testing framework). Refer to</span>
@@ -530,28 +517,28 @@
         []Reporter{printer.NewlineReporter{}})
 }
 
-<span class="hljs-keyword">var</span> _ = BeforeSuite(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(done Done)</span></span> {
-    logf.SetLogger(zap.LoggerTo(GinkgoWriter, <span class="hljs-literal">true</span>))
+<span class="hljs-keyword">var</span> _ = BeforeSuite(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+    logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(<span class="hljs-literal">true</span>)))
 
     By(<span class="hljs-string">&quot;bootstrapping test environment&quot;</span>)
     testEnv = &amp;envtest.Environment{
-        CRDDirectoryPaths: []<span class="hljs-keyword">string</span>{filepath.Join(<span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>, <span class="hljs-string">&quot;crd&quot;</span>, <span class="hljs-string">&quot;bases&quot;</span>)},
+        CRDDirectoryPaths:     []<span class="hljs-keyword">string</span>{filepath.Join(<span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>, <span class="hljs-string">&quot;crd&quot;</span>, <span class="hljs-string">&quot;bases&quot;</span>)},
+        ErrorIfCRDPathMissing: <span class="hljs-literal">true</span>,
     }
 
-    <span class="hljs-keyword">var</span> err error
-    cfg, err = testEnv.Start()
-    Expect(err).ToNot(HaveOccurred())
-    Expect(cfg).ToNot(BeNil())
+    cfg, err := testEnv.Start()
+    Expect(err).NotTo(HaveOccurred())
+    Expect(cfg).NotTo(BeNil())
 
     err = multitenancyv1.AddToScheme(scheme.Scheme)
     Expect(err).NotTo(HaveOccurred())
 
-    <span class="hljs-comment">// +kubebuilder:scaffold:scheme</span>
+    <span class="hljs-comment">//+kubebuilder:scaffold:scheme</span>
 
     mgr, err := ctrl.NewManager(cfg, ctrl.Options{
         Scheme: scheme.Scheme,
     })
-    Expect(err).ToNot(HaveOccurred())
+    Expect(err).NotTo(HaveOccurred())
 
     err = (&amp;TenantReconciler{
         Client:   mgr.GetClient(),
@@ -559,23 +546,23 @@
         Scheme:   mgr.GetScheme(),
         Recorder: mgr.GetEventRecorderFor(<span class="hljs-string">&quot;tenant-controller&quot;</span>),
     }).SetupWithManager(mgr)
-    Expect(err).ToNot(HaveOccurred())
+    Expect(err).NotTo(HaveOccurred())
 
     <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
         err = mgr.Start(ctrl.SetupSignalHandler())
-        Expect(err).ToNot(HaveOccurred())
+        Expect(err).NotTo(HaveOccurred())
     }()
 
-    k8sClient = mgr.GetClient()
-    Expect(k8sClient).ToNot(BeNil())
+    k8sClient, err = client.New(cfg, client.Options{Scheme: scheme.Scheme})
+    Expect(err).NotTo(HaveOccurred())
+    Expect(k8sClient).NotTo(BeNil())
 
-    <span class="hljs-built_in">close</span>(done)
 }, <span class="hljs-number">60</span>)
 
 <span class="hljs-keyword">var</span> _ = AfterSuite(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
     By(<span class="hljs-string">&quot;tearing down the test environment&quot;</span>)
     err := testEnv.Stop()
-    Expect(err).ToNot(HaveOccurred())
+    Expect(err).NotTo(HaveOccurred())
 })
 </code></pre>
 <p>まず<code>envtest.Environment</code>でテスト用の環境設定をおこないます。
@@ -599,6 +586,7 @@
     multitenancyv1 <span class="hljs-string">&quot;github.com/zoetrope/kubebuilder-training/codes/api/v1&quot;</span>
     corev1 <span class="hljs-string">&quot;k8s.io/api/core/v1&quot;</span>
     rbacv1 <span class="hljs-string">&quot;k8s.io/api/rbac/v1&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/api/meta&quot;</span>
     metav1 <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;</span>
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;</span>
 )
@@ -642,18 +630,18 @@
                 <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
                     <span class="hljs-keyword">return</span> err
                 }
-                cond := findCondition(createdTenant.Status.Conditions, multitenancyv1.ConditionReady)
+                cond := meta.FindStatusCondition(createdTenant.Status.Conditions, multitenancyv1.ConditionReady)
                 <span class="hljs-keyword">if</span> cond == <span class="hljs-literal">nil</span> {
                     <span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">&quot;condition not found&quot;</span>)
                 }
-                <span class="hljs-keyword">if</span> cond.Status != corev1.ConditionTrue {
+                <span class="hljs-keyword">if</span> cond.Status != metav1.ConditionTrue {
                     <span class="hljs-keyword">return</span> errors.New(cond.Reason)
                 }
                 <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
             }).Should(Succeed())
 
             nsList := &amp;corev1.NamespaceList{}
-            err = k8sClient.List(ctx, nsList, client.MatchingFields(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{ownerControllerField: tenant.Name}))
+            err = k8sClient.List(ctx, nsList)
             Expect(err).Should(Succeed())
 
             <span class="hljs-keyword">var</span> namespaces []<span class="hljs-keyword">string</span>
@@ -662,7 +650,6 @@
             }
             Expect(namespaces).Should(ContainElement(<span class="hljs-string">&quot;test1&quot;</span>))
             Expect(namespaces).Should(ContainElement(<span class="hljs-string">&quot;test2&quot;</span>))
-
         })
     })
 })
@@ -728,7 +715,7 @@ ok      github.com/zoetrope/kubebuilder-training/codes/controllers      5.528s
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"コントローラのテスト","level":"1.4.5","depth":2,"next":{"title":"Webhookの実装","level":"1.4.6","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.4","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.15","time":"2020-12-12T05:51:27.319Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"コントローラのテスト","level":"1.4.4","depth":2,"next":{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2021-04-29T10:17:23.760Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
