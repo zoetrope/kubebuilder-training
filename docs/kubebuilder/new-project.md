@@ -5,16 +5,14 @@
 ```console
 $ mkdir tenant
 $ cd tenant
-$ kubebuilder init --plugins go.kubebuilder.io/v3-alpha --domain example.com --repo github.com/zoetrope/tenant
+$ kubebuilder init --domain example.com --repo github.com/zoetrope/tenant
 ```
 
 `--domain`で指定した名前はCRDのグループ名に使われます。
 あなたの所属する組織が保持するドメインなどを利用して、ユニークでvalidな名前を指定してください。
 
-`--repo`にはgo modulesのmodule名を指定します。通常は`github.com/<user_name>/<product_name>`を指定します。
-
-`--plugins`では、生成するプロジェクトのレイアウトをkubebuilder v2の形式にするかv3の形式にするか指定できます。
-ここでは最新のv3-alphaを指定しましょう。
+`--repo`にはgo modulesのmodule名を指定します。
+GitHubにリポジトリを作る場合は`github.com/<user_name>/<product_name>`を指定します。
 
 コマンドの実行に成功すると、下記のようなファイルが生成されます。
 
@@ -22,13 +20,7 @@ $ kubebuilder init --plugins go.kubebuilder.io/v3-alpha --domain example.com --r
 ├── Dockerfile
 ├── Makefile
 ├── PROJECT
-├── bin
-│    └── manager
 ├── config
-│    ├── certmanager
-│    │    ├── certificate.yaml
-│    │    ├── kustomization.yaml
-│    │    └── kustomizeconfig.yaml
 │    ├── default
 │    │    ├── kustomization.yaml
 │    │    ├── manager_auth_proxy_patch.yaml
@@ -48,7 +40,8 @@ $ kubebuilder init --plugins go.kubebuilder.io/v3-alpha --domain example.com --r
 │         ├── kustomization.yaml
 │         ├── leader_election_role.yaml
 │         ├── leader_election_role_binding.yaml
-│         └── role_binding.yaml
+│         ├── role_binding.yaml
+│         └── service_account.yaml
 ├── go.mod
 ├── go.sum
 ├── hack
@@ -62,18 +55,38 @@ $ kubebuilder init --plugins go.kubebuilder.io/v3-alpha --domain example.com --r
 
 コード生成やコントローラのビルドなどをおこなうためのMakefileです。
 
-よく利用するターゲットとしては以下のものがあります。
+`make help`でターゲットの一覧を確認してみましょう。
 
-| target       | 処理内容                                            |
-|:-------------|:---------------------------------------------------|
-| manifests    | goのソースコードからCRDやRBAC等のマニフェストを生成する |
-| generate     | DeepCopy関数などを生成する                           |
-| docker-build | Dockerイメージのビルドをおこなう                      |
-| install      | KubernetesクラスタにCRDを適用する                    |
-| deploy       | Kubernetesクラスタにコントローラを適用する            |
-| manager      | コントローラのビルド                                 |
-| run          | コントローラをローカル環境で実行する                   |
-| test         | テストを実行する                                     |
+```console
+make help
+
+Usage:
+  make <target>
+
+General
+  help             Display this help.
+
+Development
+  manifests        Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
+  generate         Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
+  fmt              Run go fmt against code.
+  vet              Run go vet against code.
+  test             Run tests.
+
+Build
+  build            Build manager binary.
+  run              Run a controller from your host.
+  docker-build     Build docker image with the manager.
+  docker-push      Push docker image with the manager.
+
+Deployment
+  install          Install CRDs into the K8s cluster specified in ~/.kube/config.
+  uninstall        Uninstall CRDs from the K8s cluster specified in ~/.kube/config.
+  deploy           Deploy controller to the K8s cluster specified in ~/.kube/config.
+  undeploy         Undeploy controller from the K8s cluster specified in ~/.kube/config.
+  controller-gen   Download controller-gen locally if necessary.
+  kustomize        Download kustomize locally if necessary.
+```
 
 ## PROJECT
 
@@ -90,7 +103,7 @@ $ kubebuilder init --plugins go.kubebuilder.io/v3-alpha --domain example.com --r
 
 これから作成するカスタムコントローラのエントリーポイントとなるソースコードです。
 
-ソースコード中に`// +kubebuilder:scaffold:imports`, `// +kubebuilder:scaffold:scheme`, `// +kubebuilder:scaffold:builder`などのコメントが記述されています。
+ソースコード中に`//+kubebuilder:scaffold:imports`, `//+kubebuilder:scaffold:scheme`, `//+kubebuilder:scaffold:builder`などのコメントが記述されています。
 Kubebuilderはこれらのコメントを目印にソースコードの自動生成をおこなうので、決して削除しないように注意してください。
 
 ## config
@@ -111,11 +124,9 @@ configディレクトリ配下には、カスタムコントローラをKubernet
 `auth_proxy_`から始まる4つのファイルは、[kube-auth-proxy][]用のマニフェストです。
 kube-auth-proxyを利用するとメトリクスエンドポイントへのアクセスをRBACで制限することができます。
 
-`leader_election_role.yaml`と`leader_election_role_binding.yaml`は、リーダーエレクション機能
-を利用するために必要な権限です。
+`leader_election_role.yaml`と`leader_election_role_binding.yaml`は、リーダーエレクション機能を利用するために必要な権限です。
 
-`role.yaml`と`role_binding.yaml`は、コントローラが各種リソースにアクセスするための
-権限を設定するマニフェストです。
+`role.yaml`と`role_binding.yaml`は、コントローラが各種リソースにアクセスするための権限を設定するマニフェストです。
 この2つのファイルは基本的に自動生成されるものなので、開発者が編集する必要はありません。
 
 必要のないファイルを削除した場合は、`kustomization.yaml`も編集してください。
@@ -124,11 +135,6 @@ kube-auth-proxyを利用するとメトリクスエンドポイントへのア�
 
 Prometheus Operator用のカスタムリソースのマニフェストです。
 Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的にカスタムコントローラのメトリクスを収集してくれるようになります。
-
-### certmanager
-
-Admission Webhook機能を提供するためには証明書が必要となります。
-certmanagerディレクトリ下のマニフェストを適用すると、[cert-manager][]を利用して証明書を発行することができます。
 
 ### default
 
@@ -141,5 +147,4 @@ kube-auth-proxyを利用しない場合は削除しても問題ありません�
 
 利用するマニフェストに応じて、`kustomization.yaml`を編集してください。
 
-[cert-manager]: https://github.com/jetstack/cert-manager
 [kube-auth-proxy]: https://github.com/brancz/kube-rbac-proxy

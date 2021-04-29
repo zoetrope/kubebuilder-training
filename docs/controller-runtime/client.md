@@ -118,12 +118,15 @@ controller-runtimeではインメモリキャッシュにインデックスを�
 
 [import:"create-or-update",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
 
-リソースが存在した場合、`role`変数に取得したリソースの値が書き込まれます。
+この関数の第3引数に渡すオブジェクトには、NameとNamespace以外のフィールドは設定しないでください(クラスタリソースの場合はNamespace不要)。
+
+リソースが存在した場合、この第3引数で渡した変数に既存のリソースの値がセットされます。
 その後、第4引数で渡した関数の中でその`role`変数を書き換え、更新処理を実行します。
 
 リソースが存在しない場合は、第4引数で渡した関数を実行した後、リソースの作成処理を実行します。
 
-なお、AnnotationsなどのMetadataはKubernetesの標準コントローラが値を設定するので、以下のように初期化や上書きしてはいけません。
+なお、Annotationsなどの一部のフィールドはKubernetesの標準コントローラが値を設定する場合があります。
+そのため、以下のように値を上書きしてしまうと、他のコントローラが設定した値が消えてしまいます。
 
 ```go
 op, err := ctrl.CreateOrUpdate(ctx, r.Client, role, func() error {
@@ -134,7 +137,7 @@ op, err := ctrl.CreateOrUpdate(ctx, r.Client, role, func() error {
 }
 ```
 
-Annotationsを追加するときは、以下のようにしましょう。
+そのような問題を避けるため、Annotationsを更新する場合は上書きではなく、以下のように追加しましょう。
 
 ```go
 op, err := ctrl.CreateOrUpdate(ctx, r.Client, role, func() error {
@@ -150,7 +153,7 @@ op, err := ctrl.CreateOrUpdate(ctx, r.Client, role, func() error {
 
 `Update()`でリソースを更新するには、そのリソースのすべてのフィールドを埋めなくてはなりません。
 
-`Patch()`を利用すると、変更したいフィールドの値を用意するだけでリソースの更新をおこなうことができます。
+一方、`Patch()`を利用すると、変更したいフィールドの値を用意するだけでリソースの更新をおこなうことができます。
 
 PatchにはMergePath方式とServer-Side Apply方式があります。
 Server-Side Apply方式では、リソースの各フィールドごとに管理者を記録することにより、複数のコントローラやユーザーが同一のリソースを編集した場合に衝突を検知することが可能です。
@@ -172,8 +175,8 @@ Server-Side Applyを利用するには、第3引数に`client.Apply`を指定し
 Statusをサブリソース化している場合、これまで紹介した`Update()`や`Patch()`を利用してもステータスを更新することができません。
 Status更新用のクライアントを利用することになります。
 
-`Status.Update()`と`Status.Path()`は、メインリソースの`Update()`、`Patch()`と使い方は同じです。
-ただし、現状カスタムリソースの Status サブリソースは Server-Side Apply による Patch をサポートされていません。
+`Status.Update()`と`Status.Patch()`は、メインリソースの`Update()`、`Patch()`と使い方は同じです。
+ただし、現状カスタムリソースの Status サブリソースは Server-Side Apply による Patch をサポートしていません。
 
 ```go
 tenant.Status = multitenancyv1.TenantStatus{

@@ -11,9 +11,10 @@ $ kubebuilder -h
 (中略)
 
 Available Commands:
+  alpha       Alpha-stage subcommands
   completion  Load completions for the specified shell
   create      Scaffold a Kubernetes API or webhook
-  edit        This command will edit the project configuration
+  edit        Update the project configuration
   help        Help about any command
   init        Initialize a new project
   version     Print the kubebuilder version

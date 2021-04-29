@@ -19,7 +19,7 @@ import (
 	multitenancyv1 "github.com/zoetrope/kubebuilder-training/codes/api/v1"
 	"github.com/zoetrope/kubebuilder-training/codes/controllers"
 	"github.com/zoetrope/kubebuilder-training/codes/runners"
-	// +kubebuilder:scaffold:imports
+	//+kubebuilder:scaffold:imports
 )
 
 //! [init]
@@ -33,7 +33,7 @@ func init() {
 
 	utilruntime.Must(multitenancyv1.AddToScheme(scheme))
 
-	// +kubebuilder:scaffold:scheme
+	//+kubebuilder:scaffold:scheme
 }
 
 //! [init]
@@ -94,7 +94,7 @@ func main() {
 		setupLog.Error(err, "unable to create webhook", "webhook", "Tenant")
 		os.Exit(1)
 	}
-	// +kubebuilder:scaffold:builder
+	//+kubebuilder:scaffold:builder
 
 	err = mgr.Add(&runners.Runner{})
 	if err != nil {
@@ -103,11 +103,11 @@ func main() {
 	}
 
 	//! [health]
-	if err := mgr.AddHealthzCheck("health", healthz.Ping); err != nil {
+	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
 		setupLog.Error(err, "unable to set up health check")
 		os.Exit(1)
 	}
-	if err := mgr.AddReadyzCheck("check", healthz.Ping); err != nil {
+	if err := mgr.AddReadyzCheck("readyz", healthz.Ping); err != nil {
 		setupLog.Error(err, "unable to set up ready check")
 		os.Exit(1)
 	}

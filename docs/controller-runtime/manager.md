@@ -1,6 +1,7 @@
 # Manager
 
-[Manager](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#Manager)は、複数のコントローラを管理し、リーダー選出機能や、メトリクスやヘルスチェックサーバーとしての機能などを提供します。
+[Manager](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#Manager)は、
+複数のコントローラを管理し、リーダー選出機能や、メトリクスやヘルスチェックサーバーとしての機能などを提供します。
 
 すでにこれまでManagerのいくつかの機能を紹介してきましたが、他にもたくさんの便利な機能を持ってるのでここで紹介していきます。
 
@@ -55,14 +56,15 @@ Runnable機能を利用するためには、まず[Runnable](https://pkg.go.dev/
 [import, title="runner.go"](../../codes/tenant/runners/runner.go)
 
 StartメソッドはmanagerのStartを呼び出した際に、goroutineとして呼び出されます。
-引数のchによりmanagerからの終了通知を受け取ることができます。
+引数のcontextによりmanagerからの終了通知を受け取ることができます。
 
 ```go
 err = mgr.Add(&runners.Runner{})
 ```
 
-`Runnable` インタフェースを実装しただけだと、リーダーとして動作している Manager でしか動かないようになります。
-リーダーでなくても常時動かしたい処理である場合、[LeaderElectionRunnable](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#LeaderElectionRunnable)インタフェースを実装し、NeedLeaderElectionメソッドで `false` を返すようにします。
+なお、このRunnerの処理は通常リーダーとして動作している Manager でしか動きません。
+リーダーでなくても常時動かしたい処理である場合、[LeaderElectionRunnable](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#LeaderElectionRunnable)インタフェースを実装し、
+NeedLeaderElectionメソッドで `false` を返すようにします。
 
 ## recorderProvider
 

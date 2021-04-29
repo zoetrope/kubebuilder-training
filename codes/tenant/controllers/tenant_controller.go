@@ -7,6 +7,7 @@ import (
 	multitenancyv1 "github.com/zoetrope/kubebuilder-training/codes/api/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/record"
@@ -28,12 +29,12 @@ type TenantReconciler struct {
 }
 
 //! [rbac]
-// +kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants/status,verbs=get;update;patch
-// +kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants/finalizers,verbs=update
-// +kubebuilder:rbac:groups=core,resources=namespaces,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterroles,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=rolebindings,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants/finalizers,verbs=update
+//+kubebuilder:rbac:groups=core,resources=namespaces,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterroles,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=rolebindings,verbs=get;list;watch;create;update;patch;delete
 //! [rbac]
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
@@ -44,7 +45,7 @@ type TenantReconciler struct {
 // the user.
 //
 // For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.7.0/pkg/reconcile
+// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.8.3/pkg/reconcile
 func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := r.Log.WithValues("tenant", req.NamespacedName)
 
@@ -88,9 +89,9 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	if err != nil {
 		log.Error(err, "unable to reconcile", "name", tenant.Name)
 		r.Recorder.Eventf(&tenant, corev1.EventTypeWarning, "Failed", "failed to reconcile: %s", err.Error())
-		setCondition(&tenant.Status.Conditions, multitenancyv1.TenantCondition{
+		meta.SetStatusCondition(&tenant.Status.Conditions, metav1.Condition{
 			Type:    multitenancyv1.ConditionReady,
-			Status:  corev1.ConditionFalse,
+			Status:  metav1.ConditionFalse,
 			Reason:  "Failed",
 			Message: err.Error(),
 		})
@@ -101,12 +102,13 @@ func (r *TenantReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		return ctrl.Result{}, err
 	}
 
-	currentCond := findCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
-	if updated || currentCond == nil || currentCond.Status != corev1.ConditionTrue {
+	currentCond := meta.FindStatusCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
+	if updated || currentCond == nil || currentCond.Status != metav1.ConditionTrue {
 		r.Recorder.Event(&tenant, corev1.EventTypeNormal, "Updated", "the tenant was updated")
-		setCondition(&tenant.Status.Conditions, multitenancyv1.TenantCondition{
+		meta.SetStatusCondition(&tenant.Status.Conditions, metav1.Condition{
 			Type:   multitenancyv1.ConditionReady,
-			Status: corev1.ConditionTrue,
+			Reason: "OK",
+			Status: metav1.ConditionTrue,
 		})
 		err = r.Status().Update(ctx, &tenant)
 		if err != nil {
@@ -287,7 +289,7 @@ const conditionReadyField = ".status.conditions.ready"
 
 func indexByConditionReady(obj client.Object) []string {
 	tenant := obj.(*multitenancyv1.Tenant)
-	cond := findCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
+	cond := meta.FindStatusCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
 	if cond == nil {
 		return nil
 	}

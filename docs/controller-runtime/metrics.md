@@ -121,10 +121,6 @@ kube-rbac-proxyを利用するためには下記のコメントアウトを解�
 
 [import:"bases,enable-prometheus"](../../codes/tenant/config/default/kustomization.yaml)
 
-prometheus/monitor.yamlは、Kubebuilderが生成した内容では動作しないため、設定を以下のように書き換えます。
-
-[import](../../codes/tenant/config/prometheus/monitor.yaml)
-
 `make manifests`を実行してマニフェストを生成し、Kubernetesクラスタに適用しておきます。
 
 Prometheus Operatorをセットアップするために、下記の手順に従ってHelmをインストールします。
@@ -133,14 +129,15 @@ Prometheus Operatorをセットアップするために、下記の手順に従�
 つぎにHelmのリポジトリの登録をおこないます。
 
 ```
-helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
 ```
 
 Prometheus Operatorをセットアップします。完了まで少し時間がかかるので待ちましょう。
 
 ```
 kubectl create ns prometheus
-helm install prometheus stable/prometheus-operator --namespace=prometheus --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
+helm install prometheus prometheus-community/kube-prometheus-stack --namespace=prometheus --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false
 kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
 ```
 

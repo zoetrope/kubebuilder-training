@@ -23,7 +23,7 @@ spec:
         control-plane: controller-manager
     spec:
       securityContext:
-        runAsUser: 65532
+        runAsNonRoot: true
       containers:
       - command:
         - /manager
@@ -37,13 +37,13 @@ spec:
         #! [probe]
         livenessProbe:
           httpGet:
-            path: /readyz
+            path: /healthz
             port: 8081
           initialDelaySeconds: 15
           periodSeconds: 20
         readinessProbe:
           httpGet:
-            path: /healthz
+            path: /readyz
             port: 8081
           initialDelaySeconds: 5
           periodSeconds: 10
@@ -55,4 +55,5 @@ spec:
           requests:
             cpu: 1000m
             memory: 512Mi
+      serviceAccountName: controller-manager
       terminationGracePeriodSeconds: 10

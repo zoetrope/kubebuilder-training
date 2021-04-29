@@ -22,9 +22,19 @@ $ make manifests
 ├── api
 │    └── v1
 │        ├── tenant_webhook.go
-│        ├── webhook_suite_test.go
-│        └── zz_generated.deepcopy.go
+│        └── webhook_suite_test.go
 ├── config
+│    ├── certmanager
+│    │   ├── certificate.yaml
+│    │   ├── kustomization.yaml
+│    │   └── kus
+│    ├── crd
+│    │   └── patches
+│    │       ├── cainjection_in_tenants.yaml
+│    │       └── webhook_in_tenants.yaml
+│    ├── default
+│    │   ├── manager_webhook_patch.yaml
+│    │   └── webhookcainjection_patch.yaml
 │    └── webhook
 │        ├── kustomization.yaml
 │        ├── kustomizeconfig.yaml
@@ -41,7 +51,10 @@ $ make manifests
 `tenant_webhook.go`がWebhook実装の雛形になります。
 このファイルにWebhookの実装を追加していくことになります。
 
-`zz_generated.deepcopy.go`は自動生成されるコードなので編集しないようにしてください。
+### config/certmanager
+
+Admission Webhook機能を提供するためには証明書が必要となります。
+certmanagerディレクトリ下のマニフェストを適用すると、[cert-manager][]を利用して証明書を発行することができます。
 
 ## config/webhook
 
@@ -68,3 +81,5 @@ kubebuilderコマンドで生成した直後の状態では、`make manifests`�
 生成直後は`bases`の`../webhook`と`../certmanager`、`patchesStrategicMerge`の`manager_webhook_patch.yaml`と`webhookcainjection_patch.yaml`、`vars`がコメントアウトされていますが、これらのコメントを外します。
 
 [import:"bases,enable-webhook,patches,enable-webhook-patch,vars"](../../codes/tenant/config/default/kustomization.yaml)
+
+[cert-manager]: https://github.com/jetstack/cert-manager

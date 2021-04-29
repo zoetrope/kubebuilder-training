@@ -7,7 +7,8 @@ Kubebuilder v3から、WebHookのテストをセットアップするコード�
 
 [import, title="api/v1/webhook_suite_test.go"](../../codes/tenant/api/v1/webhook_suite_test.go)
 
-基本的にはコントローラのテストコードと似ていますが、`envtest.Environment`を作成する際に、Webhook用のマニフェストのパスを指定したり、`ctrl.NewManager`を呼び出す際に`Host`,`Port`,`CertDir`のパラメータをtestEnvのパラメータで上書きする必要があります。
+基本的にはコントローラのテストコードと似ていますが、`envtest.Environment`を作成する際に、Webhook用のマニフェストのパスを指定したり、
+`ctrl.NewManager`を呼び出す際に`Host`,`Port`,`CertDir`のパラメータをtestEnvのパラメータで上書きする必要があります。
 
 ## Webhookのテスト
 

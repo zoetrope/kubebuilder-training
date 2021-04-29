@@ -18,7 +18,17 @@ Webhook用の証明書を発行するためにcert-managerが必要となりま�
 下記のコマンドを実行してcert-managerのデプロイをおこないます。([参考](https://cert-manager.io/docs/installation/kubernetes/))
 
 ```console
-$ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.1.0/cert-manager.yaml
+$ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/latest/download/cert-manager.yaml
+```
+
+cert-managerのPodが起動したことを確認しましょう。
+
+```console
+$ kubectl get pod -n cert-manager
+NAME                                       READY   STATUS    RESTARTS   AGE
+cert-manager-7dd5854bb4-whlcn              1/1     Running   0          26s
+cert-manager-cainjector-64c949654c-64wjk   1/1     Running   0          26s
+cert-manager-webhook-6bdffc7c9d-hkr8h      1/1     Running   0          26s
 ```
 
 ## コントローラのコンテナイメージの用意

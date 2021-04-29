@@ -6,7 +6,7 @@ envtestはetcdとkube-apiserverを立ち上げてテスト用の環境を構築�
 環境変数`USE_EXISTING_CLUSTER`を指定すれば、既存のKubernetesクラスタを利用したテストをおこなうことも可能です。
 
 なおcontroller-genが生成するテストコードでは、[Ginkgo](https://github.com/onsi/ginkgo)というテストフレームワークを利用しています。
-このフレームワークの利用方法については[Ginkgonoのドキュメント](https://onsi.github.io/ginkgo/)を御覧ください。
+このフレームワークの利用方法については[Ginkgoのドキュメント](https://onsi.github.io/ginkgo/)を御覧ください。
 
 ## テスト環境のセットアップ
 

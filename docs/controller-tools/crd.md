@@ -7,7 +7,7 @@
 
 そこでKubebuilderではcontroller-genというツールを利用して、Goで記述したstructからCRDを生成する方式を採用しています。
 
-`kubebuilder create api`コマンドで生成された[api/v1/tenant_types.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/api/v1/tenant_types.go)を見てみると、`TenantSpec`, `TenantStatus`, `Tenant`, `TenantList`という構造体が定義されており、たくさんの`// +kubebuilder:`から始まるマーカーコメントが付与されています。
+`kubebuilder create api`コマンドで生成された[api/v1/tenant_types.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/api/v1/tenant_types.go)を見てみると、`TenantSpec`, `TenantStatus`, `Tenant`, `TenantList`という構造体が定義されており、たくさんの`//+kubebuilder:`から始まるマーカーコメントが付与されています。
 controller-genは、これらの構造体とマーカーを頼りにCRDの生成をおこないます。
 
 `Tenant`がカスタムリソースの本体となる構造体です。`TenantList`は`Tenant`のリストを表す構造体です。これら2つの構造体は基本的に変更することはありません。
@@ -110,14 +110,7 @@ type SampleSpec struct {
 
 [import:"status"](../../codes/tenant/api/v1/tenant_types.go)
 
-汎用的な Condition 型が Kubernetes 1.19 で追加されるので、こちらを使っていくのも良いです。
-
-- https://pkg.go.dev/k8s.io/apimachinery@v0.19.0-rc.4/pkg/apis/meta/v1?tab=doc#Condition
-
-`TenantConditionType`には`// +kubebuilder:validation:Enum=Ready`というマーカーが付与されています。
-これにより`TenantConditionType`は列挙型となり、マーカーで列挙した値(ここでは"Ready")以外の値を指定できなくなります。
-
-このStatusフィールドにより、ユーザーや他のシステム(モニタリングシステムなど)がテナントリソースの状態を確認することができるようになります。
+Statusフィールドにより、ユーザーや他のシステム(モニタリングシステムなど)がテナントリソースの状態を確認することができるようになります。
 
 テナントの作成に成功した場合には下記のようなStatusになります。
 
