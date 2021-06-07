@@ -231,13 +231,13 @@ func (r *TenantReconciler) reconcileRBAC(ctx context.Context, log logr.Logger, t
 		})
 		//! [create-or-update]
 		if err != nil {
-			log.Error(err, "unable to create-or-update RoleBinding")
+			log.Error(err, "unable to create-or-update ClusterRole")
 			return updated, err
 		}
 
 		if op != controllerutil.OperationResultNone {
 			updated = true
-			log.Info("reconcile RoleBinding successfully", "op", op)
+			log.Info("reconcile ClusterRole successfully", "op", op)
 		}
 
 		rb := &rbacv1.RoleBinding{}
