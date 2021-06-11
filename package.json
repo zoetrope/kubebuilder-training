@@ -7,8 +7,8 @@
     "honkit": "^3.6.20"
   },
   "devDependencies": {
-    "gh-pages": "^3.2.0",
-    "tgitbook-plugin-include-codeblock": "^3.2.2"
+    "gh-pages": "^3.1.0",
+    "gitbook-plugin-include-codeblock": "^3.2.2"
   },
   "scripts": {
     "build": "honkit build",
