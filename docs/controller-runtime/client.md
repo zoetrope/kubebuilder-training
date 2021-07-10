@@ -191,11 +191,11 @@ tenant.Status = multitenancyv1.TenantStatus{
 err := r.Status().Update(ctx, &tenant)
 ```
 
-## Delete/DeleteOfAll
+## Delete/DeleteAllOf
 
-最後にリソースを削除する`Delete`と`DeleteOfAll`を見てみましょう。
+最後にリソースを削除する`Delete`と`DeleteAllOf`を見てみましょう。
 
-`Delete`と`DeleteOfAll`には`Preconditions`と`PropagationPolicy`という特殊なオプションがあるのでそちらを紹介します。
+`Delete`と`DeleteAllOf`には`Preconditions`と`PropagationPolicy`という特殊なオプションがあるのでそちらを紹介します。
 
 まずは`Preconditions`オプションを利用した例です。
 
