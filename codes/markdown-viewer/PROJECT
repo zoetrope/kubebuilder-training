@@ -1,0 +1,6 @@
+domain: zoetrope.github.io
+layout:
+- go.kubebuilder.io/v3
+projectName: markdown-viewer
+repo: github.com/zoetrope/markdown-viewer
+version: "3"
