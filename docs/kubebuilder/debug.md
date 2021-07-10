@@ -21,32 +21,41 @@ Kubebuilderによって生成されたMakefileには`make run`というターゲ
 
 そこで、Telepresenceというツールを利用してコントローラをローカルのプロセスとして実行する方法を紹介します。
 
-まずは下記のページを参考にしてTelepresenceをインストールしてください。
+まずは下記のページを参考にしてTelepresence v2をインストールしてください。
 
-* [Installing Telepresence](https://www.telepresence.io/reference/install)
+* [Install Telepresence](https://www.telepresence.io/docs/latest/install/)
 
-Telepresenceを利用する場合、ConfigMapやSecretをボリュームとしてアクセスする際のパスがPodとして実行する場合と異なります。
-Kubebuilderで生成したカスタムコントローラでは、Webhookの証明書のパスを下記のように設定し、`NewManager`するときのOptionとして指定してあげましょう。
+カスタムコントローラをTelepresenceで実行する場合、いくつか注意点があります。
 
-[import:"telepresence",unindent="true"](../../codes/tenant/main.go)
-
-次に[Kindで動かしてみよう](./kind.md)の手順通りにコントローラをデプロイします。
-
-最後に下記のコマンドで、Kubernetes上で動いているコントローラをローカルで動いているプロセスと置き換えます。
-
-```console
-telepresence --namespace tenant-system --swap-deployment tenant-controller-manager:manager --run make run
-```
-
-なお、kubebuilderが生成したコントローラのマニフェスト(`config/manager/manager.yaml`)には以下のように非常に小さなサイズのResourcesが指定されています。
-これが原因でTelepresenceのProxyがOOM Killerに終了させられることがあるので、メモリサイズを増やしておくとよいでしょう。
+Telepresenceでは、対象のワークロードにtraffic-agentというコンテナがインジェクトされるのですが、このコンテナはルート権限で実行する必要があります。
+Kubebuilderが生成した[manager.yaml](../../codes/markdown-viewer/config/manager/manager.yaml)には、
+SecurityContextで`runAsNonRoot: true`が指定されているので、これをコメントアウトする必要があります。
 
 ```yaml
-resources:
-  limits:
-    cpu: 100m
-    memory: 30Mi
-  requests:
-    cpu: 100m
-    memory: 20Mi
+      securityContext:
+        runAsNonRoot: true
+```
+
+またTelepresenceでは、コンテナにマウントされたConfigMapやSecretが、ローカルのディレクトリにマウントされます。
+そのため、ConfigMapやSecretにアクセスする際のパスが、Podとして実行する場合とTelepresenceで実行する場合で異なります。
+
+ローカルにマウントされたディレクトリのパスは、環境変数`TELEPRESENCE_ROOT`で取得することができます。
+Kubebuilderで生成したカスタムコントローラでは、Webhookの証明書のパスを下記のように設定し、`NewManager`するときのOptionとして指定しましょう。
+
+[import:"telepresence,new-manager",unindent="true"](../../codes/markdown-viewer/main.go)
+
+なお、Telepresenceではローカルにボリュームをマウントするためにsshfsを利用しています。
+ボリュームマウント機能がうまく動作しない場合は、sshfsがインストールされているかどうかを確認したり、
+`/etc/fuse.conf`に下記のオプションが指定されているかどうかを確認してみてください。
+
+```text
+user_allow_other
+```
+
+準備が整ったら、[Kindで動かしてみよう](./kind.md)の手順通りにコントローラをデプロイします。
+
+最後に下記のコマンドで、Kubernetes上で動いているコントローラを、make runを実行して起動したプロセスと置き換えます。
+
+```console
+telepresence intercept markdown-viewer-controller-manager --namespace markdown-viewer-system --service markdown-viewer-webhook-service -- make run
 ```
