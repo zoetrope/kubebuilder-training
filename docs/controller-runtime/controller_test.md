@@ -10,6 +10,21 @@ envtestはetcdとkube-apiserverを立ち上げてテスト用の環境を構築�
 
 ## テスト環境のセットアップ
 
+```Makefile
+test: manifests generate fmt vet setup-envtest ## Run tests.
+	source <($(SETUP_ENVTEST) use -p env); go test ./... -coverprofile cover.out
+```
+
+```Makefile
+SETUP_ENVTEST := $(shell pwd)/bin/setup-envtest
+.PHONY: setup-envtest
+setup-envtest: ## Download setup-envtest locally if necessary
+	# see https://github.com/kubernetes-sigs/controller-runtime/tree/master/tools/setup-envtest
+	GOBIN=$(shell pwd)/bin go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+```
+
+
+
 controller-genによって自動生成された[controllers/suite_test.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/controllers/suite_test.go)を見てみましょう。
 
 [import, title="controllers/suite_test.go"](../../codes/tenant/controllers/suite_test.go)

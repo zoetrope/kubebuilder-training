@@ -11,8 +11,10 @@ Kubernetesには、Admission Webhookと呼ばれる拡張機能があります�
 
 ここでは`--programmatic-validation`と`--defaulting`を指定して、Tenantリソース用のWebhookを生成してみましょう。
 
+注意: kindにはPodやDeploymentなどの既存のリソースを指定することはできません。
+
 ```console
-$ kubebuilder create webhook --group multitenancy --version v1 --kind Tenant --programmatic-validation --defaulting
+$ kubebuilder create webhook --group viewer --version v1 --kind MarkdownView --programmatic-validation --defaulting
 $ make manifests
 ```
 
@@ -21,53 +23,45 @@ $ make manifests
 ```
 ├── api
 │    └── v1
-│        ├── tenant_webhook.go
+│        ├── markdownView_webhook.go
 │        └── webhook_suite_test.go
-├── config
-│    ├── certmanager
-│    │   ├── certificate.yaml
-│    │   ├── kustomization.yaml
-│    │   └── kus
-│    ├── crd
-│    │   └── patches
-│    │       ├── cainjection_in_tenants.yaml
-│    │       └── webhook_in_tenants.yaml
-│    ├── default
-│    │   ├── manager_webhook_patch.yaml
-│    │   └── webhookcainjection_patch.yaml
-│    └── webhook
-│        ├── kustomization.yaml
-│        ├── kustomizeconfig.yaml
-│        ├── manifests.yaml
-│        └── service.yaml
-├── default
-│    ├── manager_webhook_patch.yaml
-│    └── webhookcainjection_patch.yaml
-└── main.go
+└── config
+     ├── certmanager
+     │   ├── certificate.yaml
+     │   ├── kustomization.yaml
+     │   └── kustomizeconfig.yaml
+     ├── default
+     │   ├── manager_webhook_patch.yaml
+     │   └── webhookcainjection_patch.yaml
+     └── webhook
+         ├── kustomization.yaml
+         ├── kustomizeconfig.yaml
+         ├── manifests.yaml
+         └── service.yaml
 ```
 
 ## api/v1
 
-`tenant_webhook.go`がWebhook実装の雛形になります。
+`markdownview_webhook.go`がWebhook実装の雛形になります。
 このファイルにWebhookの実装を追加していくことになります。
 
 ### config/certmanager
 
-Admission Webhook機能を提供するためには証明書が必要となります。
-certmanagerディレクトリ下のマニフェストを適用すると、[cert-manager][]を利用して証明書を発行することができます。
+Admission Webhook機能を利用するためには証明書が必要となります。
+[cert-manager][]を利用して証明書を発行するためのカスタムリソースが生成されています。
 
 ## config/webhook
 
 `config/webhook`下のファイルは、Webhook機能を利用するために必要なマニフェストになります。
-基本的に編集する必要はありません。
+manifests.yamlファイルは`make manifests`ファイルで自動生成されるため、基本的に手動で編集する必要はありません。
 
 ## main.go
 
 `main.go`には、以下のようなWebhookの初期化をおこなうためのコードが追加されています。
 
 ```go
-if err = (&multitenancyv1.Tenant{}).SetupWebhookWithManager(mgr); err != nil {
-	setupLog.Error(err, "unable to create webhook", "webhook", "Tenant")
+if err = (&viewerv1.MarkdownView{}).SetupWebhookWithManager(mgr); err != nil {
+	setupLog.Error(err, "unable to create webhook", "webhook", "MarkdownView")
 	os.Exit(1)
 }
 ```
@@ -76,10 +70,10 @@ if err = (&multitenancyv1.Tenant{}).SetupWebhookWithManager(mgr); err != nil {
 
 kubebuilderコマンドで生成した直後の状態では、`make manifests`コマンドでマニフェストを生成しても、Webhook機能が利用できるようにはなっていません。
 
-[config/default/kustomization.yaml](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/config/default/kustomization.yaml)ファイルを編集する必要があります。
+[config/default/kustomization.yaml](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-viewer/config/default/kustomization.yaml)ファイルを編集する必要があります。
 
 生成直後は`bases`の`../webhook`と`../certmanager`、`patchesStrategicMerge`の`manager_webhook_patch.yaml`と`webhookcainjection_patch.yaml`、`vars`がコメントアウトされていますが、これらのコメントを外します。
 
-[import:"bases,enable-webhook,patches,enable-webhook-patch,vars"](../../codes/tenant/config/default/kustomization.yaml)
+[import:"bases,enable-webhook,patches,enable-webhook-patch,vars"](../../codes/markdown-viewer/config/default/kustomization.yaml)
 
 [cert-manager]: https://github.com/jetstack/cert-manager

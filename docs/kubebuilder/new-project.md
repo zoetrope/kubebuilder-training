@@ -3,9 +3,9 @@
 それではさっそく`kubebuilder init`コマンドを利用して、プロジェクトの雛形を生成しましょう。
 
 ```console
-$ mkdir tenant
-$ cd tenant
-$ kubebuilder init --domain example.com --repo github.com/zoetrope/tenant
+$ mkdir markdown-viewer
+$ cd markdown-viewer
+$ kubebuilder init --domain zoetrope.github.io --repo github.com/zoetrope/markdown-viewer
 ```
 
 `--domain`で指定した名前はCRDのグループ名に使われます。
@@ -47,6 +47,16 @@ GitHubにリポジトリを作る場合は`github.com/<user_name>/<product_name>
 ├── hack
 │    └── boilerplate.go.txt
 └── main.go
+```
+
+```diff
+-       $(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.4.1)
++       $(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.6.1)
+```
+
+```diff
+-       sigs.k8s.io/controller-runtime v0.8.3
++       sigs.k8s.io/controller-runtime v0.9.2
 ```
 
 生成されたファイルをそれぞれ見ていきましょう。

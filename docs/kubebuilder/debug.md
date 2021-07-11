@@ -23,19 +23,19 @@ Kubebuilderによって生成されたMakefileには`make run`というターゲ
 
 まずは下記のページを参考にしてTelepresenceをインストールしてください。
 
-* [Installing Telepresence](https://www.telepresence.io/reference/install)
+* [Install Telepresence](https://www.telepresence.io/docs/latest/install/)
 
 Telepresenceを利用する場合、ConfigMapやSecretをボリュームとしてアクセスする際のパスがPodとして実行する場合と異なります。
 Kubebuilderで生成したカスタムコントローラでは、Webhookの証明書のパスを下記のように設定し、`NewManager`するときのOptionとして指定してあげましょう。
 
-[import:"telepresence",unindent="true"](../../codes/tenant/main.go)
+[import:"telepresence,new-manager",unindent="true"](../../codes/markdown-viewer/main.go)
 
 次に[Kindで動かしてみよう](./kind.md)の手順通りにコントローラをデプロイします。
 
 最後に下記のコマンドで、Kubernetes上で動いているコントローラをローカルで動いているプロセスと置き換えます。
 
 ```console
-telepresence --namespace tenant-system --swap-deployment tenant-controller-manager:manager --run make run
+telepresence --namespace markdown-viewer-system --swap-deployment markdown-viewer-controller-manager:manager --run make run
 ```
 
 なお、kubebuilderが生成したコントローラのマニフェスト(`config/manager/manager.yaml`)には以下のように非常に小さなサイズのResourcesが指定されています。
