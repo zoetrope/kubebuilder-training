@@ -22,8 +22,8 @@ spec:
       labels:
         control-plane: controller-manager
     spec:
-      #securityContext:
-      #  runAsNonRoot: true
+      securityContext:
+        runAsNonRoot: true
       containers:
       - command:
         - /manager
@@ -48,8 +48,8 @@ spec:
           periodSeconds: 10
         resources:
           limits:
-            cpu: 100m
-            memory: 30Mi
+            cpu: 1000m
+            memory: 300Mi
           requests:
             cpu: 100m
             memory: 20Mi

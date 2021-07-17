@@ -87,6 +87,8 @@ Podが3つある状態でReconcileが呼び出されたときにさらに3つの
 
 ![Edge-driven vs. Level-driven Trigger](./img/edge_level_trigger.png)
 
+TODO: 要見直し
+
 Reconciliation Loopがエッジドリブントリガーのみで実行される場合、もしイベントが発生したときにコントローラが起動していなかったりすると、
 そのトリガーが発動せずあるべき状態と現在の状態がずれてしまうことになります。
 

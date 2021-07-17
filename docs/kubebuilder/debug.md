@@ -14,6 +14,9 @@ Kubebuilderによって生成されたMakefileには`make run`というターゲ
 * コントローラがAPIサーバにアクセスするときの権限が、クラスタ内で動作させた場合と異なります(例えば、`$HOME/.kube/config`の設定を利用すると、kubectlと同じ権限を持つようになります)。
 * [Downward API](https://kubernetes.io/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information/)が利用できません。
 
+<!--
+TODO: カスタムコントローラをTelepresenceで実行したときにキャッシュ周りの問題がありそう？
+
 ## Telepresenceによる実行
 
 `make run`による実行では上記のようにいくつかの問題があります。
@@ -44,6 +47,30 @@ Kubebuilderで生成したカスタムコントローラでは、Webhookの証�
 
 [import:"telepresence,new-manager",unindent="true"](../../codes/markdown-viewer/main.go)
 
+```go
+	//! [telepresence]
+	certDir := filepath.Join("tmp", "k8s-webhook-server", "serving-certs")
+	root := os.Getenv("TELEPRESENCE_ROOT")
+	fmt.Printf("TELEPRESENCE_ROOT: %s\n", root)
+	time.Sleep(30 * time.Second)
+	if len(root) != 0 {
+		certDir = filepath.Join(root, certDir)
+	} else {
+		certDir = filepath.Join("/", certDir)
+	}
+	//! [telepresence]
+
+	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
+		Scheme:                 scheme,
+		MetricsBindAddress:     metricsAddr,
+		Port:                   9443,
+		HealthProbeBindAddress: probeAddr,
+		LeaderElection:         enableLeaderElection,
+		LeaderElectionID:       "c124e721.zoetrope.github.io",
+		CertDir:                certDir,
+	})
+```
+
 なお、Telepresenceではローカルにボリュームをマウントするためにsshfsを利用しています。
 ボリュームマウント機能がうまく動作しない場合は、sshfsがインストールされているかどうかを確認したり、
 `/etc/fuse.conf`に下記のオプションが指定されているかどうかを確認してみてください。
@@ -59,3 +86,5 @@ user_allow_other
 ```console
 telepresence intercept markdown-viewer-controller-manager --namespace markdown-viewer-system --service markdown-viewer-webhook-service --port=9443 -- make run
 ```
+
+-->

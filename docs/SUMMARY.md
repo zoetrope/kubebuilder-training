@@ -25,4 +25,5 @@
   * [Webhookのテスト](controller-runtime/webhook_test.md)
   * [Manager](controller-runtime/manager.md)
   * [メトリクスの収集](controller-runtime/metrics.md)
+  * [Reconcileの実装(応用編)](controller-runtime/advanced_reconcile.md)
   <!-- * [CRDのバージョニング](controller-runtime/versioning.md) -->

@@ -18,10 +18,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
-	"path/filepath"
-	"time"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
@@ -68,18 +65,6 @@ func main() {
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
-	//! [telepresence]
-	certDir := filepath.Join("tmp", "k8s-webhook-server", "serving-certs")
-	root := os.Getenv("TELEPRESENCE_ROOT")
-	fmt.Printf("TELEPRESENCE_ROOT: %s\n", root)
-	time.Sleep(30 * time.Second)
-	if len(root) != 0 {
-		certDir = filepath.Join(root, certDir)
-	} else {
-		certDir = filepath.Join("/", certDir)
-	}
-	//! [telepresence]
-
 	//! [new-manager]
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
@@ -88,7 +73,6 @@ func main() {
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
 		LeaderElectionID:       "c124e721.zoetrope.github.io",
-		CertDir:                certDir,
 	})
 	//! [new-manager]
 	if err != nil {
