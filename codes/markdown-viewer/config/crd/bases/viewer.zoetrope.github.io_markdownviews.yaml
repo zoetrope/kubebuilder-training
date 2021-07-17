@@ -36,9 +36,18 @@ spec:
           spec:
             description: MarkdownViewSpec defines the desired state of MarkdownView
             properties:
-              foo:
-                description: Foo is an example field of MarkdownView. Edit markdownview_types.go
-                  to remove/update
+              markdowns:
+                additionalProperties:
+                  type: string
+                description: Markdowns are
+                type: object
+              replicas:
+                default: 1
+                description: Replicas is the number of instances.
+                format: int32
+                type: integer
+              viewerImage:
+                description: ViewerImage is a image name
                 type: string
             type: object
           status:

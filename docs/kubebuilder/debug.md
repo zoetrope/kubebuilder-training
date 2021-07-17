@@ -57,5 +57,5 @@ user_allow_other
 最後に下記のコマンドで、Kubernetes上で動いているコントローラを、make runを実行して起動したプロセスと置き換えます。
 
 ```console
-telepresence intercept markdown-viewer-controller-manager --namespace markdown-viewer-system --service markdown-viewer-webhook-service -- make run
+telepresence intercept markdown-viewer-controller-manager --namespace markdown-viewer-system --service markdown-viewer-webhook-service --port=9443 -- make run
 ```
