@@ -20,6 +20,7 @@ import (
 	"context"
 
 	viewerv1 "github.com/zoetrope/markdown-viewer/api/v1"
+	"github.com/zoetrope/markdown-viewer/pkg/constants"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
@@ -128,7 +129,7 @@ func (r *MarkdownViewReconciler) reconcileConfigMap(ctx context.Context, mdView 
 
 func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView viewerv1.MarkdownView) (bool, error) {
 	depName := "viewer-" + mdView.Name
-	viewerImage := DefaultViewerImage
+	viewerImage := constants.DefaultViewerImage
 	if len(mdView.Spec.ViewerImage) != 0 {
 		viewerImage = mdView.Spec.ViewerImage
 	}
@@ -148,7 +149,7 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 				WithLabels(labelSet(mdView)).
 				WithSpec(corev1apply.PodSpec().
 					WithContainers(corev1apply.Container().
-						WithName(ViewerName).
+						WithName(constants.ViewerName).
 						WithImage(viewerImage).
 						WithImagePullPolicy(corev1.PullIfNotPresent).
 						WithCommand("mdbook").
@@ -187,7 +188,7 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 		return false, err
 	}
 
-	currApplyConfig, err := appsv1apply.ExtractDeployment(&current, ControllerName)
+	currApplyConfig, err := appsv1apply.ExtractDeployment(&current, constants.ControllerName)
 	if err != nil {
 		return false, err
 	}
@@ -197,7 +198,7 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 	}
 
 	err = r.Patch(ctx, patch, client.Apply, &client.PatchOptions{
-		FieldManager: ControllerName,
+		FieldManager: constants.ControllerName,
 	})
 	return true, err
 }
@@ -236,7 +237,7 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 		return false, err
 	}
 
-	currApplyConfig, err := corev1apply.ExtractService(&current, ControllerName)
+	currApplyConfig, err := corev1apply.ExtractService(&current, constants.ControllerName)
 	if err != nil {
 		return false, err
 	}
@@ -246,7 +247,7 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 	}
 
 	err = r.Patch(ctx, patch, client.Apply, &client.PatchOptions{
-		FieldManager: ControllerName,
+		FieldManager: constants.ControllerName,
 	})
 	return true, err
 }
@@ -268,9 +269,9 @@ func ownerRef(mdView viewerv1.MarkdownView, scheme *runtime.Scheme) (*metav1appl
 
 func labelSet(mdView viewerv1.MarkdownView) map[string]string {
 	labels := map[string]string{
-		LabelAppName:      ViewerName,
-		LabelAppInstance:  mdView.Name,
-		LabelAppCreatedBy: ControllerName,
+		constants.LabelAppName:      constants.ViewerName,
+		constants.LabelAppInstance:  mdView.Name,
+		constants.LabelAppCreatedBy: constants.ControllerName,
 	}
 	return labels
 }

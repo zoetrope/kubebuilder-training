@@ -17,7 +17,11 @@ limitations under the License.
 package v1
 
 import (
+	"github.com/zoetrope/markdown-viewer/pkg/constants"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/util/validation/field"
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
@@ -42,7 +46,9 @@ var _ webhook.Defaulter = &MarkdownView{}
 func (r *MarkdownView) Default() {
 	markdownviewlog.Info("default", "name", r.Name)
 
-	// TODO(user): fill in your defaulting logic.
+	if len(r.Spec.ViewerImage) == 0 {
+		r.Spec.ViewerImage = constants.DefaultViewerImage
+	}
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
@@ -54,15 +60,39 @@ var _ webhook.Validator = &MarkdownView{}
 func (r *MarkdownView) ValidateCreate() error {
 	markdownviewlog.Info("validate create", "name", r.Name)
 
-	// TODO(user): fill in your validation logic upon object creation.
-	return nil
+	return r.validate()
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
 func (r *MarkdownView) ValidateUpdate(old runtime.Object) error {
 	markdownviewlog.Info("validate update", "name", r.Name)
 
-	// TODO(user): fill in your validation logic upon object update.
+	return r.validate()
+}
+
+func (r *MarkdownView) validate() error {
+	var errs field.ErrorList
+
+	if r.Spec.Replicas < 1 || r.Spec.Replicas > 5 {
+		errs = append(errs, field.Invalid(field.NewPath("spec", "replicas"), r.Spec.Replicas, "spec.replicas must be in the range of 1 to 5."))
+	}
+
+	hasSummary := false
+	for name := range r.Spec.Markdowns {
+		if name == "SUMMARY.md" {
+			hasSummary = true
+		}
+	}
+	if !hasSummary {
+		errs = append(errs, field.Required(field.NewPath("spec", "markdowns"), "spec.markdowns must have SUMMARY.md."))
+	}
+
+	if len(errs) > 0 {
+		err := apierrors.NewInvalid(schema.GroupKind{Group: GroupVersion.Group, Kind: "MarkdownView"}, r.Name, errs)
+		markdownviewlog.Error(err, "validation error", "name", r.Name)
+		return err
+	}
+
 	return nil
 }
 
@@ -70,6 +100,5 @@ func (r *MarkdownView) ValidateUpdate(old runtime.Object) error {
 func (r *MarkdownView) ValidateDelete() error {
 	markdownviewlog.Info("validate delete", "name", r.Name)
 
-	// TODO(user): fill in your validation logic upon object deletion.
 	return nil
 }

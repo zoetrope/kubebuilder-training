@@ -1,4 +1,4 @@
-package controllers
+package constants
 
 const (
 	LabelAppInstance  = "app.kubernetes.io/instance"
