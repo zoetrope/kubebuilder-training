@@ -5,9 +5,9 @@ KubernetesではRBAC(Role-based access control)によりリソースへのアク
 
 controller-genでは、Goのソースコード中に埋め込まれたマーカーを元にRBACのマニフェストを生成することができます。
 
-テナントコントローラに付与したマーカーを見てみましょう。
+MarkdownViewerコントローラに付与したマーカーを見てみましょう。
 
-[import:"rbac"](../../codes/tenant/controllers/tenant_controller.go)
+[import:"rbac"](../../codes/markdown-viewer/controllers/markdownview_controller.go)
 
 まずは、Tenantリソースに対して`get;list;watch;create;update;patch;delete`の権限を与えます。
 statusをサブリソース化した場合は、個別に権限を追加する必要があります。
@@ -17,4 +17,4 @@ statusをサブリソース化した場合は、個別に権限を追加する�
 なお、controller-runtimeの提供するClientは、Getでリソースを取得した場合も裏でListやWatchを呼び出しています。
 そのためgetしかしない場合でも、get, list, watchを許可しておきましょう。
 
-`make manifests`を実行すると[config/rbac/role.yaml](../../codes/tenant/config/rbac/role.yaml)が更新されます。
+`make manifests`を実行すると[config/rbac/role.yaml](../../codes/markdown-viewer/config/rbac/role.yaml)が更新されます。

@@ -93,7 +93,78 @@ CreateOrUpdateを利用した場合、DeploymentやServiceを適切に作成す�
 CreateOrUpdateでDeploymentを作成した直後に、api-serverからそのDeploymentを取得して差分をチェックしてみましょう。
 以下のような差分が生じます。
 
-
+```diff
+ spec:
++  progressDeadlineSeconds: 600
+   replicas: 1
++  revisionHistoryLimit: 10
+   selector:
+     matchLabels:
+       app.kubernetes.io/created-by: markdown-viewer-controller
+       app.kubernetes.io/instance: markdownview-sample
+       app.kubernetes.io/name: mdbook
++  strategy:
++    rollingUpdate:
++      maxSurge: 25%
++      maxUnavailable: 25%
++    type: RollingUpdate
+   template:
+     metadata:
++      creationTimestamp: null
+       labels:
+         app.kubernetes.io/created-by: markdown-viewer-controller
+         app.kubernetes.io/instance: markdownview-sample
+         app.kubernetes.io/name: mdbook
+     spec:
+       containers:
+       - args:
+         - serve
+         - --hostname
+         - 0.0.0.0
+         command:
+         - mdbook
+         image: peaceiris/mdbook:latest
+         imagePullPolicy: IfNotPresent
+         livenessProbe:
++          failureThreshold: 3
+           httpGet:
+             path: /
+             port: http
+             scheme: HTTP
++          periodSeconds: 10
++          successThreshold: 1
++          timeoutSeconds: 1
+         name: mdbook
+         ports:
+         - containerPort: 3000
+           name: http
+           protocol: TCP
+         readinessProbe:
++          failureThreshold: 3
+           httpGet:
+             path: /
+             port: http
+             scheme: HTTP
++          periodSeconds: 10
++          successThreshold: 1
++          timeoutSeconds: 1
++        resources: {}
++        terminationMessagePath: /dev/termination-log
++        terminationMessagePolicy: File
+         volumeMounts:
+         - mountPath: /book/src
+           name: markdowns
++      dnsPolicy: ClusterFirst
++      restartPolicy: Always
++      schedulerName: default-scheduler
++      securityContext: {}
++      terminationGracePeriodSeconds: 30
+       volumes:
+       - configMap:
++          defaultMode: 420
+           name: markdowns-markdownview-sample
+         name: markdowns
+```
 
 api-serverがデフォルト値を埋めたり、
 また、それ以外にも何らかのMutating Webhookにより値が設定されたり、別のカスタムコントローラが値を書き換える場合もあります。
