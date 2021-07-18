@@ -64,10 +64,10 @@ type MarkdownViewReconciler struct {
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.8.3/pkg/reconcile
+//! [reconcile]
 func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
 
-	//! [get]
 	var mdView viewerv1.MarkdownView
 	err := r.Get(ctx, req.NamespacedName, &mdView)
 	if err != nil {
@@ -77,7 +77,6 @@ func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request
 		logger.Error(err, "unable to get MarkdownView", "name", req.NamespacedName)
 		return ctrl.Result{}, err
 	}
-	//! [get]
 
 	if !mdView.ObjectMeta.DeletionTimestamp.IsZero() {
 		return ctrl.Result{}, nil
@@ -99,6 +98,9 @@ func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request
 	return r.updateStatus(ctx, mdView)
 }
 
+//! [reconcile]
+
+//! [reconcile-configmap]
 func (r *MarkdownViewReconciler) reconcileConfigMap(ctx context.Context, mdView viewerv1.MarkdownView) error {
 	logger := log.FromContext(ctx)
 
@@ -125,6 +127,8 @@ func (r *MarkdownViewReconciler) reconcileConfigMap(ctx context.Context, mdView 
 	}
 	return nil
 }
+
+//! [reconcile-configmap]
 
 func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView viewerv1.MarkdownView) error {
 	logger := log.FromContext(ctx)
@@ -163,6 +167,20 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 							WithName("http").
 							WithProtocol(corev1.ProtocolTCP).
 							WithContainerPort(3000),
+						).
+						WithLivenessProbe(corev1apply.Probe().
+							WithHTTPGet(corev1apply.HTTPGetAction().
+								WithPort(intstr.FromString("http")).
+								WithPath("/").
+								WithScheme(corev1.URISchemeHTTP),
+							),
+						).
+						WithReadinessProbe(corev1apply.Probe().
+							WithHTTPGet(corev1apply.HTTPGetAction().
+								WithPort(intstr.FromString("http")).
+								WithPath("/").
+								WithScheme(corev1.URISchemeHTTP),
+							),
 						),
 					).
 					WithVolumes(corev1apply.Volume().
@@ -201,12 +219,16 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 	err = r.Patch(ctx, patch, client.Apply, &client.PatchOptions{
 		FieldManager: constants.ControllerName,
 	})
+
 	if err != nil {
-		logger.Info("reconcile Deployment successfully", "name", mdView.Name)
+		logger.Error(err, "unable to create or update Deployment")
+		return err
 	}
-	return err
+	logger.Info("reconcile Deployment successfully", "name", mdView.Name)
+	return nil
 }
 
+//! [reconcile-service]
 func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView viewerv1.MarkdownView) error {
 	logger := log.FromContext(ctx)
 	svcName := "viewer-" + mdView.Name
@@ -221,6 +243,7 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 		WithOwnerReferences(owner).
 		WithSpec(corev1apply.ServiceSpec().
 			WithSelector(labelSet(mdView)).
+			WithType(corev1.ServiceTypeClusterIP).
 			WithPorts(corev1apply.ServicePort().
 				WithProtocol(corev1.ProtocolTCP).
 				WithPort(80).
@@ -255,11 +278,17 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 		FieldManager: constants.ControllerName,
 	})
 	if err != nil {
-		logger.Info("reconcile Service successfully", "name", mdView.Name)
+		logger.Error(err, "unable to create or update Deployment")
+		return err
 	}
-	return err
+
+	logger.Info("reconcile Service successfully", "name", mdView.Name)
+	return nil
 }
 
+//! [reconcile-service]
+
+//! [update-status]
 func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewerv1.MarkdownView) (ctrl.Result, error) {
 	var dep appsv1.Deployment
 	err := r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: "viewer-" + mdView.Name}, &dep)
@@ -286,6 +315,8 @@ func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewer
 	return ctrl.Result{}, nil
 }
 
+//! [update-status]
+
 func ownerRef(mdView viewerv1.MarkdownView, scheme *runtime.Scheme) (*metav1apply.OwnerReferenceApplyConfiguration, error) {
 	gvk, err := apiutil.GVKForObject(&mdView, scheme)
 	if err != nil {
@@ -311,13 +342,14 @@ func labelSet(mdView viewerv1.MarkdownView) map[string]string {
 }
 
 // SetupWithManager sets up the controller with the Manager.
+//! [managedby]
 func (r *MarkdownViewReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	//! [managedby]
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&viewerv1.MarkdownView{}).
 		Owns(&corev1.ConfigMap{}).
 		Owns(&appsv1.Deployment{}).
 		Owns(&corev1.Service{}).
 		Complete(r)
-	//! [managedby]
 }
+
+//! [managedby]

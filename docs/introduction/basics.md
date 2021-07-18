@@ -92,36 +92,3 @@ TODO: 要見直し
 Reconciliation Loopがエッジドリブントリガーのみで実行される場合、もしイベントが発生したときにコントローラが起動していなかったりすると、
 そのトリガーが発動せずあるべき状態と現在の状態がずれてしまうことになります。
 
-例えば`status.phase`フィールドで状態を保持し、その状態に応じて動作するコントローラを考えてみましょう。
-
-最初にコントローラのReconcileが実行されたときには状態はAでした。
-
-```yaml
-status:
-  phase: A
-```
-
-次にコントローラのReconcileが実行されたときには状態はCに変化しました。
-
-```yaml
-status:
-  phase: C
-```
-
-このとき実際にはphaseはA->B->Cと変化したにも関わらず、Bに変化したときのイベントをコントローラが取りこぼしていると、正しく処理ができない可能性があります。
-
-そこで上記のような状態の持たせ方はせずに、各状態のON/OFFをリストで表現すれば、Bに変化したことを取りこぼさずに必要な処理を実行させることが可能になります。
-
-```yaml
-status:
-  conditions:
-  - type: A
-    status: True
-  - type: B
-    status: True
-  - type: C
-    status: False
-```
-
-[API Conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)
-

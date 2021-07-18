@@ -46,3 +46,53 @@ Kubernetes内のリソースの変更だけでなく、外部イベントをト�
 [import:"external-event,managedby",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
 
 これにより、Ready状態のテナントリソースが存在すると10秒ごとにReconcileが呼び出されるようになります。
+
+
+### ステータスの更新
+
+例えば`status.phase`フィールドで状態を保持し、その状態に応じて動作するコントローラを考えてみましょう。
+
+最初にコントローラのReconcileが実行されたときには状態はAでした。
+
+```yaml
+status:
+  phase: A
+```
+
+次にコントローラのReconcileが実行されたときには状態はCに変化しました。
+
+```yaml
+status:
+  phase: C
+```
+
+このとき実際にはphaseはA->B->Cと変化したにも関わらず、Bに変化したときのイベントをコントローラが取りこぼしていると、正しく処理ができない可能性があります。
+
+そこで上記のような状態の持たせ方はせずに、各状態のON/OFFをリストで表現すれば、Bに変化したことを取りこぼさずに必要な処理を実行させることが可能になります。
+
+```yaml
+status:
+  conditions:
+  - type: A
+    status: True
+  - type: B
+    status: True
+  - type: C
+    status: False
+```
+
+[API Conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)
+
+コントローラが扱うリソースに何も変更が加えられなかった場合は、ステータスを更新する必要もないでしょう。
+そこで下記のように更新をおこなったかどうかをフラグで返すようにしておきます。
+
+[import:"reconcile"](../../codes/tenant/controllers/tenant_controller.go)
+
+上記の関数の戻り値に応じてステータスの更新をおこないます。
+Conditionsの更新には、`meta.SetStatusCondition()`という関数が用意されています。
+この関数を利用すると、同じタイプのConditionがすでに存在する場合は値を更新し、存在しない場合は追加してくれます。
+また、Condition.Statusの値が変化したときだけ`LastTransitionTime`が現在の時刻で更新されます。
+
+[import:"status",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
+
+これにより、ユーザーはテナントリソースのステータスを確認することが可能になります。
