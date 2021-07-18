@@ -72,7 +72,7 @@ func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request
 	err := r.Get(ctx, req.NamespacedName, &mdView)
 	if err != nil {
 		if errors.IsNotFound(err) {
-			return ctrl.Result{}, nil
+			return ctrl.Result{Requeue: true}, nil
 		}
 		logger.Error(err, "unable to get MarkdownView", "name", req.NamespacedName)
 		return ctrl.Result{}, err
@@ -83,23 +83,23 @@ func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request
 		return ctrl.Result{}, nil
 	}
 
-	_, err = r.reconcileConfigMap(ctx, mdView)
+	err = r.reconcileConfigMap(ctx, mdView)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-	_, err = r.reconcileDeployment(ctx, mdView)
+	err = r.reconcileDeployment(ctx, mdView)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
-	_, err = r.reconcileService(ctx, mdView)
+	err = r.reconcileService(ctx, mdView)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
 
-	return ctrl.Result{}, nil
+	return r.updateStatus(ctx, mdView)
 }
 
-func (r *MarkdownViewReconciler) reconcileConfigMap(ctx context.Context, mdView viewerv1.MarkdownView) (bool, error) {
+func (r *MarkdownViewReconciler) reconcileConfigMap(ctx context.Context, mdView viewerv1.MarkdownView) error {
 	logger := log.FromContext(ctx)
 
 	cm := &corev1.ConfigMap{}
@@ -118,16 +118,17 @@ func (r *MarkdownViewReconciler) reconcileConfigMap(ctx context.Context, mdView 
 
 	if err != nil {
 		logger.Error(err, "unable to create or update ConfigMap")
-		return false, err
+		return err
 	}
 	if op != controllerutil.OperationResultNone {
 		logger.Info("reconcile ConfigMap successfully", "op", op)
-		return true, nil
 	}
-	return false, nil
+	return nil
 }
 
-func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView viewerv1.MarkdownView) (bool, error) {
+func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView viewerv1.MarkdownView) error {
+	logger := log.FromContext(ctx)
+
 	depName := "viewer-" + mdView.Name
 	viewerImage := constants.DefaultViewerImage
 	if len(mdView.Spec.ViewerImage) != 0 {
@@ -136,7 +137,7 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 
 	owner, err := ownerRef(mdView, r.Scheme)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	dep := appsv1apply.Deployment(depName, mdView.Namespace).
@@ -176,7 +177,7 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 
 	obj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(dep)
 	if err != nil {
-		return false, err
+		return err
 	}
 	patch := &unstructured.Unstructured{
 		Object: obj,
@@ -185,30 +186,34 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 	var current appsv1.Deployment
 	err = r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: depName}, &current)
 	if err != nil && !errors.IsNotFound(err) {
-		return false, err
+		return err
 	}
 
 	currApplyConfig, err := appsv1apply.ExtractDeployment(&current, constants.ControllerName)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	if equality.Semantic.DeepEqual(dep, currApplyConfig) {
-		return false, nil
+		return nil
 	}
 
 	err = r.Patch(ctx, patch, client.Apply, &client.PatchOptions{
 		FieldManager: constants.ControllerName,
 	})
-	return true, err
+	if err != nil {
+		logger.Info("reconcile Deployment successfully", "name", mdView.Name)
+	}
+	return err
 }
 
-func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView viewerv1.MarkdownView) (bool, error) {
+func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView viewerv1.MarkdownView) error {
+	logger := log.FromContext(ctx)
 	svcName := "viewer-" + mdView.Name
 
 	owner, err := ownerRef(mdView, r.Scheme)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	svc := corev1apply.Service(svcName, mdView.Namespace).
@@ -225,7 +230,7 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 
 	obj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(svc)
 	if err != nil {
-		return false, err
+		return err
 	}
 	patch := &unstructured.Unstructured{
 		Object: obj,
@@ -234,22 +239,51 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 	var current corev1.Service
 	err = r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: svcName}, &current)
 	if err != nil && !errors.IsNotFound(err) {
-		return false, err
+		return err
 	}
 
 	currApplyConfig, err := corev1apply.ExtractService(&current, constants.ControllerName)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	if equality.Semantic.DeepEqual(svc, currApplyConfig) {
-		return false, nil
+		return nil
 	}
 
 	err = r.Patch(ctx, patch, client.Apply, &client.PatchOptions{
 		FieldManager: constants.ControllerName,
 	})
-	return true, err
+	if err != nil {
+		logger.Info("reconcile Service successfully", "name", mdView.Name)
+	}
+	return err
+}
+
+func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewerv1.MarkdownView) (ctrl.Result, error) {
+	var dep appsv1.Deployment
+	err := r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: "viewer-" + mdView.Name}, &dep)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+
+	if dep.Status.AvailableReplicas == 0 {
+		mdView.Status = viewerv1.MarkdownViewNotReady
+	} else if dep.Status.AvailableReplicas == mdView.Spec.Replicas {
+		mdView.Status = viewerv1.MarkdownViewHealthy
+	} else {
+		mdView.Status = viewerv1.MarkdownViewAvailable
+	}
+
+	err = r.Status().Update(ctx, &mdView)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+
+	if mdView.Status != viewerv1.MarkdownViewHealthy {
+		return ctrl.Result{Requeue: true}, nil
+	}
+	return ctrl.Result{}, nil
 }
 
 func ownerRef(mdView viewerv1.MarkdownView, scheme *runtime.Scheme) (*metav1apply.OwnerReferenceApplyConfiguration, error) {

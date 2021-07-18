@@ -16,7 +16,14 @@ spec:
     singular: markdownview
   scope: Namespaced
   versions:
-  - name: v1
+  - additionalPrinterColumns:
+    - jsonPath: .spec.replicas
+      name: REPLICAS
+      type: integer
+    - jsonPath: .status
+      name: STATUS
+      type: string
+    name: v1
     schema:
       openAPIV3Schema:
         description: MarkdownView is the Schema for the markdownviews API
@@ -52,7 +59,11 @@ spec:
             type: object
           status:
             description: MarkdownViewStatus defines the observed state of MarkdownView
-            type: object
+            enum:
+            - ready
+            - available
+            - healthy
+            type: string
         type: object
     served: true
     storage: true
