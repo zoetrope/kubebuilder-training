@@ -1,74 +1,82 @@
 # カスタムコントローラの基礎
 
-ここではカスタムコントローラを開発する上で必要となるKubernetesの知識を簡単に説明します。
+ここではカスタムコントローラを開発する上で必要となるKubernetesの基礎知識を解説します。
 
 ## Declarative
 
 Kubernetesにおいてもっとも重要なコンセプトがDeclarative(宣言的) APIです。
 
-例えば、以下のようなYAMLフォーマットで記述されたマニフェストファイルを用意して、KubernetesのAPIサーバーに登録します。
-この登録された情報のことをリソースと呼びます。
+例えば、Kubernetes上にNginxをデプロイしたい場合は、以下のようなYAML形式で記述されたマニフェストを用意して、Deploymentリソースを作成します。
 
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sample
+  name: nginx-deployment
 spec:
   selector:
     matchLabels:
-      app: httpd
+      app.kubernetes.io/name: nginx
   replicas: 3
   template:
     metadata:
       labels:
-        app: httpd
+        app.kubernetes.io/name: nginx
     spec:
       containers:
-      - name: httpd
-        image: quay.io/cybozu/testhttpd:0.1.0
+      - name: nginx
+        image: nginx:latest
 ```
 
-kube-controller-managerと呼ばれるプログラムは、APIサーバ上にDeploymentリソースが登録されるとReplicaSetリソースをAPIサーバーに登録し、
-さらにReplicaSetリソースが登録されると`spec.replicas`に指定された数のPodをAPIサーバーに登録します。
-次にkube-schedulerというプログラムは、APIサーバ上にPodリソースが登録されると、Podを配置するノードを決定しPodの情報を更新します。
+Kubernetes内ではさまざまなリソースを管理するコントローラが動いています。
+Deploymentを管理するコントローラは、APIサーバ上にDeploymentリソースが登録されると対応するReplicaSetリソースを新たに作成します。
+次にReplicaSetを管理するコントローラは、ReplicaSetリソースが登録されると`spec.replicas`に指定された通りに3つのPodを新たに作成します。
+さらににkube-schedulerというプログラムは、APIサーバ上にPodリソースが登録されると、Podを配置するノードを決定しPodの情報を更新します。
 各ノードで動作しているkubeletというプログラムは、自分のノード名が記述されたPodリソースを見つけるとコンテナを立ち上げます。
 
 ![Declarative API](./img/declarative.png)
 
-またDeploymentリソースの`spec.replicas`の数を増やすと、それに合わせてPodも追加され新しくコンテナが起動されます。逆に`spec.replicas`を減らすとPodとコンテナも削除されます。
+Deploymentリソースの`spec.replicas`の数を増やすと、それに合わせてコントローラはPodの数を増やします。逆に`spec.replicas`を減らすとPodを削除します。
 
-このようにKubernetesでは様々なプログラムAPIサーバーに登録された情報をもとに、システムがあるべき状態になるように調整していきます。
+このようにKubernetesではユーザーが宣言したマニフェストをもとに、複数のプログラムが連携して、システムがあるべき状態(ここでは3つのNginxのインスタンスが起動している状態)になるように調整していきます。
+
+Imperative(命令型)ではなくDeclarative(宣言的)な仕組みとすることで、Kubernetes上で動作するアプリケーションは高い可用性とスケーラビリティを実現することができます。
+しかしながら、コントローラはさまざまな状況を考慮する必要があるため、その実装はとても難しいものとなるでしょう。
 
 ## CRD(Custom Resource Definition)とCR(Custom Resource)
 
 KubernetesにはDeploymentやPodを始めとしてたくさんの標準リソースが用意されています。
-標準リソースだけでもある程度システムの構築は可能なもののの、より複雑なシステムを構築したい場合はリソースのカスタマイズがおこないたくなります。
+標準リソースだけでもある程度システムの構築は可能なもののの、例えば証明書発行やMySQLクラスタの管理をKubernetes上で自動化したい場合は独自のリソースが必要になるでしょう。
 
-そこで、Kubernetesの利用者が自由に新しいリソース(CR: Custom Resource)を利用するための仕組みが用意されています。
+そこで、Kubernetesの利用者が自由に新しいリソースを利用するための仕組みとしてカスタムリソース(CR: Custom Resource)が用意されています。
 
-カスタムリソースを利用するためには、カスタムリソースの定義としてCRD(Custom Resource Definition)を用意する必要があります。
+カスタムリソースを利用するためには、その定義としてCRD(Custom Resource Definition)を用意する必要があります。
 CRDでは下記のようにOpenAPI v3.0の形式でバリデーションを記述することが可能になっています。
 
-- [CRDの例](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/config/crd/bases/multitenancy.example.com_tenants.yaml)
+- [CRDの例](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-viewer/config/crd/bases/viewer.zoetrope.github.io_markdownviews.yaml)
 
 ## カスタムコントローラ
 
-あるリソースの状態をチェックして、それをあるべき姿に持っていこうとするプログラムのことをコントローラと呼びます。
-先に紹介したkube-controller-managerは、PodコントローラやServiceコントローラなど、標準リソース用のコントローラの集合から構成されています。
+Kubernetesにおいて、あるリソースの状態をチェックして何らかの処理をおこなうプログラムのことをコントローラと呼びます。
+例えば、先に紹介したDeploymentリソースに基づいてReplicaSetリソースを作成しているのも一つのコントローラです。
 
-一方で、ユーザーが定義したカスタムリソースを対象としたコントローラのことをカスタムコントローラと呼びます。
+Kubernetesのソースコードを見てみると、標準リソースに対応する数多くのコントローラが存在することが確認できます。
 
-カスタムコントローラを実装する上で重要な考え方を以下に紹介します。
+- https://github.com/kubernetes/kubernetes/tree/master/pkg/controller
+
+これに対してユーザーが定義したカスタムリソースを対象としたコントローラのことをカスタムコントローラと呼びます。
+
+以降では、コントローラを実装する上で重要な考え方を紹介します。
 
 ### Reconciliation Loop
 
 Reconciliation Loopは、コントローラのメインロジックです。
-あるべき理想の状態と現在の状態を比較し、その差分がなくなるように調整する処理を実行し続けます。
+
+リソースに記述された状態を理想とし、システムの現在の状態と比較し、その差分がなくなるように調整する処理を実行し続けます。
 
 ![Reconcile Loop](./img/reconcile_loop.png)
 
-リソースが新しく登録されたり、編集されたり、監視対象のシステムの状態が変更するなどの何らかのイベントが発生すると、Reconciliation Loopは呼び出されます。
+先ほどのDeploymentの例であれば、3つのPodが存在する状態が理想であり、Reconciliation LoopではPodの数を増やしたり減らしたりして理想の状態と一致するように処理します。
 
 ### 冪等
 
@@ -78,17 +86,25 @@ Reconciliation Loopは冪等性を備えていなければなりません。
 このコントローラは、あるべき状態としてPodが3つだと宣言されていたら、Reconcileを何度呼ばれてもPodの数が3つになるようにしなければなりません。
 Podが3つある状態でReconcileが呼び出されたときにさらに3つのPodをつくってしまったり、エラーを出してしまったりしてはいけないのです。
 
-これは当たり前のことのように感じられるかもしれませんが、Kubernetes登場前のインフラ自動化ツールでは、冪等性を備えていないものもよく見かけられました。
+これは当たり前のことのように感じられるかもしれませんが、Kubernetes登場前のImperativeなインフラ自動化ツールでは、冪等性を備えていないものもよく見かけられました。
 
 ### エッジドリブントリガーとレベルドリブントリガー
 
-エッジドリブントリガーとは状態の変化が発生した時点で処理を実行することで、レベルドリブントリガーとは状態を定期的にチェックし現在の状態に応じて処理を実行することです。
+Reconciliation Loopは、リソースが新しく登録されたり、編集されたり、対象のシステムの状態が変化したときに、適切に処理をしなければなりません。
+先ほどの例であれば、Deploymentリソースに記述されたレプリカ数が増えた場合やサーバーが故障してPodの数が減ってしまった場合などには、新しいPodを作成する必要があります。
+
+このとき、状態が変化したイベントに応じて処理を実行することをエッジドリブントリガーと呼び、
+現在の状態に応じて処理を実行することをレベルドリブントリガーと呼びます。 
 ([参考](https://hackernoon.com/level-triggering-and-reconciliation-in-kubernetes-1f17fe30333d))
 
 ![Edge-driven vs. Level-driven Trigger](./img/edge_level_trigger.png)
 
-TODO: 要見直し
+図にあるように、Reconciliation Loopがイベント(Replica数の増減)のみを見ていた場合、
+もし何らかの原因(コントローラの故障など)でイベントをロストしてしまうと、
+あるべき状態と現在の状態がずれてしまうことになります。
+一方で現在の状態(現在のReplica数)を見ていた場合は、イベントをロストしたとしてもあるべき状態に収束させることが可能です。
 
-Reconciliation Loopがエッジドリブントリガーのみで実行される場合、もしイベントが発生したときにコントローラが起動していなかったりすると、
-そのトリガーが発動せずあるべき状態と現在の状態がずれてしまうことになります。
-
+Kubebuilderが提供するフレームワークでは、さまざまなイベントが発生したときにReconciliation Loopが呼び出されるようになっています。
+ただし、そのときにReconciliation Loopは、値がどのように変化したのかという情報を受け取りません。
+必ず現在の状態をチェックして、その状態に応じた処理を実装する必要があります。
+このような仕組みとすることで、イベントのロストや故障に強いコントローラの実装が可能になっています。
