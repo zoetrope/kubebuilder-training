@@ -213,28 +213,3 @@ err := r.Status().Update(ctx, &tenant)
 
 上記のようにDeploymentリソースの削除時に`DeletePropagationOrphan`を指定すると、子のリソースであるReplicaSetやPodのリソースが削除されなくなります。
 
-## ディスカバリーベースのクライアント
-
-client-goを利用してCRDを扱う場合、[k8s.io/client-go/dynamic](https://pkg.go.dev/k8s.io/client-go/dynamic?tab=doc)や[k8s.io/apimachinery/pkg/apis/meta/v1/unstructured](https://pkg.go.dev/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured?tab=doc)による動的型クライアントを利用するか、[kubernetes/code-generator](https://github.com/kubernetes/code-generator)を利用してコード生成をおこなう必要がありました。
-
-しかし、controller-runtimeのClientでは、引数に構造体を渡すだけで標準リソースでもカスタムリソースでもAPIを呼び分けてくれています。
-このClientはどのように仕組みになっているのでしょうか。
-
-まずは渡された構造体の型を Scheme に登録された情報から探します。そうすると GVK が得られます。
-
-次にREST APIを叩くためにはREST APIのパスを解決する必要があります。
-REST APIのパスは、namespace-scopedのリソースであれば`/apis/{group}/{version}/namespaces/{namespace}/{resource}/{name}`、cluster-scopeのスコープであれば`/apis/{group}/{version}/{resource}/{name}`のようになります。
-この情報はCRDに記述されているため、APIサーバーに問い合わせる必要があります。
-
-これらの情報は`kubectl`でも確認することができます。以下のように実行してみましょう。
-
-```
-$ kubectl api-resources --api-group="multitenancy.example.com"
-NAME      SHORTNAMES   APIGROUP                   NAMESPACED   KIND
-tenants                multitenancy.example.com   false        Tenant
-```
-
-APIサーバーに問い合わせて取得した情報をもとにREST APIのパスが解決できました。
-最後はこのパスに対してリクエストを発行します。
-
-Clientはこのような仕組みによって、標準リソースとカスタムリソースを同じように扱うことができ、型安全で簡単に利用できるクライアントを実現しています。

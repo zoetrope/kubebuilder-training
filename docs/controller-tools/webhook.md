@@ -1,24 +1,25 @@
 # Webhookマニフェストの生成
 
 AdmissionWebhookを利用するためには、`MutatingWebhookConfiguration`や`ValidatingWebhookConfiguration`などのマニフェストを用意する必要があります。
-controller-genでは`// +kubebuilder:webhook`マーカーの記述に基づいてマニフェストを生成することができます。
+controller-genは`// +kubebuilder:webhook`マーカーの記述に基づいてマニフェストを生成することができます。
 
 まずはデフォルト値を設定するWebhookのマーカーを見てみましょう。
 
-[import:"webhook-defaulter"](../../codes/tenant/api/v1/tenant_webhook.go)
+[import:"webhook-defaulter"](../../codes/markdown-viewer/api/v1/markdownview_webhook.go)
 
-`groups`,`versions`,`resource`には、Webhookの対象となるリソースのGVKを指定します。
-`path`はWebhookのパスを指定しますが、これはcontroller-runtimeが自動的に生成するパスなので基本的には変更せずに利用します。
-`mutating`にはMutatingWebhookかどうかを指定します。
-`failurePolicy`は、WebhookのAPIに接続できない場合など呼び出しに失敗したときの挙動を指定します。
-`verbs`はリソースに対してどの操作をおこなったときにWebhookを呼び出すかを指定できます。
+同様にバリデーションWebhookのマーカーを確認します。
 
-今回はテナントリソースが作成されたときだけデフォルト値を設定するように、`verbs`をcreateのみに変更しました。
+[import:"webhook-validator"](../../codes/markdown-viewer/api/v1/markdownview_webhook.go)
 
-次にバリデーションWebhookのマーカーを見てみましょう。
+- `path`: Webhookのパスを指定します。これはcontroller-runtimeが自動的に生成するパスなので基本的には変更せずに利用します。
+- `mutating`: Webhookで値を書き換えるかどうかを指定します。Defaulterでは`true`, Validatorでは`false`を指定します。
+- `failurePolicy`: Webhook APIの呼び出しに失敗したときの挙動を指定します。`fail`を指定するとWebhookが呼び出せない場合はリソースの作成もできません。`ignore`を指定するとWebhookが呼び出せなくてもリソースが作成できてしまいます。
+- `sideEffects`: Webhook APIの呼び出しに副作用があるかどうかを指定します。これはAPIサーバーをdry-runモードで呼び出したときの挙動に影響します。副作用がない場合は`None`, ある場合は`Some`を指定します。
+- `groups`,`versions`,`resource`: Webhookの対象となるリソースのGVKを指定します。
+- `verbs`: Webhookの対象となるリソースの操作を指定できます。`create`, `update`, `delete`などを指定することができます。
+- `name`: Webhookの名前を指定します。ドットで区切られた3つ以上のセグメントを持つドメイン名でなければなりません。
+- `admissionReviewVersions`: WebhookがサポートするAdmissionReviewのバージョンを指定します。Kubernetes 1.16以降の環境でしか動作させないのであれば`v1`のみで問題ありません。1.15以前の環境で動作させたい場合は`v1beta1`も指定しましょう。
 
-[import:"webhook-validator"](../../codes/tenant/api/v1/tenant_webhook.go)
+`make manifests`を実行すると、マーカーの内容に基づいて以下のようなマニフェストファイルが生成されます。
 
-今回はテナントリソースが更新されたときだけバリデーションをおこなうように、`verbs`をupdateのみに変更しました。
-
-`make manifests`を実行すると[config/webhook/manifests.yaml](../../codes/tenant/config/webhook/manifests.yaml)が更新されます。
+[import](../../codes/markdown-viewer/config/webhook/manifests.yaml)

@@ -38,9 +38,14 @@ func (r *MarkdownView) SetupWebhookWithManager(mgr ctrl.Manager) error {
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 
+//! [webhook-defaulter]
 //+kubebuilder:webhook:path=/mutate-viewer-zoetrope-github-io-v1-markdownview,mutating=true,failurePolicy=fail,sideEffects=None,groups=viewer.zoetrope.github.io,resources=markdownviews,verbs=create;update,versions=v1,name=mmarkdownview.kb.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Defaulter = &MarkdownView{}
+
+//! [webhook-defaulter]
+
+//! [default]
 
 // Default implements webhook.Defaulter so a webhook will be registered for the type
 func (r *MarkdownView) Default() {
@@ -51,10 +56,17 @@ func (r *MarkdownView) Default() {
 	}
 }
 
+//! [default]
+
+//! [webhook-validator]
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
 //+kubebuilder:webhook:path=/validate-viewer-zoetrope-github-io-v1-markdownview,mutating=false,failurePolicy=fail,sideEffects=None,groups=viewer.zoetrope.github.io,resources=markdownviews,verbs=create;update,versions=v1,name=vmarkdownview.kb.io,admissionReviewVersions={v1,v1beta1}
 
 var _ webhook.Validator = &MarkdownView{}
+
+//! [webhook-validator]
+
+//! [validate]
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
 func (r *MarkdownView) ValidateCreate() error {
@@ -102,3 +114,5 @@ func (r *MarkdownView) ValidateDelete() error {
 
 	return nil
 }
+
+//! [validate]
