@@ -9,14 +9,16 @@ MarkdownのレンダリングにはmdBookを利用することとします。
 
 MarkdownViewコントローラの主な処理の流れは次のようになります。
 
-図を書く
+![MarkdownView Controller](./img/markdownview_controller.png)
 
-- ユーザーはレンダリングしたいMarkdownを含むカスタムリソースを用意します。
-- 指定したMarkdownをConfigMapリソースとして作成します。
-- MarkdownをレンダリングするためのmdBookをDeploymentリソースとして作成します。
-- レンダリングしたMarkdownを閲覧できるようにServiceリソースを作成します。
+- ユーザーはMarkdownViewカスタムリソースを作成します。
+- MarkdownViewコントローラは、作成されたMarkdownViewリソースの内容に応じて必要な各リソースを作成します。
+  - カスタムリソースに記述されたMarkdownをConfigMapリソースとして作成します。
+  - MarkdownをレンダリングするためのmdBookをDeploymentリソースとして作成します。
+  - mdBookにアクセスするためのServiceリソースを作成します。
+- ユーザーは、作成されたサービスを経由して、レンダリングされたMarkdownを閲覧することができます。
 
-カスタムリソースは以下のように、Markdownの内容、レンダリングに利用するmdBookのコンテナイメージおよびレプリカ数を指定できるようにします。
+MarkdownViewカスタムリソースには、以下のようにMarkdownの内容とレンダリングに利用するmdBookのコンテナイメージおよびレプリカ数を指定できるようにします。
 
 [import](../../codes/markdown-viewer/config/samples/viewer_v1_markdownview.yaml)
 

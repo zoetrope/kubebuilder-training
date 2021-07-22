@@ -9,8 +9,8 @@
   * [プロジェクトの雛形作成](kubebuilder/new-project.md)
   * [APIの雛形作成](kubebuilder/api.md)
   * [Webhookの雛形作成](kubebuilder/webhook.md)
-  * [kindで動かしてみよう](kubebuilder/kind.md)
-  * [手軽な動作確認](kubebuilder/debug.md)
+  * [カスタムコントローラの動作確認](kubebuilder/kind.md)
+  <!-- * [手軽な動作確認](kubebuilder/debug.md) -->
 * [controller-tools](controller-tools/README.md)
   * [CRDマニフェストの生成](controller-tools/crd.md)
   <!-- * [CRDマニフェストの生成(応用編)](controller-tools/advanced_crd.md) -->

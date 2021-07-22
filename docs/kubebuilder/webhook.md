@@ -72,7 +72,7 @@ kubebuilderコマンドで生成した直後の状態では、`make manifests`�
 
 [config/default/kustomization.yaml](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-viewer/config/default/kustomization.yaml)ファイルを編集する必要があります。
 
-生成直後は`bases`の`../webhook`と`../certmanager`、`patchesStrategicMerge`の`manager_webhook_patch.yaml`と`webhookcainjection_patch.yaml`、`vars`がコメントアウトされていますが、これらのコメントを外します。
+生成直後のkustomization.yamlは、`bases` の `../webhook` と `../certmanager`, `patchesStrategicMerge` の `manager_webhook_patch.yaml` と `webhookcainjection_patch.yaml`, `vars` がコメントアウトされていますが、これらのコメントを外します。
 
 [import:"bases,enable-webhook,patches,enable-webhook-patch,vars"](../../codes/markdown-viewer/config/default/kustomization.yaml)
 

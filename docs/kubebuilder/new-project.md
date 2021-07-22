@@ -49,17 +49,26 @@ GitHubにリポジトリを作る場合は`github.com/<user_name>/<product_name>
 └── main.go
 ```
 
+Kubebuilderによって生成されたgo.modおよびMakefileには、少し古いバージョンのcontroller-runtimeとcontroller-genが使われている場合があります。
+必要に応じて、最新のバージョンを利用するように以下のように書き換えておきましょう。
+なお、go.modを書き換えた後は`go mod tidy`コマンドを実行してください。
+
+- go.mod
+
+```diff
+-       sigs.k8s.io/controller-runtime v0.8.3
++       sigs.k8s.io/controller-runtime v0.9.3
+```
+
+- Makefile
+
 ```diff
 -       $(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.4.1)
 +       $(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.6.1)
 ```
 
-```diff
--       sigs.k8s.io/controller-runtime v0.8.3
-+       sigs.k8s.io/controller-runtime v0.9.2
-```
 
-生成されたファイルをそれぞれ見ていきましょう。
+それでは生成されたファイルをそれぞれ見ていきましょう。
 
 ## Makefile
 

@@ -1,4 +1,4 @@
-# Kindで動かしてみよう
+# カスタムコントローラの動作確認
 
 kubebuilderコマンドで生成したプロジェクトをビルドし、[Kind](https://kind.sigs.k8s.io/docs/user/quick-start/)環境で動かしてみましょう。
 
@@ -112,4 +112,30 @@ I0710 09:29:49.409787       1 leaderelection.go:253] successfully acquired lease
 2021-07-10T09:33:53.626Z        DEBUG   controller-runtime.webhook.webhooks     received request {"webhook": "/validate-viewer-zoetrope-github-io-v1-markdownview", "UID": "904fc35e-4415-4a90-af96-52cbe1cef1b7", "kind": "viewer.zoetrope.github.io/v1, Kind=MarkdownView", "resource": {"group":"viewer.zoetrope.github.io","version":"v1","resource":"markdownviews"}}
 2021-07-10T09:33:53.626Z        INFO    markdownview-resource   validate create {"name": "markdownview-sample"}
 2021-07-10T09:33:53.626Z        DEBUG   controller-runtime.webhook.webhooks     wrote response   {"webhook": "/validate-viewer-zoetrope-github-io-v1-markdownview", "code": 200, "reason": "", "UID": "904fc35e-4415-4a90-af96-52cbe1cef1b7", "allowed": true}
+```
+
+## 開発時の流れ
+
+開発時には、カスタムコントローラの実装を書き換えて何度も動作確認をおこなうことになります。
+次のような手順で、効率よく開発を進めることができます。
+
+- コントローラの実装が変わった場合は、下記のコマンドでコンテナイメージをビルドし、kind環境にロードし直します。
+```
+$ make docker-build
+$ kind load docker-image controller:latest
+```
+
+- CRDに変更がある場合は下記のコマンドを実行します。ただし、互換性のない変更をおこなった場合はこのコマンドに失敗するため、事前に`make uninstall`を実行してください。
+```
+make install
+```
+
+- CRD以外のマニフェストファイルに変更がある場合は下記のコマンドを実行します。ただし、互換性のない変更をおこなった場合はこのコマンドに失敗するため、事前に`make undeploy`を実行してください。
+```
+make deploy
+```
+
+- 次のコマンドでカスタムコントローラを再起動します。
+```
+$ kubectl rollout restart -n markdown-viewer-system deployment markdown-viewer-controller-manager
 ```

@@ -36,7 +36,7 @@ Kubebuilderは、下記のツールとライブラリから構成されていま
 
 * kubebuilder: v3.1.0
 * controller-tools: v0.6.1
-* controller-runtime: v0.9.2
+* controller-runtime: v0.9.3
 
 ## 更新履歴
 
