@@ -1,13 +1,43 @@
 # CRDマニフェストの生成
 
 コントローラでカスタムリソースを扱うためには、そのリソースのCRD(Custom Resource Definition)を定義する必要があります。
-下記の例の様にCRDは長くなりがちで、人間が記述するには少々大変です。
+下記の例の様にCRDは長くなりがちで、手書きで作成するには少々手間がかかります。
 
 - [CRDの例](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-viewer/config/crd/bases/viewer.zoetrope.github.io_markdownviews.yaml)
 
-そこでKubebuilderではcontroller-genというツールを利用して、Goで記述したstructからCRDを生成する方式を採用しています。
+そこでKubebuilderではcontroller-genというツールを提供しており、Goで記述したstructからCRDを生成することができます。
 
-`kubebuilder create api`コマンドで生成された[api/v1/markdownview_types.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-viewer/api/v1/markdownview_types.go)を見てみると、`MarkdownViewSpec`, `MarkdownViewStatus`, `MarkdownView`, `MarkdownViewList`という構造体が定義されており、`//+kubebuilder:`から始まるマーカーコメントが付与されています。
+まずは`kubebuilder create api`コマンドで生成された[api/v1/markdownview_types.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-viewer/api/v1/markdownview_types.go)を見てみましょう。
+
+```go
+type MarkdownViewSpec struct {
+	Foo string `json:"foo,omitempty"`
+}
+
+type MarkdownViewStatus struct {
+}
+
+//+kubebuilder:object:root=true
+//+kubebuilder:subresource:status
+
+type MarkdownView struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	Spec   MarkdownViewSpec   `json:"spec,omitempty"`
+	Status MarkdownViewStatus `json:"status,omitempty"`
+}
+
+//+kubebuilder:object:root=true
+
+type MarkdownViewList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty"`
+	Items           []MarkdownView `json:"items"`
+}
+```
+
+`MarkdownViewSpec`, `MarkdownViewStatus`, `MarkdownView`, `MarkdownViewList`という構造体が定義されており、`//+kubebuilder:`から始まるマーカーコメントがいくつか付与されています。
 controller-genは、これらの構造体とマーカーを頼りにCRDの生成をおこないます。
 
 `MarkdownView`がカスタムリソースの本体となる構造体です。`MarkdownViewList`は`MarkdownView`のリストを表す構造体です。これら2つの構造体は基本的に変更することはありません。
@@ -18,9 +48,9 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 
 ## MarkdownViewSpec
 
-さっそく`MarkdownViewSpec`を定義していきましょう。
+さっそく`MarkdownViewSpec`を書き換えていきましょう。
 
-[作成するカスタムコントローラ](../introduction/sample.md)において、MarkdownViewコントローラが扱うカスタムリソースとして、下記のようなマニフェストを検討しました。
+[作成するカスタムコントローラ](../introduction/sample.md)において、MarkdownViewコントローラが扱うカスタムリソースとして下記のようなマニフェストを例示しました。
 
 [import](../../codes/markdown-viewer/config/samples/viewer_v1_markdownview.yaml)
 
@@ -77,7 +107,7 @@ type SampleSpec struct {
 ### Validation
 
 `Markdowns`フィールドには`// +kubebuiler:validation:MinItems=1`というマーカーが付与されています。
-これは最低1つ以上のMarkdownを記述しないと、カスタムリソースを作成するときにバリデーションエラーとなることを示しています。
+これは最低1つ以上の要素を記述しないと、カスタムリソースを作成するときにバリデーションエラーとなることを示しています。
 
 `MinItems`以外にも下記のようなバリデーションが用意されています。
 詳しくは`controller-gen crd -w`コマンドで確認してください。
@@ -90,12 +120,13 @@ type SampleSpec struct {
 
 ## MarkdownViewStatus
 
-次にMarkdownViewリソースの状態を表現するために`MarkdownViewStatus`型を定義します。
+次にMarkdownViewリソースの状態を表現するための`MarkdownViewStatus`を書き換えます。
 
 [import:"status"](../../codes/markdown-viewer/api/v1/markdownview_types.go)
 
-`MarkdownViewStatus`は、`NotReady`,`Available`,`Healty`の
+今回のカスタムコントローラでは、`MarkdownViewStatus`を文字列型とし、`NotReady`,`Available`,`Healty`の3つの状態をあらわすようにしました。
 
+`//+kubebuilder:validation:Enum`を利用すると、指定した文字列以外の値を設定することができないようになります。
 
 ## MarkdownView
 
@@ -103,17 +134,23 @@ type SampleSpec struct {
 
 [import:"markdown-view"](../../codes/markdown-viewer/api/v1/markdownview_types.go)
 
-- `+kubebuilder:object:root=true`: `MarkdownView`構造体がカスタムリソースのrootオブジェクトであることを表すマーカーです。
+Kubebuilderが生成した初期状態では、`+kubebuilder:object:root=true`と`+kubebuilder:subresource`の2つのマーカーが指定されています。
+ここではさらに`+kubebuilder:printcolumn`を追加することとします。
+  
+`+kubebuilder:object:root=true`は、`MarkdownView`構造体がカスタムリソースのrootオブジェクトであることを表すマーカーです。
 
-上記に加えて`+kubebuilder:subresource`と`+kubebuilder:printcolumn`を付与します。
+`+kubebuilder:subresource`と`+kubebuilder:printcolumn`マーカーについて、以降で解説します。
 
 ### subresource
 
 `+kubebuilder:subresource:status`というマーカーを追加すると、`status`フィールドがサブリソースとして扱われるようになります。
 
-サブリソースを有効にすると`status`が独自のエンドポイントを持つようになります。
-これによりMarkdownViewリソース全体を取得・更新しなくても、`status`のみを取得したり更新することが可能になります。
-ただし、あくまでもメインのリソースに属するリソースなので、個別に作成や削除することはできません。
+Kubernetesでは、すべてのリソースはそれぞれ独立したAPIエンドポイントを持っており、APIサーバー経由でリソースの取得・作成・変更・削除をおこなうことができます。
+
+サブリソースを有効にすると`status`フィールドがメインのリソースと独立したAPIエンドポイントを持つようになります。
+
+これによりメインのリソース全体を取得・更新しなくても、`status`のみを取得したり更新することが可能になります。
+ただし、あくまでもメインのリソースに属するサブのリソースなので、個別に作成や削除することはできません。
 
 ユーザーが`spec`フィールドを記述し、コントローラが`status`フィールドを記述するという役割分担を明確にすることができるので、基本的には`status`はサブリソースにしておくのがよいでしょう。
 なおKubebuilder v3では、`status`フィールドがサブリソースに指定するマーカーが最初から指定されるようになりました。
