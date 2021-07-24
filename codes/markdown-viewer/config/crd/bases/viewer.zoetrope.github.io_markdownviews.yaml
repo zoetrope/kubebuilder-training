@@ -46,23 +46,25 @@ spec:
               markdowns:
                 additionalProperties:
                   type: string
-                description: Markdowns are
+                description: Markdowns contain the markdown files you want to display.
+                  The key indicates the file name and must not overlap with the keys.
+                  The value is the content in markdown format.
                 type: object
               replicas:
                 default: 1
-                description: Replicas is the number of instances.
+                description: Replicas is the number of viewers.
                 format: int32
                 type: integer
               viewerImage:
-                description: ViewerImage is a image name
+                description: ViewerImage is the image name of the viewer.
                 type: string
             type: object
           status:
             description: MarkdownViewStatus defines the observed state of MarkdownView
             enum:
-            - ready
-            - available
-            - healthy
+            - NotReady
+            - Available
+            - Healthy
             type: string
         type: object
     served: true

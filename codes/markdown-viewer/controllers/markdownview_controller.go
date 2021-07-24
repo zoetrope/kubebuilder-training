@@ -19,6 +19,8 @@ package controllers
 import (
 	"context"
 
+	"github.com/zoetrope/markdown-viewer/pkg/metrics"
+
 	viewerv1 "github.com/zoetrope/markdown-viewer/api/v1"
 	"github.com/zoetrope/markdown-viewer/pkg/constants"
 	appsv1 "k8s.io/api/apps/v1"
@@ -70,10 +72,11 @@ func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request
 
 	var mdView viewerv1.MarkdownView
 	err := r.Get(ctx, req.NamespacedName, &mdView)
+	if errors.IsNotFound(err) {
+		r.removeMetrics(mdView)
+		return ctrl.Result{}, nil
+	}
 	if err != nil {
-		if errors.IsNotFound(err) {
-			return ctrl.Result{Requeue: true}, nil
-		}
 		logger.Error(err, "unable to get MarkdownView", "name", req.NamespacedName)
 		return ctrl.Result{}, err
 	}
@@ -303,6 +306,7 @@ func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewer
 	} else {
 		mdView.Status = viewerv1.MarkdownViewAvailable
 	}
+	r.setMetrics(mdView)
 
 	err = r.Status().Update(ctx, &mdView)
 	if err != nil {
@@ -316,6 +320,35 @@ func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewer
 }
 
 //! [update-status]
+
+//! [set-metrics]
+func (r *MarkdownViewReconciler) setMetrics(mdView viewerv1.MarkdownView) {
+	switch mdView.Status {
+	case viewerv1.MarkdownViewNotReady:
+		metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
+		metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+	case viewerv1.MarkdownViewAvailable:
+		metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
+		metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+	case viewerv1.MarkdownViewHealthy:
+		metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
+	}
+}
+
+//! [set-metrics]
+
+//! [remove-metrics]
+func (r *MarkdownViewReconciler) removeMetrics(mdView viewerv1.MarkdownView) {
+	metrics.NotReadyVec.DeleteLabelValues(mdView.Name, mdView.Name)
+	metrics.AvailableVec.DeleteLabelValues(mdView.Name, mdView.Name)
+	metrics.HealthyVec.DeleteLabelValues(mdView.Name, mdView.Name)
+}
+
+//! [remove-metrics]
 
 func ownerRef(mdView viewerv1.MarkdownView, scheme *runtime.Scheme) (*metav1apply.OwnerReferenceApplyConfiguration, error) {
 	gvk, err := apiutil.GVKForObject(&mdView, scheme)

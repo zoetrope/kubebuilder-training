@@ -21,6 +21,7 @@ import (
 )
 
 //! [spec]
+
 // MarkdownViewSpec defines the desired state of MarkdownView
 type MarkdownViewSpec struct {
 	// Markdowns contain the markdown files you want to display.
