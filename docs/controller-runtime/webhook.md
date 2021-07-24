@@ -1,63 +1,73 @@
 # Webhookの実装
 
-[Webhookマニフェストの生成](../controller-tools/webhook.md)で解説したように、テナントコントローラではリソースの作成時に
-デフォルト値を設定するためのWebhookと、リソースの更新時にバリデーションするためのWebhookを作成します。
+Kubernetesでは、リソースの作成・更新・削除をおこなう直前にWebhookで任意の処理を実行するとことができます。
+MutatingWebhookではリソースの値を書き換えることができ、ValidatingWebhookでは値の検証をおこなうことができます。
 
-これらのWebhookの実装は非常に簡単で、controller-genで生成された関数に必要な処理を書いていくだけです。
+controller-runtimeでは、MutatingWebhookを実装するためのDefaulterとValidatingWebhookを実装するためのValidatorが用意されています。
 
-## デフォルト値設定のWebhook
+## Defaulterの実装
 
-まずはデフォルト値を設定するWebhookの実装です。
+まずはDefaulterの実装です。
+Defaultメソッドでは、MarkdownViewリソースの値を書き換えることができます。
 
-[import:"default"](../../codes/tenant/api/v1/tenant_webhook.go)
+[import:"default"](../../codes/markdown-viewer/api/v1/markdownview_webhook.go)
 
-`namespacePrefix`フィールドが空だった場合は、テナントの名前に`-`を連結した文字列を`namespacePrefix`として利用します。
+ここでは`r.Spec.ViewerImage`が空だった場合に、デフォルトのコンテナイメージを指定しています。
 
-## バリデーションのWebhook
+## Validatorの実装
 
-次にバリデーションWebhookの実装です。
+次にValidatorの実装です。
+ValidateCreate, ValidateUpdate, ValidateDeleteは、それぞれリソースの作成・更新・削除のタイミングで呼び出される関数です。
+これらの関数の中でMarkdownViewリソースの内容をチェックし、エラーを返すことでリソースの操作を失敗させることができます。
 
-[import:"validate"](../../codes/tenant/api/v1/tenant_webhook.go)
+[import:"validate"](../../codes/markdown-viewer/api/v1/markdownview_webhook.go)
 
-今回はCreateとDelete時のバリデーションをおこなわないため、`ValidateUpdate`関数のみを実装します。
-更新前のリソースが引数で渡ってくるので、`namespacePrefix`フィールドが変更されていればバリデーションエラーとします。
+今回はValidateCreateとValidateUpdateで同じバリデーションをおこなうことにしましょう。
+`.Spec.Replicas`の値が1から5の範囲にない場合と、`.Spec.Markdowns`に`SUMMARY.md`が含まれない場合はエラーとします。
 
-このようなバリデーションを実装することで、途中で`namespacePrefix`を変更できないようにすることが可能です。
+なお、ValidationWebhookを実装する際には`"k8s.io/apimachinery/pkg/util/validation/field"`パッケージが役立ちます。
+このパッケージを利用してエラーの原因や問題のあるフィールドを指定することで、バリデーションエラー時のメッセージがわかりやすいものになります。
 
 ## 動作確認
 
-Webhookの動作確認をしてみましょう。
+それでは、Webhookの動作確認をしてみましょう。
 
-Webhookの実装をおこなったカスタムコントローラをKubernetesクラスタにデプロイし、下記のような`namespacePrefix`を指定していないマニフェストを適用します。
+Webhookの実装をおこなったカスタムコントローラをKubernetesクラスタにデプロイし、下記のような`ViewerImage`を指定していないマニフェストを適用します。
 
 ```yaml
-apiVersion: multitenancy.example.com/v1
-kind: Tenant
+apiVersion: viewer.zoetrope.github.io/v1
+kind: MarkdownView
 metadata:
-  name: sample
+  name: markdownview-sample
 spec:
-  namespaces:
-    - test1
-  admin:
-    kind: ServiceAccount
-    name: default
-    namespace: default
+  markdowns:
+    SUMMARY.md: |
+      # Summary
+
+      - [Page1](page1.md)
+    page1.md: |
+      # Page 1
+
+      一ページ目のコンテンツです。
+  replicas: 1
 ```
 
-作成されたリソースを確認して、`namespacePrefix`に"sample-"という文字列が入っていれば成功です。
+作成されたリソースを確認して、`ViewerImage`にデフォルトのコンテナイメージ名が入っていれば成功です。
 
 ```
-$ kubectl get tenant sample
-NAME     ADMIN     PREFIX    READY
-sample   default   sample-   True
+$ kubectl get markdownview markdownview-sample -o jsonpath="{.spec.viewerImage}"
+peaceiris/mdbook:latest
 ```
 
 続いてバリデーションWebhookの動作も確認してみましょう。
 
-先ほど作成したリソースをeditして`namespacePrefix`を別の名前に変更しようとしたときに、下記のようなエラーが発生すれば成功です。
+先ほど作成したリソースをeditして`replicas`を大きな値にしたり、`markdowns`に`SUMMARY.md`を含めないようにしてみましょう
+以下のようなエラーが発生すれば成功です。
 
 ```
-$ kubectl edit tenant sample
-error: tenants.multitenancy.example.com "sample" could not be patched: admission webhook "vtenant.kb.io" denied the request: spec.namespacePrefix field should not be changed
-You can run `kubectl replace -f /tmp/kubectl-edit-bwuei.yaml` to try this update again.
+$ kubectl edit markdownview markdownview-sample
+
+markdownviews.viewer.zoetrope.github.io "markdownview-sample" was not valid:
+ * spec.replicas: Invalid value: 10: replicas must be in the range of 1 to 5.
+ * spec.markdowns: Required value: markdowns must have SUMMARY.md.
 ```

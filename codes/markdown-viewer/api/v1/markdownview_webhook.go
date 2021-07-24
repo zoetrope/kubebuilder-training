@@ -86,7 +86,7 @@ func (r *MarkdownView) validate() error {
 	var errs field.ErrorList
 
 	if r.Spec.Replicas < 1 || r.Spec.Replicas > 5 {
-		errs = append(errs, field.Invalid(field.NewPath("spec", "replicas"), r.Spec.Replicas, "spec.replicas must be in the range of 1 to 5."))
+		errs = append(errs, field.Invalid(field.NewPath("spec", "replicas"), r.Spec.Replicas, "replicas must be in the range of 1 to 5."))
 	}
 
 	hasSummary := false
@@ -96,7 +96,7 @@ func (r *MarkdownView) validate() error {
 		}
 	}
 	if !hasSummary {
-		errs = append(errs, field.Required(field.NewPath("spec", "markdowns"), "spec.markdowns must have SUMMARY.md."))
+		errs = append(errs, field.Required(field.NewPath("spec", "markdowns"), "markdowns must have SUMMARY.md."))
 	}
 
 	if len(errs) > 0 {
