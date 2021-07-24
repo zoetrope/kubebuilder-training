@@ -1,6 +1,6 @@
 # クライアントの使い方
 
-controller-runtimeでは、Kubernetes APIにアクセスするためのクライアントとして[client.Client](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client?tab=doc#Client)を提供しています。
+controller-runtimeでは、Kubernetes APIにアクセスするために[client.Client](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client?tab=doc#Client)を提供しています。
 
 このクライアントは標準リソースとカスタムリソースを同じように扱うことができ、型安全で簡単に利用することができます。
 
@@ -25,7 +25,7 @@ SchemeはGoのstructとGroupVersionKindを相互に変換したり、異なる�
 このSchemeとConfigを利用してManagerを作成し、`GetClient()`でクライアントを取得することができます。
 ただし、Managerの`Start()`を呼び出す前にClientを利用することはできないので注意しましょう。
 
-```
+```go
 mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
     Scheme: scheme,
 })
@@ -42,7 +42,13 @@ client := mgr.GetClient()
 そして第3引数に指定した変数で結果を受け取ることができます。
 なお、どの種類のリソースを取得するのかは、第3引数に渡した変数の型で自動的に判別されます。
 
-[import:"get",unindent="true"](../../codes/tenant/controllers/tenant_controller.go)
+```go
+var dep appsv1.Deployment
+err = r.Get(ctx, client.ObjectKey{Namespace: "default", Name: "sample"}, &dep)
+if err != nil {
+    return err
+}
+```
 
 ### クライアントのキャッシュ機構
 
@@ -69,12 +75,12 @@ Listでは条件を指定して複数のリソースを一度に取得するこ�
 下記の例では、LabelSelectorやNamespaceを指定してリソースの取得をおこなっています。
 なお、Namespaceを指定しなかった場合は、全Namespaceのリソースを取得します。
 
-[import:"list"](../../codes/misc/main.go)
+[import:"list"](../../codes/client-sample/main.go)
 
 `Limit`と`Continue`を利用することで、ページネーションをおこなうことも可能です。
 下記の例では1回のAPI呼び出しで3件ずつリソースを取得して表示しています。
 
-[import:"pagination"](../../codes/misc/main.go)
+[import:"pagination"](../../codes/client-sample/main.go)
 
 `.ListMeta.Continue`にトークンが入っているを利用して、続きのリソースを取得することができます。
 トークンが空になるとすべてのリソースを取得したということになります。
@@ -151,24 +157,28 @@ op, err := ctrl.CreateOrUpdate(ctx, r.Client, role, func() error {
 
 ## Patch
 
-`Update()`でリソースを更新するには、そのリソースのすべてのフィールドを埋めなくてはなりません。
+UpdateやCreateOrUpdateは、GetしてからUpdateするまでの間に、他の誰かがリソースを書き換えてしまう可能性がある。
+すると、失敗する。誰かが書き換えたよエラー。
+Patchの場合はどうなる？
+
+
+`Update()`でリソースを更新するには、
+
+PUT/PATCH。これは、「オブジェクトをXのように正確にする」という書き込みコマンドです。
+
+APPLY。これは、「私が管理するフィールドは、このように正確に見えるようにしてください（ただし、他のフィールドについては気にしません）」という書き込みコマンドです。
 
 一方、`Patch()`を利用すると、変更したいフィールドの値を用意するだけでリソースの更新をおこなうことができます。
 
+[import:"patch-merge"](../../codes/client-sample/main.go)
+
 PatchにはMergePath方式とServer-Side Apply方式があります。
-Server-Side Apply方式では、リソースの各フィールドごとに管理者を記録することにより、複数のコントローラやユーザーが同一のリソースを編集した場合に衝突を検知することが可能です。
-MergePatch方式ではそのような衝突検知はおこなわれません。
+Apply, MergeFrom, StrategicMergeFrom
+MergeFromはリストのマージが賢くない。リストに差分があった場合、すべての要素が上書きされる。
 
-ここではServer-Side Apply方式による`Patch()`の利用方法を紹介します。
-以下の例では、Deploymentリソースの`spec.replicas`フィールドのみを更新しています。
 
-[import:"patch"](../../codes/misc/main.go)
+[import:"patch-apply"](../../codes/client-sample/main.go)
 
-Server-Side Applyを利用するには、第3引数に`client.Apply`を指定し、オプションには`FieldManager`を指定する必要があります。
-この`FieldManager`がフィールドごとの管理者の名前になるので、他のコントローラと被らないようにユニークな名前にしましょう。
-
-なお、リストやマップをどのようにマージするのかは、Goの構造体に付与したマーカーで制御することが可能です。
-詳しくは[Merge strategy](https://kubernetes.io/docs/reference/using-api/api-concepts/#merge-strategy)を参照してください。(TODO: あとで書く)
 
 ## Status.Update/Patch
 
@@ -195,21 +205,15 @@ err := r.Status().Update(ctx, &tenant)
 
 最後にリソースを削除する`Delete`と`DeleteAllOf`を見てみましょう。
 
-`Delete`と`DeleteAllOf`には`Preconditions`と`PropagationPolicy`という特殊なオプションがあるのでそちらを紹介します。
+`Delete`と`DeleteAllOf`には`Preconditions`という特殊なオプションがあります。
 
-まずは`Preconditions`オプションを利用した例です。
+`Preconditions`オプションを利用した例です。
 
-[import:"cond"](../../codes/misc/main.go)
+[import:"cond"](../../codes/client-sample/main.go)
 
+TODO: 文章見直し。日本語が変。
 リソースを取得してから削除のリクエストを投げるまでの間にリソースが作り直されてしまう可能性があります。
+
 そこで再作成したリソースを間違って消してしまわないように、UIDとResourceVersionを指定して、確実に指定したリソースを削除しています。
 
-つづいて`PropagationPolicy`オプションを利用した例です。
-
-[import:"policy"](../../codes/misc/main.go)
-
-[リソースの削除](deletion.md)で解説するように、Kubernetesでは親リソースを削除するとそのリソースに結びつく子リソースも一緒に削除されます。
-この挙動を変えるためのオプションとして`PropagationPolicy`が用意されています。
-
-上記のようにDeploymentリソースの削除時に`DeletePropagationOrphan`を指定すると、子のリソースであるReplicaSetやPodのリソースが削除されなくなります。
-
+`DeleteAllOf`をサポートしていないリソースもあります。Serviceなど

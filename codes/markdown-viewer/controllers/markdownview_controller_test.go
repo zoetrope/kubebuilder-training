@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"k8s.io/utils/pointer"
@@ -108,6 +109,24 @@ var _ = Describe("MarkdownView controller", func() {
 		}).Should(Succeed())
 		Expect(svc.Spec.Ports[0].Port).Should(Equal(int32(80)))
 		Expect(svc.Spec.Ports[0].TargetPort).Should(Equal(intstr.FromInt(3000)))
+	})
+
+	It("should update status", func() {
+		mdView := newMarkdownView()
+		err := k8sClient.Create(ctx, mdView)
+		Expect(err).NotTo(HaveOccurred())
+
+		updated := viewerv1.MarkdownView{}
+		Eventually(func() error {
+			err := k8sClient.Get(ctx, client.ObjectKey{Namespace: "test", Name: "sample"}, &updated)
+			if err != nil {
+				return err
+			}
+			if updated.Status == "" {
+				return errors.New("status should be updated")
+			}
+			return nil
+		}).Should(Succeed())
 	})
 	//! [test]
 })

@@ -3,7 +3,7 @@
 Kubernetesには、Admission Webhookと呼ばれる拡張機能があります。
 これは特定のリソースを作成・更新する際にWebhook APIを呼び出し、バリデーションやリソースの書き換えをおこなうための機能です。
 
-`kubebuilder`コマンドでは、以下の3種類のオプションで生成するWebhookを指定することができます。
+`kubebuilder`コマンドでは、以下の3種類のオプションで生成するWebhookを指定できます。
 
 - `--programmatic-validation`: リソースのバリデーションをおこなうためのWebhook
 - `--defaulting`: リソースのフィールドにデフォルト値を設定するためのWebhook
@@ -11,7 +11,7 @@ Kubernetesには、Admission Webhookと呼ばれる拡張機能があります�
 
 ここでは`--programmatic-validation`と`--defaulting`を指定して、Tenantリソース用のWebhookを生成してみましょう。
 
-注意: kindにはPodやDeploymentなどの既存のリソースを指定することはできません。
+注意: kindにはPodやDeploymentなどの既存のリソースを指定できません。
 
 ```console
 $ kubebuilder create webhook --group viewer --version v1 --kind MarkdownView --programmatic-validation --defaulting
@@ -52,7 +52,7 @@ Admission Webhook機能を利用するためには証明書が必要となりま
 
 ## config/webhook
 
-`config/webhook`下のファイルは、Webhook機能を利用するために必要なマニフェストになります。
+`config/webhook`下は、Webhook機能を利用するために必要なマニフェストファイルです。
 manifests.yamlファイルは`make manifests`ファイルで自動生成されるため、基本的に手動で編集する必要はありません。
 
 ## main.go

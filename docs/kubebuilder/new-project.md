@@ -141,7 +141,7 @@ configディレクトリ配下には、カスタムコントローラをKubernet
 各種権限を設定するためのマニフェストです。
 
 `auth_proxy_`から始まる4つのファイルは、[kube-auth-proxy][]用のマニフェストです。
-kube-auth-proxyを利用するとメトリクスエンドポイントへのアクセスをRBACで制限することができます。
+kube-auth-proxyを利用するとメトリクスエンドポイントへのアクセスをRBACで制限できます。
 
 `leader_election_role.yaml`と`leader_election_role_binding.yaml`は、リーダーエレクション機能を利用するために必要な権限です。
 

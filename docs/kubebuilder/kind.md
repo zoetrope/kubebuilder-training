@@ -47,7 +47,7 @@ $ make docker-build
 $ kind load docker-image controller:latest
 ```
 
-なおkind環境では、コンテナイメージのタグ名に`latest`を利用するとロードしたコンテナイメージが利用されない問題があります。([参考](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster))
+なおコンテナイメージのタグ名が`latest`の場合ImagePullPolicyが`Always`になり、ロードしたコンテナイメージが利用されない場合があります。([参考](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster))
 
 そこで、[config/manager/manager.yaml](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-viewer/config/manager/manager.yaml)に`imagePullPolicy: IfNotPresent`を追加しておきます。
 

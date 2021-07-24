@@ -107,3 +107,9 @@ CreateOrUpdateを利用した場合、DeploymentやServiceを適切に作成す�
 最後に、テナントリソースの状況をユーザーに知らせるためにステータスの更新をおこないます。
 
 [import:"update-status"](../../codes/markdown-viewer/controllers/markdownview_controller.go)
+
+## 動作確認
+
+```
+$ kubectl port-forward svc/viewer-markdownview-sample 3000:80
+```

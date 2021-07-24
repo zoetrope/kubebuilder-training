@@ -5,6 +5,9 @@ controller-runtimeは[envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime
 envtestはetcdとkube-apiserverを立ち上げてテスト用の環境を構築します。
 また環境変数`USE_EXISTING_CLUSTER`を指定すれば、既存のKubernetesクラスタを利用したテストをおこなうことも可能です。
 
+envtestでは、etcdとkube-apiserverのみを立ち上げており、controller-managerやschedulerは動いていません。
+そのため、DeploymentやCronJobリソースを作成しても、Podは作成されないので注意してください。
+
 なおcontroller-genが生成するテストコードでは、[Ginkgo](https://github.com/onsi/ginkgo)というテストフレームワークを利用しています。
 このフレームワークの利用方法については[Ginkgoのドキュメント](https://onsi.github.io/ginkgo/)を御覧ください。
 
@@ -57,7 +60,11 @@ controller-genによって自動生成された[controllers/suite_test.go](https
 
 これらのテストケースでは`k8sClient`を利用してKubernetesクラスタにMarkdownViewリソースを作成し、
 その後に期待するリソースが作成されていることを確認しています。
+Reconcile処理はテストコードとは非同期に動くため、Eventually関数を利用してリソースが作成できるまで待つようにしています。
 
-Reconcile処理はテストコードとは非同期に動くため、Eventually関数を利用してリソースが作成できるまで待つようにしましょう。
+最後のテストではStatusが更新されることを確認しています。
+本来はここでStatusがHealthyになることをテストすべきですが、Envtestではcontroller-managerが存在しないためDeploymentがReadyにならず、
+MarkdownViewのStatusもHealthyになりません。
+Envtestは実際のKubernetesクラスターとは異なるということを意識してテストを書くようにしましょう。
 
-テストが賭けたら、`make test`でテストを実行してみましょう。
+テストが書けたら、`make test`でテストを実行してみましょう。

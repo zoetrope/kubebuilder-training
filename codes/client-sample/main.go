@@ -47,12 +47,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	err = deleteWithPropagationPolicy(cli)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
 	err = patchApply(cli)
 	if err != nil {
 		fmt.Println(err)
@@ -152,25 +146,6 @@ func deleteWithPreConditions(cli client.Client) error {
 }
 
 //! [cond]
-
-//! [policy]
-func deleteWithPropagationPolicy(cli client.Client) error {
-	var deploy appsv1.Deployment
-	err := cli.Get(context.Background(), client.ObjectKey{
-		Namespace: "default",
-		Name:      "test",
-	}, &deploy)
-	if err != nil {
-		return err
-	}
-	policy := metav1.DeletePropagationOrphan
-	err = cli.Delete(context.Background(), &deploy, &client.DeleteOptions{
-		PropagationPolicy: &policy,
-	})
-	return err
-}
-
-//! [policy]
 
 //! [patch-merge]
 func patchMerge(cli client.Client) error {

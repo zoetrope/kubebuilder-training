@@ -18,7 +18,7 @@
   * [Webhookマニフェストの生成](controller-tools/webhook.md)
 * [controller-runtime](controller-runtime/README.md)
   * [クライアントの使い方](controller-runtime/client.md)
-  * [Server Side Apply](controller-runtime/ssa.md)
+  <!-- * [Server Side Apply](controller-runtime/ssa.md) -->
   * [Reconcileの実装](controller-runtime/reconcile.md)
   * [リソースの削除](controller-runtime/deletion.md)
   * [コントローラのテスト](controller-runtime/controller_test.md)
@@ -26,5 +26,5 @@
   * [Webhookのテスト](controller-runtime/webhook_test.md)
   * [Manager](controller-runtime/manager.md)
   * [モニタリング](controller-runtime/monitoring.md)
-  * [応用テクニック](controller-runtime/advanced.md)
+  <!-- * [応用テクニック](controller-runtime/advanced.md) -->
   <!-- * [CRDのバージョニング](controller-runtime/versioning.md) -->
