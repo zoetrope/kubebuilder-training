@@ -20,7 +20,7 @@ controller-genでは、Goのソースコード中に埋め込まれたマーカ�
 MarkdownViewリソースと、そのサブリソースである`status`と`finalizer`に権限が付与されています。
 なお、サブリソースはlistやcreate,delete操作をおこなえないので`get;update;patch`の権限のみが付与されています。
 
-これらに加えて、MarkdownViewコントローラが作成するConfigMap, Deployment, Serviceリソースを操作する権限のマーカーを追加しましょう。
+これらに加えてMarkdownViewコントローラが作成するConfigMap, Deployment, Service, Eventリソースを操作する権限のマーカーを追加しましょう。
 
 [import:"rbac"](../../codes/markdown-viewer/controllers/markdownview_controller.go)
 

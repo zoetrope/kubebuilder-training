@@ -49,8 +49,10 @@ fmt: ## Run go fmt against code.
 vet: ## Run go vet against code.
 	go vet ./...
 
+#! [test]
 test: manifests generate fmt vet setup-envtest ## Run tests.
 	source <($(SETUP_ENVTEST) use -p env); go test ./... -coverprofile cover.out
+#! [test]
 
 ##@ Build
 
@@ -90,11 +92,13 @@ KUSTOMIZE = $(shell pwd)/bin/kustomize
 kustomize: ## Download kustomize locally if necessary.
 	$(call go-get-tool,$(KUSTOMIZE),sigs.k8s.io/kustomize/kustomize/v3@v3.8.7)
 
+#! [setup-envtest]
 SETUP_ENVTEST := $(shell pwd)/bin/setup-envtest
 .PHONY: setup-envtest
 setup-envtest: ## Download setup-envtest locally if necessary
 	# see https://github.com/kubernetes-sigs/controller-runtime/tree/master/tools/setup-envtest
 	GOBIN=$(shell pwd)/bin go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+#! [setup-envtest]
 
 # go-get-tool will 'go get' any package $2 and install it to $1.
 PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))

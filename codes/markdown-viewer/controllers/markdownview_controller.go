@@ -18,11 +18,11 @@ package controllers
 
 import (
 	"context"
-
-	"github.com/zoetrope/markdown-viewer/pkg/metrics"
+	"fmt"
 
 	viewerv1 "github.com/zoetrope/markdown-viewer/api/v1"
 	"github.com/zoetrope/markdown-viewer/pkg/constants"
+	"github.com/zoetrope/markdown-viewer/pkg/metrics"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
@@ -55,6 +55,7 @@ type MarkdownViewReconciler struct {
 //+kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch
 //! [rbac]
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
@@ -299,18 +300,25 @@ func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewer
 		return ctrl.Result{}, err
 	}
 
+	var status viewerv1.MarkdownViewStatus
 	if dep.Status.AvailableReplicas == 0 {
-		mdView.Status = viewerv1.MarkdownViewNotReady
+		status = viewerv1.MarkdownViewNotReady
 	} else if dep.Status.AvailableReplicas == mdView.Spec.Replicas {
-		mdView.Status = viewerv1.MarkdownViewHealthy
+		status = viewerv1.MarkdownViewHealthy
 	} else {
-		mdView.Status = viewerv1.MarkdownViewAvailable
+		status = viewerv1.MarkdownViewAvailable
 	}
-	r.setMetrics(mdView)
 
-	err = r.Status().Update(ctx, &mdView)
-	if err != nil {
-		return ctrl.Result{}, err
+	if mdView.Status != status {
+		mdView.Status = status
+		r.setMetrics(mdView)
+
+		r.Recorder.Event(&mdView, corev1.EventTypeNormal, "Updated", fmt.Sprintf("MarkdownView(%s:%s) updated: %s", mdView.Namespace, mdView.Name, mdView.Status))
+
+		err = r.Status().Update(ctx, &mdView)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
 	}
 
 	if mdView.Status != viewerv1.MarkdownViewHealthy {

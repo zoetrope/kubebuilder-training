@@ -24,7 +24,7 @@ generators
 +crd[:crdVersions=<[]string>][,maxDescLen=<int>][,preserveUnknownFields=<bool>][,trivialVersions=<bool>]  package  generates CustomResourceDefinition objects.
 ```
 
-`kubebuilder`が生成した[Makefile](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/Makefile)には、`make manifests`と`make generate`というターゲットが用意されており、`make manifests`では`webhook`, `rbac`, `crd`の生成、`make generate`では`object`の生成がおこなわれます。
+`kubebuilder`が生成したMakefileには、`make manifests`と`make generate`というターゲットが用意されており、`make manifests`では`webhook`, `rbac`, `crd`の生成、`make generate`では`object`の生成がおこなわれます。
 
 `controller-gen`がマニフェストの生成をおこなう際には、Goのstructの構成と、ソースコード中に埋め込まれた`// +kubebuilder:`から始まるコメント(マーカーと呼ばれる)を目印にします。
 
