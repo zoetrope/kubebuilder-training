@@ -1,0 +1,31 @@
+version: 1
+rules:
+  - expected: コントローラー
+    patterns:
+      - コントローラ
+      - controller
+      - Controller
+  - expected: サーバー
+    patterns:
+      - サーバ
+      - server
+      - Server
+  - expected: クラスター
+    patterns:
+      - クラスタ
+      - cluster
+      - Cluster
+  - expected: kube-apiserver
+    patterns:
+      - apiserver
+      - api\-server
+      - API server
+      - API Server
+      - APIサーバ
+      - APIサーバー
+  - expected: Kubebuilder
+  - expected: オペレーター
+    patterns:
+      - オペレータ
+      - operator
+      - Operator
