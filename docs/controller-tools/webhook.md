@@ -5,11 +5,11 @@ controller-genは`// +kubebuilder:webhook`マーカーの記述に基づいて�
 
 まずはデフォルト値を設定するWebhookのマーカーを見てみましょう。
 
-[import:"webhook-defaulter"](../../codes/markdown-viewer/api/v1/markdownview_webhook.go)
+[import:"webhook-defaulter"](../../codes/markdown-view/api/v1/markdownview_webhook.go)
 
 同様にバリデーションWebhookのマーカーを確認します。
 
-[import:"webhook-validator"](../../codes/markdown-viewer/api/v1/markdownview_webhook.go)
+[import:"webhook-validator"](../../codes/markdown-view/api/v1/markdownview_webhook.go)
 
 - `path`: Webhookのパスを指定します。これはcontroller-runtimeが自動的に生成するパスなので基本的には変更せずに利用します。
 - `mutating`: Webhookで値を書き換えるかどうかを指定します。Defaulterでは`true`, Validatorでは`false`を指定します。
@@ -22,4 +22,4 @@ controller-genは`// +kubebuilder:webhook`マーカーの記述に基づいて�
 
 `make manifests`を実行すると、マーカーの内容に基づいて以下のようなマニフェストファイルが生成されます。
 
-[import](../../codes/markdown-viewer/config/webhook/manifests.yaml)
+[import](../../codes/markdown-view/config/webhook/manifests.yaml)

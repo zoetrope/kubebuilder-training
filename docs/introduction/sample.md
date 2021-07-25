@@ -20,8 +20,8 @@ MarkdownViewコントローラの主な処理の流れは次のようになり�
 
 MarkdownViewカスタムリソースには、以下のようにMarkdownの内容とレンダリングに利用するmdBookのコンテナイメージおよびレプリカ数を指定できるようにします。
 
-[import](../../codes/markdown-viewer/config/samples/viewer_v1_markdownview.yaml)
+[import](../../codes/markdown-view/config/samples/view_v1_markdownview.yaml)
 
 ソースコードは以下にあるので参考にしてください。
 
-- https://github.com/zoetrope/kubebuilder-training/tree/master/codes/markdown-viewer
+- https://github.com/zoetrope/kubebuilder-training/tree/master/codes/markdown-view

@@ -7,7 +7,7 @@
 カスタムリソースとコントローラのソースコードを生成するかどうか聞かれるので、今回はどちらも`y`と回答します。
 
 ```console
-$ kubebuilder create api --group viewer --version v1 --kind MarkdownView
+$ kubebuilder create api --group view --version v1 --kind MarkdownView
 Create Resource [y/n]
 y
 Create Controller [y/n]
@@ -31,7 +31,7 @@ $ make manifests
 ├── config
 │    ├── crd
 │    │    ├── bases
-│    │    │    └── viewer.zoetrope.github.io_markdownviews.yaml
+│    │    │    └── view.zoetrope.github.io_markdownviews.yaml
 │    │    ├── patches
 │    │    │    ├── cainjection_in_markdownviews.yaml
 │    │    │    └── webhook_in_markdownviews.yaml
@@ -42,7 +42,7 @@ $ make manifests
 │    │    ├── markdownview_editor_role.yaml
 │    │    └── markdownview_viewer_role.yaml
 │    └── samples
-│        └── viewer_v1_markdownview.yaml
+│        └── view_v1_markdownview.yaml
 └── controllers
      ├── markdownview_controller.go
      └── suite_test.go
@@ -94,7 +94,7 @@ crdディレクトリにはCRD(Custom Resource Definition)のマニフェスト�
 
 `role.yaml`には、MarkdownViewリソースを扱うための権限が追加されています。
 
-`markdownView_editor_role.yaml`と`markdownView_viewer_role.yaml`は、MarkdownViewリソースの編集・読み取りの権限です。
+`markdownview_editor_role.yaml`と`markdownview_viewer_role.yaml`は、MarkdownViewリソースの編集・読み取りの権限です。
 必要に応じて利用しましょう。
 
 ### samples

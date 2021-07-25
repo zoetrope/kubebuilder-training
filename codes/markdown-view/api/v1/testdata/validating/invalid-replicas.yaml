@@ -1,0 +1,19 @@
+apiVersion: view.zoetrope.github.io/v1
+kind: MarkdownView
+metadata:
+  name: invalid-replicas
+  namespace: default
+  annotations:
+    message: 'admission webhook "vmarkdownview.kb.io" denied the request: MarkdownView.view.zoetrope.github.io "invalid-replicas" is invalid: spec.replicas: Invalid value: 100: replicas must be in the range of 1 to 5.'
+spec:
+  markdowns:
+    SUMMARY.md: |
+      # Summary
+
+      - [Page1](page1.md)
+    page1.md: |
+      # Page 1
+
+      一ページ目のコンテンツです。
+  replicas: 100
+  viewerImage: "peaceiris/mdbook:latest"

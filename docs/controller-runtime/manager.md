@@ -16,9 +16,9 @@
 リーダー選出の利用方法は、`NewManager`のオプションの`LeaderElection`にtrueを指定し、`LeaderElectionID`にリーダー選出用のIDを指定するだけです。
 リーダー選出は、同じ`LeaderElectionID`を指定したプロセスの中から一つだけリーダーを選ぶという挙動になります。
 
-[import:"new-manager",unindent:"true"](../../codes/markdown-viewer/main.go)
+[import:"new-manager",unindent:"true"](../../codes/markdown-view/main.go)
 
-それでは、[config/manager/manager.yaml](../../codes/markdown-viewer/config/manager/manager.yaml)の`replicas`フィールドを2に変更して、MarkdownViewコントローラをデプロイしてみましょう。
+それでは、[config/manager/manager.yaml](../../codes/markdown-view/config/manager/manager.yaml)の`replicas`フィールドを2に変更して、MarkdownViewコントローラをデプロイしてみましょう。
 
 デプロイされた2つのPodのログを表示させてみると、リーダーに選出された方のPodだけがReconcile処理をおこなっている様子が確認できると思います。
 
@@ -26,15 +26,15 @@
 下記のようにConfigMapを表示させてみると、`metadata.annotations["control-plane.alpha.kubernetes.io/leader"]`に、現在のリーダーの情報が保存されていることがわかります。
 
 ```
-$ kubectl get configmap -n markdown-viewer-system c124e721.zoetrope.github.io -o yaml
+$ kubectl get configmap -n markdown-view-system c124e721.zoetrope.github.io -o yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   annotations:
-    control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"markdown-viewer-controller-manager-87dcb5f6-7ql9f_ece9f1fd-d5e0-4f10-9627-f6214ed9af8a","leaseDurationSeconds":15,"acquireTime":"2021-07-24T06:41:44Z","renewTime":"2021-07-24T10:33:47Z","leaderTransitions":1}'
+    control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"markdown-view-controller-manager-87dcb5f6-7ql9f_ece9f1fd-d5e0-4f10-9627-f6214ed9af8a","leaseDurationSeconds":15,"acquireTime":"2021-07-24T06:41:44Z","renewTime":"2021-07-24T10:33:47Z","leaderTransitions":1}'
   creationTimestamp: "2021-07-24T05:56:03Z"
   name: c124e721.zoetrope.github.io
-  namespace: markdown-viewer-system
+  namespace: markdown-view-system
   resourceVersion: "64771"
   uid: d47a3dba-988b-4839-804f-2b6f0ac9c9c1
 ```
@@ -136,16 +136,16 @@ Managerには、ヘルスチェック用のAPIのエンドポイントを作成�
 
 ヘルスチェック機能を利用するには、Managerの作成時に`HealthProbeBindAddress`でエンドポイントのアドレスを指定します。
 
-[import:"new-manager",unindent:"true"](../../codes/markdown-viewer/main.go)
+[import:"new-manager",unindent:"true"](../../codes/markdown-view/main.go)
 
 そして、`AddHealthzCheck`と`AddReadyzCheck`で、ハンドラの登録をおこないます。
 デフォルトでは`healthz.Ping`という何もしない関数を利用していますが、独自の関数を登録することも可能です。
 
-[import:"health",unindent:"true"](../../codes/markdown-viewer/main.go)
+[import:"health",unindent:"true"](../../codes/markdown-view/main.go)
 
 カスタムコントローラのマニフェストでは、このヘルスチェックAPIを`livenessProbe`と`readinessProbe`として利用するように指定されています。
 
-[import:"probe",unindent:"true"](../../codes/markdown-viewer/config/manager/manager.yaml)
+[import:"probe",unindent:"true"](../../codes/markdown-view/config/manager/manager.yaml)
 
 ## FieldIndexer
 

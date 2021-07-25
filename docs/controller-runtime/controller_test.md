@@ -21,17 +21,17 @@ Kubebuilder v3.1時点では、Envtest Binaries Managerが利用されるよう�
 
 まず、Envtest Binaries Managerをインストールするためのターゲットを追加します。
 
-[import:"setup-envtest"](../../codes/markdown-viewer/Makefile)
+[import:"setup-envtest"](../../codes/markdown-view/Makefile)
 
 testターゲットは以下のように書き換えます。
 
-[import:"test"](../../codes/markdown-viewer/Makefile)
+[import:"test"](../../codes/markdown-view/Makefile)
 
 ## テスト環境のセットアップ
 
-controller-genによって自動生成された[controllers/suite_test.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-viewer/controllers/suite_test.go)を見てみましょう。
+controller-genによって自動生成された[controllers/suite_test.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/controllers/suite_test.go)を見てみましょう。
 
-[import, title="controllers/suite_test.go"](../../codes/markdown-viewer/controllers/suite_test.go)
+[import, title="controllers/suite_test.go"](../../codes/markdown-view/controllers/suite_test.go)
 
 まず`envtest.Environment`でテスト用の環境設定をおこないます。
 ここでは、`CRDDirectoryPaths`で適用するCRDのマニフェストのパスを指定しています。
@@ -47,7 +47,7 @@ controller-genによって自動生成された[controllers/suite_test.go](https
 
 まずは各テストの実行前と実行後に呼び出される`BeforeEach`と`AfterEach`関数を実装します。
 
-[import:"setup",unindent:"true"](../../codes/markdown-viewer/controllers/markdownview_controller_test.go)
+[import:"setup",unindent:"true"](../../codes/markdown-view/controllers/markdownview_controller_test.go)
 
 `BeforeEach`では、テストで利用したリソースをすべて削除します。 (なお、Serviceリソースは`DeleteAllOf`をサポートしていないため、1つずつ削除しています。)
 その後、MarkdownViewReconcilerを作成し、Reconciliation Loop処理を開始します。
@@ -56,7 +56,7 @@ controller-genによって自動生成された[controllers/suite_test.go](https
 
 次にテストケースを記述します。
 
-[import:"test",unindent:"true"](../../codes/markdown-viewer/controllers/markdownview_controller_test.go)
+[import:"test",unindent:"true"](../../codes/markdown-view/controllers/markdownview_controller_test.go)
 
 これらのテストケースでは`k8sClient`を利用してKubernetesクラスタにMarkdownViewリソースを作成し、
 その後に期待するリソースが作成されていることを確認しています。

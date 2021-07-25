@@ -8,9 +8,9 @@ controller-genでは、Goのソースコード中に埋め込まれたマーカ�
 まずはKubebuilderによって生成されたマーカーを見てみましょう。
 
 ```go
-//+kubebuilder:rbac:groups=viewer.zoetrope.github.io,resources=markdownviews,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=viewer.zoetrope.github.io,resources=markdownviews/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=viewer.zoetrope.github.io,resources=markdownviews/finalizers,verbs=update
+//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/finalizers,verbs=update
 ```
 
 - `groups`: 権限を与えたいリソースのAPIグループを指定します。
@@ -22,11 +22,11 @@ MarkdownViewリソースと、そのサブリソースである`status`と`final
 
 これらに加えてMarkdownViewコントローラが作成するConfigMap, Deployment, Service, Eventリソースを操作する権限のマーカーを追加しましょう。
 
-[import:"rbac"](../../codes/markdown-viewer/controllers/markdownview_controller.go)
+[import:"rbac"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
 なお、controller-runtimeの提供するClientは、Getでリソースを取得した場合も裏でListやWatchを呼び出しています。
 そのためgetしかしない場合でも、get, list, watchを許可しておきましょう。
 
 `make manifests`を実行すると以下のように`config/rbac/role.yaml`が更新されます。
 
-[import](../../codes/markdown-viewer/config/rbac/role.yaml)
+[import](../../codes/markdown-view/config/rbac/role.yaml)

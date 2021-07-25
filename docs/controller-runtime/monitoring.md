@@ -14,12 +14,12 @@ CPUやメモリの使用量や、Reconcileにかかった時間やKubernetesク�
 どのようなメトリクスが公開されているのか見てみましょう。
 `NewManager`のオプションで`MetricsBindAddress`に指定されたアドレスにアクセスすると、公開されているメトリクスを確認することができます。
 
-[import:"new-manager",unindent:"true"](../../codes/markdown-viewer/main.go)
+[import:"new-manager",unindent:"true"](../../codes/markdown-view/main.go)
 
 まずはメトリクス用のポートをPort Forwardします。
 
 ```
-kubectl -n markdown-viewer-system port-forward deploy/markdown-viewer-controller-manager 8080:8080
+kubectl -n markdown-view-system port-forward deploy/markdown-view-controller-manager 8080:8080
 ```
 
 curlを実行すると、下記のようなメトリクスが出力されることが確認できます。
@@ -43,14 +43,14 @@ controller_runtime_reconcile_total{controller="markdownview",result="requeue_aft
 controller_runtime_reconcile_total{controller="markdownview",result="success"} 0
 # HELP controller_runtime_webhook_requests_in_flight Current number of admission requests being served.
 # TYPE controller_runtime_webhook_requests_in_flight gauge
-controller_runtime_webhook_requests_in_flight{webhook="/mutate-viewer-zoetrope-github-io-v1-markdownview"} 0
-controller_runtime_webhook_requests_in_flight{webhook="/validate-viewer-zoetrope-github-io-v1-markdownview"} 0
+controller_runtime_webhook_requests_in_flight{webhook="/mutate-view-zoetrope-github-io-v1-markdownview"} 0
+controller_runtime_webhook_requests_in_flight{webhook="/validate-view-zoetrope-github-io-v1-markdownview"} 0
 # HELP controller_runtime_webhook_requests_total Total number of admission requests by HTTP status code.
 # TYPE controller_runtime_webhook_requests_total counter
-controller_runtime_webhook_requests_total{code="200",webhook="/mutate-viewer-zoetrope-github-io-v1-markdownview"} 0
-controller_runtime_webhook_requests_total{code="200",webhook="/validate-viewer-zoetrope-github-io-v1-markdownview"} 0
-controller_runtime_webhook_requests_total{code="500",webhook="/mutate-viewer-zoetrope-github-io-v1-markdownview"} 0
-controller_runtime_webhook_requests_total{code="500",webhook="/validate-viewer-zoetrope-github-io-v1-markdownview"} 0
+controller_runtime_webhook_requests_total{code="200",webhook="/mutate-view-zoetrope-github-io-v1-markdownview"} 0
+controller_runtime_webhook_requests_total{code="200",webhook="/validate-view-zoetrope-github-io-v1-markdownview"} 0
+controller_runtime_webhook_requests_total{code="500",webhook="/mutate-view-zoetrope-github-io-v1-markdownview"} 0
+controller_runtime_webhook_requests_total{code="500",webhook="/validate-view-zoetrope-github-io-v1-markdownview"} 0
 
 ・・・ 以下省略
 
@@ -64,16 +64,16 @@ controller-runtimeが提供するメトリクスだけでなく、カスタム�
 ここではMarkdownViewリソースのステータスをメトリクスとして公開してみましょう。
 MarkdownViewには3種類のステータスがあるので、Gauge Vectorも3つ用意します。
 
-[import, title="metrics.go"](../../codes/markdown-viewer/pkg/metrics/metrics.go)
+[import, title="metrics.go"](../../codes/markdown-view/pkg/metrics/metrics.go)
 
 Statusを更新する際に以下の関数を呼び出して、メトリクスを更新することとします。
 
-[import:"set-metrics",unindent="true"](../../codes/markdown-viewer/controllers/markdownview_controller.go)
+[import:"set-metrics",unindent="true"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
 また、MarkdownViewリソースが削除された場合には、以下の関数を実行してメトリクスも削除しておきましょう。
 すでに存在しないリソースのメトリクスが残ったままになっていると、誤った警告が検出されてしまう可能性があります。
 
-[import:"remove-metrics",unindent="true"](../../codes/markdown-viewer/controllers/markdownview_controller.go)
+[import:"remove-metrics",unindent="true"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
 先ほどと同様にメトリクスを確認してみましょう。
 下記の項目が出力されていれば成功です。
@@ -81,15 +81,15 @@ Statusを更新する際に以下の関数を呼び出して、メトリクス�
 ```
 $ curl localhost:8080/metrics
 
-# HELP markdownviewer_available The cluster status about available condition
-# TYPE markdownviewer_available gauge
-markdownviewer_available{name="markdownview-sample",namespace="markdownview-sample"} 0
-# HELP markdownviewer_healthy The cluster status about healthy condition
-# TYPE markdownviewer_healthy gauge
-markdownviewer_healthy{name="markdownview-sample",namespace="markdownview-sample"} 1
-# HELP markdownviewer_notready The cluster status about not ready condition
-# TYPE markdownviewer_notready gauge
-markdownviewer_notready{name="markdownview-sample",namespace="markdownview-sample"} 0
+# HELP markdownview_available The cluster status about available condition
+# TYPE markdownview_available gauge
+markdownview_available{name="markdownview-sample",namespace="markdownview-sample"} 0
+# HELP markdownview_healthy The cluster status about healthy condition
+# TYPE markdownview_healthy gauge
+markdownview_healthy{name="markdownview-sample",namespace="markdownview-sample"} 1
+# HELP markdownview_notready The cluster status about not ready condition
+# TYPE markdownview_notready gauge
+markdownview_notready{name="markdownview-sample",namespace="markdownview-sample"} 0
 ```
 
 ## kube-rbac-proxy
@@ -100,11 +100,11 @@ kube-rbac-proxyを利用すると、メトリクスのエンドポイントに�
 
 kube-rbac-proxyを利用するためには下記の`manager_auth_proxy_patch.yaml`のコメントアウトを解除します。
 
-[import:"patches,enable-auth-proxy"](../../codes/markdown-viewer/config/default/kustomization.yaml)
+[import:"patches,enable-auth-proxy"](../../codes/markdown-view/config/default/kustomization.yaml)
 
 さらに、`auto_proxy_`から始まる4つのマニフェストも有効にします。
 
-[import](../../codes/markdown-viewer/config/rbac/kustomization.yaml)
+[import](../../codes/markdown-view/config/rbac/kustomization.yaml)
 
 ## Grafanaでの可視化
 
@@ -113,7 +113,7 @@ kube-rbac-proxyを利用するためには下記の`manager_auth_proxy_patch.yam
 まずはマニフェストの準備をします。
 下記のコメントアウトを解除してください。
 
-[import:"bases,enable-prometheus"](../../codes/markdown-viewer/config/default/kustomization.yaml)
+[import:"bases,enable-prometheus"](../../codes/markdown-view/config/default/kustomization.yaml)
 
 `make manifests`を実行してマニフェストを生成し、Kubernetesクラスタに適用しておきます。
 
@@ -137,7 +137,7 @@ kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
 
 起動したPrometheusにメトリクスを読み取る権限を付与する必要があるので、下記のマニフェストを適用します。
 
-[import](../../codes/markdown-viewer/config/rbac/prometheus_role_binding.yaml)
+[import](../../codes/markdown-view/config/rbac/prometheus_role_binding.yaml)
 
 ```
 kubectl apply -f ./config/rbac/prometheus_role_binding.yaml

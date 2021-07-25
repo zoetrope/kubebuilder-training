@@ -10,7 +10,7 @@ controller-runtimeでは、MutatingWebhookを実装するためのDefaulterとVa
 まずはDefaulterの実装です。
 Defaultメソッドでは、MarkdownViewリソースの値を書き換えることができます。
 
-[import:"default"](../../codes/markdown-viewer/api/v1/markdownview_webhook.go)
+[import:"default"](../../codes/markdown-view/api/v1/markdownview_webhook.go)
 
 ここでは`r.Spec.ViewerImage`が空だった場合に、デフォルトのコンテナイメージを指定しています。
 
@@ -20,7 +20,7 @@ Defaultメソッドでは、MarkdownViewリソースの値を書き換えるこ�
 ValidateCreate, ValidateUpdate, ValidateDeleteは、それぞれリソースの作成・更新・削除のタイミングで呼び出される関数です。
 これらの関数の中でMarkdownViewリソースの内容をチェックし、エラーを返すことでリソースの操作を失敗させることができます。
 
-[import:"validate"](../../codes/markdown-viewer/api/v1/markdownview_webhook.go)
+[import:"validate"](../../codes/markdown-view/api/v1/markdownview_webhook.go)
 
 今回はValidateCreateとValidateUpdateで同じバリデーションをおこなうことにしましょう。
 `.Spec.Replicas`の値が1から5の範囲にない場合と、`.Spec.Markdowns`に`SUMMARY.md`が含まれない場合はエラーとします。
@@ -35,7 +35,7 @@ ValidateCreate, ValidateUpdate, ValidateDeleteは、それぞれリソースの�
 Webhookの実装をおこなったカスタムコントローラをKubernetesクラスタにデプロイし、下記のような`ViewerImage`を指定していないマニフェストを適用します。
 
 ```yaml
-apiVersion: viewer.zoetrope.github.io/v1
+apiVersion: view.zoetrope.github.io/v1
 kind: MarkdownView
 metadata:
   name: markdownview-sample
@@ -67,7 +67,7 @@ peaceiris/mdbook:latest
 ```
 $ kubectl edit markdownview markdownview-sample
 
-markdownviews.viewer.zoetrope.github.io "markdownview-sample" was not valid:
+markdownviews.view.zoetrope.github.io "markdownview-sample" was not valid:
  * spec.replicas: Invalid value: 10: replicas must be in the range of 1 to 5.
  * spec.markdowns: Required value: markdowns must have SUMMARY.md.
 ```

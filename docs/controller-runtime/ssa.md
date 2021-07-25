@@ -71,7 +71,7 @@ CreateOrUpdateでDeploymentを作成した直後に、api-serverからそのDepl
 +  revisionHistoryLimit: 10
    selector:
      matchLabels:
-       app.kubernetes.io/created-by: markdown-viewer-controller
+       app.kubernetes.io/created-by: markdown-view-controller
        app.kubernetes.io/instance: markdownview-sample
        app.kubernetes.io/name: mdbook
 +  strategy:
@@ -83,7 +83,7 @@ CreateOrUpdateでDeploymentを作成した直後に、api-serverからそのDepl
      metadata:
 +      creationTimestamp: null
        labels:
-         app.kubernetes.io/created-by: markdown-viewer-controller
+         app.kubernetes.io/created-by: markdown-view-controller
          app.kubernetes.io/instance: markdownview-sample
          app.kubernetes.io/name: mdbook
      spec:

@@ -3,11 +3,11 @@
 コントローラでカスタムリソースを扱うためには、そのリソースのCRD(Custom Resource Definition)を定義する必要があります。
 下記の例の様にCRDは長くなりがちで、手書きで作成するには少々手間がかかります。
 
-- [CRDの例](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-viewer/config/crd/bases/viewer.zoetrope.github.io_markdownviews.yaml)
+- [CRDの例](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/config/crd/bases/view.zoetrope.github.io_markdownviews.yaml)
 
 そこでKubebuilderではcontroller-genというツールを提供しており、Goで記述したstructからCRDを生成することができます。
 
-まずは`kubebuilder create api`コマンドで生成された[api/v1/markdownview_types.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-viewer/api/v1/markdownview_types.go)を見てみましょう。
+まずは`kubebuilder create api`コマンドで生成された[api/v1/markdownview_types.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/api/v1/markdownview_types.go)を見てみましょう。
 
 ```go
 type MarkdownViewSpec struct {
@@ -52,16 +52,16 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 
 [作成するカスタムコントローラ](../introduction/sample.md)において、MarkdownViewコントローラが扱うカスタムリソースとして下記のようなマニフェストを例示しました。
 
-[import](../../codes/markdown-viewer/config/samples/viewer_v1_markdownview.yaml)
+[import](../../codes/markdown-view/config/samples/view_v1_markdownview.yaml)
 
 上記のマニフェストを取り扱うための構造体を用意しましょう。
 
-[import:"spec"](../../codes/markdown-viewer/api/v1/markdownview_types.go)
+[import:"spec"](../../codes/markdown-view/api/v1/markdownview_types.go)
 
 まず下記の3つのフィールドを定義します。
 
 - `Markdowns`: 表示したいマークダウンファイルの一覧
-- `Replicas`: MarkdownViewerのレプリカ数
+- `Replicas`: Viewerのレプリカ数
 - `ViewerImage`: Markdownの表示に利用するViewerのイメージ名
 
 各フィールドの上に`// +kubebuilder`という文字列から始まるマーカーと呼ばれるコメントが記述されています。
@@ -122,7 +122,7 @@ type SampleSpec struct {
 
 次にMarkdownViewリソースの状態を表現するための`MarkdownViewStatus`を書き換えます。
 
-[import:"status"](../../codes/markdown-viewer/api/v1/markdownview_types.go)
+[import:"status"](../../codes/markdown-view/api/v1/markdownview_types.go)
 
 今回のカスタムコントローラでは、`MarkdownViewStatus`を文字列型とし、`NotReady`,`Available`,`Healty`の3つの状態をあらわすようにしました。
 
@@ -132,7 +132,7 @@ type SampleSpec struct {
 
 続いて`MarkdownView`構造体のマーカーを見てみましょう。
 
-[import:"markdown-view"](../../codes/markdown-viewer/api/v1/markdownview_types.go)
+[import:"markdown-view"](../../codes/markdown-view/api/v1/markdownview_types.go)
 
 Kubebuilderが生成した初期状態では、`+kubebuilder:object:root=true`と`+kubebuilder:subresource`の2つのマーカーが指定されています。
 ここではさらに`+kubebuilder:printcolumn`を追加することとします。

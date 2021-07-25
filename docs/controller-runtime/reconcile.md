@@ -55,7 +55,7 @@ Reconcile処理は下記のタイミングで呼び出されます。
 この、コントローラが扱うリソースを伝える方法が
 Reconcileが呼ばれるタイミングを制御するために、`NewControllerManagedBy`関数を利用します。
 
-[import:"managedby",unindent:"true"](../../codes/markdown-viewer/controllers/markdownview_controller.go)
+[import:"managedby",unindent:"true"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
 `For`ではこのコントローラのReconcile対象となるリソースの型を指定します。
 
@@ -72,7 +72,7 @@ TODO: その他の方法については応用編へ。
 
 ### Reconcile処理の流れ
 
-[import:"reconcile",unindent:"true"](../../codes/markdown-viewer/controllers/markdownview_controller.go)
+[import:"reconcile",unindent:"true"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
 このNamespacedNameを利用して、テナントリソースの取得をおこないます。
 
@@ -92,7 +92,7 @@ reconcile
 
 テナントリソースに記述されたnamespaceを作成します。
 
-[import:"reconcile-configmap"](../../codes/markdown-viewer/controllers/markdownview_controller.go)
+[import:"reconcile-configmap"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
 
 ### reconcileDeployment, reconcileService
@@ -100,13 +100,13 @@ reconcile
 CreateOrUpdateを利用した場合、DeploymentやServiceを適切に作成することは意外と面倒だったりします。
 
 
-[import:"reconcile-service"](../../codes/markdown-viewer/controllers/markdownview_controller.go)
+[import:"reconcile-service"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
 ### ステータスの更新
 
 最後に、テナントリソースの状況をユーザーに知らせるためにステータスの更新をおこないます。
 
-[import:"update-status"](../../codes/markdown-viewer/controllers/markdownview_controller.go)
+[import:"update-status"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
 ## 動作確認
 

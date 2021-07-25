@@ -10,11 +10,11 @@ controller-runtimeでは、Kubernetes APIにアクセスするためのクライ
 
 SchemeはGoのstructとGroupVersionKindを相互に変換したり、異なるバージョン間でのSchemeの変換をおこなったりするための機能です。
 
-[import:"init"](../../codes/markdown-viewer/main.go)
+[import:"init"](../../codes/markdown-view/main.go)
 
 最初に`runtime.NewScheme()`で新しい`scheme`を作成します。
 `clientgoscheme.AddToScheme`では、PodやServiceなどKubernetesの標準リソースの型をschemeに追加しています。
-`viewerv1.AddToScheme`では、MarkdownViewカスタムリソースの型をschemeに追加しています。
+`viewv1.AddToScheme`では、MarkdownViewカスタムリソースの型をschemeに追加しています。
 
 このSchemeを利用することで、標準リソースとMarkdownViewリソースを扱うことができるクライアントを作成できます。
 

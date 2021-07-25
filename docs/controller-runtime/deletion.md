@@ -18,7 +18,7 @@ Kubernetesではリソースの親子関係を表すために`.metadata.ownerRef
 例えば、以下のようにConfigMapリソースを作成する際に、[controllerutil.SetControllerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetControllerReference)
 というユーティリティ関数を利用していました。
 
-[import:"reconcile-configmap",unindent:"true"](../../codes/markdown-viewer/controllers/markdownview_controller.go)
+[import:"reconcile-configmap",unindent:"true"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
 この関数を利用すると、ConfigMapリソースに以下のような`.metadata.ownerReferences`が付与され、このリソースに親リソースの情報が設定されます。
 
@@ -30,7 +30,7 @@ metadata:
   name: markdowns-markdownview-sample
   namespace: default
   ownerReferences:
-  - apiVersion: viewer.zoetrope.github.io/v1
+  - apiVersion: view.zoetrope.github.io/v1
     blockOwnerDeletion: true
     controller: true
     kind: MarkdownView
@@ -66,11 +66,11 @@ Finalizerの仕組みを利用するためには、まず親リソースの`fina
 なお、この名前はテナントコントローラーが管理しているFinalizerであると識別できるように、他のコントローラーと衝突しない名前にしておきましょう。
 
 ```yaml
-apiVersion: viewer.zoetrope.github.io/v1
+apiVersion: view.zoetrope.github.io/v1
 kind: MarkdownView
 metadata:
   finalizers:
-  - markdownview.finalizers.viewer.zoetrope.github.io
+  - markdownview.finalizers.view.zoetrope.github.io
 # 以下省略
 ```
 
@@ -78,11 +78,11 @@ metadata:
 代わりに、以下のように`deletionTimestamp`が付与されるだけです。
 
 ```yaml
-apiVersion: viewer.zoetrope.github.io/v1
+apiVersion: view.zoetrope.github.io/v1
 kind: MarkdownView
 metadata:
   finalizers:
-    - markdownview.finalizers.viewer.zoetrope.github.io
+    - markdownview.finalizers.view.zoetrope.github.io
   deletionTimestamp: "2021-07-24T15:23:54Z"
 # 以下省略
 ```
@@ -101,7 +101,7 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
 以下のように、Finalizersフィールドを利用して、独自のリソース削除処理を実装できます。
 
 ```go
-finalizerName := "markdwonview.finalizers.viewer.zoetrope.github.io"
+finalizerName := "markdwonview.finalizers.view.zoetrope.github.io"
 if mdView.ObjectMeta.DeletionTimestamp.IsZero() {
     // deletionTimestampが付与されていなければ、finalizersフィールドを追加します。
     if !controllerutil.ContainsFinalizer(&mdView, finalizerName) {

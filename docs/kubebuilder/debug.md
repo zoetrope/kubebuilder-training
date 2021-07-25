@@ -31,7 +31,7 @@ TODO: カスタムコントローラをTelepresenceで実行したときにキ�
 カスタムコントローラをTelepresenceで実行する場合、いくつか注意点があります。
 
 Telepresenceでは、対象のワークロードにtraffic-agentというコンテナがインジェクトされるのですが、このコンテナはルート権限で実行する必要があります。
-Kubebuilderが生成した[manager.yaml](../../codes/markdown-viewer/config/manager/manager.yaml)には、
+Kubebuilderが生成した[manager.yaml](../../codes/markdown-view/config/manager/manager.yaml)には、
 SecurityContextで`runAsNonRoot: true`が指定されているので、これをコメントアウトする必要があります。
 
 ```yaml
@@ -45,7 +45,7 @@ SecurityContextで`runAsNonRoot: true`が指定されているので、これを
 ローカルにマウントされたディレクトリのパスは、環境変数`TELEPRESENCE_ROOT`で取得することができます。
 Kubebuilderで生成したカスタムコントローラでは、Webhookの証明書のパスを下記のように設定し、`NewManager`するときのOptionとして指定しましょう。
 
-[import:"telepresence,new-manager",unindent="true"](../../codes/markdown-viewer/main.go)
+[import:"telepresence,new-manager",unindent="true"](../../codes/markdown-view/main.go)
 
 ```go
 	//! [telepresence]
@@ -84,7 +84,7 @@ user_allow_other
 最後に下記のコマンドで、Kubernetes上で動いているコントローラを、make runを実行して起動したプロセスと置き換えます。
 
 ```console
-telepresence intercept markdown-viewer-controller-manager --namespace markdown-viewer-system --service markdown-viewer-webhook-service --port=9443 -- make run
+telepresence intercept markdown-view-controller-manager --namespace markdown-view-system --service markdown-view-webhook-service --port=9443 -- make run
 ```
 
 -->

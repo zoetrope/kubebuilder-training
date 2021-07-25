@@ -4,4 +4,4 @@
 
 ## コンテンツ
 - [つくって学ぶKubebuilder](https://zoetrope.github.io/kubebuilder-training/)
-- [MarkdownViewコントローラ](https://github.com/zoetrope/kubebuilder-training/tree/master/codes/markdown-viewer)
+- [MarkdownViewコントローラ](https://github.com/zoetrope/kubebuilder-training/tree/master/codes/markdown-view)

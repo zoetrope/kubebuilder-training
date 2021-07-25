@@ -1,0 +1,24 @@
+# permissions for end users to edit markdownviews.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: markdownview-editor-role
+rules:
+- apiGroups:
+  - view.zoetrope.github.io
+  resources:
+  - markdownviews
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - view.zoetrope.github.io
+  resources:
+  - markdownviews/status
+  verbs:
+  - get

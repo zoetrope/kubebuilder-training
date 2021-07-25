@@ -3,9 +3,9 @@
 それではさっそく`kubebuilder init`コマンドを利用して、プロジェクトの雛形を生成しましょう。
 
 ```console
-$ mkdir markdown-viewer
-$ cd markdown-viewer
-$ kubebuilder init --domain zoetrope.github.io --repo github.com/zoetrope/markdown-viewer
+$ mkdir markdown-view
+$ cd markdown-view
+$ kubebuilder init --domain zoetrope.github.io --repo github.com/zoetrope/markdown-view
 ```
 
 `--domain`で指定した名前はCRDのグループ名に使われます。
