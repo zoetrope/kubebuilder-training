@@ -282,7 +282,7 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 		FieldManager: constants.ControllerName,
 	})
 	if err != nil {
-		logger.Error(err, "unable to create or update Deployment")
+		logger.Error(err, "unable to create or update Service")
 		return err
 	}
 

@@ -63,7 +63,7 @@ Kubernetes上のLogicalVolumeカスタムリソースが削除されたら、そ
 そのようなリソースの削除には、Finalizerという仕組みを利用できます。
 
 Finalizerの仕組みを利用するためには、まず親リソースの`finalizers`フィールドにFinalizerの名前を指定します。
-なお、この名前はテナントコントローラーが管理しているFinalizerであると識別できるように、他のコントローラーと衝突しない名前にしておきましょう。
+なお、この名前はMarkdownViewコントローラーが管理しているFinalizerであると識別できるように、他のコントローラーと衝突しない名前にしておきましょう。
 
 ```yaml
 apiVersion: view.zoetrope.github.io/v1

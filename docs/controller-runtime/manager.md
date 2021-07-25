@@ -150,23 +150,53 @@ Managerには、ヘルスチェック用のAPIのエンドポイントを作成�
 ## FieldIndexer
 
 複数のリソースを取得する際にラベルやnamespaceだけでなく、特定のフィールドの値に応じてフィルタリングしたいことがあるかと思います。
-controller-runtimeではインメモリキャッシュにインデックスを張る仕組みが用意されています。
+controller-runtimeではインメモリにキャッシュしているリソースに対してインデックスを張る仕組みが用意されています。
 
 ![index](./img/index.png)
 
-インデックスを利用するためには事前に`GetFieldIndexer().IndexField()`を利用して、どのフィールドの値に基づいてインデックスを張るのかを指定しておきます。
-下記の例ではnamespaceリソースに対して、ownerReferenceに指定されているTenantリソースの名前に応じてインデックスを作成しています。
+インデックスを利用するためには事前にManagerの`GetFieldIndexer()`を利用して、どのフィールドの値に基づいてインデックスを張るのかを指定します。
+下記の例ではConfigMapリソースに対して、`ownerReferences`に指定されているMarkdownViewリソースの名前でインデックスを作成しています。
 
-[import:"indexer"](../../codes/tenant/controllers/tenant_controller.go)
-[import:"index-field",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
+```go
+const ownerControllerField = ".metadata.ownerReference.controller"
 
-フィールド名には、どのフィールドを利用してインデックスを張っているのかを示す文字列を指定します。
+func indexByOwnerMarkdownView(obj client.Object) []string {
+    cm := obj.(*corev1.ConfigMap)
+    owner := metav1.GetControllerOf(cm)
+    if owner == nil {
+        return nil
+    }
+    if owner.APIVersion != viewv1.GroupVersion.String() || owner.Kind != "MarkdownView" {
+        return nil
+    }
+    return []string{owner.Name}
+}
+
+func (r *MarkdownViewReconciler) SetupWithManager(mgr ctrl.Manager) error {
+    err := mgr.GetFieldIndexer().IndexField(ctx, &corev1.ConfigMap{}, ownerControllerField, indexByOwnerMarkdownView)
+    if err != nil {
+        return err
+    }
+    return nil
+}
+```
+
+`IndexField`の第3引数のフィールド名には、どのフィールドを利用してインデックスを張っているのかを示す文字列を指定します。
+ここでは、`.metadata.ownerReference.controller`という文字列を指定しています。
 実際にインデックスに利用しているフィールドのパスと一致していなくても問題はないのですが、なるべく一致させたほうが可読性がよくなるのでおすすめです。
+
 なおインデックスはGVKごとに作成されるので、異なるタイプのリソース間でフィールド名が同じになっても問題ありません。
 またnamespaceスコープのリソースの場合は、内部的にフィールド名にnamespace名を付与して管理しているので、明示的にフィールド名にnamespaceを含める必要はありません。
 インデクサーが返す値はスライスになっていることから分かるように、複数の値にマッチするようにインデックスを構成することも可能です。
 
 上記のようなインデックスを作成しておくと、`List()`を呼び出す際に特定のフィールドが指定した値と一致するリソースだけを取得することができます。
-例えば以下の例であれば、ownerReferenceに指定したTenantリソースがセットされているnamespaceだけを取得することができます。
+例えば以下の例であれば、ownerReferenceに指定したMarkdownViewリソースがセットされているConfigMapだけを取得することができます。
 
-[import:"matching-fields",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
+```go
+var cms corev1.ConfigMapList
+err := r.List(ctx, &cms, client.MatchingFields(map[string]string{ownerControllerField: mdView.Name}))
+if err != nil {
+    return err
+}
+```
+

@@ -9,7 +9,7 @@ Kubernetesには、Admission Webhookと呼ばれる拡張機能があります�
 - `--defaulting`: リソースのフィールドにデフォルト値を設定するためのWebhook
 - `--conversion`: カスタムリソースのバージョンアップ時にリソースの変換をおこなうためのWebhook
 
-ここでは`--programmatic-validation`と`--defaulting`を指定して、Tenantリソース用のWebhookを生成してみましょう。
+ここでは`--programmatic-validation`と`--defaulting`を指定して、MarkdownViewリソース用のWebhookを生成してみましょう。
 
 注意: kindにはPodやDeploymentなどの既存のリソースを指定できません。
 

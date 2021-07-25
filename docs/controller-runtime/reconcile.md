@@ -1,13 +1,13 @@
 # Reconcile
 
-Reconcileはカスタムコントローラのコアロジックになります。
+Reconcileはカスタムコントローラのコアロジックです。
 あるべき状態(ユーザーが作成したカスタムリソース)と、実際のシステムの状態を比較し、差分があればそれを埋めるための処理を実行します。
 
 ## Reconcilerの仕組み
 
 ### Reconcilerインタフェース
 
-Reconcile処理は[reconcile.Reconciler](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Reconciler)インタフェースを実装することになります。
+controller-runtimeでは、Reconcile処理は[reconcile.Reconciler](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Reconciler)インタフェースを実装することになります。
 
 ```go
 type Reconciler interface {
@@ -15,17 +15,16 @@ type Reconciler interface {
 }
 ```
 
-引数として渡ってくる[reconcile.Request](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Request)には、`For`で指定した監視対象のNamespacedNameが含まれています。
+引数の[reconcile.Request](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Request)には、
+このReconcilerが対象とするカスタムリソースのNamespaceとNameが入っています。
 
+戻り値の[reconcile.Result](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Result)には、
+`Requeue`, `RequeueAfter`というフィールドがあります。
+RequeueにTrueを指定して戻り値を返すと、Reconcile処理がキューに積まれて再度実行されることになります。
+RequeueAfterを指定した場合は、指定した時間が経過したあとに再度Reconcile処理が実行されます。
 
-なお、`Owns`でnamespaceやClusterRole, RoleBindingを監視対象に設定しましたが、これらのリソースの変更によってReconcileが呼び出された場合でも、
-RequestのNamespacedNameにはこれらのリソースのownerであるテナントリソースの名前が入っています。
-
-戻り値の[reconcile.Result](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Result)には、`Requeue`, `RequeueAfter`というフィールドが含まれています。
-この戻り値を利用すると、指定した時間が経過したあとに再度Reconcileを呼び出させることが可能になります。
-例えば何らかの時間がかかる処理(コンテナの起動など)を待つ場合に利用できます。
-
-また、Recnocileがエラーを返した場合は、失敗するたびに待ち時間が指数関数的に増加します。
+また、Recnocileがエラーを返した場合もReconcile処理がキューに積まれて再度実行されることになるのですが、
+失敗するたびに待ち時間が指数関数的に増加します。
 
 Reconcileは複数のリソースを管理しているため、1つのリソースを処理するために多くの時間をかけるべきではありません。
 何らかの待ちが発生する場合は、`Requeue`や`RequeueAfter`を指定してReconcileをすぐに抜けるようにしましょう。
@@ -48,23 +47,33 @@ Reconcile処理は下記のタイミングで呼び出されます。
 
 ### 監視対象の制御
 
-前節で、Reconcileが呼ばれるタイミングとして
-
-> - コントローラが扱うリソースが作成、更新、削除されたとき
-
-この、コントローラが扱うリソースを伝える方法が
-Reconcileが呼ばれるタイミングを制御するために、`NewControllerManagedBy`関数を利用します。
+Reconcile処理は、コントローラが扱うリソースが作成、更新、削除されたときに呼び出されると説明しました。
+「コントローラが扱うリソース」を指定するために、[NewControllerManagedBy](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/builder#ControllerManagedBy)関数を利用します。
 
 [import:"managedby",unindent:"true"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
-`For`ではこのコントローラのReconcile対象となるリソースの型を指定します。
+#### For
 
-`Owns`にはこのコントローラが生成するリソースの型を指定します。
-ここではテナントコントローラが生成するnamespaceとClusterRole,RoleBindingを指定しています。
-これらのリソースに何らかの変更が発生した際にReconcileが呼び出されるようになります。
-ただし、Ownsで指定した型のすべてのリソースの変更をウォッチするわけではなく、テナントリソースがownerReferenceに指定されているリソースのみが監視対象となります。
+`For`にはこのコントローラのReconcile対象となるリソースの型を指定します。
 
-TODO: その他の方法については応用編へ。
+今回はMarkdownViewカスタムリソースを指定します。
+これによりMarkdownViewリソースの作成・変更・削除がおこなわれると、Reconcile関数が呼び出されることになります。
+そして、Reconcile関数の引数で渡されるRequestは、MarkdownViewの情報になります。
+
+なお、`For`に指定することのできるリソースは1種類だけです。
+
+#### Owns
+
+`Owns`にはこのコントローラが生成するリソースの型を指定します。`For`とは異なり、`Owns`は複数指定することが可能です。
+
+MarkdownViewコントローラは、ConfigMap, Deployment, Serviceリソースを作成することになるため、これらを`Owns`に指定します。
+
+これにより、MarkdownViewコントローラが作成したConfigMap, Deployment, Serviceリソースに何らかの変更が発生した際にReconcileが呼び出されるようになります。
+ただしこのとき、コントローラが作成したリソースの`ownerReferences`にMarkdownViewリソースを指定しなければなりません。
+`ownerReferences`の設定方法は[リソースの削除](./deletion.md))を参照してください。
+
+なお、`Owns`に指定したリソースの変更によってReconcileが呼び出された場合でも、
+RequestにはこれらのリソースのownerであるMarkdownViewリソースの名前が入っています。
 
 ## Reconcileの実装
 
@@ -72,44 +81,82 @@ TODO: その他の方法については応用編へ。
 
 ### Reconcile処理の流れ
 
+Reconcile処理のおおまかな流れを確認しましょう。
+
 [import:"reconcile",unindent:"true"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
-このNamespacedNameを利用して、テナントリソースの取得をおこないます。
+Reconcileの引数として渡ってきたRequestを利用して、対象となるMarkdownViewリソースの取得をおこないます。
 
-このとき、NotFoundだった場合
-Reconcileが呼び出されたのに、引数で渡されたRequestの対象のリソースはもう存在しない場合。
-リソースを削除した場合に発生することがある。
-ここでエラーを返すとエラーログがうるさくなるので、`Requeue: true`で返しておくとよいでしょう。
+ここでMarkdownViewリソースが存在しなかった場合は、MarkdownViewリソースが削除されたということです。
+終了処理をおこなって関数を抜けましょう。(ここではメトリクスの削除処理をおこなっています)
 
-また、`DeletionTimestamp.IsZero()`は、リソースの削除中。
-後述するようにFinalizerで自前の終了処理を実装することもできます。
+次に`DeletionTimestamp`の確認をしています。
+`DeletionTimestamp`がゼロでない場合は、対象のリソースの削除が開始されたということです。(詳しくは[リソースの削除](./deletion.md)を参照してください。)
+この場合もすぐに関数を抜けましょう。
 
-reconcile
+そして、`reconcileConfigMap`, `reconcileDeployment`, `reconcileService`で、それぞれConfigMap, Deployment, Serviceリソースの作成・更新処理をおこないます。
 
-最後にupdateStatusでステータスの更新をおこないます。
+最後に`updateStatus`でステータスの更新をおこないます。
 
 ### reconcileConfigMap
 
-テナントリソースに記述されたnamespaceを作成します。
+`reconcileConfigMap`では、MarkdownViewリソースに記述されたMarkdownの内容をもとに、ConfigMapリソースを作成します。
 
 [import:"reconcile-configmap"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
+ここでは、[クライアントの使い方](./client.md)で紹介した`CreateOrUpdate`関数を利用しています。
 
 ### reconcileDeployment, reconcileService
 
-CreateOrUpdateを利用した場合、DeploymentやServiceを適切に作成することは意外と面倒だったりします。
+`reconcileDeployment`, `reconcileService`では、それぞれDeploymentとServiceリソースを作成します。
 
+`reconcileConfigMap`と同様に`CreateOrUpdate`を利用してリソースを作成することもできるのですが、
+DeploymentやServiceリソースはフィールド数が多いこともあり、適切に差分を検出してリソースを更新することが面倒だったりします。
+
+そこで今回は、[クライアントの使い方](./client.md)で紹介したApplyConfigurationを利用したServer-Side Apply方式でリソースを作成します。
 
 [import:"reconcile-service"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
 ### ステータスの更新
 
-最後に、テナントリソースの状況をユーザーに知らせるためにステータスの更新をおこないます。
+最後に、MarkdownViewリソースの状況をユーザーに知らせるためにステータスの更新をおこないます。
 
 [import:"update-status"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
+ここでは、`reconcileDeployment`で作成したDeploymentリソースをチェックし、その状態に応じてMarkdownViewリソースの
+ステータスを決定しています。
+
 ## 動作確認
+
+Reconcile処理の実装が完了したら動作確認してみましょう。
+[カスタムコントローラーの動作確認](../kubebuilder/kind.md)の手順通りにカスタムコントローラをデプロイし、
+サンプルのMarkdownViewリソースを適用します。
+
+Deployment, Service, ConfigMapリソースが生成され、MarkdownViewリソースの状態がHealthyになっていることを確認しましょう。
+
+```
+$ kubectl get deployment,service,configmap
+NAME                                         READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/viewer-markdownview-sample   1/1     1            1           177m
+
+NAME                                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+service/viewer-markdownview-sample   ClusterIP   10.96.162.90   <none>        80/TCP    177m
+
+NAME                                      DATA   AGE
+configmap/markdowns-markdownview-sample   2      177m
+
+$ kubectl get markdownview markdownview-sample
+NAME                  REPLICAS   STATUS
+markdownview-sample   1          Healthy
+```
+
+次にローカル環境から作成されたサービスにアクセスするために、Port Forwardをおこないます。
 
 ```
 $ kubectl port-forward svc/viewer-markdownview-sample 3000:80
 ```
+
+最後にブラウザで`http://localhost:3000`にアクセスしてください。
+以下のようにレンダリングされたMarkdownが表示されれば成功です。
+
+![index](./img/mdbook.png)
