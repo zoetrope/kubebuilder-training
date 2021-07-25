@@ -24,18 +24,18 @@ import (
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
+	viewerv1 "github.com/zoetrope/markdown-viewer/api/v1"
+	"github.com/zoetrope/markdown-viewer/controllers"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
-
-	viewerv1 "github.com/zoetrope/markdown-viewer/api/v1"
-	"github.com/zoetrope/markdown-viewer/controllers"
 	//+kubebuilder:scaffold:imports
 )
 
+//! [init]
 var (
 	scheme   = runtime.NewScheme()
 	setupLog = ctrl.Log.WithName("setup")
@@ -47,6 +47,8 @@ func init() {
 	utilruntime.Must(viewerv1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
+
+//! [init]
 
 func main() {
 	var metricsAddr string

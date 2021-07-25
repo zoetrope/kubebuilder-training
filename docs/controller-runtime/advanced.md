@@ -1,5 +1,31 @@
 # 応用テクニック
 
+## 更新処理
+
+なお、Annotationsなどの一部のフィールドはKubernetesの標準コントローラが値を設定する場合があります。
+そのため、以下のように値を上書きしてしまうと、他のコントローラが設定した値が消えてしまいます。
+
+```go
+op, err := ctrl.CreateOrUpdate(ctx, r.Client, role, func() error {
+	role.Annotations = map[string]string{
+		"an1": "test",
+	}
+	return nil
+}
+```
+
+そのような問題を避けるため、Annotationsを更新する場合は上書きではなく、以下のように追加しましょう。
+
+```go
+op, err := ctrl.CreateOrUpdate(ctx, r.Client, role, func() error {
+	if role.Annotations == nil {
+		role.Annotations = make(map[string]string)
+	}
+	role.Annotations["an1"] = "test"
+	return nil
+}
+```
+
 ### イベントのフィルタリング
 
 `WithEventFilter`では、`For`, `Owns`, `Watches`で監視対象としたリソースの変更イベントをまとめてフィルタリングすることができます。

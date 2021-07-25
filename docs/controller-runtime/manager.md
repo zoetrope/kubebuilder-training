@@ -94,7 +94,7 @@ err = mgr.Add(&runners.Runner{})
 リーダーでなくても常時動かしたい処理である場合、[LeaderElectionRunnable](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#LeaderElectionRunnable)インタフェースを実装し、
 NeedLeaderElectionメソッドで `false` を返すようにします。
 
-## recorderProvider
+## EventRecorder
 
 カスタムリソースのStatusには、現在の状態が保存されています。
 一方、これまでどのような処理が実施されてきたのかを記録したい場合、Kubernetesが提供する[Event](https://pkg.go.dev/k8s.io/api/core/v1?tab=doc#Event)リソースを利用することができます。
@@ -130,7 +130,7 @@ LAST SEEN   TYPE     REASON    OBJECT                             MESSAGE
 13s         Normal   Updated   markdownview/markdownview-sample   MarkdownView(default:markdownview-sample) updated: Healthy
 ```
 
-## healthProbeListener
+## HealthProbe
 
 Managerには、ヘルスチェック用のAPIのエンドポイントを作成する機能が用意されています。
 
@@ -147,3 +147,26 @@ Managerには、ヘルスチェック用のAPIのエンドポイントを作成�
 
 [import:"probe",unindent:"true"](../../codes/markdown-viewer/config/manager/manager.yaml)
 
+## FieldIndexer
+
+複数のリソースを取得する際にラベルやnamespaceだけでなく、特定のフィールドの値に応じてフィルタリングしたいことがあるかと思います。
+controller-runtimeではインメモリキャッシュにインデックスを張る仕組みが用意されています。
+
+![index](./img/index.png)
+
+インデックスを利用するためには事前に`GetFieldIndexer().IndexField()`を利用して、どのフィールドの値に基づいてインデックスを張るのかを指定しておきます。
+下記の例ではnamespaceリソースに対して、ownerReferenceに指定されているTenantリソースの名前に応じてインデックスを作成しています。
+
+[import:"indexer"](../../codes/tenant/controllers/tenant_controller.go)
+[import:"index-field",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
+
+フィールド名には、どのフィールドを利用してインデックスを張っているのかを示す文字列を指定します。
+実際にインデックスに利用しているフィールドのパスと一致していなくても問題はないのですが、なるべく一致させたほうが可読性がよくなるのでおすすめです。
+なおインデックスはGVKごとに作成されるので、異なるタイプのリソース間でフィールド名が同じになっても問題ありません。
+またnamespaceスコープのリソースの場合は、内部的にフィールド名にnamespace名を付与して管理しているので、明示的にフィールド名にnamespaceを含める必要はありません。
+インデクサーが返す値はスライスになっていることから分かるように、複数の値にマッチするようにインデックスを構成することも可能です。
+
+上記のようなインデックスを作成しておくと、`List()`を呼び出す際に特定のフィールドが指定した値と一致するリソースだけを取得することができます。
+例えば以下の例であれば、ownerReferenceに指定したTenantリソースがセットされているnamespaceだけを取得することができます。
+
+[import:"matching-fields",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
