@@ -1,67 +1,83 @@
 # CRDマニフェストの生成
 
-コントローラでカスタムリソースを扱うためには、そのリソースのCRD(Custom Resource Definition)を定義する必要があります。
-下記の例の様にCRDは長くなりがちで、人間が記述するには少々大変です。
+コントローラーでカスタムリソースを扱うためには、そのリソースのCRD(Custom Resource Definition)を定義する必要があります。
+下記の例の様にCRDは長くなりがちで、手書きで作成するには少々手間がかかります。
 
-- [CRDの例](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/config/crd/bases/multitenancy.example.com_tenants.yaml)
+- [CRDの例](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/config/crd/bases/view.zoetrope.github.io_markdownviews.yaml)
 
-そこでKubebuilderではcontroller-genというツールを利用して、Goで記述したstructからCRDを生成する方式を採用しています。
+そこでKubebuilderではcontroller-genというツールを提供しており、Goで記述したstructからCRDを生成できます。
 
-`kubebuilder create api`コマンドで生成された[api/v1/tenant_types.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/api/v1/tenant_types.go)を見てみると、`TenantSpec`, `TenantStatus`, `Tenant`, `TenantList`という構造体が定義されており、たくさんの`//+kubebuilder:`から始まるマーカーコメントが付与されています。
-controller-genは、これらの構造体とマーカーを頼りにCRDの生成をおこないます。
+まずは`kubebuilder create api`コマンドで生成された[api/v1/markdownview_types.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/api/v1/markdownview_types.go)を見てみましょう。
 
-`Tenant`がカスタムリソースの本体となる構造体です。`TenantList`は`Tenant`のリストを表す構造体です。これら2つの構造体は基本的に変更することはありません。
-`TenantSpec`と`TenantStatus`は`Tenant`構造体を構成する要素です。この2つの構造体を書き換えてカスタムリソースを定義していきます。
+```go
+type MarkdownViewSpec struct {
+	Foo string `json:"foo,omitempty"`
+}
 
-一般的にカスタムリソースの`Spec`はユーザーが記述するもので、システムのあるべき状態をユーザーからコントローラに伝えるために利用されます。
-一方の`Status`は、コントローラが処理した結果をユーザーや他のシステムに伝えるために利用されます。
+type MarkdownViewStatus struct {
+}
 
-## TenantSpec
+//+kubebuilder:object:root=true
+//+kubebuilder:subresource:status
 
-さっそく`TenantSpec`を定義していきましょう。
+type MarkdownView struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-[作成するカスタムコントローラ](../introduction/sample.md)において、テナントコントローラが扱うカスタムリソースとして、下記のようなマニフェストを検討しました。
+	Spec   MarkdownViewSpec   `json:"spec,omitempty"`
+	Status MarkdownViewStatus `json:"status,omitempty"`
+}
 
-```yaml
-apiVersion: multitenancy.example.com/v1
-kind: Tenant
-metadata:
-  name: sample
-spec:
-  namespaces:
-    - test1
-    - test2
-  namespacePrefix: sample-
-  admin:
-    kind: User
-    name: test
-    namespace: default
-    apiGroup: rbac.authorization.k8s.io
+//+kubebuilder:object:root=true
+
+type MarkdownViewList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty"`
+	Items           []MarkdownView `json:"items"`
+}
 ```
 
-上記のマニフェストを取り扱うための構造体を用意しましょう。
+`MarkdownViewSpec`, `MarkdownViewStatus`, `MarkdownView`, `MarkdownViewList`という構造体が定義されており、`//+kubebuilder:`から始まるマーカーコメントがいくつか付与されています。
+controller-genは、これらの構造体とマーカーを頼りにCRDの生成をおこないます。
 
-[import:"spec"](../../codes/tenant/api/v1/tenant_types.go)
+`MarkdownView`がカスタムリソースの本体となる構造体です。`MarkdownViewList`は`MarkdownView`のリストを表す構造体です。これら2つの構造体は基本的に変更することはありません。
+`MarkdownViewSpec`と`MarkdownViewStatus`は`MarkdownView`構造体を構成する要素です。この2つの構造体を書き換えてカスタムリソースを定義していきます。
+
+一般的にカスタムリソースの`Spec`はユーザーが記述するもので、システムのあるべき状態をユーザーからコントローラーに伝える用途として利用されます。
+一方の`Status`は、コントローラーが処理した結果をユーザーや他のシステムに伝える用途として利用されます。
+
+## MarkdownViewSpec
+
+さっそく`MarkdownViewSpec`を書き換えていきましょう。
+
+[作成するカスタムコントローラ](../introduction/sample.md)において、MarkdownViewコントローラーが扱うカスタムリソースとして下記のようなマニフェストを例示しました。
+
+[import](../../codes/markdown-view/config/samples/view_v1_markdownview.yaml)
+
+上記のマニフェストを扱うための構造体を用意しましょう。
+
+[import:"spec"](../../codes/markdown-view/api/v1/markdownview_types.go)
 
 まず下記の3つのフィールドを定義します。
 
-- `Namespaces`: テナントに属するnamespaceの一覧を指定
-- `NamespacePrefix`: namespace名のプリフィックスを指定
-- `Admin`: テナントの管理ユーザーを指定
+- `Markdowns`: 表示したいマークダウンファイルの一覧
+- `Replicas`: Viewerのレプリカ数
+- `ViewerImage`: Markdownの表示に利用するViewerのイメージ名
 
 各フィールドの上に`// +kubebuilder`という文字列から始まるマーカーと呼ばれるコメントが記述されています。
-これらのマーカーによって、生成されるCRDの内容を制御することができます。
+これらのマーカーによって、生成されるCRDの内容を制御できます。
 
-付与できるマーカーは`controller-gen crd -w`コマンドで確認することができます。
+付与できるマーカーは`controller-gen crd -w`コマンドで確認できます。
 
 ### Required/Optional
 
-`Namespaces`と`Admin`フィールドには`+kubebuiler:validation:Required`マーカーが付与されています。
-これはこのフィールドが必須項目であることを示しており、ユーザーがマニフェストを記述する際にこの項目を省略することができません。
-一方の`NamespacePrefix`には`+optional`が付与されており、この項目が省略可能であることを示しています。
+`Markdowns`フィールドには`+kubebuiler:validation:Required`マーカーが付与されています。
+これはこのフィールドが必須項目であることを示しており、ユーザーがマニフェストを記述する際にこの項目を省略できません。
+一方の`Replicas`と`ViewerImage`には`+optional`が付与されており、この項目が省略可能であることを示しています。
 
 マーカーを指定しなかった場合はデフォルトでRequiredなフィールドになります。
-ファイル内に下記のマーカーを配置すると、デフォルトの挙動をOptionalに変更することができます。
+
+なお、ファイル内に下記のマーカーを配置すると、デフォルトの挙動をOptionalに変更できます。
 
 ```
 // +kubebuilder:validation:Optional
@@ -75,7 +91,7 @@ type SampleSpec struct {
 }
 ```
 
-Optionalなフィールドは、以下のようにフィールドの型をポインタにすることができます。
+Optionalなフィールドは、以下のようにフィールドの型をポインタにできます。
 これによりマニフェストで値を指定しなかった場合の挙動が異なります。
 ポインタ型にした場合はnullが入り、実体にした場合はその型の初期値(intの場合は0)が入ります。
 
@@ -90,8 +106,8 @@ type SampleSpec struct {
 
 ### Validation
 
-`Namespaces`フィールドには`// +kubebuiler:validation:MinItems=1`というマーカーが付与されています。
-これは最低1つ以上のnamespaceを記述しないと、カスタムリソースを作成するときにバリデーションエラーとなることを示しています。
+`Markdowns`フィールドには`// +kubebuiler:validation:MinItems=1`というマーカーが付与されています。
+これは最低1つ以上の要素を記述しないと、カスタムリソースを作成するときにバリデーションエラーとなることを示しています。
 
 `MinItems`以外にも下記のようなバリデーションが用意されています。
 詳しくは`controller-gen crd -w`コマンドで確認してください。
@@ -102,83 +118,56 @@ type SampleSpec struct {
 - 正規表現にマッチするかどうか
 - リスト内の要素がユニークかどうか
 
+## MarkdownViewStatus
 
-## TenantStatus
+次にMarkdownViewリソースの状態を表現するための`MarkdownViewStatus`を書き換えます。
 
-次にテナントリソースの状態を表現するために`TenantStatus`に`Conditions`フィールドを追加します。
-このようなCondition型は様々なリソースで利用されている頻出パターンなので覚えておくとよいでしょう。
+[import:"status"](../../codes/markdown-view/api/v1/markdownview_types.go)
 
-[import:"status"](../../codes/tenant/api/v1/tenant_types.go)
+今回のカスタムコントローラーでは、`MarkdownViewStatus`を文字列型とし、`NotReady`,`Available`,`Healty`の3つの状態をあらわすようにしました。
 
-Statusフィールドにより、ユーザーや他のシステム(モニタリングシステムなど)がテナントリソースの状態を確認することができるようになります。
+`//+kubebuilder:validation:Enum`を利用すると、指定した文字列以外の値を設定できないようになります。
 
-テナントの作成に成功した場合には下記のようなStatusになります。
+## MarkdownView
 
-```yaml
-apiVersion: multitenancy.example.com/v1
-kind: Tenant
-metadata:
-  name: sample
-spec: # 省略
-status:
-  conditions:
-  - type: Ready
-    status: True
-    lastTransitionTime: "2020-07-18T09:01:02Z"
-```
+続いて`MarkdownView`構造体のマーカーを見てみましょう。
 
-テナントの作成に失敗すると下記のようなStatusになります。
+[import:"markdown-view"](../../codes/markdown-view/api/v1/markdownview_types.go)
 
-```yaml
-apiVersion: multitenancy.example.com/v1
-kind: Tenant
-metadata:
-  name: sample
-spec: # 省略
-status:
-  conditions:
-  - type: Ready
-    status: False
-    reason: Failed
-    message: "failed to create 'test1' namespace"
-    lastTransitionTime: "2020-07-18T10:15:34"
-```
+Kubebuilderが生成した初期状態では、`+kubebuilder:object:root=true`と`+kubebuilder:subresource`の2つのマーカーが指定されています。
+ここではさらに`+kubebuilder:printcolumn`を追加することとします。
+  
+`+kubebuilder:object:root=true`は、`MarkdownView`構造体がカスタムリソースのrootオブジェクトであることを表すマーカーです。
 
-## Tenant
-
-続いて`Tenant`構造体のマーカーを見てみましょう。
-
-[import:"tenant"](../../codes/tenant/api/v1/tenant_types.go)
-
-- `+kubebuilder:object:root=true`: `Tenant`構造体がカスタムリソースのrootオブジェクトであることを表すマーカーです。
-- `+kubebuilder:resource:scope=Cluster`: `Tenant`がcluster-scopeのカスタムリソースであることを表すマーカーです。namespaced-scopeの場合は"scope=Namespaced"とするか、このマーカーを省略します。
-
-上記に加えて`+kubebuilder:subresource`と`+kubebuilder:printcolumn`を付与します。
+`+kubebuilder:subresource`と`+kubebuilder:printcolumn`マーカーについて、以降で解説します。
 
 ### subresource
 
 `+kubebuilder:subresource:status`というマーカーを追加すると、`status`フィールドがサブリソースとして扱われるようになります。
 
-サブリソースを有効にすると`status`が独自のエンドポイントを持つようになります。
-これによりTenantリソース全体を取得・更新しなくても、`status`のみを取得したり更新することが可能になります。
-ただし、あくまでもメインのリソースに属するリソースなので、個別に作成や削除することはできません。
+Kubernetesでは、すべてのリソースはそれぞれ独立したAPIエンドポイントを持っており、APIサーバー経由でリソースの取得・作成・変更・削除をおこなうことができます。
 
-ユーザーが`spec`フィールドを記述し、コントローラが`status`フィールドを記述するという役割分担を明確にすることができるので、基本的には`status`はサブリソースにしておくのがよいでしょう。
+サブリソースを有効にすると`status`フィールドがメインのリソースと独立したAPIエンドポイントを持つようになります。
+
+これによりメインのリソース全体を取得・更新しなくても、`status`のみの取得や更新が可能になります。
+ただし、あくまでもメインのリソースに属するサブのリソースなので、個別の作成や削除はできません。
+
+ユーザーが`spec`フィールドを記述し、コントローラーが`status`フィールドを記述するという役割分担を明確にできるので、基本的には`status`はサブリソースにしておくのがよいでしょう。
 なおKubebuilder v3では、`status`フィールドがサブリソースに指定するマーカーが最初から指定されるようになりました。
 
-なお、CRDでは任意のフィールドをサブリソースにすることはできず、`status`と`scale`の2つのフィールドのみに対応しています。
+CRDでは任意のフィールドをサブリソースにはできず、`status`と`scale`の2つのフィールドのみに対応しています。
 
 ### printcolumn
 
-`+kubebuilder:printcolumn`マーカーを付与すると、kubectlでカスタムリソースを取得したときに表示する項目を指定することができます。
+`+kubebuilder:printcolumn`マーカーを付与すると、kubectlでカスタムリソースを取得したときに表示する項目を指定できます。
 
-表示対象のフィールドはJSONPathで指定することが可能です。
-これにより`JSONPath=".status.conditions[?(@.type=='Ready')].status"`と記述すると、`status.conditions`の中の`type`が"Ready"な要素の`status`の値を表示することができます。
+表示対象のフィールドはJSONPathで指定可能です。
+例えば、`JSONPath=".spec.replicas"`と記述すると、kubectl getしたときに`.spec.replicas`の値が表示されます。
 
-kubectlでTenantリソースを取得すると、下記のようにPREFIXやREADYの値が表示されていることが確認できます。
+kubectlでMarkdownViewリソースを取得すると、下記のようにREPLICASやSTATUSの値が表示されていることが確認できます。
 
 ```
-$ kubectl get tenant
-NAME            ADMIN     PREFIX           READY
-tenant-sample   default   tenant-sample-   True
+$ kubectl get markdownview
+NAME                  REPLICAS   STATUS
+MarkdownView-sample   1          healthy
 ```

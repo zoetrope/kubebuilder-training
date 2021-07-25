@@ -1,36 +1,42 @@
 # クライアントの使い方
 
-controller-runtimeでは、Kubernetes APIにアクセスするためのクライアントとして[client.Client](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client?tab=doc#Client)を提供しています。
+controller-runtimeでは、Kubernetes APIにアクセスするためのクライアントライブラリ([client.Client](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client?tab=doc#Client))を提供しています。
 
-このクライアントは標準リソースとカスタムリソースを同じように扱うことができ、型安全で簡単に利用することができます。
+このクライアントは標準リソースとカスタムリソースを同じように扱うことができ、型安全で簡単に利用できます。
 
 ## クライアントの作成
 
 クライアントを作成するためにはまず[Scheme](https://pkg.go.dev/k8s.io/apimachinery/pkg/runtime?tab=doc#Scheme)を用意する必要があります。
 
-SchemeはGoのstructとGroupVersionKindを相互に変換したり、異なるバージョン間でのSchemeの変換をおこなうための機能です。
+SchemeはGoのstructとGroupVersionKindを相互に変換したり、異なるバージョン間でのSchemeの変換をおこなったりするための機能です。
 
-[import:"init"](../../codes/tenant/main.go)
+[import:"init"](../../codes/markdown-view/main.go)
 
 最初に`runtime.NewScheme()`で新しい`scheme`を作成します。
 `clientgoscheme.AddToScheme`では、PodやServiceなどKubernetesの標準リソースの型をschemeに追加しています。
-`multitenancyv1.AddToScheme`では、Tenantカスタムリソースの型をschemeに追加しています。
+`viewv1.AddToScheme`では、MarkdownViewカスタムリソースの型をschemeに追加しています。
 
-このSchemeを利用することで、標準リソースとTenantリソースを扱うことができるクライアントを作成できます。
+このSchemeを利用することで、標準リソースとMarkdownViewリソースを扱うことができるクライアントを作成できます。
 
 つぎに[GetConfigOrDie](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client/config?tab=doc#GetConfigOrDie)でクライアントの設定を取得しています。
-この関数はコマンドラインオプションの`--kubeconfig`や、環境変数`KUBECONFIG`で指定された設定ファイルを利用するか、またはKubernetesクラスタ上でPodとして動いているのであれば、Podが持つサービスアカウントの認証情報を利用します。
-通常コントローラはKubernetesクラスタ上で動いているので、サービスアカウントの認証情報が利用されます。
 
-このSchemeとConfigを利用してManagerを作成し、`GetClient()`でクライアントを取得することができます。
-ただし、Managerの`Start()`を呼び出す前にClientを利用することはできないので注意しましょう。
-
-```
+```go
 mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
     Scheme: scheme,
 })
 client := mgr.GetClient()
 ```
+
+GetConfigOrDie関数は、下記のいずれかの設定を読み込みます。
+
+- コマンドラインオプションの`--kubeconfig`指定された設定ファイル
+- 環境変数`KUBECONFIG`で指定された設定ファイル
+- Kubernetesクラスター上でPodとして動いているのであれば、カスタムコントローラーが持つサービスアカウントの認証情報を利用
+
+カスタムコントローラーは通常Kubernetesクラスター上で動いているので、サービスアカウントの認証情報が利用されます。
+
+このSchemeとConfigを利用してManagerを作成し、`GetClient()`でクライアントを取得できます。
+ただし、Managerの`Start()`を呼び出す前にクライアントは利用できないので注意しましょう。
 
 ## Get/List
 
@@ -42,12 +48,12 @@ client := mgr.GetClient()
 そして第3引数に指定した変数で結果を受け取ることができます。
 なお、どの種類のリソースを取得するのかは、第3引数に渡した変数の型で自動的に判別されます。
 
-[import:"get",unindent="true"](../../codes/tenant/controllers/tenant_controller.go)
+[import:"get"](../../codes/client-sample/main.go)
 
 ### クライアントのキャッシュ機構
 
-Kubernetes上ではいくつものコントローラが動いており、そのコントローラはそれぞれたくさんのリソースを扱っています。
-これらのコントローラが毎回APIサーバーにアクセスしてリソースの取得をおこなうと、APIサーバーやそのバックエンドにいるetcdの負荷が高まってしまうという問題があります。
+Kubernetes上ではいくつものコントローラーが動いており、そのコントローラーはそれぞれたくさんのリソースを扱っています。
+これらのコントローラーが毎回APIサーバーにアクセスしてリソースの取得をおこなうと、APIサーバーやそのバックエンドにいるetcdの負荷が高まってしまうという問題があります。
 
 そこで、controller-runtimeの提供するクライアントはキャッシュ機構を備えています。
 このクライアントは`Get()`や`List()`でリソースを取得すると、同一namespace内の同じKindのリソースをすべて取得してインメモリにキャッシュします。
@@ -55,186 +61,118 @@ Kubernetes上ではいくつものコントローラが動いており、その�
 
 ![cache](./img/cache.png)
 
-このようなキャッシュの仕組みにより、コントローラからAPIサーバーへのアクセスを大幅に減らすことが可能になっています。
+このようなキャッシュの仕組みにより、コントローラーからAPIサーバーへのアクセスを減らすことが可能になっています。
 
 なお、このようなキャッシュ機構を備えているため、実装上はGetしか呼び出していなくても、リソースのアクセス権限としてはListやWatchが必要となります。
 [RBACマニフェストの生成](../controller-tools/rbac.md)で解説したように、リソースの取得をおこなう場合は`get, list, watch`の権限を付与しておきましょう。
 
-キャッシュの仕組みが必要ない場合は、Managerから`GetAPIReader()`でキャッシュを利用しないクライアントを取得することもできます。
+キャッシュの仕組みが必要ない場合は、Managerの`GetAPIReader()`を利用してキャッシュ機能のないクライアントを取得できます。
 
 ### Listの使い方
 
-Listでは条件を指定して複数のリソースを一度に取得することができます。
+Listでは条件を指定して複数のリソースを一度に取得できます。
 
 下記の例では、LabelSelectorやNamespaceを指定してリソースの取得をおこなっています。
 なお、Namespaceを指定しなかった場合は、全Namespaceのリソースを取得します。
 
-[import:"list"](../../codes/misc/main.go)
+[import:"list"](../../codes/client-sample/main.go)
 
 `Limit`と`Continue`を利用することで、ページネーションをおこなうことも可能です。
 下記の例では1回のAPI呼び出しで3件ずつリソースを取得して表示しています。
 
-[import:"pagination"](../../codes/misc/main.go)
+[import:"pagination"](../../codes/client-sample/main.go)
 
-`.ListMeta.Continue`にトークンが入っているを利用して、続きのリソースを取得することができます。
+`.ListMeta.Continue`にトークンが入っているを利用して、続きのリソースを取得できます。
 トークンが空になるとすべてのリソースを取得したということになります。
-
-### インデックス
-
-複数のリソースを取得する際にラベルやnamespaceだけでなく、特定のフィールドの値に応じてフィルタリングしたいことがあるかと思います。
-controller-runtimeではインメモリキャッシュにインデックスを張る仕組みが用意されています。
-
-![index](./img/index.png)
-
-インデックスを利用するためには事前に`GetFieldIndexer().IndexField()`を利用して、どのフィールドの値に基づいてインデックスを張るのかを指定しておきます。
-下記の例ではnamespaceリソースに対して、ownerReferenceに指定されているTenantリソースの名前に応じてインデックスを作成しています。
-
-[import:"indexer"](../../codes/tenant/controllers/tenant_controller.go)
-[import:"index-field",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
-
-フィールド名には、どのフィールドを利用してインデックスを張っているのかを示す文字列を指定します。
-実際にインデックスに利用しているフィールドのパスと一致していなくても問題はないのですが、なるべく一致させたほうが可読性がよくなるのでおすすめです。
-なおインデックスはGVKごとに作成されるので、異なるタイプのリソース間でフィールド名が同じになっても問題ありません。
-またnamespaceスコープのリソースの場合は、内部的にフィールド名にnamespace名を付与して管理しているので、明示的にフィールド名にnamespaceを含める必要はありません。
-インデクサーが返す値はスライスになっていることから分かるように、複数の値にマッチするようにインデックスを構成することも可能です。
-
-上記のようなインデックスを作成しておくと、`List()`を呼び出す際に特定のフィールドが指定した値と一致するリソースだけを取得することができます。
-例えば以下の例であれば、ownerReferenceに指定したTenantリソースがセットされているnamespaceだけを取得することができます。
-
-[import:"matching-fields",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
 
 ## Create/Update
 
-リソースの作成は以下のように`Create()`を利用します。更新処理の`Update()`も同じように利用できます。
+リソースの作成は`Create()`、更新には`Update()`を利用します。
+例えば、Deploymentリソースは以下のように作成できます。
 
-[import:"namespace,create",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
+[import:"create",unindent:"true"](../../codes/client-sample/main.go)
 
-なお、リソースが存在する状態で`Create()`を呼んだり、リソースが存在しない状態で`Update()`を呼び出すとエラーになります。
+なお、リソースがすでに存在する状態で`Create()`を呼んだり、リソースが存在しない状態で`Update()`を呼び出したりするとエラーになります。
 
 ## CreateOrUpdate
 
-`Get()`でリソースを取得して、リソースが存在しなければ`Create()`、存在すれば`Update()`を呼び出すという処理は頻出パターンです。
+`Get()`でリソースを取得して、リソースが存在しなければ`Create()`を呼び、存在すれば`Update()`を呼び出すという処理は頻出パターンです。
 そこで、controller-runtimeには`CreateOrUpdate()`という便利な関数が用意されています。
 
-[import:"create-or-update",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
+[import:"create-or-update",unindent:"true"](../../codes/client-sample/main.go)
 
-この関数の第3引数に渡すオブジェクトには、NameとNamespace以外のフィールドは設定しないでください(クラスタリソースの場合はNamespace不要)。
+この関数の第3引数に渡すオブジェクトには、NameとNamespaceのみを指定します(ただしクラスターリソースの場合はNamespace不要)。
 
 リソースが存在した場合、この第3引数で渡した変数に既存のリソースの値がセットされます。
-その後、第4引数で渡した関数の中でその`role`変数を書き換え、更新処理を実行します。
+その後、第4引数で渡した関数の中でその`dep`変数を書き換え、更新処理を実行します。
 
-リソースが存在しない場合は、第4引数で渡した関数を実行した後、リソースの作成処理を実行します。
-
-なお、Annotationsなどの一部のフィールドはKubernetesの標準コントローラが値を設定する場合があります。
-そのため、以下のように値を上書きしてしまうと、他のコントローラが設定した値が消えてしまいます。
-
-```go
-op, err := ctrl.CreateOrUpdate(ctx, r.Client, role, func() error {
-	role.Annotations = map[string]string{
-		"an1": "test",
-	}
-	return nil
-}
-```
-
-そのような問題を避けるため、Annotationsを更新する場合は上書きではなく、以下のように追加しましょう。
-
-```go
-op, err := ctrl.CreateOrUpdate(ctx, r.Client, role, func() error {
-	if role.Annotations == nil {
-		role.Annotations = make(map[string]string)
-	}
-	role.Annotations["an1"] = "test"
-	return nil
-}
-```
+リソースが存在しない場合は、第4引数で渡した関数を実行した後、リソースの作成処理が実行されます。
 
 ## Patch
 
-`Update()`でリソースを更新するには、そのリソースのすべてのフィールドを埋めなくてはなりません。
+`Update()`や`CreateOrUpdate()`による更新処理は、リソースを取得してから更新するまでの間に、他の誰かがリソースを書き換えてしまう可能性があります
+(これをTOCTTOU: Time of check to time of useと呼びます)。
 
-一方、`Patch()`を利用すると、変更したいフィールドの値を用意するだけでリソースの更新をおこなうことができます。
+すでに書き換えられたリソースを更新しようとすると、以下のようなエラーが発生してしまいます。
 
-PatchにはMergePath方式とServer-Side Apply方式があります。
-Server-Side Apply方式では、リソースの各フィールドごとに管理者を記録することにより、複数のコントローラやユーザーが同一のリソースを編集した場合に衝突を検知することが可能です。
-MergePatch方式ではそのような衝突検知はおこなわれません。
+```
+Operation cannot be fulfilled on deployments.apps "sample": the object has been modified; please apply your changes to the latest version and try again
+```
 
-ここではServer-Side Apply方式による`Patch()`の利用方法を紹介します。
-以下の例では、Deploymentリソースの`spec.replicas`フィールドのみを更新しています。
+そこで`Patch()`を利用すると、競合することなく変更したいフィールドの値だけを更新できます。
 
-[import:"patch"](../../codes/misc/main.go)
+Patchには`client.MergeFrom`や`client.StrategicMergeFrom`を利用する方法と, Server-Side Applyを利用する方法があります。
 
-Server-Side Applyを利用するには、第3引数に`client.Apply`を指定し、オプションには`FieldManager`を指定する必要があります。
-この`FieldManager`がフィールドごとの管理者の名前になるので、他のコントローラと被らないようにユニークな名前にしましょう。
+`client.MergeFrom`と`client.StrategicMergeFrom`の違いは、リスト要素の更新方法です。
+`client.MergeFrom`でリストを更新すると指定した要素で上書きされますが、`client.StrategicMergeFrom`ではリストはpatchStrategyに応じて
+要素が追加されたり更新されたりします。
 
-なお、リストやマップをどのようにマージするのかは、Goの構造体に付与したマーカーで制御することが可能です。
-詳しくは[Merge strategy](https://kubernetes.io/docs/reference/using-api/api-concepts/#merge-strategy)を参照してください。(TODO: あとで書く)
+`client.MergeFrom`を利用してDeploymentの利プリカ数のみを更新する例を以下に示します。
+
+[import:"patch-merge"](../../codes/client-sample/main.go)
+
+一方のServer-Side ApplyはKubernetes v1.14で導入されたリソースの更新方法です。
+リソースの各フィールドを更新したコンポーネントを`.metadata.managedFields`で管理することで、
+サーバーサイドでリソース更新の衝突を検出できます。
+
+Server-Side Applyでは、以下のようにUnstructured型のパッチを用意してリソースの更新をおこないます。
+
+[import:"patch-apply"](../../codes/client-sample/main.go)
+
+上記のようにServer-Side ApplyはUnstructured型を利用するため、型安全なコードが記述できませんでした。
+
+Kubernetes v1.21ではApplyConfigurationが導入され、以下のように型安全なServer-Side Applyのコードが書けるようになりました。
+
+[import:"patch-apply-config"](../../codes/client-sample/main.go)
 
 ## Status.Update/Patch
 
-Statusをサブリソース化している場合、これまで紹介した`Update()`や`Patch()`を利用してもステータスを更新することができません。
+Statusをサブリソース化している場合、これまで紹介した`Update()`や`Patch()`を利用してもステータスを更新できません。
 Status更新用のクライアントを利用することになります。
 
-`Status.Update()`と`Status.Patch()`は、メインリソースの`Update()`、`Patch()`と使い方は同じです。
-ただし、現状カスタムリソースの Status サブリソースは Server-Side Apply による Patch をサポートしていません。
+`Status().Update()`と`Status().Patch()`は、メインリソースの`Update()`、`Patch()`と使い方は同じです。
+以下のようにstatusフィールドを変更し、`Status().Update()`を呼び出します。
+(このコードはあくまでもサンプルです。Deploymentリソースのステータスを勝手に書き換えるべきではありません。)
 
-```go
-tenant.Status = multitenancyv1.TenantStatus{
-	Conditions: []multitenancyv1.TenantCondition{
-		{
-			Type:               multitenancyv1.ConditionReady, 
-			Status:             corev1.ConditionTrue,
-			LastTransitionTime: metav1.NewTime(time.Now()),
-		},
-	},
-}
-err := r.Status().Update(ctx, &tenant)
-```
+[import:"update-status"](../../codes/client-sample/main.go)
 
-## Delete/DeleteOfAll
+なお、現状ではカスタムリソースのStatusサブリソースはServer-Side Applyをサポートしていません。
 
-最後にリソースを削除する`Delete`と`DeleteOfAll`を見てみましょう。
+## Delete/DeleteAllOf
 
-`Delete`と`DeleteOfAll`には`Preconditions`と`PropagationPolicy`という特殊なオプションがあるのでそちらを紹介します。
+最後にリソースを削除する`Delete`と`DeleteAllOf`を見てみましょう。
 
-まずは`Preconditions`オプションを利用した例です。
+`Delete`と`DeleteAllOf`には`Preconditions`という特殊なオプションがあります。
+以下のコードは`Preconditions`オプションを利用した例です。
 
-[import:"cond"](../../codes/misc/main.go)
+[import:"cond"](../../codes/client-sample/main.go)
 
-リソースを取得してから削除のリクエストを投げるまでの間にリソースが作り直されてしまう可能性があります。
-そこで再作成したリソースを間違って消してしまわないように、UIDとResourceVersionを指定して、確実に指定したリソースを削除しています。
+リソースを削除する際、リソース取得してから削除のリクエストを投げるまでの間に、同じ名前の別のリソースが作り直される場合があります。
+そのようなケースでは、NameとNamespaceのみを指定してDeleteを呼び出した場合、誤って新しく作成されたリソースを削除される可能性があります。
+そこでこの例では再作成したリソースを間違って消してしまわないように、`Preconditions`オプションを利用してUIDとResourceVersionが一致するリソースを削除しています。
 
-つづいて`PropagationPolicy`オプションを利用した例です。
+`DeleteAllOf`は、以下のように指定した種類のリソースをまとめて削除できます。
 
-[import:"policy"](../../codes/misc/main.go)
+[import:"delete-all-of"](../../codes/client-sample/main.go)
 
-[リソースの削除](deletion.md)で解説するように、Kubernetesでは親リソースを削除するとそのリソースに結びつく子リソースも一緒に削除されます。
-この挙動を変えるためのオプションとして`PropagationPolicy`が用意されています。
-
-上記のようにDeploymentリソースの削除時に`DeletePropagationOrphan`を指定すると、子のリソースであるReplicaSetやPodのリソースが削除されなくなります。
-
-## ディスカバリーベースのクライアント
-
-client-goを利用してCRDを扱う場合、[k8s.io/client-go/dynamic](https://pkg.go.dev/k8s.io/client-go/dynamic?tab=doc)や[k8s.io/apimachinery/pkg/apis/meta/v1/unstructured](https://pkg.go.dev/k8s.io/apimachinery/pkg/apis/meta/v1/unstructured?tab=doc)による動的型クライアントを利用するか、[kubernetes/code-generator](https://github.com/kubernetes/code-generator)を利用してコード生成をおこなう必要がありました。
-
-しかし、controller-runtimeのClientでは、引数に構造体を渡すだけで標準リソースでもカスタムリソースでもAPIを呼び分けてくれています。
-このClientはどのように仕組みになっているのでしょうか。
-
-まずは渡された構造体の型を Scheme に登録された情報から探します。そうすると GVK が得られます。
-
-次にREST APIを叩くためにはREST APIのパスを解決する必要があります。
-REST APIのパスは、namespace-scopedのリソースであれば`/apis/{group}/{version}/namespaces/{namespace}/{resource}/{name}`、cluster-scopeのスコープであれば`/apis/{group}/{version}/{resource}/{name}`のようになります。
-この情報はCRDに記述されているため、APIサーバーに問い合わせる必要があります。
-
-これらの情報は`kubectl`でも確認することができます。以下のように実行してみましょう。
-
-```
-$ kubectl api-resources --api-group="multitenancy.example.com"
-NAME      SHORTNAMES   APIGROUP                   NAMESPACED   KIND
-tenants                multitenancy.example.com   false        Tenant
-```
-
-APIサーバーに問い合わせて取得した情報をもとにREST APIのパスが解決できました。
-最後はこのパスに対してリクエストを発行します。
-
-Clientはこのような仕組みによって、標準リソースとカスタムリソースを同じように扱うことができ、型安全で簡単に利用できるクライアントを実現しています。
+なお、Serviceリソースなど`DeleteAllOf`が利用できないリソースもあるので注意しましょう。

@@ -1,20 +1,32 @@
 # RBACマニフェストの生成
 
-KubernetesではRBAC(Role-based access control)によりリソースへのアクセス権を制御することができます。
-カスタムコントローラにおいても、利用するリソースにのみアクセスできるように適切に権限を設定する必要があります。
+KubernetesではRBAC(Role-based access control)によりリソースへのアクセス権を制御できます。
+カスタムコントローラーにおいても、利用するリソースにのみアクセスできるように適切な権限を設定する必要があります。
 
-controller-genでは、Goのソースコード中に埋め込まれたマーカーを元にRBACのマニフェストを生成することができます。
+controller-genでは、Goのソースコード中に埋め込まれたマーカーを元にRBACのマニフェストを生成できます。
 
-テナントコントローラに付与したマーカーを見てみましょう。
+まずはKubebuilderによって生成されたマーカーを見てみましょう。
 
-[import:"rbac"](../../codes/tenant/controllers/tenant_controller.go)
+```go
+//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/finalizers,verbs=update
+```
 
-まずは、Tenantリソースに対して`get;list;watch;create;update;patch;delete`の権限を与えます。
-statusをサブリソース化した場合は、個別に権限を追加する必要があります。
-サブリソースはcreateやdelete操作をおこなえないので`get;update;patch`の権限を与えます。
-また、テナントコントローラが管理するNamespace, ClusterRole, RoleBindingを操作する権限も追加します。
+- `groups`: 権限を与えたいリソースのAPIグループを指定します。
+- `resources`: 権限を与えたいリソースの種類を指定します。
+- `verb`: どのような権限を与えるのかを指定します。コントローラーがおこなう操作に応じた権限を指定します。
+
+MarkdownViewリソースと、そのサブリソースである`status`と`finalizer`に権限が付与されています。
+なお、サブリソースはlistやcreate,delete操作をおこなえないので`get;update;patch`の権限のみが付与されています。
+
+これらに加えてMarkdownViewコントローラーが作成するConfigMap, Deployment, Service, Eventリソースを操作する権限のマーカーを追加しましょう。
+
+[import:"rbac"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
 なお、controller-runtimeの提供するClientは、Getでリソースを取得した場合も裏でListやWatchを呼び出しています。
 そのためgetしかしない場合でも、get, list, watchを許可しておきましょう。
 
-`make manifests`を実行すると[config/rbac/role.yaml](../../codes/tenant/config/rbac/role.yaml)が更新されます。
+`make manifests`を実行すると以下のように`config/rbac/role.yaml`が更新されます。
+
+[import](../../codes/markdown-view/config/rbac/role.yaml)

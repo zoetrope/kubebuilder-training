@@ -1,12 +1,12 @@
-# Kindで動かしてみよう
+# カスタムコントローラーの動作確認
 
-kubebuilderコマンドで生成したプロジェクトをビルドし、[Kind](https://kind.sigs.k8s.io/docs/user/quick-start/)環境で動かしてみましょう。
+Kubebuilderコマンドで生成したプロジェクトをビルドし、[Kind](https://kind.sigs.k8s.io/docs/user/quick-start/)環境で動かしてみましょう。
 
-Kindとはローカル環境にKubernetesクラスタを構築するためのツールで、手軽にコントローラのテストや動作確認をおこなうことができます。
+Kindとはローカル環境にKubernetesクラスターを構築するためのツールで、手軽にコントローラーのテストや動作確認をおこなうことができます。
 
 ## kindの立ち上げ
 
-まずはkindコマンドを利用してKubernetesクラスタを作成します。
+まずはkindコマンドを利用してKubernetesクラスターを作成します。
 
 ```console
 $ kind create cluster
@@ -31,15 +31,7 @@ cert-manager-cainjector-64c949654c-64wjk   1/1     Running   0          26s
 cert-manager-webhook-6bdffc7c9d-hkr8h      1/1     Running   0          26s
 ```
 
-## コントローラのコンテナイメージの用意
-
-コンテナイメージのタグ名に`latest`を利用すると、`imagePullPolicy: Always`になってしまうため、kind上にロードしたコンテナイメージが利用されない問題があります。([参考](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster))
-そこでコンテナイメージをビルドする前に、`Makefile`を編集してイメージのタグ名を変更しておきます。
-
-```diff
-- IMG ?= controller:latest
-+ IMG ?= controller:v1
-```
+## コントローラーのコンテナイメージの用意
 
 コンテナイメージをビルドします。
 
@@ -48,16 +40,21 @@ $ make docker-build
 ```
 
 このコンテナイメージを利用するためには、ビルドしたコンテナイメージをDockerHubなどのコンテナレジストリに登録するか、kind環境にロードする必要があります。
+
 ここでは下記のコマンドを利用してkind環境にコンテナイメージをロードしましょう。
 
 ```console
-$ kind load docker-image controller:v1
+$ kind load docker-image controller:latest
 ```
 
+なおコンテナイメージのタグ名に`latest`を指定した場合、ImagePullPolicyが`Always`になり、ロードしたコンテナイメージが利用されない場合があります。
+([参考](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster))
 
-## コントローラの動作確認
+そこで、[config/manager/manager.yaml](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/config/manager/manager.yaml)に`imagePullPolicy: IfNotPresent`を追加しておきます。
 
-次にCRDをKubernetesクラスタに適用します。
+## コントローラーの動作確認
+
+次にCRDをKubernetesクラスターに適用します。
 
 ```console
 $ make install
@@ -69,49 +66,77 @@ $ make install
 $ make deploy
 ```
 
-コントローラのPodがRunningになったことを確認してください。
+コントローラーのPodがRunningになったことを確認してください。
 
 ```console
-$ kubectl get pod -n tenant-system
-NAME                                         READY   STATUS    RESTARTS   AGE
-tenant-controller-manager-6dd494cc9c-vwbzq   1/1     Running   0          1m
+$ kubectl get pod -n markdown-view-system
+NAME                                                READY   STATUS    RESTARTS   AGE
+markdown-view-controller-manager-5bc678bbf9-vb9r5   2/2     Running   0          30s
 ```
 
-次にコントローラのログを表示させておきます。
+次にコントローラーのログを表示させておきます。
 
 ```console
-$ kubectl logs -n tenant-system tenant-controller-manager-6dd494cc9c-vwbzq -c manager -f
+$ kubectl logs -n markdown-view-system markdown-view-controller-manager-5bc678bbf9-vb9r5 -c manager -f
 ```
 
 サンプルのカスタムリソースを適用します。
 
 ```console
-$ kubectl apply -f config/samples/multitenancy_v1_tenant.yaml
+$ kubectl apply -f config/samples/view_v1_markdownview.yaml
 ```
 
-以下のようにWebhookやReconcileのメッセージがコントローラのログに表示されていれば成功です。
+以下のようにWebhookやReconcileのメッセージがコントローラーのログに表示されていれば成功です。
 
 ```console
-2020-12-12T08:40:34.435Z        INFO    controller-runtime.metrics      metrics server is starting to listen    {"addr": "127.0.0.1:8080"}
-2020-12-12T08:40:34.435Z        INFO    controller-runtime.builder      Registering a mutating webhook  {"GVK": "multitenancy.example.com/v1, Kind=Tenant", "path": "/mutate-multitenancy-example-com-v1-tenant"}
-2020-12-12T08:40:34.435Z        INFO    controller-runtime.webhook      registering webhook     {"path": "/mutate-multitenancy-example-com-v1-tenant"}
-2020-12-12T08:40:34.435Z        INFO    controller-runtime.builder      Registering a validating webhook        {"GVK": "multitenancy.example.com/v1, Kind=Tenant", "path": "/validate-multitenancy-example-com-v1-tenant"}
-2020-12-12T08:40:34.436Z        INFO    controller-runtime.webhook      registering webhook     {"path": "/validate-multitenancy-example-com-v1-tenant"}
-2020-12-12T08:40:34.436Z        INFO    setup   starting manager
-I1212 08:40:34.436378       1 leaderelection.go:243] attempting to acquire leader lease  tenant-system/27475f02.example.com...
-2020-12-12T08:40:34.436Z        INFO    controller-runtime.manager      starting metrics server {"path": "/metrics"}
-2020-12-12T08:40:34.536Z        INFO    controller-runtime.webhook.webhooks     starting webhook server
-2020-12-12T08:40:34.536Z        INFO    controller-runtime.certwatcher  Updated current TLS certificate
-2020-12-12T08:40:34.536Z        INFO    controller-runtime.webhook      serving webhook server  {"host": "", "port": 9443}
-2020-12-12T08:40:34.537Z        INFO    controller-runtime.certwatcher  Starting certificate watcher
-2020-12-12T08:40:44.991Z        DEBUG   controller-runtime.webhook.webhooks     received request        {"webhook": "/mutate-multitenancy-example-com-v1-tenant", "UID": "cc5f97e6-dd4c-460e-8790-1d8163ba2f94", "kind": "multit
-enancy.example.com/v1, Kind=Tenant", "resource": {"group":"multitenancy.example.com","version":"v1","resource":"tenants"}}
-2020-12-12T08:40:44.991Z        INFO    tenant-resource default {"name": "tenant-sample"}
-2020-12-12T08:40:44.992Z        DEBUG   controller-runtime.webhook.webhooks     wrote response  {"webhook": "/mutate-multitenancy-example-com-v1-tenant", "code": 200, "reason": "", "UID": "cc5f97e6-dd4c-460e-8790-1d8163ba2f9
-4", "allowed": true}
-2020-12-12T08:40:44.997Z        DEBUG   controller-runtime.webhook.webhooks     received request        {"webhook": "/validate-multitenancy-example-com-v1-tenant", "UID": "09cb9d18-9d22-45b9-bdca-75065db20c6c", "kind": "mult
-itenancy.example.com/v1, Kind=Tenant", "resource": {"group":"multitenancy.example.com","version":"v1","resource":"tenants"}}
-2020-12-12T08:40:44.997Z        INFO    tenant-resource validate update {"name": "tenant-sample"}
-2020-12-12T08:40:44.997Z        DEBUG   controller-runtime.webhook.webhooks     wrote response  {"webhook": "/validate-multitenancy-example-com-v1-tenant", "code": 200, "reason": "", "UID": "09cb9d18-9d22-45b9-bdca-75065db20
-c6c", "allowed": true}
+2021-07-10T09:29:49.311Z        INFO    controller-runtime.metrics      metrics server is starting to listen     {"addr": "127.0.0.1:8080"}
+2021-07-10T09:29:49.311Z        INFO    controller-runtime.builder      Registering a mutating webhook   {"GVK": "view.zoetrope.github.io/v1, Kind=MarkdownView", "path": "/mutate-view-zoetrope-github-io-v1-markdownview"}
+2021-07-10T09:29:49.311Z        INFO    controller-runtime.webhook      registering webhook      {"path": "/mutate-view-zoetrope-github-io-v1-markdownview"}
+2021-07-10T09:29:49.311Z        INFO    controller-runtime.builder      Registering a validating webhook {"GVK": "view.zoetrope.github.io/v1, Kind=MarkdownView", "path": "/validate-view-zoetrope-github-io-v1-markdownview"}
+2021-07-10T09:29:49.311Z        INFO    controller-runtime.webhook      registering webhook      {"path": "/validate-view-zoetrope-github-io-v1-markdownview"}
+2021-07-10T09:29:49.311Z        INFO    setup   starting manager
+I0710 09:29:49.312373       1 leaderelection.go:243] attempting to acquire leader lease markdown-view-system/c124e721.zoetrope.github.io...
+2021-07-10T09:29:49.312Z        INFO    controller-runtime.manager      starting metrics server  {"path": "/metrics"}
+2021-07-10T09:29:49.312Z        INFO    controller-runtime.webhook.webhooks     starting webhook server
+2021-07-10T09:29:49.312Z        INFO    controller-runtime.certwatcher  Updated current TLS certificate
+2021-07-10T09:29:49.312Z        INFO    controller-runtime.webhook      serving webhook server   {"host": "", "port": 9443}
+2021-07-10T09:29:49.312Z        INFO    controller-runtime.certwatcher  Starting certificate watcher
+I0710 09:29:49.409787       1 leaderelection.go:253] successfully acquired lease markdown-view-system/c124e721.zoetrope.github.io
+2021-07-10T09:29:49.409Z        DEBUG   controller-runtime.manager.events       Normal  {"object": {"kind":"ConfigMap","namespace":"markdown-view-system","name":"c124e721.zoetrope.github.io","uid":"b48865ea-3d05-47bd-be4f-4d03a14b7a36","apiVersion":"v1","resourceVersion":"1982"}, "reason": "LeaderElection", "message": "markdown-view-controller-manager-5bc678bbf9-vb9r5_d64b0043-4a95-432e-9c76-3001247a87ac became leader"}
+2021-07-10T09:29:49.409Z        DEBUG   controller-runtime.manager.events       Normal  {"object": {"kind":"Lease","namespace":"markdown-view-system","name":"c124e721.zoetrope.github.io","uid":"3ef3dcde-abbb-440b-9052-1c85ed01d67d","apiVersion":"coordination.k8s.io/v1","resourceVersion":"1983"}, "reason": "LeaderElection", "message": "markdown-view-controller-manager-5bc678bbf9-vb9r5_d64b0043-4a95-432e-9c76-3001247a87ac became leader"}
+2021-07-10T09:29:49.410Z        INFO    controller-runtime.manager.controller.markdownview       Starting EventSource    {"reconciler group": "view.zoetrope.github.io", "reconciler kind": "MarkdownView", "source": "kind source: /, Kind="}
+2021-07-10T09:29:49.410Z        INFO    controller-runtime.manager.controller.markdownview       Starting Controller     {"reconciler group": "view.zoetrope.github.io", "reconciler kind": "MarkdownView"}
+2021-07-10T09:29:49.511Z        INFO    controller-runtime.manager.controller.markdownview       Starting workers        {"reconciler group": "view.zoetrope.github.io", "reconciler kind": "MarkdownView", "worker count": 1}
+2021-07-10T09:33:53.622Z        DEBUG   controller-runtime.webhook.webhooks     received request {"webhook": "/mutate-view-zoetrope-github-io-v1-markdownview", "UID": "20fe30b5-6d45-4592-ae4b-ee5048e054d1", "kind": "view.zoetrope.github.io/v1, Kind=MarkdownView", "resource": {"group":"view.zoetrope.github.io","version":"v1","resource":"markdownviews"}}
+2021-07-10T09:33:53.623Z        INFO    markdownview-resource   default {"name": "markdownview-sample"}
+2021-07-10T09:33:53.623Z        DEBUG   controller-runtime.webhook.webhooks     wrote response   {"webhook": "/mutate-view-zoetrope-github-io-v1-markdownview", "code": 200, "reason": "", "UID": "20fe30b5-6d45-4592-ae4b-ee5048e054d1", "allowed": true}
+2021-07-10T09:33:53.626Z        DEBUG   controller-runtime.webhook.webhooks     received request {"webhook": "/validate-view-zoetrope-github-io-v1-markdownview", "UID": "904fc35e-4415-4a90-af96-52cbe1cef1b7", "kind": "view.zoetrope.github.io/v1, Kind=MarkdownView", "resource": {"group":"view.zoetrope.github.io","version":"v1","resource":"markdownviews"}}
+2021-07-10T09:33:53.626Z        INFO    markdownview-resource   validate create {"name": "markdownview-sample"}
+2021-07-10T09:33:53.626Z        DEBUG   controller-runtime.webhook.webhooks     wrote response   {"webhook": "/validate-view-zoetrope-github-io-v1-markdownview", "code": 200, "reason": "", "UID": "904fc35e-4415-4a90-af96-52cbe1cef1b7", "allowed": true}
+```
+
+## 開発時の流れ
+
+開発時には、カスタムコントローラーの実装を書き換えて何度も動作確認をおこなうことになります。
+次のような手順で、効率よく開発を進めることができます。
+
+- コントローラーの実装が変わった場合は、下記のコマンドでコンテナイメージをビルドし、kind環境にロードし直します。
+```
+$ make docker-build
+$ kind load docker-image controller:latest
+```
+
+- CRDに変更がある場合は下記のコマンドを実行します。ただし、互換性のない変更をおこなった場合はこのコマンドに失敗するため、事前に`make uninstall`を実行してください。
+```
+make install
+```
+
+- CRD以外のマニフェストファイルに変更がある場合は下記のコマンドを実行します。ただし、互換性のない変更をおこなった場合はこのコマンドに失敗するため、事前に`make undeploy`を実行してください。
+```
+make deploy
+```
+
+- 次のコマンドでカスタムコントローラーを再起動します。
+```
+$ kubectl rollout restart -n markdown-view-system deployment markdown-view-controller-manager
 ```

@@ -1,0 +1,22 @@
+{
+  "filters": {},
+  "rules": {
+    "@textlint-ja/no-synonyms": true,
+    "@textlint-ja/textlint-rule-no-insert-dropping-sa": true,
+    "ja-hiragana-fukushi": true,
+    "ja-hiragana-hojodoushi": true,
+    "ja-no-orthographic-variants": true,
+    "no-mixed-zenkaku-and-hankaku-alphabet": true,
+    "no-start-duplicated-conjunction": {
+      "interval": 2
+    },
+    "prefer-tari-tari": true,
+    "preset-ja-spacing": true,
+    "preset-ja-technical-writing": true,
+    "prh": {
+      "rulePaths": [
+        "./prh.yaml"
+      ]
+    }
+  }
+}

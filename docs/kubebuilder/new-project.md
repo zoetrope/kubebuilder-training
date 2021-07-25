@@ -3,9 +3,9 @@
 それではさっそく`kubebuilder init`コマンドを利用して、プロジェクトの雛形を生成しましょう。
 
 ```console
-$ mkdir tenant
-$ cd tenant
-$ kubebuilder init --domain example.com --repo github.com/zoetrope/tenant
+$ mkdir markdown-view
+$ cd markdown-view
+$ kubebuilder init --domain zoetrope.github.io --repo github.com/zoetrope/markdown-view
 ```
 
 `--domain`で指定した名前はCRDのグループ名に使われます。
@@ -49,11 +49,30 @@ GitHubにリポジトリを作る場合は`github.com/<user_name>/<product_name>
 └── main.go
 ```
 
-生成されたファイルをそれぞれ見ていきましょう。
+Kubebuilderによって生成されたgo.modおよびMakefileには、少し古いバージョンのcontroller-runtimeとcontroller-genが使われている場合があります。
+必要に応じて、最新のバージョンを利用するように以下のように書き換えておきましょう。
+なお、go.modを書き換えた後は`go mod tidy`コマンドを実行してください。
+
+- go.mod
+
+```diff
+-       sigs.k8s.io/controller-runtime v0.8.3
++       sigs.k8s.io/controller-runtime v0.9.3
+```
+
+- Makefile
+
+```diff
+-       $(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.4.1)
++       $(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.6.1)
+```
+
+
+それでは生成されたファイルをそれぞれ見ていきましょう。
 
 ## Makefile
 
-コード生成やコントローラのビルドなどをおこなうためのMakefileです。
+コード生成やコントローラーのビルドなどをおこなうためのMakefileです。
 
 `make help`でターゲットの一覧を確認してみましょう。
 
@@ -101,32 +120,32 @@ Deployment
 
 ## main.go
 
-これから作成するカスタムコントローラのエントリーポイントとなるソースコードです。
+これから作成するカスタムコントローラーのエントリーポイントとなるソースコードです。
 
 ソースコード中に`//+kubebuilder:scaffold:imports`, `//+kubebuilder:scaffold:scheme`, `//+kubebuilder:scaffold:builder`などのコメントが記述されています。
 Kubebuilderはこれらのコメントを目印にソースコードの自動生成をおこなうので、決して削除しないように注意してください。
 
 ## config
 
-configディレクトリ配下には、カスタムコントローラをKubernetesクラスタにデプロイするためのマニフェストが生成されます。
+configディレクトリ配下には、カスタムコントローラーをKubernetesクラスターにデプロイするためのマニフェストが生成されます。
 
 実装する機能によっては必要のないマニフェストも含まれているので、適切に取捨選択してください。
 
 ### manager
 
-カスタムコントローラのDeploymentリソースのマニフェストです。
-カスタムコントローラのコマンドラインオプションの変更をおこなった場合など、必要に応じて書き換えてください。
+カスタムコントローラーのDeploymentリソースのマニフェストです。
+カスタムコントローラーのコマンドラインオプションの変更をおこなった場合など、必要に応じて書き換えてください。
 
 ### rbac
 
 各種権限を設定するためのマニフェストです。
 
 `auth_proxy_`から始まる4つのファイルは、[kube-auth-proxy][]用のマニフェストです。
-kube-auth-proxyを利用するとメトリクスエンドポイントへのアクセスをRBACで制限することができます。
+kube-auth-proxyを利用するとメトリクスエンドポイントへのアクセスをRBACで制限できます。
 
 `leader_election_role.yaml`と`leader_election_role_binding.yaml`は、リーダーエレクション機能を利用するために必要な権限です。
 
-`role.yaml`と`role_binding.yaml`は、コントローラが各種リソースにアクセスするための権限を設定するマニフェストです。
+`role.yaml`と`role_binding.yaml`は、コントローラーが各種リソースにアクセスするための権限を設定するマニフェストです。
 この2つのファイルは基本的に自動生成されるものなので、開発者が編集する必要はありません。
 
 必要のないファイルを削除した場合は、`kustomization.yaml`も編集してください。
@@ -134,7 +153,7 @@ kube-auth-proxyを利用するとメトリクスエンドポイントへのア�
 ### prometheus
 
 Prometheus Operator用のカスタムリソースのマニフェストです。
-Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的にカスタムコントローラのメトリクスを収集してくれるようになります。
+Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的にカスタムコントローラーのメトリクスを収集してくれるようになります。
 
 ### default
 
@@ -143,7 +162,7 @@ Prometheus Operatorを利用している場合、このマニフェストを適�
 `manager_auth_proxy_patch.yaml`は、[kube-auth-proxy][]を利用するために必要なパッチです。
 kube-auth-proxyを利用しない場合は削除しても問題ありません。
 
-`manager_config_patch.yaml`は、カスタムコントローラのオプションを引数ではなくConfigMapで指定するためのパッチファイルです。
+`manager_config_patch.yaml`は、カスタムコントローラーのオプションを引数ではなくConfigMapで指定するためのパッチファイルです。
 
 利用するマニフェストに応じて、`kustomization.yaml`を編集してください。
 

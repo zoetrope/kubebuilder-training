@@ -1,78 +1,76 @@
 # リソースの削除
 
-テナントコントローラは、テナントリソースが作成されたら、マニフェストに記述されている内容に基づいてnamespaceを作成します。
-逆にテナントリソースが削除されたら、作成したnamespaceも削除しなければなりません。
+ここではKubernetesにおけるリソースの削除処理について解説します。
 
-しかし、Reconcileループによる削除処理は難しい問題です。
-なぜなら親リソースが削除されたというイベントを取りこぼしてしまうと、その親リソースに関する情報は消えてしまい、どの子リソースを削除すべきか判断できなくなってしまうからです。
-このようにイベントドリブンなトリガーで動く処理は、Kubernetesのコンセプトに反していると言えます。
+実はコントローラーにおいて削除処理は難しい問題です。
+例えばMarkdownViewリソースが削除されたら、そのMarkdownViewに紐付く形で作成されたConfigMap, Deployment, Serviceリソースも一緒に削除しなければなりません。
+しかし、もしMarkdownViewが削除されたというイベントを取りこぼしてしまうと、そのリソースに関する情報は消えてしまい、関連するどのリソースを削除すべきか判断できなくなってしまうからです。
 
-そこでKubernetesでは、ownerReferenceによるガベージコレクションと、Finalizerという2種類のリソース削除の仕組みを提供しています。
+そこでKubernetesでは、ownerReferenceによるガベージコレクションと、Finalizerというリソース削除の仕組みを提供しています。
 
 ## ownerReferenceによるガベージコレクション
 
-1つめのリソース削除の仕組みはownerReferenceによるガベージコレクションの仕組みです。([参考](https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/))
-これは親リソースが削除されると、そのリソースの子のリソースもガベージコレクションにより自動的に削除されるという仕組みです。
+1つめのリソース削除の仕組みはownerReferenceによるガベージコレクションです。([参考](https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/))
+これは親リソースが削除されると、そのリソースの子リソースもガベージコレクションにより自動的に削除されるという仕組みです。
 
-例えば、以下のようにnamespaceリソースを作成する際に、親リソースとしてテナントリソースを指定します。
-そのための関数としてcontroller-runtimeでは、[controllerutil.SetControllerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetControllerReference)というユーティリティ関数を用意しています。
+Kubernetesではリソースの親子関係を表すために`.metadata.ownerReferences`フィールドを利用します。
 
-[import:"namespace,controller-reference",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
+例えば、以下のようにConfigMapリソースを作成する際に、[controllerutil.SetControllerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetControllerReference)
+というユーティリティ関数を利用していました。
 
-すると、作成されたnamespaceリソースには、下記のように`ownerReferences`フィールドが付与されています。
+[import:"reconcile-configmap",unindent:"true"](../../codes/markdown-view/controllers/markdownview_controller.go)
+
+この関数を利用すると、ConfigMapリソースに以下のような`.metadata.ownerReferences`が付与され、このリソースに親リソースの情報が設定されます。
 
 ```yaml
 apiVersion: v1
-kind: Namespace
+kind: ConfigMap
 metadata:
-  name: tenant-sample-test1
+  creationTimestamp: "2021-07-25T09:35:43Z"
+  name: markdowns-markdownview-sample
+  namespace: default
   ownerReferences:
-  - apiVersion: multitenancy.example.com/v1
+  - apiVersion: view.zoetrope.github.io/v1
     blockOwnerDeletion: true
     controller: true
-    kind: Tenant
-    name: tenant-sample
-    uid: c296e7b2-6c92-470b-b110-f62eb43b2bbe
-spec:
-  finalizers:
-  - kubernetes
-status:
-  phase: Active
+    kind: MarkdownView
+    name: markdownview-sample
+    uid: 8e8701a6-fa67-4ab8-8e0c-29c21ae6e1ec
+  resourceVersion: "17582"
+  uid: 8803226f-7d8f-4632-b3eb-e47dc36eabf3
+data:
+  ・・省略・・
 ```
 
-この状態で親のテナントリソースを削除すると、子のnamespaceリソースも自動的に削除されます。
+この状態で親のMarkdownViewリソースを削除すると、子のConfigMapリソースも自動的に削除されます。
 
 なお、異なるnamespaceのリソースをownerにしたり、cluster-scopedリソースのownerにnamespace-scopedリソースを指定することはできません。
-今回のテナントコントローラのようにNamespaceやClusterRoleなどのcluster-scopedリソースを扱う場合は、カスタムリソースもcluster-scopedにする必要があります。
 
 また、`SetControllerReference`と似た関数で[controllerutil.SetOwnerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetOwnerReference)もあります。
-
-`SetControllerReference`は、`controller`フィールドと`blockOwnerDeletion`フィールドにtrueが指定されており、1つのリソースに1つのオーナーのみしか指定することができません。また子リソースが削除されるまで親リソースの削除がブロックされます。
-
-一方の`SetOwnerReference`は1つのリソースに複数のオーナーを指定することができ、子リソースの削除はブロックされずバックグラウンドで実施されます。
-
+`SetControllerReference`は、1つのリソースに1つのオーナーのみしか指定できず、`controller`フィールドと`blockOwnerDeletion`フィールドにtrueが指定されているため子リソースが削除されるまで親リソースの削除がブロックされます。
+一方の`SetOwnerReference`は1つのリソースに複数のオーナーを指定でき、子リソースの削除はブロックされません。
 
 ## Finalizer
 
 ### Finalizerの仕組み
 
-ownerReferenceとガベージコレクションにより、親リソースと一緒に子リソースを削除することができると説明しました。
+ownerReferenceとガベージコレクションにより、親リソースと一緒に子リソースを削除できると説明しました。
 しかし、この仕組だけでは削除できないケースもあります。直接の親ではないリソースを削除したいケースや、Kubernetesで管理していない外部のリソースなどを削除したいケースなどがあります。
 
 例えばTopoLVMでは、LogicalVolumeというカスタムリソースを作成すると、ノード上にLVM(Logical Volume Manager)のLV(Logical Volume)を作成します。
 Kubernetes上のLogicalVolumeカスタムリソースが削除されたら、それに合わせてノード上のLVも削除しなければなりません。
 
-そのようなリソースの削除には、Finalizerという仕組みを利用することができます。
+そのようなリソースの削除には、Finalizerという仕組みを利用できます。
 
 Finalizerの仕組みを利用するためには、まず親リソースの`finalizers`フィールドにFinalizerの名前を指定します。
-なお、この名前はテナントコントローラが管理しているFinalizerであると識別できるように、他のコントローラと衝突しない名前にしておきましょう。
+なお、この名前はMarkdownViewコントローラーが管理しているFinalizerであると識別できるように、他のコントローラーと衝突しない名前にしておきましょう。
 
 ```yaml
-apiVersion: multitenancy.example.com/v1
-kind: Tenant
+apiVersion: view.zoetrope.github.io/v1
+kind: MarkdownView
 metadata:
   finalizers:
-  - tenant.finalizers.multitenancy.example.com
+  - markdownview.finalizers.view.zoetrope.github.io
 # 以下省略
 ```
 
@@ -80,28 +78,55 @@ metadata:
 代わりに、以下のように`deletionTimestamp`が付与されるだけです。
 
 ```yaml
-apiVersion: multitenancy.example.com/v1
-kind: Tenant
+apiVersion: view.zoetrope.github.io/v1
+kind: MarkdownView
 metadata:
   finalizers:
-  - tenant.finalizers.multitenancy.example.com
-  deletionTimestamp: "2020-07-24T15:23:54Z"
+    - markdownview.finalizers.view.zoetrope.github.io
+  deletionTimestamp: "2021-07-24T15:23:54Z"
 # 以下省略
 ```
 
-カスタムコントローラは`deletionTimestamp`が付与されていることを発見すると、そのリソースに関連するリソースを削除し、その後に`finalizers`フィールドを削除します。
+カスタムコントローラーは`deletionTimestamp`が付与されていることを発見すると、そのリソースに関連するリソースを削除し、その後に`finalizers`フィールドを削除します。
 `finalizers`フィールドが空になると、Kubernetesがこのリソースを完全に削除します。
 
-このような仕組みにより、コントローラが削除イベントを取りこぼしたとしても、テナントリソースが削除されるまでは何度もReconcileが呼び出されるため、子のリソースの情報が失われて削除できなくなるという問題を回避できます。
-一方で、カスタムリソースよりも先にコントローラを削除してしまった場合は、いつまでたってもカスタムリソースが削除されないという問題が発生することになるので注意しましょう。
+このような仕組みにより、コントローラーが削除イベントを取りこぼしたとしても、対象のリソースが削除されるまでは何度もReconcileが呼び出されるため、子のリソースの情報が失われて削除できなくなるという問題を回避できます。
+一方で、カスタムリソースよりも先にコントローラーを削除してしまった場合は、いつまでたってもカスタムリソースが削除されないという問題が発生することになるので注意しましょう。
 
 ### Finalizerの実装方法
 
 それではFinalizerを実装してみましょう。
 controller-runtimeでは、Finalizerを扱うためのユーティリティ関数として[controllerutil.ContainsFinalizer](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#ContainsFinalizer)、[controllerutil.AddFinalizer](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#AddFinalizer)、[controllerutil.RemoveFinalizer](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#RemoveFinalizer)などを提供しているのでこれを利用しましょう。
 
-[import:"finalizer",unindent:"true"](../../codes/tenant/controllers/tenant_controller.go)
+以下のように、Finalizersフィールドを利用して、独自のリソース削除処理を実装できます。
 
-`deletionTimestamp`が付与されていなければ、`finalizers`フィールドを追加します。
+```go
+finalizerName := "markdwonview.finalizers.view.zoetrope.github.io"
+if mdView.ObjectMeta.DeletionTimestamp.IsZero() {
+    // deletionTimestampが付与されていなければ、finalizersフィールドを追加します。
+    if !controllerutil.ContainsFinalizer(&mdView, finalizerName) {
+        controllerutil.AddFinalizer(&mdView, finalizerName)
+        err = r.Update(ctx, &mdView)
+        if err != nil {
+            return ctrl.Result{}, err
+        }
+    }
+} else {
+    // deletionTimestampがゼロではないということはリソースの削除が開始されたということ
 
-`deletionTimestamp`が付与されていた場合は、`finalizers`に自分で指定した名前が存在した場合はリソースの削除をおこない、その後`finalizers`フィールドをクリアします。
+    // finalizersに上記で指定した名前が存在した場合は削除処理を実施する
+    if controllerutil.ContainsFinalizer(&mdView, finalizerName) {
+        // ここで外部リソースを削除する
+        deleteExternalResources()
+
+        // finalizersフィールドをクリアしてリソースを削除できるようにする
+        controllerutil.RemoveFinalizer(&mdView, finalizerName)
+        err = r.Update(ctx, &mdView)
+        if err != nil {
+            return ctrl.Result{}, err
+        }
+    }
+    return ctrl.Result{}, nil
+}
+```
+

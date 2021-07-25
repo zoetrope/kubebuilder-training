@@ -1,0 +1,16 @@
+apiVersion: view.zoetrope.github.io/v1
+kind: MarkdownView
+metadata:
+  name: mutating
+  namespace: default
+spec:
+  markdowns:
+    SUMMARY.md: |
+      # Summary
+
+      - [Page1](page1.md)
+    page1.md: |
+      # Page 1
+
+      一ページ目のコンテンツです。
+  replicas: 1
