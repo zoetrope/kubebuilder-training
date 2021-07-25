@@ -72,7 +72,7 @@ Kubebuilderによって生成されたgo.modおよびMakefileには、少し古�
 
 ## Makefile
 
-コード生成やコントローラのビルドなどをおこなうためのMakefileです。
+コード生成やコントローラーのビルドなどをおこなうためのMakefileです。
 
 `make help`でターゲットの一覧を確認してみましょう。
 
@@ -120,21 +120,21 @@ Deployment
 
 ## main.go
 
-これから作成するカスタムコントローラのエントリーポイントとなるソースコードです。
+これから作成するカスタムコントローラーのエントリーポイントとなるソースコードです。
 
 ソースコード中に`//+kubebuilder:scaffold:imports`, `//+kubebuilder:scaffold:scheme`, `//+kubebuilder:scaffold:builder`などのコメントが記述されています。
 Kubebuilderはこれらのコメントを目印にソースコードの自動生成をおこなうので、決して削除しないように注意してください。
 
 ## config
 
-configディレクトリ配下には、カスタムコントローラをKubernetesクラスタにデプロイするためのマニフェストが生成されます。
+configディレクトリ配下には、カスタムコントローラーをKubernetesクラスターにデプロイするためのマニフェストが生成されます。
 
 実装する機能によっては必要のないマニフェストも含まれているので、適切に取捨選択してください。
 
 ### manager
 
-カスタムコントローラのDeploymentリソースのマニフェストです。
-カスタムコントローラのコマンドラインオプションの変更をおこなった場合など、必要に応じて書き換えてください。
+カスタムコントローラーのDeploymentリソースのマニフェストです。
+カスタムコントローラーのコマンドラインオプションの変更をおこなった場合など、必要に応じて書き換えてください。
 
 ### rbac
 
@@ -145,7 +145,7 @@ kube-auth-proxyを利用するとメトリクスエンドポイントへのア�
 
 `leader_election_role.yaml`と`leader_election_role_binding.yaml`は、リーダーエレクション機能を利用するために必要な権限です。
 
-`role.yaml`と`role_binding.yaml`は、コントローラが各種リソースにアクセスするための権限を設定するマニフェストです。
+`role.yaml`と`role_binding.yaml`は、コントローラーが各種リソースにアクセスするための権限を設定するマニフェストです。
 この2つのファイルは基本的に自動生成されるものなので、開発者が編集する必要はありません。
 
 必要のないファイルを削除した場合は、`kustomization.yaml`も編集してください。
@@ -153,7 +153,7 @@ kube-auth-proxyを利用するとメトリクスエンドポイントへのア�
 ### prometheus
 
 Prometheus Operator用のカスタムリソースのマニフェストです。
-Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的にカスタムコントローラのメトリクスを収集してくれるようになります。
+Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的にカスタムコントローラーのメトリクスを収集してくれるようになります。
 
 ### default
 
@@ -162,7 +162,7 @@ Prometheus Operatorを利用している場合、このマニフェストを適�
 `manager_auth_proxy_patch.yaml`は、[kube-auth-proxy][]を利用するために必要なパッチです。
 kube-auth-proxyを利用しない場合は削除しても問題ありません。
 
-`manager_config_patch.yaml`は、カスタムコントローラのオプションを引数ではなくConfigMapで指定するためのパッチファイルです。
+`manager_config_patch.yaml`は、カスタムコントローラーのオプションを引数ではなくConfigMapで指定するためのパッチファイルです。
 
 利用するマニフェストに応じて、`kustomization.yaml`を編集してください。
 

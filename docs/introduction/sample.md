@@ -1,18 +1,18 @@
-# 作成するカスタムコントローラ
+# MarkdownViewコントローラー
 
-本資料では、カスタムコントローラの例としてMarkdownViewコントローラを実装することとします。
-MarkdownViewコントローラは、ユーザーが用意したMarkdownをレンダリングしてブラウザから閲覧できるようにサービスを提供するコントローラです。
+本資料では、カスタムコントローラーの例としてMarkdownViewコントローラーを実装することとします。
+MarkdownViewコントローラーは、ユーザーが用意したMarkdownをレンダリングしてブラウザから閲覧できるようにサービスを提供するコントローラーです。
 
 MarkdownのレンダリングにはmdBookを利用することとします。
 
 - https://rust-lang.github.io/mdBook/
 
-MarkdownViewコントローラの主な処理の流れは次のようになります。
+MarkdownViewコントローラーの主な処理の流れは次のようになります。
 
 ![MarkdownView Controller](./img/markdownview_controller.png)
 
 - ユーザーはMarkdownViewカスタムリソースを作成します。
-- MarkdownViewコントローラは、作成されたMarkdownViewリソースの内容に応じて必要な各リソースを作成します。
+- MarkdownViewコントローラーは、作成されたMarkdownViewリソースの内容に応じて必要な各リソースを作成します。
   - カスタムリソースに記述されたMarkdownをConfigMapリソースとして作成します。
   - MarkdownをレンダリングするためのmdBookをDeploymentリソースとして作成します。
   - mdBookにアクセスするためのServiceリソースを作成します。

@@ -1,6 +1,6 @@
 # Reconcile
 
-Reconcileはカスタムコントローラのコアロジックです。
+Reconcileはカスタムコントローラーのコアロジックです。
 あるべき状態(ユーザーが作成したカスタムリソース)と、実際のシステムの状態を比較し、差分があればそれを埋めるための処理を実行します。
 
 ## Reconcilerの仕組み
@@ -33,9 +33,9 @@ Reconcileは複数のリソースを管理しているため、1つのリソー�
 
 Reconcile処理は下記のタイミングで呼び出されます。
 
-* コントローラが扱うリソースが作成、更新、削除されたとき
+* コントローラーの扱うリソースが作成、更新、削除されたとき
 * Reconcileに失敗してリクエストが再度キューに積まれたとき
-* コントローラの起動時
+* コントローラーの起動時
 * 外部イベントが発生したとき
 * キャッシュを再同期するとき(デフォルトでは10時間に1回)
 
@@ -43,33 +43,33 @@ Reconcile処理は下記のタイミングで呼び出されます。
 
 なお、Reconcile処理はデフォルトでは1秒間に10回以上実行されないように制限されています。
 
-また、これらのイベントが高い頻度で発生する場合は、Reconciliation Loopを並列実行するように設定することも可能です
+また、これらのイベントが高い頻度で発生する場合は、Reconciliation Loopを並列実行するように設定可能です。
 
 ### 監視対象の制御
 
-Reconcile処理は、コントローラが扱うリソースが作成、更新、削除されたときに呼び出されると説明しました。
-「コントローラが扱うリソース」を指定するために、[NewControllerManagedBy](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/builder#ControllerManagedBy)関数を利用します。
+Reconcile処理は、コントローラーの扱うリソースが作成、更新、削除されたときに呼び出されると説明しました。
+「コントローラーの扱うリソース」を指定するために、[NewControllerManagedBy](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/builder#ControllerManagedBy)関数を利用します。
 
 [import:"managedby",unindent:"true"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
 #### For
 
-`For`にはこのコントローラのReconcile対象となるリソースの型を指定します。
+`For`にはこのコントローラーのReconcile対象となるリソースの型を指定します。
 
 今回はMarkdownViewカスタムリソースを指定します。
 これによりMarkdownViewリソースの作成・変更・削除がおこなわれると、Reconcile関数が呼び出されることになります。
 そして、Reconcile関数の引数で渡されるRequestは、MarkdownViewの情報になります。
 
-なお、`For`に指定することのできるリソースは1種類だけです。
+なお、`For`に指定できるリソースは1種類だけです。
 
 #### Owns
 
-`Owns`にはこのコントローラが生成するリソースの型を指定します。`For`とは異なり、`Owns`は複数指定することが可能です。
+`Owns`にはこのコントローラーが生成するリソースの型を指定します。`For`とは異なり、`Owns`は複数指定が可能です。
 
-MarkdownViewコントローラは、ConfigMap, Deployment, Serviceリソースを作成することになるため、これらを`Owns`に指定します。
+MarkdownViewコントローラーは、ConfigMap, Deployment, Serviceリソースを作成することになるため、これらを`Owns`に指定します。
 
-これにより、MarkdownViewコントローラが作成したConfigMap, Deployment, Serviceリソースに何らかの変更が発生した際にReconcileが呼び出されるようになります。
-ただしこのとき、コントローラが作成したリソースの`ownerReferences`にMarkdownViewリソースを指定しなければなりません。
+これにより、MarkdownViewコントローラーが作成したConfigMap, Deployment, Serviceリソースに何らかの変更が発生した際にReconcileが呼び出されるようになります。
+ただしこのとき、コントローラーが作成したリソースの`ownerReferences`にMarkdownViewリソースを指定しなければなりません。
 `ownerReferences`の設定方法は[リソースの削除](./deletion.md))を参照してください。
 
 なお、`Owns`に指定したリソースの変更によってReconcileが呼び出された場合でも、
@@ -110,7 +110,7 @@ Reconcileの引数として渡ってきたRequestを利用して、対象とな�
 
 `reconcileDeployment`, `reconcileService`では、それぞれDeploymentとServiceリソースを作成します。
 
-`reconcileConfigMap`と同様に`CreateOrUpdate`を利用してリソースを作成することもできるのですが、
+`reconcileConfigMap`と同様に`CreateOrUpdate`を利用したリソースの作成も可能なのですが、
 DeploymentやServiceリソースはフィールド数が多いこともあり、適切に差分を検出してリソースを更新することが面倒だったりします。
 
 そこで今回は、[クライアントの使い方](./client.md)で紹介したApplyConfigurationを利用したServer-Side Apply方式でリソースを作成します。
@@ -119,7 +119,7 @@ DeploymentやServiceリソースはフィールド数が多いこともあり、
 
 ### ステータスの更新
 
-最後に、MarkdownViewリソースの状況をユーザーに知らせるためにステータスの更新をおこないます。
+最後に、MarkdownViewリソースの状況をユーザーに知らせるためのステータスを更新します。
 
 [import:"update-status"](../../codes/markdown-view/controllers/markdownview_controller.go)
 
@@ -129,7 +129,7 @@ DeploymentやServiceリソースはフィールド数が多いこともあり、
 ## 動作確認
 
 Reconcile処理の実装が完了したら動作確認してみましょう。
-[カスタムコントローラーの動作確認](../kubebuilder/kind.md)の手順通りにカスタムコントローラをデプロイし、
+[カスタムコントローラーの動作確認](../kubebuilder/kind.md)の手順通りにカスタムコントローラーをデプロイし、
 サンプルのMarkdownViewリソースを適用します。
 
 Deployment, Service, ConfigMapリソースが生成され、MarkdownViewリソースの状態がHealthyになっていることを確認しましょう。
@@ -150,7 +150,7 @@ NAME                  REPLICAS   STATUS
 markdownview-sample   1          Healthy
 ```
 
-次にローカル環境から作成されたサービスにアクセスするために、Port Forwardをおこないます。
+次にローカル環境から作成されたサービスにアクセスするため、Port Forwardをおこないます。
 
 ```
 $ kubectl port-forward svc/viewer-markdownview-sample 3000:80

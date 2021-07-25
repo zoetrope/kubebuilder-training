@@ -1,11 +1,11 @@
 # CRDマニフェストの生成
 
-コントローラでカスタムリソースを扱うためには、そのリソースのCRD(Custom Resource Definition)を定義する必要があります。
+コントローラーでカスタムリソースを扱うためには、そのリソースのCRD(Custom Resource Definition)を定義する必要があります。
 下記の例の様にCRDは長くなりがちで、手書きで作成するには少々手間がかかります。
 
 - [CRDの例](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/config/crd/bases/view.zoetrope.github.io_markdownviews.yaml)
 
-そこでKubebuilderではcontroller-genというツールを提供しており、Goで記述したstructからCRDを生成することができます。
+そこでKubebuilderではcontroller-genというツールを提供しており、Goで記述したstructからCRDを生成できます。
 
 まずは`kubebuilder create api`コマンドで生成された[api/v1/markdownview_types.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/api/v1/markdownview_types.go)を見てみましょう。
 
@@ -43,18 +43,18 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 `MarkdownView`がカスタムリソースの本体となる構造体です。`MarkdownViewList`は`MarkdownView`のリストを表す構造体です。これら2つの構造体は基本的に変更することはありません。
 `MarkdownViewSpec`と`MarkdownViewStatus`は`MarkdownView`構造体を構成する要素です。この2つの構造体を書き換えてカスタムリソースを定義していきます。
 
-一般的にカスタムリソースの`Spec`はユーザーが記述するもので、システムのあるべき状態をユーザーからコントローラに伝えるために利用されます。
-一方の`Status`は、コントローラが処理した結果をユーザーや他のシステムに伝えるために利用されます。
+一般的にカスタムリソースの`Spec`はユーザーが記述するもので、システムのあるべき状態をユーザーからコントローラーに伝える用途として利用されます。
+一方の`Status`は、コントローラーが処理した結果をユーザーや他のシステムに伝える用途として利用されます。
 
 ## MarkdownViewSpec
 
 さっそく`MarkdownViewSpec`を書き換えていきましょう。
 
-[作成するカスタムコントローラ](../introduction/sample.md)において、MarkdownViewコントローラが扱うカスタムリソースとして下記のようなマニフェストを例示しました。
+[作成するカスタムコントローラ](../introduction/sample.md)において、MarkdownViewコントローラーが扱うカスタムリソースとして下記のようなマニフェストを例示しました。
 
 [import](../../codes/markdown-view/config/samples/view_v1_markdownview.yaml)
 
-上記のマニフェストを取り扱うための構造体を用意しましょう。
+上記のマニフェストを扱うための構造体を用意しましょう。
 
 [import:"spec"](../../codes/markdown-view/api/v1/markdownview_types.go)
 
@@ -65,19 +65,19 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 - `ViewerImage`: Markdownの表示に利用するViewerのイメージ名
 
 各フィールドの上に`// +kubebuilder`という文字列から始まるマーカーと呼ばれるコメントが記述されています。
-これらのマーカーによって、生成されるCRDの内容を制御することができます。
+これらのマーカーによって、生成されるCRDの内容を制御できます。
 
-付与できるマーカーは`controller-gen crd -w`コマンドで確認することができます。
+付与できるマーカーは`controller-gen crd -w`コマンドで確認できます。
 
 ### Required/Optional
 
 `Markdowns`フィールドには`+kubebuiler:validation:Required`マーカーが付与されています。
-これはこのフィールドが必須項目であることを示しており、ユーザーがマニフェストを記述する際にこの項目を省略することができません。
+これはこのフィールドが必須項目であることを示しており、ユーザーがマニフェストを記述する際にこの項目を省略できません。
 一方の`Replicas`と`ViewerImage`には`+optional`が付与されており、この項目が省略可能であることを示しています。
 
 マーカーを指定しなかった場合はデフォルトでRequiredなフィールドになります。
 
-なお、ファイル内に下記のマーカーを配置すると、デフォルトの挙動をOptionalに変更することができます。
+なお、ファイル内に下記のマーカーを配置すると、デフォルトの挙動をOptionalに変更できます。
 
 ```
 // +kubebuilder:validation:Optional
@@ -91,7 +91,7 @@ type SampleSpec struct {
 }
 ```
 
-Optionalなフィールドは、以下のようにフィールドの型をポインタにすることができます。
+Optionalなフィールドは、以下のようにフィールドの型をポインタにできます。
 これによりマニフェストで値を指定しなかった場合の挙動が異なります。
 ポインタ型にした場合はnullが入り、実体にした場合はその型の初期値(intの場合は0)が入ります。
 
@@ -124,9 +124,9 @@ type SampleSpec struct {
 
 [import:"status"](../../codes/markdown-view/api/v1/markdownview_types.go)
 
-今回のカスタムコントローラでは、`MarkdownViewStatus`を文字列型とし、`NotReady`,`Available`,`Healty`の3つの状態をあらわすようにしました。
+今回のカスタムコントローラーでは、`MarkdownViewStatus`を文字列型とし、`NotReady`,`Available`,`Healty`の3つの状態をあらわすようにしました。
 
-`//+kubebuilder:validation:Enum`を利用すると、指定した文字列以外の値を設定することができないようになります。
+`//+kubebuilder:validation:Enum`を利用すると、指定した文字列以外の値を設定できないようになります。
 
 ## MarkdownView
 
@@ -149,19 +149,19 @@ Kubernetesでは、すべてのリソースはそれぞれ独立したAPIエン�
 
 サブリソースを有効にすると`status`フィールドがメインのリソースと独立したAPIエンドポイントを持つようになります。
 
-これによりメインのリソース全体を取得・更新しなくても、`status`のみを取得したり更新することが可能になります。
-ただし、あくまでもメインのリソースに属するサブのリソースなので、個別に作成や削除することはできません。
+これによりメインのリソース全体を取得・更新しなくても、`status`のみの取得や更新が可能になります。
+ただし、あくまでもメインのリソースに属するサブのリソースなので、個別の作成や削除はできません。
 
-ユーザーが`spec`フィールドを記述し、コントローラが`status`フィールドを記述するという役割分担を明確にすることができるので、基本的には`status`はサブリソースにしておくのがよいでしょう。
+ユーザーが`spec`フィールドを記述し、コントローラーが`status`フィールドを記述するという役割分担を明確にできるので、基本的には`status`はサブリソースにしておくのがよいでしょう。
 なおKubebuilder v3では、`status`フィールドがサブリソースに指定するマーカーが最初から指定されるようになりました。
 
-CRDでは任意のフィールドをサブリソースにすることはできず、`status`と`scale`の2つのフィールドのみに対応しています。
+CRDでは任意のフィールドをサブリソースにはできず、`status`と`scale`の2つのフィールドのみに対応しています。
 
 ### printcolumn
 
-`+kubebuilder:printcolumn`マーカーを付与すると、kubectlでカスタムリソースを取得したときに表示する項目を指定することができます。
+`+kubebuilder:printcolumn`マーカーを付与すると、kubectlでカスタムリソースを取得したときに表示する項目を指定できます。
 
-表示対象のフィールドはJSONPathで指定することが可能です。
+表示対象のフィールドはJSONPathで指定可能です。
 例えば、`JSONPath=".spec.replicas"`と記述すると、kubectl getしたときに`.spec.replicas`の値が表示されます。
 
 kubectlでMarkdownViewリソースを取得すると、下記のようにREPLICASやSTATUSの値が表示されていることが確認できます。

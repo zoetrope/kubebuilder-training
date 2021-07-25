@@ -32,7 +32,7 @@ ValidateCreate, ValidateUpdate, ValidateDeleteは、それぞれリソースの�
 
 それでは、Webhookの動作確認をしてみましょう。
 
-Webhookの実装をおこなったカスタムコントローラをKubernetesクラスタにデプロイし、下記のような`ViewerImage`を指定していないマニフェストを適用します。
+Webhookの実装をおこなったカスタムコントローラーをKubernetesクラスターにデプロイし、下記のような`ViewerImage`を指定していないマニフェストを適用します。
 
 ```yaml
 apiVersion: view.zoetrope.github.io/v1
@@ -61,7 +61,7 @@ peaceiris/mdbook:latest
 
 続いてバリデーションWebhookの動作も確認してみましょう。
 
-先ほど作成したリソースをeditして`replicas`を大きな値にしたり、`markdowns`に`SUMMARY.md`を含めないようにしてみましょう
+先ほど作成したリソースを編集して`replicas`を大きな値にしたり、`markdowns`に`SUMMARY.md`を含めないようにしたりしてみましょう。
 以下のようなエラーが発生すれば成功です。
 
 ```

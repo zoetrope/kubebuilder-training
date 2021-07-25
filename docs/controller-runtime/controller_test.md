@@ -1,11 +1,12 @@
-# コントローラのテスト
+# コントローラーのテスト
 
-controller-runtimeは[envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest?tab=doc)というパッケージを提供しており、コントローラやWebhookの簡易的なテストを実施することが可能です。
+controller-runtimeは[envtest](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest?tab=doc)というパッケージを提供しており、
+コントローラーやWebhookの簡易的なテストを実施できます。
 
 envtestはetcdとkube-apiserverを立ち上げてテスト用の環境を構築します。
-また環境変数`USE_EXISTING_CLUSTER`を指定すれば、既存のKubernetesクラスタを利用したテストをおこなうことも可能です。
+また環境変数`USE_EXISTING_CLUSTER`を指定すれば、既存のKubernetesクラスターを利用したテストをおこなうことも可能です。
 
-envtestでは、etcdとkube-apiserverのみを立ち上げており、controller-managerやschedulerは動いていません。
+Envtestでは、etcdとkube-apiserverのみを立ち上げており、controller-managerやschedulerは動いていません。
 そのため、DeploymentやCronJobリソースを作成しても、Podは作成されないので注意してください。
 
 なおcontroller-genが生成するテストコードでは、[Ginkgo](https://github.com/onsi/ginkgo)というテストフレームワークを利用しています。
@@ -15,7 +16,7 @@ envtestでは、etcdとkube-apiserverのみを立ち上げており、controller
 
 controller-runtimeは、[Envtest Binaries Manager](https://github.com/kubernetes-sigs/controller-runtime/tree/master/tools/setup-envtest)
 というツールを提供しています。
-このツールを利用することで、Envtestで利用するetcdやkube-apiserverの任意のバージョンのバイナリをセットアップすることができます。
+このツールを利用することで、Envtestで利用するetcdやkube-apiserverの任意のバージョンのバイナリをセットアップできます。
 
 Kubebuilder v3.1時点では、Envtest Binaries Managerが利用されるようになっていないので、Makefileを書き換えておきましょう。
 
@@ -37,11 +38,11 @@ controller-genによって自動生成された[controllers/suite_test.go](https
 ここでは、`CRDDirectoryPaths`で適用するCRDのマニフェストのパスを指定しています。
 
 `testEnv.Start()`を呼び出すとetcdとkube-apiserverが起動します。
-あとはコントローラのメイン関数と同様に初期化処理をおこなうだけです。
+あとはコントローラーのメイン関数と同様に初期化処理をおこなうだけです。
 
 テスト終了時にはetcdとkube-apiserverを終了するように`testEnv.Stop()`を呼び出します。
 
-## コントローラのテスト
+## コントローラーのテスト
 
 それでは実際のテストを書いていきましょう。
 
@@ -58,13 +59,14 @@ controller-genによって自動生成された[controllers/suite_test.go](https
 
 [import:"test",unindent:"true"](../../codes/markdown-view/controllers/markdownview_controller_test.go)
 
-これらのテストケースでは`k8sClient`を利用してKubernetesクラスタにMarkdownViewリソースを作成し、
+これらのテストケースでは`k8sClient`を利用してKubernetesクラスターにMarkdownViewリソースを作成し、
 その後に期待するリソースが作成されていることを確認しています。
 Reconcile処理はテストコードとは非同期に動くため、Eventually関数を利用してリソースが作成できるまで待つようにしています。
 
 最後のテストではStatusが更新されることを確認しています。
-本来はここでStatusがHealthyになることをテストすべきですが、Envtestではcontroller-managerが存在しないためDeploymentがReadyにならず、
-MarkdownViewのStatusもHealthyになりません。
+本来はここでStatusがHealthyになることをテストすべきでしょう。
+しかし、Envtestではcontroller-managerが存在しないためDeploymentがReadyにならず、MarkdownViewのStatusもHealthyになることはありません。
+よってここではStatusが何かしら更新されればOKというテストにしています。
 Envtestは実際のKubernetesクラスターとは異なるということを意識してテストを書くようにしましょう。
 
-テストが書けたら、`make test`でテストを実行してみましょう。
+テストが書けたら、`make test`で実行してみましょう。

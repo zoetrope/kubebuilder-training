@@ -1,10 +1,10 @@
 # APIの雛形作成
 
-`kubebuilder create api`コマンドを利用すると、カスタムリソースとカスタムコントローラの実装の雛形を生成できます。
+`kubebuilder create api`コマンドを利用すると、カスタムリソースとカスタムコントローラーの実装の雛形を生成できます。
 
-以下のコマンドを実行して、MarkdownViewを表現するためのカスタムリソースと、MarkdownViewを扱うカスタムコントローラを生成してみましょう。
+以下のコマンドを実行して、MarkdownViewを表現するためのカスタムリソースと、MarkdownViewを扱うカスタムコントローラーを生成してみましょう。
 
-カスタムリソースとコントローラのソースコードを生成するかどうか聞かれるので、今回はどちらも`y`と回答します。
+カスタムリソースとコントローラーのソースコードを生成するかどうか聞かれるので、今回はどちらも`y`と回答します。
 
 ```console
 $ kubebuilder create api --group view --version v1 --kind MarkdownView
@@ -60,14 +60,14 @@ $ make manifests
 
 ## controllers
 
-`markdownview_controller.go`は、カスタムコントローラのメインロジックになります。
-今後、カスタムコントローラの処理は基本的にこのファイルに書いていくことになります。
+`markdownview_controller.go`は、カスタムコントローラーのメインロジックになります。
+今後、カスタムコントローラーの処理は基本的にこのファイルに書いていくことになります。
 
 `suite_test.go`はテストコードです。詳細は[コントローラのテスト](../controller-runtime/controller_test.md)で解説します。
 
 ## main.go
 
-`main.go`には、下記のようなコントローラの初期化処理が追加されています。
+`main.go`には、下記のようなコントローラーの初期化処理が追加されています。
 
 ```go
 if err = (&controllers.MarkdownViewReconciler{

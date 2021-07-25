@@ -2,12 +2,12 @@
 
 ## テスト環境のセットアップ
 
-Webhookもコントローラのテストと同じくenvtestを利用することができます。
+Webhookもコントローラーのテストと同じくEnvtestを利用できます。
 Kubebuilderによってテストを実行するためのコードが以下のように生成されています。
 
 [import, title="api/v1/webhook_suite_test.go"](../../codes/markdown-view/api/v1/webhook_suite_test.go)
 
-基本的にはコントローラのテストコードと似ていますが、`envtest.Environment`を作成する際に、Webhook用のマニフェストのパスを指定したり、
+基本的にはコントローラーのテストコードと似ていますが、`envtest.Environment`を作成する際に、Webhook用のマニフェストのパスを指定したり、
 `ctrl.NewManager`を呼び出す際に`Host`,`Port`,`CertDir`のパラメータをtestEnvのパラメータで上書きする必要があります。
 
 ## Webhookのテスト

@@ -68,7 +68,7 @@ if err = (&viewv1.MarkdownView{}).SetupWebhookWithManager(mgr); err != nil {
 
 ## kustomization.yamlの編集
 
-kubebuilderコマンドで生成した直後の状態では、`make manifests`コマンドでマニフェストを生成しても、Webhook機能が利用できるようにはなっていません。
+Kubebuilderコマンドで生成した直後の状態では、`make manifests`コマンドでマニフェストを生成しても、Webhook機能が利用できるようにはなっていません。
 
 [config/default/kustomization.yaml](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/config/default/kustomization.yaml)ファイルを編集する必要があります。
 

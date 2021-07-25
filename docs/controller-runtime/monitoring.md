@@ -1,7 +1,7 @@
 # モニタリング
 
-カスタムコントローラの運用にはモニタリングが重要です。
-システムを安定運用させるためには、カスタムコントローラが管理するリソースやカスタムコントローラ自身に何か問題が生じた場合、
+カスタムコントローラーの運用にはモニタリングが重要です。
+システムを安定運用させるためには、カスタムコントローラーが管理するリソースやカスタムコントローラー自身に何か問題が生じた場合、
 それを検出して適切な対応をおこなう必要があります。
 
 ここでは、controller-runtimeが提供するメトリクス公開の仕組みについて紹介します。
@@ -12,7 +12,7 @@ Kubebuilderが生成したコードでは、自動的に基本的なメトリク
 CPUやメモリの使用量や、Reconcileにかかった時間やKubernetesクライアントのレイテンシーなど、controller-runtime関連のメトリクスが公開されています。
 
 どのようなメトリクスが公開されているのか見てみましょう。
-`NewManager`のオプションで`MetricsBindAddress`に指定されたアドレスにアクセスすると、公開されているメトリクスを確認することができます。
+`NewManager`のオプションの`MetricsBindAddress`で指定されたアドレスにアクセスすると、公開されているメトリクスを確認できます。
 
 [import:"new-manager",unindent:"true"](../../codes/markdown-view/main.go)
 
@@ -22,7 +22,7 @@ CPUやメモリの使用量や、Reconcileにかかった時間やKubernetesク�
 kubectl -n markdown-view-system port-forward deploy/markdown-view-controller-manager 8080:8080
 ```
 
-curlを実行すると、下記のようなメトリクスが出力されることが確認できます。
+curlを実行すると、下記のようなメトリクスが出力されます。
 
 ```
 $ curl localhost:8080/metrics
@@ -58,7 +58,7 @@ controller_runtime_webhook_requests_total{code="500",webhook="/validate-view-zoe
 
 ## カスタムメトリクス
 
-controller-runtimeが提供するメトリクスだけでなく、カスタムコントローラ固有のメトリクスを収集することもできます。
+controller-runtimeが提供するメトリクスだけでなく、カスタムコントローラー固有のメトリクスの公開もできます。
 詳しくは[Prometheusのドキュメント](https://prometheus.io/docs/instrumenting/writing_exporters/)を参照してください。
 
 ここではMarkdownViewリソースのステータスをメトリクスとして公開してみましょう。
@@ -95,8 +95,8 @@ markdownview_notready{name="markdownview-sample",namespace="markdownview-sample"
 ## kube-rbac-proxy
 
 Kubebuilderで生成したプロジェクトには、[kube-rbac-proxy](https://github.com/brancz/kube-rbac-proxy)を利用できるようにマニフェストが記述されています。
-kube-rbac-proxyを利用すると、メトリクスのエンドポイントにアクセスするための権限をRBACで設定することができるようになります。
-この設定でPrometheusのみにメトリクスのAPIを
+kube-rbac-proxyを利用すると、メトリクスのエンドポイントにアクセスするための権限をRBACで設定できるようになります。
+PrometheusにのみメトリクスのAPIをアクセス可能にすることで、任意のユーザーにメトリクスを取得されることを防ぐことができます。
 
 kube-rbac-proxyを利用するためには下記の`manager_auth_proxy_patch.yaml`のコメントアウトを解除します。
 
@@ -108,14 +108,14 @@ kube-rbac-proxyを利用するためには下記の`manager_auth_proxy_patch.yam
 
 ## Grafanaでの可視化
 
-それでは実際にPrometheusとGrafanaを使って、コントローラのメトリクスを可視化してみましょう。
+それでは実際にPrometheusとGrafanaを使って、コントローラーのメトリクスを可視化してみましょう。
 
 まずはマニフェストの準備をします。
 下記のコメントアウトを解除してください。
 
 [import:"bases,enable-prometheus"](../../codes/markdown-view/config/default/kustomization.yaml)
 
-`make manifests`を実行してマニフェストを生成し、Kubernetesクラスタに適用しておきます。
+`make manifests`を実行してマニフェストを生成し、Kubernetesクラスターに適用しておきます。
 
 Prometheus Operatorをセットアップするために、下記の手順に従ってHelmをインストールします。
 - https://helm.sh/docs/intro/install/
@@ -149,11 +149,12 @@ kubectl apply -f ./config/rbac/prometheus_role_binding.yaml
 kubectl port-forward service/prometheus-grafana 3000:80 --address 0.0.0.0 --namespace prometheus
 ```
 
-ブラウザから`http://localhost:3000`を開くとGrafanaの画面が確認できると思いますので、ユーザー名とパスワードを入力してログインします。
+ブラウザから`http://localhost:3000`でGrafanaの画面が開くので、ユーザー名とパスワードを入力してログインします。
+
 - Username: `admin`
 - Password: `prom-operator`
 
-Explore画面を開いて以下のようなPromQLを入力してみましょう。これによりReconcileにかかっている処理時間をモニタリングすることができます。
+Explore画面を開いて以下のようなPromQLを入力してみましょう。これによりReconcileにかかっている処理時間をモニタリングできます。
 
 ```
 histogram_quantile(0.99, sum(rate(controller_runtime_reconcile_time_seconds_bucket[5m])) by (le))

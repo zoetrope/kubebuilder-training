@@ -1,12 +1,12 @@
-# カスタムコントローラの動作確認
+# カスタムコントローラーの動作確認
 
-kubebuilderコマンドで生成したプロジェクトをビルドし、[Kind](https://kind.sigs.k8s.io/docs/user/quick-start/)環境で動かしてみましょう。
+Kubebuilderコマンドで生成したプロジェクトをビルドし、[Kind](https://kind.sigs.k8s.io/docs/user/quick-start/)環境で動かしてみましょう。
 
-Kindとはローカル環境にKubernetesクラスタを構築するためのツールで、手軽にコントローラのテストや動作確認をおこなうことができます。
+Kindとはローカル環境にKubernetesクラスターを構築するためのツールで、手軽にコントローラーのテストや動作確認をおこなうことができます。
 
 ## kindの立ち上げ
 
-まずはkindコマンドを利用してKubernetesクラスタを作成します。
+まずはkindコマンドを利用してKubernetesクラスターを作成します。
 
 ```console
 $ kind create cluster
@@ -31,7 +31,7 @@ cert-manager-cainjector-64c949654c-64wjk   1/1     Running   0          26s
 cert-manager-webhook-6bdffc7c9d-hkr8h      1/1     Running   0          26s
 ```
 
-## コントローラのコンテナイメージの用意
+## コントローラーのコンテナイメージの用意
 
 コンテナイメージをビルドします。
 
@@ -47,13 +47,14 @@ $ make docker-build
 $ kind load docker-image controller:latest
 ```
 
-なおコンテナイメージのタグ名が`latest`の場合ImagePullPolicyが`Always`になり、ロードしたコンテナイメージが利用されない場合があります。([参考](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster))
+なおコンテナイメージのタグ名に`latest`を指定した場合、ImagePullPolicyが`Always`になり、ロードしたコンテナイメージが利用されない場合があります。
+([参考](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster))
 
 そこで、[config/manager/manager.yaml](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/config/manager/manager.yaml)に`imagePullPolicy: IfNotPresent`を追加しておきます。
 
-## コントローラの動作確認
+## コントローラーの動作確認
 
-次にCRDをKubernetesクラスタに適用します。
+次にCRDをKubernetesクラスターに適用します。
 
 ```console
 $ make install
@@ -65,7 +66,7 @@ $ make install
 $ make deploy
 ```
 
-コントローラのPodがRunningになったことを確認してください。
+コントローラーのPodがRunningになったことを確認してください。
 
 ```console
 $ kubectl get pod -n markdown-view-system
@@ -73,7 +74,7 @@ NAME                                                READY   STATUS    RESTARTS  
 markdown-view-controller-manager-5bc678bbf9-vb9r5   2/2     Running   0          30s
 ```
 
-次にコントローラのログを表示させておきます。
+次にコントローラーのログを表示させておきます。
 
 ```console
 $ kubectl logs -n markdown-view-system markdown-view-controller-manager-5bc678bbf9-vb9r5 -c manager -f
@@ -85,7 +86,7 @@ $ kubectl logs -n markdown-view-system markdown-view-controller-manager-5bc678bb
 $ kubectl apply -f config/samples/view_v1_markdownview.yaml
 ```
 
-以下のようにWebhookやReconcileのメッセージがコントローラのログに表示されていれば成功です。
+以下のようにWebhookやReconcileのメッセージがコントローラーのログに表示されていれば成功です。
 
 ```console
 2021-07-10T09:29:49.311Z        INFO    controller-runtime.metrics      metrics server is starting to listen     {"addr": "127.0.0.1:8080"}
@@ -116,10 +117,10 @@ I0710 09:29:49.409787       1 leaderelection.go:253] successfully acquired lease
 
 ## 開発時の流れ
 
-開発時には、カスタムコントローラの実装を書き換えて何度も動作確認をおこなうことになります。
+開発時には、カスタムコントローラーの実装を書き換えて何度も動作確認をおこなうことになります。
 次のような手順で、効率よく開発を進めることができます。
 
-- コントローラの実装が変わった場合は、下記のコマンドでコンテナイメージをビルドし、kind環境にロードし直します。
+- コントローラーの実装が変わった場合は、下記のコマンドでコンテナイメージをビルドし、kind環境にロードし直します。
 ```
 $ make docker-build
 $ kind load docker-image controller:latest
@@ -135,7 +136,7 @@ make install
 make deploy
 ```
 
-- 次のコマンドでカスタムコントローラを再起動します。
+- 次のコマンドでカスタムコントローラーを再起動します。
 ```
 $ kubectl rollout restart -n markdown-view-system deployment markdown-view-controller-manager
 ```

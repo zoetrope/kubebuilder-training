@@ -1,26 +1,26 @@
 # Manager
 
 [Manager](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#Manager)は、
-複数のコントローラを管理し、リーダー選出機能やメトリクスやヘルスチェックサーバーなどの機能を提供します。
+複数のコントローラーを管理し、リーダー選出機能やメトリクスやヘルスチェックサーバーなどの機能を提供します。
 
 すでにこれまでManagerのいくつかの機能を紹介してきましたが、他にもたくさんの便利な機能を持ってるのでここで紹介していきます。
 
 ## Leader Election
 
-カスタムコントローラの可用性を向上させたい場合、Deploymentの機能を利用してカスタムコントローラのPodを複数個立ち上げます。
-しかし、Reconcile処理が同じリソースに対して何らかの処理を実行した場合、競合が発生してしまうかもしれません。
+カスタムコントローラーの可用性を向上させたい場合、Deploymentの機能を利用してカスタムコントローラーのPodを複数個立ち上げます。
+しかし、Reconcile処理が同じリソースに対して何らかの処理を実行した場合、競合が発生してしまいます。
 
 そこで、Managerはリーダー選出機能を提供しています。
 これにより複数のプロセスの中から1つだけリーダーを選出し、リーダーに選ばれたプロセスだけがReconcile処理を実行できるようになります。
 
 リーダー選出の利用方法は、`NewManager`のオプションの`LeaderElection`にtrueを指定し、`LeaderElectionID`にリーダー選出用のIDを指定するだけです。
-リーダー選出は、同じ`LeaderElectionID`を指定したプロセスの中から一つだけリーダーを選ぶという挙動になります。
+リーダー選出は、同じ`LeaderElectionID`を指定したプロセスの中から1つだけリーダーを選ぶという挙動になります。
 
 [import:"new-manager",unindent:"true"](../../codes/markdown-view/main.go)
 
-それでは、[config/manager/manager.yaml](../../codes/markdown-view/config/manager/manager.yaml)の`replicas`フィールドを2に変更して、MarkdownViewコントローラをデプロイしてみましょう。
+それでは、[config/manager/manager.yaml](../../codes/markdown-view/config/manager/manager.yaml)の`replicas`フィールドを2に変更して、MarkdownViewコントローラーをデプロイしてみましょう。
 
-デプロイされた2つのPodのログを表示させてみると、リーダーに選出された方のPodだけがReconcile処理をおこなっている様子が確認できると思います。
+デプロイされた2つのPodのログを表示させてみると、リーダーに選出された方のPodだけがReconcile処理をおこなっている様子が確認できます。
 
 リーダー選出の機能にはConfigMapが利用されています。
 下記のようにConfigMapを表示させてみると、`metadata.annotations["control-plane.alpha.kubernetes.io/leader"]`に、現在のリーダーの情報が保存されていることがわかります。
@@ -43,10 +43,10 @@ metadata:
 
 ## Runnable
 
-カスタムコントローラの実装において、Reconcile Loop以外にもgoroutineを立ち上げて定期的に実行したり、何らかのイベントを待ち受けたりしたい場合があります。
+カスタムコントローラーの実装において、Reconcile Loop以外にもgoroutineを立ち上げて定期的に実行したり、何らかのイベントを待ち受けたりしたい場合があります。
 Managerではそのような処理を実現するための仕組みを提供しています。
 
-例えばTopoLVMでは、定期的なメトリクスの収集やgRPCサーバの起動用にRunnableを利用しています。
+例えばTopoLVMでは、定期的なメトリクスの収集やgRPCサーバーの起動用にRunnableを利用しています。
 
 - [https://github.com/topolvm/topolvm/tree/main/runners](https://github.com/topolvm/topolvm/tree/main/runners)
 
@@ -90,16 +90,16 @@ StartメソッドはManagerのStartを呼び出した際に、goroutineとして
 err = mgr.Add(&runners.Runner{})
 ```
 
-なお、このRunnerの処理は通常リーダーとして動作している Manager でしか動きません。
+なお、このRunnerの処理は通常リーダーとして動作しているManagerでしか動きません。
 リーダーでなくても常時動かしたい処理である場合、[LeaderElectionRunnable](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#LeaderElectionRunnable)インタフェースを実装し、
 NeedLeaderElectionメソッドで `false` を返すようにします。
 
 ## EventRecorder
 
 カスタムリソースのStatusには、現在の状態が保存されています。
-一方、これまでどのような処理が実施されてきたのかを記録したい場合、Kubernetesが提供する[Event](https://pkg.go.dev/k8s.io/api/core/v1?tab=doc#Event)リソースを利用することができます。
+一方、これまでどのような処理が実施されてきたのかを記録したい場合、Kubernetesが提供する[Event](https://pkg.go.dev/k8s.io/api/core/v1?tab=doc#Event)リソースを利用できます。
 
-Managerはイベントを記録するための機能を提供しており、以下のように取得することができます。
+Managerはイベントを記録するための機能を提供しており、以下のように取得できます。
 
 ```go
 recorder := mgr.GetEventRecorderFor("markdownview-controller")
@@ -108,14 +108,14 @@ recorder := mgr.GetEventRecorderFor("markdownview-controller")
 この[EventRecorder](https://pkg.go.dev/k8s.io/client-go/tools/record?tab=doc#EventRecorder)をReconcilerに渡して利用します。
 
 Eventを記録するための関数として、`Event`, `Eventf`, `AnnotatedEventf`などが用意されています。
-ここでは、ステータス更新時に以下のようなイベントを記録することにしましょう。なお、イベントタイプには`EventTypeNormal`, `EventTypeWarning`のみ指定することができます。
+ここでは、ステータス更新時に以下のようなイベントを記録することにしましょう。なお、イベントタイプには`EventTypeNormal`, `EventTypeWarning`のみ指定できます。
 
 ```go
 r.Recorder.Event(&mdView, corev1.EventTypeNormal, "Updated", fmt.Sprintf("MarkdownView(%s:%s) updated: %s", mdView.Namespace, mdView.Name, mdView.Status))
 ```
 
 このEventリソースは第1引数で指定したリソースに結びいており、そのリソースと同じnamespaceにEventリソースが作成されます。
-カスタムコントローラがEventリソースを作成できるように、以下のようなRBACのマーカーを追加し、`make manifests`でマニフェストを更新しておきます。
+カスタムコントローラーがEventリソースを作成できるように、以下のようなRBACのマーカーを追加し、`make manifests`でマニフェストを更新しておきます。
 
 ```go
 //+kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch
@@ -139,17 +139,18 @@ Managerには、ヘルスチェック用のAPIのエンドポイントを作成�
 [import:"new-manager",unindent:"true"](../../codes/markdown-view/main.go)
 
 そして、`AddHealthzCheck`と`AddReadyzCheck`で、ハンドラの登録をおこないます。
-デフォルトでは`healthz.Ping`という何もしない関数を利用していますが、独自の関数を登録することも可能です。
+デフォルトでは`healthz.Ping`という何もしない関数を利用していますが、独自関数の登録も可能です。
 
 [import:"health",unindent:"true"](../../codes/markdown-view/main.go)
 
-カスタムコントローラのマニフェストでは、このヘルスチェックAPIを`livenessProbe`と`readinessProbe`として利用するように指定されています。
+カスタムコントローラーのマニフェストでは、このヘルスチェックAPIを`livenessProbe`と`readinessProbe`として利用するように指定されています。
 
 [import:"probe",unindent:"true"](../../codes/markdown-view/config/manager/manager.yaml)
 
 ## FieldIndexer
 
-複数のリソースを取得する際にラベルやnamespaceだけでなく、特定のフィールドの値に応じてフィルタリングしたいことがあるかと思います。
+[クライアントの使い方](./client.md)で紹介したように、複数のリソースを取得する際にラベルやnamespaceで絞り込むことが可能です。
+しかし、特定のフィールドの値に応じてフィルタリングしたいこともあるでしょう。
 controller-runtimeではインメモリにキャッシュしているリソースに対してインデックスを張る仕組みが用意されています。
 
 ![index](./img/index.png)
@@ -183,14 +184,14 @@ func (r *MarkdownViewReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 `IndexField`の第3引数のフィールド名には、どのフィールドを利用してインデックスを張っているのかを示す文字列を指定します。
 ここでは、`.metadata.ownerReference.controller`という文字列を指定しています。
-実際にインデックスに利用しているフィールドのパスと一致していなくても問題はないのですが、なるべく一致させたほうが可読性がよくなるのでおすすめです。
+実際にインデックスに利用しているフィールドのパスと一致していなくても問題はないのですが、一致させると可読性がよくなるのでおすすめです。
 
 なおインデックスはGVKごとに作成されるので、異なるタイプのリソース間でフィールド名が同じになっても問題ありません。
 またnamespaceスコープのリソースの場合は、内部的にフィールド名にnamespace名を付与して管理しているので、明示的にフィールド名にnamespaceを含める必要はありません。
-インデクサーが返す値はスライスになっていることから分かるように、複数の値にマッチするようにインデックスを構成することも可能です。
+インデクサーが返す値はスライスになっていることから分かるように、複数の値にマッチするようなインデックスの構成も可能です。
 
-上記のようなインデックスを作成しておくと、`List()`を呼び出す際に特定のフィールドが指定した値と一致するリソースだけを取得することができます。
-例えば以下の例であれば、ownerReferenceに指定したMarkdownViewリソースがセットされているConfigMapだけを取得することができます。
+上記のようなインデックスを作成しておくと、`List()`を呼び出す際に特定のフィールドが指定した値と一致するリソースだけを取得できます。
+例えば以下の例であれば、ownerReferenceに指定したMarkdownViewリソースがセットされているConfigMapだけを取得できます。
 
 ```go
 var cms corev1.ConfigMapList
