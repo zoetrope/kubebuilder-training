@@ -1,40 +1,40 @@
 # つくって学ぶKubebuilder
 
-本資料ではKuberbuilderを利用してカスタムコントローラ/オペレータを開発する方法について学びます。
+本資料ではKuberbuilderを利用してカスタムコントローラー/オペレーターを開発する方法について学びます。
 
 ## Kubebuilderとは
 
-Kubebuilderは、Kubernetesを拡張するためのカスタムコントローラ/オペレータを開発するためのフレームワークです。
+Kubebuilderは、Kubernetesを拡張するためのカスタムコントローラー/オペレーターを開発するためのフレームワークです。
 
 Kubernetesでは、標準で用意されているDeploymentやServiceなどのリソースを利用することで、簡単にアプリケーションのデプロイやサービスの提供ができるようになっています。
 さらに標準リソースを利用するだけでなく、ユーザーが独自のカスタムリソースを定義してKubernetesを機能拡張することが可能になっています。
-このカスタムリソースを扱うためのプログラムをカスタムコントローラと呼びます。
-また、カスタムコントローラを利用して独自のソフトウェアのセットアップや運用を自動化するためのプログラムをオペレータと呼びます。
+このカスタムリソースを扱うためのプログラムをカスタムコントローラーと呼びます。
+また、カスタムコントローラーを利用して独自のソフトウェアのセットアップや運用を自動化するためのプログラムをオペレーターと呼びます。
 
-カスタムコントローラやオペレータの実装例として、次のようなものがあります。
+カスタムコントローラーやオペレーターの実装例として、次のようなものがあります。
 
 - [cert-manager](https://cert-manager.io/docs/)
 - [MOCO](https://github.com/cybozu-go/moco)
 
-cert-managerは、CertificateリソースやIssuerリソースなどのカスタムリソースを利用して、証明書の発行を自動化できるカスタムコントローラです。
-MOCOは、MySQLClusterリソースやBackupPolicyリソースを利用して、MySQLクラスタの構築や自動バックアップを管理するためのオペレータです。
+cert-managerは、CertificateリソースやIssuerリソースなどのカスタムリソースを利用して、証明書の発行を自動化できるカスタムコントローラーです。
+MOCOは、MySQLClusterリソースやBackupPolicyリソースを利用して、MySQLクラスターの構築や自動バックアップを管理するためのオペレーターです。
 
-Kubebuilderでは、client-goを使いやすく抽象化したライブラリとマニフェストを自動生成するツールを提供することで、簡単にカスタムコントローラやオペレータを開発できます。
+Kubebuilderでは、client-goを使いやすく抽象化したライブラリとマニフェストを自動生成するツールを提供することで、簡単にカスタムコントローラーやオペレーターを開発できます。
 
 Kubebuilderは、下記のツールとライブラリから構成されています。
 
 - [kubebuilder](https://github.com/kubernetes-sigs/kubebuilder)
-  - カスタムコントローラのプロジェクトの雛形を生成するツール
+  - カスタムコントローラーのプロジェクトの雛形を生成するツール
 - [controller-tools](https://github.com/kubernetes-sigs/controller-tools)
   - Goのソースコードからマニフェストを生成するツール
 - [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime)
-  - カスタムコントローラを実装するためのフレームワーク・ライブラリ
+  - カスタムコントローラーを実装するためのフレームワーク・ライブラリ
 
-本資料ではこれらのツールの利用してカスタムコントローラを実装する方法を学んでいきます。
+本資料ではこれらのツールの利用してカスタムコントローラーを実装する方法を学んでいきます。
 
 ## 対応バージョン
 
-* kubebuilder: v3.1.0
+* Kubebuilder: v3.1.0
 * controller-tools: v0.6.1
 * controller-runtime: v0.9.3
 

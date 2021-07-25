@@ -1,31 +1,19 @@
 version: 1
 rules:
   - expected: コントローラー
-    patterns:
-      - コントローラ
-      - controller
-      - Controller
+    pattern: /コントローラ(?!ー)/
   - expected: サーバー
-    patterns:
-      - サーバ
-      - server
-      - Server
+    pattern: /サーバ(?!ー)/
   - expected: クラスター
-    patterns:
-      - クラスタ
-      - cluster
-      - Cluster
+    pattern: /クラスタ(?!ー)/
+  - expected: オペレーター
+    pattern: /オペレータ(?!ー)/
   - expected: kube-apiserver
     patterns:
-      - apiserver
-      - api\-server
-      - API server
-      - API Server
-      - APIサーバ
-      - APIサーバー
-  - expected: Kubebuilder
-  - expected: オペレーター
+      - /\bapi[-]server\b/i
+  - expected: kube-apiserver
     patterns:
-      - オペレータ
-      - operator
-      - Operator
+      - /API [Ss]erver/
+      - /APIサーバ(?!ー)/
+  - expected: Kubebuilder
+  - expected: Kubernetes
