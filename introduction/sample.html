@@ -3,7 +3,7 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <title>作成するカスタムコントローラ · つくって学ぶKubebuilder</title>
+        <title>MarkdownViewコントローラー · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="HonKit 3.6.20">
@@ -122,7 +122,7 @@
                 <a href="basics.html">
             
                     
-                    カスタムコントローラの基礎
+                    カスタムコントローラーの基礎
             
                 </a>
             
@@ -135,7 +135,7 @@
                 <a href="sample.html">
             
                     
-                    作成するカスタムコントローラ
+                    MarkdownViewコントローラー
             
                 </a>
             
@@ -219,20 +219,7 @@
                 <a href="../kubebuilder/kind.html">
             
                     
-                    kindで動かしてみよう
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
-            
-                <a href="../kubebuilder/debug.html">
-            
-                    
-                    手軽な動作確認
+                    カスタムコントローラーの動作確認
             
                 </a>
             
@@ -361,7 +348,7 @@
                 <a href="../controller-runtime/controller_test.html">
             
                     
-                    コントローラのテスト
+                    コントローラーのテスト
             
                 </a>
             
@@ -408,12 +395,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/monitoring.html">
             
-                <a href="../controller-runtime/metrics.html">
+                <a href="../controller-runtime/monitoring.html">
             
                     
-                    メトリクスの収集
+                    モニタリング
             
                 </a>
             
@@ -456,7 +443,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >作成するカスタムコントローラ</a>
+        <a href=".." >MarkdownViewコントローラー</a>
     </h1>
 </div>
 
@@ -471,37 +458,49 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="作成するカスタムコントローラ">作成するカスタムコントローラ</h1>
-<p>本資料ではカスタムコントローラの実装例として、Kubernetesでマルチテナンシーを実現するためのテナントコントローラを実装します。</p>
-<p>Kubernetesでは、namespaceという仕組みにより各種リソースの分離をおこなうことが可能になっています。
-しかし複数のチームがKubernetesを利用するユースケースでは、namespaceだけでは機能が不足する場合があります。
-例えば1つのチームが複数のnamespaceを利用したいと思っても、namespaceの作成には強い権限が必要となるため、チームのメンバーがnamespaceを自由に追加することはできません。</p>
-<p>そこでテナントという仕組みを考えてみましょう。</p>
+                                <h1 id="markdownviewコントローラー">MarkdownViewコントローラー</h1>
+<p>本資料では、カスタムコントローラーの例としてMarkdownViewコントローラーを実装することとします。
+MarkdownViewコントローラーは、ユーザーが用意したMarkdownをレンダリングしてブラウザから閲覧できるようにサービスを提供するコントローラーです。</p>
+<p>MarkdownのレンダリングにはmdBookを利用することとします。</p>
 <ul>
-<li>テナントは複数のnamespaceから構成される</li>
-<li>テナントの管理者に指定されたユーザーはテナントに新しいnamespaceを自由に追加・削除できる</li>
+<li><a href="https://rust-lang.github.io/mdBook/" target="_blank">https://rust-lang.github.io/mdBook/</a></li>
 </ul>
-<p>次にこのテナントを表現するためのカスタムリソースを考えてみます。
-下記のようにテナントを構成するnamespace名の一覧と、namespace名のプリフィックス、管理者を指定できるようにしましょう。</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">multitenancy.example.com/v1</span>
-<span class="hljs-attr">kind:</span> <span class="hljs-string">Tenant</span>
+<p>MarkdownViewコントローラーの主な処理の流れは次のようになります。</p>
+<p><img src="img/markdownview_controller.png" alt="MarkdownView Controller"></p>
+<ul>
+<li>ユーザーはMarkdownViewカスタムリソースを作成します。</li>
+<li>MarkdownViewコントローラーは、作成されたMarkdownViewリソースの内容に応じて必要な各リソースを作成します。<ul>
+<li>カスタムリソースに記述されたMarkdownをConfigMapリソースとして作成します。</li>
+<li>MarkdownをレンダリングするためのmdBookをDeploymentリソースとして作成します。</li>
+<li>mdBookにアクセスするためのServiceリソースを作成します。</li>
+</ul>
+</li>
+<li>ユーザーは、作成されたサービスを経由して、レンダリングされたMarkdownを閲覧できます。</li>
+</ul>
+<p>MarkdownViewカスタムリソースには、以下のようにMarkdownの内容とレンダリングに利用するmdBookのコンテナイメージおよびレプリカ数を指定できるようにします。</p>
+<blockquote>
+<p><a id="view_v1_markdownview.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/config/samples/view_v1_markdownview.yaml" target="_blank">view_v1_markdownview.yaml</a></p>
+</blockquote>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">view.zoetrope.github.io/v1</span>
+<span class="hljs-attr">kind:</span> <span class="hljs-string">MarkdownView</span>
 <span class="hljs-attr">metadata:</span>
-  <span class="hljs-attr">name:</span> <span class="hljs-string">sample</span>
+  <span class="hljs-attr">name:</span> <span class="hljs-string">markdownview-sample</span>
 <span class="hljs-attr">spec:</span>
-  <span class="hljs-attr">namespaces:</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-string">test1</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-string">test2</span>
-  <span class="hljs-attr">namespacePrefix:</span> <span class="hljs-string">sample-</span>
-  <span class="hljs-attr">admin:</span>
-    <span class="hljs-attr">kind:</span> <span class="hljs-string">User</span>
-    <span class="hljs-attr">name:</span> <span class="hljs-string">test</span>
-    <span class="hljs-attr">namespace:</span> <span class="hljs-string">default</span>
-    <span class="hljs-attr">apiGroup:</span> <span class="hljs-string">rbac.authorization.k8s.io</span>
+  <span class="hljs-attr">markdowns:</span>
+    <span class="hljs-attr">SUMMARY.md:</span> <span class="hljs-string">|
+      # Summary
+</span>
+      <span class="hljs-bullet">-</span> [<span class="hljs-string">Page1</span>]<span class="hljs-string">(page1.md)</span>
+    <span class="hljs-attr">page1.md:</span> <span class="hljs-string">|
+      # Page 1
+</span>
+      <span class="hljs-string">一ページ目のコンテンツです。</span>
+  <span class="hljs-attr">replicas:</span> <span class="hljs-number">1</span>
+  <span class="hljs-attr">viewerImage:</span> <span class="hljs-string">&quot;peaceiris/mdbook:latest&quot;</span>
 </code></pre>
-<p>本資料でこれから開発するカスタムコントローラは、上記のカスタムリソースを読み取り、namespaceを作成したり管理者権限の設定をおこなうことになります。</p>
 <p>ソースコードは以下にあるので参考にしてください。</p>
 <ul>
-<li><a href="https://github.com/zoetrope/kubebuilder-training/tree/master/codes/tenant" target="_blank">https://github.com/zoetrope/kubebuilder-training/tree/master/codes/tenant</a></li>
+<li><a href="https://github.com/zoetrope/kubebuilder-training/tree/master/codes/markdown-view" target="_blank">https://github.com/zoetrope/kubebuilder-training/tree/master/codes/markdown-view</a></li>
 </ul>
 
                                 
@@ -530,7 +529,7 @@
 
             
                 
-                <a href="basics.html" class="navigation navigation-prev " aria-label="Previous page: カスタムコントローラの基礎">
+                <a href="basics.html" class="navigation navigation-prev " aria-label="Previous page: カスタムコントローラーの基礎">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
@@ -546,7 +545,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"作成するカスタムコントローラ","level":"1.1.3","depth":2,"next":{"title":"参考情報","level":"1.1.4","depth":2,"path":"introduction/references.md","ref":"introduction/references.md","articles":[]},"previous":{"title":"カスタムコントローラの基礎","level":"1.1.2","depth":2,"path":"introduction/basics.md","ref":"introduction/basics.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"introduction/sample.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"MarkdownViewコントローラー","level":"1.1.3","depth":2,"next":{"title":"参考情報","level":"1.1.4","depth":2,"path":"introduction/references.md","ref":"introduction/references.md","articles":[]},"previous":{"title":"カスタムコントローラーの基礎","level":"1.1.2","depth":2,"path":"introduction/basics.md","ref":"introduction/basics.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"introduction/sample.md","mtime":"2021-07-25T14:05:57.610Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

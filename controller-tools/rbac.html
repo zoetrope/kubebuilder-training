@@ -122,7 +122,7 @@
                 <a href="../introduction/basics.html">
             
                     
-                    カスタムコントローラの基礎
+                    カスタムコントローラーの基礎
             
                 </a>
             
@@ -135,7 +135,7 @@
                 <a href="../introduction/sample.html">
             
                     
-                    作成するカスタムコントローラ
+                    MarkdownViewコントローラー
             
                 </a>
             
@@ -219,20 +219,7 @@
                 <a href="../kubebuilder/kind.html">
             
                     
-                    kindで動かしてみよう
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
-            
-                <a href="../kubebuilder/debug.html">
-            
-                    
-                    手軽な動作確認
+                    カスタムコントローラーの動作確認
             
                 </a>
             
@@ -361,7 +348,7 @@
                 <a href="../controller-runtime/controller_test.html">
             
                     
-                    コントローラのテスト
+                    コントローラーのテスト
             
                 </a>
             
@@ -408,12 +395,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/monitoring.html">
             
-                <a href="../controller-runtime/metrics.html">
+                <a href="../controller-runtime/monitoring.html">
             
                     
-                    メトリクスの収集
+                    モニタリング
             
                 </a>
             
@@ -472,27 +459,118 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="rbacマニフェストの生成">RBACマニフェストの生成</h1>
-<p>KubernetesではRBAC(Role-based access control)によりリソースへのアクセス権を制御することができます。
-カスタムコントローラにおいても、利用するリソースにのみアクセスできるように適切に権限を設定する必要があります。</p>
-<p>controller-genでは、Goのソースコード中に埋め込まれたマーカーを元にRBACのマニフェストを生成することができます。</p>
-<p>テナントコントローラに付与したマーカーを見てみましょう。</p>
-<blockquote>
-<p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
-</blockquote>
-<pre><code class="lang-golang"><span class="hljs-comment">//+kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants,verbs=get;list;watch;create;update;patch;delete</span>
-<span class="hljs-comment">//+kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants/status,verbs=get;update;patch</span>
-<span class="hljs-comment">//+kubebuilder:rbac:groups=multitenancy.example.com,resources=tenants/finalizers,verbs=update</span>
-<span class="hljs-comment">//+kubebuilder:rbac:groups=core,resources=namespaces,verbs=get;list;watch;create;update;patch;delete</span>
-<span class="hljs-comment">//+kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=clusterroles,verbs=get;list;watch;create;update;patch;delete</span>
-<span class="hljs-comment">//+kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=rolebindings,verbs=get;list;watch;create;update;patch;delete</span>
+<p>KubernetesではRBAC(Role-based access control)によりリソースへのアクセス権を制御できます。
+カスタムコントローラーにおいても、利用するリソースにのみアクセスできるように適切な権限を設定する必要があります。</p>
+<p>controller-genでは、Goのソースコード中に埋め込まれたマーカーを元にRBACのマニフェストを生成できます。</p>
+<p>まずはKubebuilderによって生成されたマーカーを見てみましょう。</p>
+<pre><code class="lang-go"><span class="hljs-comment">//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews,verbs=get;list;watch;create;update;patch;delete</span>
+<span class="hljs-comment">//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/status,verbs=get;update;patch</span>
+<span class="hljs-comment">//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/finalizers,verbs=update</span>
 </code></pre>
-<p>まずは、Tenantリソースに対して<code>get;list;watch;create;update;patch;delete</code>の権限を与えます。
-statusをサブリソース化した場合は、個別に権限を追加する必要があります。
-サブリソースはcreateやdelete操作をおこなえないので<code>get;update;patch</code>の権限を与えます。
-また、テナントコントローラが管理するNamespace, ClusterRole, RoleBindingを操作する権限も追加します。</p>
+<ul>
+<li><code>groups</code>: 権限を与えたいリソースのAPIグループを指定します。</li>
+<li><code>resources</code>: 権限を与えたいリソースの種類を指定します。</li>
+<li><code>verb</code>: どのような権限を与えるのかを指定します。コントローラーがおこなう操作に応じた権限を指定します。</li>
+</ul>
+<p>MarkdownViewリソースと、そのサブリソースである<code>status</code>と<code>finalizer</code>に権限が付与されています。
+なお、サブリソースはlistやcreate,delete操作をおこなえないので<code>get;update;patch</code>の権限のみが付与されています。</p>
+<p>これらに加えてMarkdownViewコントローラーが作成するConfigMap, Deployment, Service, Eventリソースを操作する権限のマーカーを追加しましょう。</p>
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-comment">//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews,verbs=get;list;watch;create;update;patch;delete</span>
+<span class="hljs-comment">//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/status,verbs=get;update;patch</span>
+<span class="hljs-comment">//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/finalizers,verbs=update</span>
+<span class="hljs-comment">//+kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete</span>
+<span class="hljs-comment">//+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete</span>
+<span class="hljs-comment">//+kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch;create;update;patch;delete</span>
+<span class="hljs-comment">//+kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch</span>
+</code></pre>
 <p>なお、controller-runtimeの提供するClientは、Getでリソースを取得した場合も裏でListやWatchを呼び出しています。
 そのためgetしかしない場合でも、get, list, watchを許可しておきましょう。</p>
-<p><code>make manifests</code>を実行すると<a href="../../codes/tenant/config/rbac/role.yaml">config/rbac/role.yaml</a>が更新されます。</p>
+<p><code>make manifests</code>を実行すると以下のように<code>config/rbac/role.yaml</code>が更新されます。</p>
+<blockquote>
+<p><a id="role.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/config/rbac/role.yaml" target="_blank">role.yaml</a></p>
+</blockquote>
+<pre><code class="lang-yaml">
+<span class="hljs-meta">---</span>
+<span class="hljs-attr">apiVersion:</span> <span class="hljs-string">rbac.authorization.k8s.io/v1</span>
+<span class="hljs-attr">kind:</span> <span class="hljs-string">ClusterRole</span>
+<span class="hljs-attr">metadata:</span>
+  <span class="hljs-attr">creationTimestamp:</span> <span class="hljs-literal">null</span>
+  <span class="hljs-attr">name:</span> <span class="hljs-string">manager-role</span>
+<span class="hljs-attr">rules:</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">apiGroups:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">apps</span>
+  <span class="hljs-attr">resources:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">deployments</span>
+  <span class="hljs-attr">verbs:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">create</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">delete</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">get</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">list</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">patch</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">update</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">watch</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">apiGroups:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;&quot;</span>
+  <span class="hljs-attr">resources:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">configmaps</span>
+  <span class="hljs-attr">verbs:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">create</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">delete</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">get</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">list</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">patch</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">update</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">watch</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">apiGroups:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;&quot;</span>
+  <span class="hljs-attr">resources:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">events</span>
+  <span class="hljs-attr">verbs:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">create</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">patch</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">update</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">apiGroups:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;&quot;</span>
+  <span class="hljs-attr">resources:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">services</span>
+  <span class="hljs-attr">verbs:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">create</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">delete</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">get</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">list</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">patch</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">update</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">watch</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">apiGroups:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">view.zoetrope.github.io</span>
+  <span class="hljs-attr">resources:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">markdownviews</span>
+  <span class="hljs-attr">verbs:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">create</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">delete</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">get</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">list</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">patch</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">update</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">watch</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">apiGroups:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">view.zoetrope.github.io</span>
+  <span class="hljs-attr">resources:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">markdownviews/finalizers</span>
+  <span class="hljs-attr">verbs:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">update</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">apiGroups:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">view.zoetrope.github.io</span>
+  <span class="hljs-attr">resources:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">markdownviews/status</span>
+  <span class="hljs-attr">verbs:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">get</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">patch</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">update</span>
+</code></pre>
 
                                 
                                 </section>
@@ -536,7 +614,7 @@ statusをサブリソース化した場合は、個別に権限を追加する�
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"next":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]},"previous":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/rbac.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"next":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]},"previous":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/rbac.md","mtime":"2021-07-25T13:54:21.390Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

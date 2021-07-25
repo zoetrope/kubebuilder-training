@@ -122,7 +122,7 @@
                 <a href="../introduction/basics.html">
             
                     
-                    カスタムコントローラの基礎
+                    カスタムコントローラーの基礎
             
                 </a>
             
@@ -135,7 +135,7 @@
                 <a href="../introduction/sample.html">
             
                     
-                    作成するカスタムコントローラ
+                    MarkdownViewコントローラー
             
                 </a>
             
@@ -219,20 +219,7 @@
                 <a href="../kubebuilder/kind.html">
             
                     
-                    kindで動かしてみよう
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
-            
-                <a href="../kubebuilder/debug.html">
-            
-                    
-                    手軽な動作確認
+                    カスタムコントローラーの動作確認
             
                 </a>
             
@@ -361,7 +348,7 @@
                 <a href="controller_test.html">
             
                     
-                    コントローラのテスト
+                    コントローラーのテスト
             
                 </a>
             
@@ -408,12 +395,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="monitoring.html">
             
-                <a href="metrics.html">
+                <a href="monitoring.html">
             
                     
-                    メトリクスの収集
+                    モニタリング
             
                 </a>
             
@@ -473,12 +460,28 @@
                                 
                                 <h1 id="webhookのテスト">Webhookのテスト</h1>
 <h2 id="テスト環境のセットアップ">テスト環境のセットアップ</h2>
-<p>Kubebuilder v3から、WebHookのテストをセットアップするコードが生成されるようになりました。
-<a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/api/v1/webhook_suite_test.go" target="_blank">api/v1/webhook_suite_test.go</a>を見てみましょう。</p>
+<p>Webhookもコントローラーのテストと同じくEnvtestを利用できます。
+Kubebuilderによってテストを実行するためのコードが以下のように生成されています。</p>
 <blockquote>
-<p><a id="api/v1/webhook_suite_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/webhook_suite_test.go" target="_blank">api/v1/webhook_suite_test.go</a></p>
+<p><a id="api/v1/webhook_suite_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/api/v1/webhook_suite_test.go" target="_blank">api/v1/webhook_suite_test.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">package</span> v1
+<pre><code class="lang-golang"><span class="hljs-comment">/*
+Copyright 2021.
+
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/</span>
+
+<span class="hljs-keyword">package</span> v1
 
 <span class="hljs-keyword">import</span> (
     <span class="hljs-string">&quot;context&quot;</span>
@@ -491,7 +494,9 @@
 
     . <span class="hljs-string">&quot;github.com/onsi/ginkgo&quot;</span>
     . <span class="hljs-string">&quot;github.com/onsi/gomega&quot;</span>
+
     admissionv1beta1 <span class="hljs-string">&quot;k8s.io/api/admission/v1beta1&quot;</span>
+    <span class="hljs-comment">//+kubebuilder:scaffold:imports</span>
     <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/runtime&quot;</span>
     <span class="hljs-string">&quot;k8s.io/client-go/rest&quot;</span>
     ctrl <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime&quot;</span>
@@ -500,7 +505,6 @@
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/envtest/printer&quot;</span>
     logf <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log&quot;</span>
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log/zap&quot;</span>
-    <span class="hljs-comment">//+kubebuilder:scaffold:imports</span>
 )
 
 <span class="hljs-comment">// These tests use Ginkgo (BDD-style Go testing framework). Refer to</span>
@@ -528,7 +532,7 @@
     By(<span class="hljs-string">&quot;bootstrapping test environment&quot;</span>)
     testEnv = &amp;envtest.Environment{
         CRDDirectoryPaths:     []<span class="hljs-keyword">string</span>{filepath.Join(<span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>, <span class="hljs-string">&quot;crd&quot;</span>, <span class="hljs-string">&quot;bases&quot;</span>)},
-        ErrorIfCRDPathMissing: <span class="hljs-literal">true</span>,
+        ErrorIfCRDPathMissing: <span class="hljs-literal">false</span>,
         WebhookInstallOptions: envtest.WebhookInstallOptions{
             Paths: []<span class="hljs-keyword">string</span>{filepath.Join(<span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>, <span class="hljs-string">&quot;webhook&quot;</span>)},
         },
@@ -563,7 +567,7 @@
     })
     Expect(err).NotTo(HaveOccurred())
 
-    err = (&amp;Tenant{}).SetupWebhookWithManager(mgr)
+    err = (&amp;MarkdownView{}).SetupWebhookWithManager(mgr)
     Expect(err).NotTo(HaveOccurred())
 
     <span class="hljs-comment">//+kubebuilder:scaffold:webhook</span>
@@ -596,76 +600,102 @@
     Expect(err).NotTo(HaveOccurred())
 })
 </code></pre>
-<p>基本的にはコントローラのテストコードと似ていますが、<code>envtest.Environment</code>を作成する際に、Webhook用のマニフェストのパスを指定したり、
+<p>基本的にはコントローラーのテストコードと似ていますが、<code>envtest.Environment</code>を作成する際に、Webhook用のマニフェストのパスを指定したり、
 <code>ctrl.NewManager</code>を呼び出す際に<code>Host</code>,<code>Port</code>,<code>CertDir</code>のパラメータをtestEnvのパラメータで上書きする必要があります。</p>
 <h2 id="webhookのテスト">Webhookのテスト</h2>
-<p>コントローラと同様にWebhookのテストも書いてみましょう。</p>
+<p>Webhookのテストコードを書いてみましょう。</p>
 <blockquote>
-<p><a id="api/v1/tenant_webhook_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_webhook_test.go" target="_blank">api/v1/tenant_webhook_test.go</a></p>
+<p><a id="api/v1/markdownview_webhook_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/api/v1/markdownview_webhook_test.go" target="_blank">api/v1/markdownview_webhook_test.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-keyword">package</span> v1
 
 <span class="hljs-keyword">import</span> (
+    <span class="hljs-string">&quot;bytes&quot;</span>
     <span class="hljs-string">&quot;context&quot;</span>
+    <span class="hljs-string">&quot;errors&quot;</span>
+    <span class="hljs-string">&quot;os&quot;</span>
+    <span class="hljs-string">&quot;path/filepath&quot;</span>
 
     . <span class="hljs-string">&quot;github.com/onsi/ginkgo&quot;</span>
     . <span class="hljs-string">&quot;github.com/onsi/gomega&quot;</span>
-    rbacv1 <span class="hljs-string">&quot;k8s.io/api/rbac/v1&quot;</span>
-    metav1 <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;</span>
-    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;</span>
+    k8serrors <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/api/errors&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/types&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/util/yaml&quot;</span>
 )
 
-<span class="hljs-keyword">var</span> _ = Describe(<span class="hljs-string">&quot;Tenant Webhook&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
-    It(<span class="hljs-string">&quot;should create a valid tenant&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
-        ctx := context.Background()
-        tenant := &amp;Tenant{
-            TypeMeta: metav1.TypeMeta{
-                APIVersion: GroupVersion.String(),
-                Kind:       <span class="hljs-string">&quot;Tenant&quot;</span>,
-            },
-            ObjectMeta: metav1.ObjectMeta{
-                Name: <span class="hljs-string">&quot;test&quot;</span>,
-            },
-            Spec: TenantSpec{
-                Namespaces: []<span class="hljs-keyword">string</span>{
-                    <span class="hljs-string">&quot;test1&quot;</span>,
-                    <span class="hljs-string">&quot;test2&quot;</span>,
-                },
-                NamespacePrefix: <span class="hljs-string">&quot;&quot;</span>,
-                Admin: rbacv1.Subject{
-                    Kind:      <span class="hljs-string">&quot;ServiceAccount&quot;</span>,
-                    Name:      <span class="hljs-string">&quot;default&quot;</span>,
-                    Namespace: <span class="hljs-string">&quot;default&quot;</span>,
-                },
-            },
-        }
-        err := k8sClient.Create(ctx, tenant)
-        Expect(err).Should(Succeed())
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">mutateTest</span><span class="hljs-params">(before <span class="hljs-keyword">string</span>, after <span class="hljs-keyword">string</span>)</span></span> {
+    ctx := context.Background()
 
-        mutatedTenant := &amp;Tenant{}
-        err = k8sClient.Get(ctx, client.ObjectKey{Name: <span class="hljs-string">&quot;test&quot;</span>}, mutatedTenant)
-        Expect(err).Should(Succeed())
-        Expect(mutatedTenant.Spec.NamespacePrefix).Should(Equal(<span class="hljs-string">&quot;test-&quot;</span>))
+    y, err := os.ReadFile(before)
+    Expect(err).NotTo(HaveOccurred())
+    d := yaml.NewYAMLOrJSONDecoder(bytes.NewReader(y), <span class="hljs-number">4096</span>)
+    beforeView := &amp;MarkdownView{}
+    err = d.Decode(beforeView)
+    Expect(err).NotTo(HaveOccurred())
+
+    err = k8sClient.Create(ctx, beforeView)
+    Expect(err).NotTo(HaveOccurred())
+
+    ret := &amp;MarkdownView{}
+    err = k8sClient.Get(ctx, types.NamespacedName{Name: beforeView.GetName(), Namespace: beforeView.GetNamespace()}, ret)
+    Expect(err).NotTo(HaveOccurred())
+
+    y, err = os.ReadFile(after)
+    Expect(err).NotTo(HaveOccurred())
+    d = yaml.NewYAMLOrJSONDecoder(bytes.NewReader(y), <span class="hljs-number">4096</span>)
+    afterView := &amp;MarkdownView{}
+    err = d.Decode(afterView)
+    Expect(err).NotTo(HaveOccurred())
+
+    Expect(ret.Spec).Should(Equal(afterView.Spec))
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">validateTest</span><span class="hljs-params">(file <span class="hljs-keyword">string</span>, valid <span class="hljs-keyword">bool</span>)</span></span> {
+    ctx := context.Background()
+    y, err := os.ReadFile(file)
+    Expect(err).NotTo(HaveOccurred())
+    d := yaml.NewYAMLOrJSONDecoder(bytes.NewReader(y), <span class="hljs-number">4096</span>)
+    view := &amp;MarkdownView{}
+    err = d.Decode(view)
+    Expect(err).NotTo(HaveOccurred())
+
+    err = k8sClient.Create(ctx, view)
+
+    <span class="hljs-keyword">if</span> valid {
+        Expect(err).NotTo(HaveOccurred(), <span class="hljs-string">&quot;MarkdownView: %v&quot;</span>, view)
+    } <span class="hljs-keyword">else</span> {
+        Expect(err).To(HaveOccurred(), <span class="hljs-string">&quot;MarkdownView: %v&quot;</span>, view)
+        statusErr := &amp;k8serrors.StatusError{}
+        Expect(errors.As(err, &amp;statusErr)).To(BeTrue())
+        expected := view.Annotations[<span class="hljs-string">&quot;message&quot;</span>]
+        Expect(statusErr.ErrStatus.Message).To(ContainSubstring(expected))
+    }
+}
+
+<span class="hljs-keyword">var</span> _ = Describe(<span class="hljs-string">&quot;MarkdownView Webhook&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+    Context(<span class="hljs-string">&quot;mutating&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+        It(<span class="hljs-string">&quot;should mutate a MarkdownView&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+            mutateTest(filepath.Join(<span class="hljs-string">&quot;testdata&quot;</span>, <span class="hljs-string">&quot;mutating&quot;</span>, <span class="hljs-string">&quot;before.yaml&quot;</span>), filepath.Join(<span class="hljs-string">&quot;testdata&quot;</span>, <span class="hljs-string">&quot;mutating&quot;</span>, <span class="hljs-string">&quot;after.yaml&quot;</span>))
+        })
+    })
+    Context(<span class="hljs-string">&quot;validating&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+        It(<span class="hljs-string">&quot;should create a valid MarkdownView&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+            validateTest(filepath.Join(<span class="hljs-string">&quot;testdata&quot;</span>, <span class="hljs-string">&quot;validating&quot;</span>, <span class="hljs-string">&quot;valid.yaml&quot;</span>), <span class="hljs-literal">true</span>)
+        })
+        It(<span class="hljs-string">&quot;should not create invalid MarkdownViews&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+            validateTest(filepath.Join(<span class="hljs-string">&quot;testdata&quot;</span>, <span class="hljs-string">&quot;validating&quot;</span>, <span class="hljs-string">&quot;empty-markdowns.yaml&quot;</span>), <span class="hljs-literal">false</span>)
+            validateTest(filepath.Join(<span class="hljs-string">&quot;testdata&quot;</span>, <span class="hljs-string">&quot;validating&quot;</span>, <span class="hljs-string">&quot;invalid-replicas.yaml&quot;</span>), <span class="hljs-literal">false</span>)
+            validateTest(filepath.Join(<span class="hljs-string">&quot;testdata&quot;</span>, <span class="hljs-string">&quot;validating&quot;</span>, <span class="hljs-string">&quot;without-summary.yaml&quot;</span>), <span class="hljs-literal">false</span>)
+        })
     })
 })
 </code></pre>
-<p>このテストではまずテナントのオブジェクトを用意して、<code>k8sClient</code>を利用してKubernetesクラスタにリソースの作成をおこなっています。
-その後、defaultingのWebhookにより、<code>namespacePrefix</code>の値が正しく設定されていることを確認しています。</p>
-<h2 id="テストの実行">テストの実行</h2>
-<p><code>make test</code>や<code>go test</code>でテストを実行してみましょう。</p>
-<pre><code>$ go test -v ./api/v1/
-=== RUN   TestWebhooks
-Running Suite: Webhook Suite
-============================
-Random Seed: 1595580068
-Will run 1 of 1 specs
+<p>MutatingWebhookのテストでは、入力となるマニフェストファイル(before.yaml)を利用してリソースを作成し、
+作成されたリソースが期待値となるマニフェストファイル(after.yaml)の内容と一致することを確認しています。</p>
+<p>ValidatingWebhookのテストでは、Validなマニフェストファイル(valid.yaml)を利用してリソースが作成できることと、
+Invalidなマニフェストファイル(empty-markdowns.yaml, invalid-replicas.yaml, without-summary.yaml)を利用してリソースの作成に失敗することをテストしています。</p>
+<p>最後に、<code>make test</code>でテストに通ることを確認しましょう。</p>
 
-Ran 1 of 1 Specs in 5.101 seconds
-SUCCESS! -- 1 Passed | 0 Failed | 0 Pending | 0 Skipped
---- PASS: TestWebhooks (5.10s)
-PASS
-ok      github.com/zoetrope/kubebuilder-training/codes/api/v1   5.191s
-</code></pre>
                                 
                                 </section>
                             
@@ -708,7 +738,7 @@ ok      github.com/zoetrope/kubebuilder-training/codes/api/v1   5.191s
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookのテスト","level":"1.4.6","depth":2,"next":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"previous":{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/webhook_test.md","mtime":"2021-04-29T10:17:23.780Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookのテスト","level":"1.4.6","depth":2,"next":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"previous":{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/webhook_test.md","mtime":"2021-07-25T13:49:30.970Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

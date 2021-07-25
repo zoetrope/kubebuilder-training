@@ -122,7 +122,7 @@
                 <a href="../introduction/basics.html">
             
                     
-                    カスタムコントローラの基礎
+                    カスタムコントローラーの基礎
             
                 </a>
             
@@ -135,7 +135,7 @@
                 <a href="../introduction/sample.html">
             
                     
-                    作成するカスタムコントローラ
+                    MarkdownViewコントローラー
             
                 </a>
             
@@ -219,20 +219,7 @@
                 <a href="../kubebuilder/kind.html">
             
                     
-                    kindで動かしてみよう
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
-            
-                <a href="../kubebuilder/debug.html">
-            
-                    
-                    手軽な動作確認
+                    カスタムコントローラーの動作確認
             
                 </a>
             
@@ -361,7 +348,7 @@
                 <a href="controller_test.html">
             
                     
-                    コントローラのテスト
+                    コントローラーのテスト
             
                 </a>
             
@@ -408,12 +395,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="monitoring.html">
             
-                <a href="metrics.html">
+                <a href="monitoring.html">
             
                     
-                    メトリクスの収集
+                    モニタリング
             
                 </a>
             
@@ -472,364 +459,277 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="reconcile">Reconcile</h1>
-<p>Reconcileはカスタムコントローラのコアロジックになります。
+<p>Reconcileはカスタムコントローラーのコアロジックです。
 あるべき状態(ユーザーが作成したカスタムリソース)と、実際のシステムの状態を比較し、差分があればそれを埋めるための処理を実行します。</p>
-<h2 id="reconcileはいつ呼ばれるのか">Reconcileはいつ呼ばれるのか</h2>
+<h2 id="reconcilerの仕組み">Reconcilerの仕組み</h2>
+<h3 id="reconcilerインタフェース">Reconcilerインタフェース</h3>
+<p>controller-runtimeでは、Reconcile処理は<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Reconciler" target="_blank">reconcile.Reconciler</a>インタフェースを実装することになります。</p>
+<pre><code class="lang-go"><span class="hljs-keyword">type</span> Reconciler <span class="hljs-keyword">interface</span> {
+    Reconcile(context.Context, Request) (Result, error)
+}
+</code></pre>
+<p>引数の<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Request" target="_blank">reconcile.Request</a>には、
+このReconcilerが対象とするカスタムリソースのNamespaceとNameが入っています。</p>
+<p>戻り値の<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Result" target="_blank">reconcile.Result</a>には、
+<code>Requeue</code>, <code>RequeueAfter</code>というフィールドがあります。
+RequeueにTrueを指定して戻り値を返すと、Reconcile処理がキューに積まれて再度実行されることになります。
+RequeueAfterを指定した場合は、指定した時間が経過したあとに再度Reconcile処理が実行されます。</p>
+<p>また、Recnocileがエラーを返した場合もReconcile処理がキューに積まれて再度実行されることになるのですが、
+失敗するたびに待ち時間が指数関数的に増加します。</p>
+<p>Reconcileは複数のリソースを管理しているため、1つのリソースを処理するために多くの時間をかけるべきではありません。
+何らかの待ちが発生する場合は、<code>Requeue</code>や<code>RequeueAfter</code>を指定してReconcileをすぐに抜けるようにしましょう。</p>
+<h3 id="reconcileの実行タイミング">Reconcileの実行タイミング</h3>
 <p>Reconcile処理は下記のタイミングで呼び出されます。</p>
 <ul>
-<li>コントローラが扱うリソースが作成、更新、削除されたとき</li>
+<li>コントローラーの扱うリソースが作成、更新、削除されたとき</li>
 <li>Reconcileに失敗してリクエストが再度キューに積まれたとき</li>
-<li>コントローラの起動時</li>
+<li>コントローラーの起動時</li>
 <li>外部イベントが発生したとき</li>
 <li>キャッシュを再同期するとき(デフォルトでは10時間に1回)</li>
 </ul>
 <p>このような様々なタイミングで呼び出されるので、Reconcile処理は必ず冪等(同じリクエストで何度呼び出しても同じ結果になること)でなければなりません。</p>
 <p>なお、Reconcile処理はデフォルトでは1秒間に10回以上実行されないように制限されています。</p>
+<p>また、これらのイベントが高い頻度で発生する場合は、Reconciliation Loopを並列実行するように設定可能です。</p>
 <h3 id="監視対象の制御">監視対象の制御</h3>
-<p>Reconcileが呼ばれるタイミングを制御するために、<code>NewControllerManagedBy</code>関数を利用します。</p>
+<p>Reconcile処理は、コントローラーの扱うリソースが作成、更新、削除されたときに呼び出されると説明しました。
+「コントローラーの扱うリソース」を指定するために、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/builder#ControllerManagedBy" target="_blank">NewControllerManagedBy</a>関数を利用します。</p>
 <blockquote>
-<p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">return</span> ctrl.NewControllerManagedBy(mgr).
-    For(&amp;multitenancyv1.Tenant{}).
-    Owns(&amp;corev1.Namespace{}).
-    Owns(&amp;rbacv1.ClusterRole{}).
-    Owns(&amp;rbacv1.RoleBinding{}).
-    Watches(&amp;src, &amp;handler.EnqueueRequestForObject{}).
-    WithEventFilter(pred).
-    Complete(r)
-</code></pre>
-<p><code>For</code>ではこのコントローラのReconcile対象となるリソースの型を指定します。</p>
-<p><code>Owns</code>にはこのコントローラが生成するリソースの型を指定します。
-ここではテナントコントローラが生成するnamespaceとClusterRole,RoleBindingを指定しています。
-これらのリソースに何らかの変更が発生した際にReconcileが呼び出されるようになります。
-ただし、Ownsで指定した型のすべてのリソースの変更をウォッチするわけではなく、テナントリソースがownerReferenceに指定されているリソースのみが監視対象となります。</p>
-<h3 id="イベントのフィルタリング">イベントのフィルタリング</h3>
-<p><code>WithEventFilter</code>では、<code>For</code>, <code>Owns</code>, <code>Watches</code>で監視対象としたリソースの変更イベントをまとめてフィルタリングすることができます。
-後述しますが、<code>For</code> や <code>Owns</code> 個々に、より細かくフィルタリングすることもできます。</p>
-<p>下記のような<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/predicate?tab=doc#Funcs" target="_blank">predicate.Funcs</a>を用意して、<code>WithEventFilter</code>関数で指定します。</p>
-<blockquote>
-<p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
-</blockquote>
-<pre><code class="lang-golang">pred := predicate.Funcs{
-    CreateFunc:  <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(event.CreateEvent)</span> <span class="hljs-title">bool</span></span> { <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span> },
-    DeleteFunc:  <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(event.DeleteEvent)</span> <span class="hljs-title">bool</span></span> { <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span> },
-    UpdateFunc:  <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(event.UpdateEvent)</span> <span class="hljs-title">bool</span></span> { <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span> },
-    GenericFunc: <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(event.GenericEvent)</span> <span class="hljs-title">bool</span></span> { <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span> },
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">SetupWithManager</span><span class="hljs-params">(mgr ctrl.Manager)</span> <span class="hljs-title">error</span></span> {
+    <span class="hljs-keyword">return</span> ctrl.NewControllerManagedBy(mgr).
+        For(&amp;viewv1.MarkdownView{}).
+        Owns(&amp;corev1.ConfigMap{}).
+        Owns(&amp;appsv1.Deployment{}).
+        Owns(&amp;corev1.Service{}).
+        Complete(r)
 }
 </code></pre>
-<p>例えば<code>CreateFunc</code>でtrueを返し、<code>DeleteFunc</code>,<code>UpdateFunc</code>でfalseを返すようにすれば、リソースが作成されたときのみReconcileが呼び出されるようにできます。
-また、引数でイベントの詳細な情報が渡ってくるので、それを利用してより複雑なフィルタリングをおこなうことも可能です。
-なお、<code>GenericFunc</code>は後述の外部イベントのフィルタリングに利用します。</p>
-<p>重要な注意点として、kube-apiserver に発行した CREATE/UPDATE/PATCH 操作が一対一でイベントにはなりません。
-たとえば CREATE 直後に UPDATE すると、イベントとしては CreateFunc しか呼び出されないことがあります。
-また、実際にはリソースが更新されていなくても、コントローラの起動直後は CREATE イベントが発火されます。
-このような挙動をするため、イベントをフィルタリングして CREATE と UPDATE で異なる更新処理をおこなう実装はおすすめしません。</p>
-<p>なお<code>WithEventFilter</code>を利用すると<code>For</code>や<code>Owns</code>,<code>Watches</code>で指定したすべての監視対象にフィルターが適用されますが、
-下記のように<code>For</code>や<code>Owns</code>,<code>Watches</code>のオプションとして個別にフィルターを指定することも可能です。</p>
-<pre><code class="lang-go"><span class="hljs-keyword">return</span> ctrl.NewControllerManagedBy(mgr).
-    For(&amp;multitenancyv1.Tenant{}, builder.WithPredicates(pred1)).
-    Owns(&amp;corev1.Namespace{}, builder.WithPredicates(pred2)).
-    Owns(&amp;rbacv1.RoleBinding{}, builder.WithPredicates(pred3)).
-    Watches(&amp;src, &amp;handler.EnqueueRequestForObject{}, builder.WithPredicates(pred4)).
-    Complete(r)
-</code></pre>
-<h3 id="外部イベントの監視">外部イベントの監視</h3>
-<p><code>Watches</code>では上記以外の外部イベントを監視したい場合に利用します。</p>
-<p>Kubernetes内のリソースの変更だけでなく、外部イベントをトリガーにしてReconcileを呼び出したい場合があります。
-例えばGitHubのWebhook呼び出しに応じて処理をおこないたい場合や、外部の状態をポーリングしてその状態の変化によって処理をおこないたい場合などが考えられます。</p>
-<p>外部イベント監視の例として、ここでは10秒ごとに起動しテナントリソースがReady状態になっていればイベントを発行する仕組みを実装してみます。</p>
-<blockquote>
-<p><a id="external_event.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/external_event.go" target="_blank">external_event.go</a></p>
-</blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">package</span> controllers
-
-<span class="hljs-keyword">import</span> (
-    <span class="hljs-string">&quot;context&quot;</span>
-    <span class="hljs-string">&quot;time&quot;</span>
-
-    multitenancyv1 <span class="hljs-string">&quot;github.com/zoetrope/kubebuilder-training/codes/api/v1&quot;</span>
-    corev1 <span class="hljs-string">&quot;k8s.io/api/core/v1&quot;</span>
-    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;</span>
-    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/event&quot;</span>
-)
-
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">newExternalEventWatcher</span><span class="hljs-params">()</span> *<span class="hljs-title">externalEventWatcher</span></span> {
-    ch := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> event.GenericEvent)
-
-    <span class="hljs-keyword">return</span> &amp;externalEventWatcher{
-        channel: ch,
-    }
-}
-
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *externalEventWatcher)</span> <span class="hljs-title">InjectClient</span><span class="hljs-params">(c client.Client)</span> <span class="hljs-title">error</span></span> {
-    r.client = c
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
-}
-
-<span class="hljs-keyword">type</span> externalEventWatcher <span class="hljs-keyword">struct</span> {
-    channel <span class="hljs-keyword">chan</span> event.GenericEvent
-    client  client.Client
-}
-
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r externalEventWatcher)</span> <span class="hljs-title">Start</span><span class="hljs-params">(ctx context.Context)</span> <span class="hljs-title">error</span></span> {
-    ticker := time.NewTicker(<span class="hljs-number">10</span> * time.Second)
-
-    <span class="hljs-keyword">defer</span> ticker.Stop()
-    <span class="hljs-keyword">for</span> {
-        <span class="hljs-keyword">select</span> {
-        <span class="hljs-keyword">case</span> &lt;-ctx.Done():
-            <span class="hljs-keyword">return</span> ctx.Err()
-        <span class="hljs-keyword">case</span> &lt;-ticker.C:
-            <span class="hljs-keyword">var</span> tenants multitenancyv1.TenantList
-            err := r.client.List(ctx, &amp;tenants, client.MatchingFields(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{conditionReadyField: <span class="hljs-keyword">string</span>(corev1.ConditionTrue)}))
-            <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-                <span class="hljs-keyword">break</span>
-            }
-            <span class="hljs-keyword">for</span> _, tenant := <span class="hljs-keyword">range</span> tenants.Items {
-                r.channel &lt;- event.GenericEvent{
-                    Object: &amp;tenant,
-                }
-            }
-        }
-    }
-}
-</code></pre>
-<p>上記のwatcherを<code>mgr.Add</code>でマネージャに登録し、<code>GenericEvent</code>をウォッチします。</p>
-<blockquote>
-<p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
-</blockquote>
-<pre><code class="lang-golang">external := newExternalEventWatcher()
-err = mgr.Add(external)
-<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-    <span class="hljs-keyword">return</span> err
-}
-src := source.Channel{
-    Source: external.channel,
-}
-<span class="hljs-keyword">return</span> ctrl.NewControllerManagedBy(mgr).
-    For(&amp;multitenancyv1.Tenant{}).
-    Owns(&amp;corev1.Namespace{}).
-    Owns(&amp;rbacv1.ClusterRole{}).
-    Owns(&amp;rbacv1.RoleBinding{}).
-    Watches(&amp;src, &amp;handler.EnqueueRequestForObject{}).
-    WithEventFilter(pred).
-    Complete(r)
-</code></pre>
-<p>これにより、Ready状態のテナントリソースが存在すると10秒ごとにReconcileが呼び出されるようになります。</p>
+<h4 id="for">For</h4>
+<p><code>For</code>にはこのコントローラーのReconcile対象となるリソースの型を指定します。</p>
+<p>今回はMarkdownViewカスタムリソースを指定します。
+これによりMarkdownViewリソースの作成・変更・削除がおこなわれると、Reconcile関数が呼び出されることになります。
+そして、Reconcile関数の引数で渡されるRequestは、MarkdownViewの情報になります。</p>
+<p>なお、<code>For</code>に指定できるリソースは1種類だけです。</p>
+<h4 id="owns">Owns</h4>
+<p><code>Owns</code>にはこのコントローラーが生成するリソースの型を指定します。<code>For</code>とは異なり、<code>Owns</code>は複数指定が可能です。</p>
+<p>MarkdownViewコントローラーは、ConfigMap, Deployment, Serviceリソースを作成することになるため、これらを<code>Owns</code>に指定します。</p>
+<p>これにより、MarkdownViewコントローラーが作成したConfigMap, Deployment, Serviceリソースに何らかの変更が発生した際にReconcileが呼び出されるようになります。
+ただしこのとき、コントローラーが作成したリソースの<code>ownerReferences</code>にMarkdownViewリソースを指定しなければなりません。
+<code>ownerReferences</code>の設定方法は<a href="deletion.html">リソースの削除</a>)を参照してください。</p>
+<p>なお、<code>Owns</code>に指定したリソースの変更によってReconcileが呼び出された場合でも、
+RequestにはこれらのリソースのownerであるMarkdownViewリソースの名前が入っています。</p>
 <h2 id="reconcileの実装">Reconcileの実装</h2>
 <p>いよいよReconcileの本体を実装します。</p>
-<h3 id="reconciler">Reconciler</h3>
-<p>Reconcileは<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Reconciler" target="_blank">reconcile.Reconciler</a>インタフェースを実装することになります。</p>
-<pre><code class="lang-go"><span class="hljs-keyword">type</span> Reconciler <span class="hljs-keyword">interface</span> {
-    Reconcile(context.Context, Request) (Result, error)
-}
-</code></pre>
-<p>引数として渡ってくる<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Request" target="_blank">reconcile.Request</a>には、<code>For</code>で指定した監視対象のNamespacedNameが含まれています。</p>
-<p>このNamespacedNameを利用して、テナントリソースの取得をおこないます。</p>
+<h3 id="reconcile処理の流れ">Reconcile処理の流れ</h3>
+<p>Reconcile処理のおおまかな流れを確認しましょう。</p>
 <blockquote>
-<p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">var</span> tenant multitenancyv1.Tenant
-err := r.Get(ctx, req.NamespacedName, &amp;tenant)
-</code></pre>
-<p>なお、<code>Owns</code>でnamespaceやClusterRole, RoleBindingを監視対象に設定しましたが、これらのリソースの変更によってReconcileが呼び出された場合でも、
-RequestのNamespacedNameにはこれらのリソースのownerであるテナントリソースの名前が入っています。</p>
-<p>戻り値の<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Result" target="_blank">reconcile.Result</a>には、<code>Requeue</code>, <code>RequeueAfter</code>というフィールドが含まれています。
-この戻り値を利用すると、指定した時間が経過したあとに再度Reconcileを呼び出させることが可能になります。
-例えば何らかの時間がかかる処理(コンテナの起動など)を待つ場合に利用できます。</p>
-<p>また、Recnocileがエラーを返した場合は、失敗するたびに待ち時間が指数関数的に増加します。</p>
-<p>Reconcileは複数のリソースを管理しているため、1つのリソースを処理するために多くの時間をかけるべきではありません。
-何らかの待ちが発生する場合は、<code>Requeue</code>や<code>RequeueAfter</code>を指定してReconcileをすぐに抜けるようにしましょう。</p>
-<h3 id="reconcilenamespaces">reconcileNamespaces</h3>
-<p>テナントリソースに記述されたnamespaceを作成します。</p>
-<blockquote>
-<p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
-</blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *TenantReconciler)</span> <span class="hljs-title">reconcileNamespaces</span><span class="hljs-params">(ctx context.Context, log logr.Logger, tenant multitenancyv1.Tenant)</span> <span class="hljs-params">(<span class="hljs-keyword">bool</span>, error)</span></span> {
-    <span class="hljs-comment">//! [matching-fields]</span>
-    <span class="hljs-keyword">var</span> namespaces corev1.NamespaceList
-    err := r.List(ctx, &amp;namespaces, client.MatchingFields(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{ownerControllerField: tenant.Name}))
-    <span class="hljs-comment">//! [matching-fields]</span>
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">Reconcile</span><span class="hljs-params">(ctx context.Context, req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
+    logger := log.FromContext(ctx)
+
+    <span class="hljs-keyword">var</span> mdView viewv1.MarkdownView
+    err := r.Get(ctx, req.NamespacedName, &amp;mdView)
+    <span class="hljs-keyword">if</span> errors.IsNotFound(err) {
+        r.removeMetrics(mdView)
+        <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
+    }
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        log.Error(err, <span class="hljs-string">&quot;unable to fetch namespaces&quot;</span>)
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, err
-    }
-    namespaceNames := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]corev1.Namespace)
-    <span class="hljs-keyword">for</span> _, ns := <span class="hljs-keyword">range</span> namespaces.Items {
-        namespaceNames[ns.Name] = ns
+        logger.Error(err, <span class="hljs-string">&quot;unable to get MarkdownView&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, req.NamespacedName)
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
 
-    updated := <span class="hljs-literal">false</span>
-    <span class="hljs-keyword">for</span> _, ns := <span class="hljs-keyword">range</span> tenant.Spec.Namespaces {
-        name := tenant.Spec.NamespacePrefix + ns
-        <span class="hljs-keyword">if</span> _, ok := namespaceNames[name]; ok {
-            <span class="hljs-built_in">delete</span>(namespaceNames, name)
-            <span class="hljs-keyword">continue</span>
-        }
-        target := corev1.Namespace{
-            ObjectMeta: metav1.ObjectMeta{
-                Name: name,
-            },
-        }
-        <span class="hljs-comment">//! [controller-reference]</span>
-        err = ctrl.SetControllerReference(&amp;tenant, &amp;target, r.Scheme)
-        <span class="hljs-comment">//! [controller-reference]</span>
-        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-            log.Error(err, <span class="hljs-string">&quot;unable to set owner reference&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, name)
-            <span class="hljs-keyword">return</span> updated, err
-        }
-        log.Info(<span class="hljs-string">&quot;creating the new namespace&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, name)
-        err = r.Create(ctx, &amp;target, &amp;client.CreateOptions{})
-        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-            log.Error(err, <span class="hljs-string">&quot;unable to create the namespace&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, name)
-            <span class="hljs-keyword">return</span> updated, err
-        }
-        addedNamespaces.Inc()
-        updated = <span class="hljs-literal">true</span>
-        <span class="hljs-built_in">delete</span>(namespaceNames, name)
+    <span class="hljs-keyword">if</span> !mdView.ObjectMeta.DeletionTimestamp.IsZero() {
+        <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
     }
 
-    <span class="hljs-keyword">for</span> _, ns := <span class="hljs-keyword">range</span> namespaceNames {
-        log.Info(<span class="hljs-string">&quot;deleting the new namespace&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, ns.Name)
-        err = r.Delete(ctx, &amp;ns, &amp;client.DeleteOptions{})
-        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-            log.Error(err, <span class="hljs-string">&quot;unable to delete the namespace&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, ns.Name)
-            <span class="hljs-keyword">return</span> updated, err
-        }
-        removedNamespaces.Inc()
-        updated = <span class="hljs-literal">true</span>
+    err = r.reconcileConfigMap(ctx, mdView)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
+    }
+    err = r.reconcileDeployment(ctx, mdView)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
+    }
+    err = r.reconcileService(ctx, mdView)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
 
-    <span class="hljs-keyword">return</span> updated, <span class="hljs-literal">nil</span>
+    <span class="hljs-keyword">return</span> r.updateStatus(ctx, mdView)
 }
 </code></pre>
-<h3 id="reconcilerbac">reconcileRBAC</h3>
-<p>ClusterRoleとRoleBindingを作成し、テナントの管理対象のnamespaceに管理者権限を付与します。</p>
+<p>Reconcileの引数として渡ってきたRequestを利用して、対象となるMarkdownViewリソースの取得をおこないます。</p>
+<p>ここでMarkdownViewリソースが存在しなかった場合は、MarkdownViewリソースが削除されたということです。
+終了処理をおこなって関数を抜けましょう。(ここではメトリクスの削除処理をおこなっています)</p>
+<p>次に<code>DeletionTimestamp</code>の確認をしています。
+<code>DeletionTimestamp</code>がゼロでない場合は、対象のリソースの削除が開始されたということです。(詳しくは<a href="deletion.html">リソースの削除</a>を参照してください。)
+この場合もすぐに関数を抜けましょう。</p>
+<p>そして、<code>reconcileConfigMap</code>, <code>reconcileDeployment</code>, <code>reconcileService</code>で、それぞれConfigMap, Deployment, Serviceリソースの作成・更新処理をおこないます。</p>
+<p>最後に<code>updateStatus</code>でステータスの更新をおこないます。</p>
+<h3 id="reconcileconfigmap">reconcileConfigMap</h3>
+<p><code>reconcileConfigMap</code>では、MarkdownViewリソースに記述されたMarkdownの内容をもとに、ConfigMapリソースを作成します。</p>
 <blockquote>
-<p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *TenantReconciler)</span> <span class="hljs-title">reconcileRBAC</span><span class="hljs-params">(ctx context.Context, log logr.Logger, tenant multitenancyv1.Tenant)</span> <span class="hljs-params">(<span class="hljs-keyword">bool</span>, error)</span></span> {
-    updated := <span class="hljs-literal">false</span>
-    <span class="hljs-keyword">for</span> _, ns := <span class="hljs-keyword">range</span> tenant.Spec.Namespaces {
-        <span class="hljs-comment">//! [create-or-update]</span>
-        name := tenant.Spec.NamespacePrefix + ns
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">reconcileConfigMap</span><span class="hljs-params">(ctx context.Context, mdView viewv1.MarkdownView)</span> <span class="hljs-title">error</span></span> {
+    logger := log.FromContext(ctx)
 
-        role := &amp;rbacv1.ClusterRole{}
-        role.SetName(name + <span class="hljs-string">&quot;-admin-role&quot;</span>)
-        op, err := ctrl.CreateOrUpdate(ctx, r.Client, role, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
-            role.Rules = []rbacv1.PolicyRule{
-                {
-                    Verbs:         []<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;get&quot;</span>, <span class="hljs-string">&quot;list&quot;</span>, <span class="hljs-string">&quot;watch&quot;</span>, <span class="hljs-string">&quot;update&quot;</span>, <span class="hljs-string">&quot;patch&quot;</span>, <span class="hljs-string">&quot;delete&quot;</span>},
-                    APIGroups:     []<span class="hljs-keyword">string</span>{multitenancyv1.GroupVersion.Group},
-                    Resources:     []<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;tenants&quot;</span>},
-                    ResourceNames: []<span class="hljs-keyword">string</span>{tenant.Name},
-                },
-                {
-                    Verbs:         []<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;get&quot;</span>, <span class="hljs-string">&quot;list&quot;</span>, <span class="hljs-string">&quot;watch&quot;</span>},
-                    APIGroups:     []<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;&quot;</span>},
-                    Resources:     []<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;namespaces&quot;</span>},
-                    ResourceNames: []<span class="hljs-keyword">string</span>{name},
-                },
-            }
-            <span class="hljs-keyword">return</span> ctrl.SetControllerReference(&amp;tenant, role, r.Scheme)
-        })
-        <span class="hljs-comment">//! [create-or-update]</span>
-        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-            log.Error(err, <span class="hljs-string">&quot;unable to create-or-update RoleBinding&quot;</span>)
-            <span class="hljs-keyword">return</span> updated, err
+    cm := &amp;corev1.ConfigMap{}
+    cm.SetNamespace(mdView.Namespace)
+    cm.SetName(<span class="hljs-string">&quot;markdowns-&quot;</span> + mdView.Name)
+
+    op, err := ctrl.CreateOrUpdate(ctx, r.Client, cm, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+        <span class="hljs-keyword">if</span> cm.Data == <span class="hljs-literal">nil</span> {
+            cm.Data = <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>)
         }
-
-        <span class="hljs-keyword">if</span> op != controllerutil.OperationResultNone {
-            updated = <span class="hljs-literal">true</span>
-            log.Info(<span class="hljs-string">&quot;reconcile RoleBinding successfully&quot;</span>, <span class="hljs-string">&quot;op&quot;</span>, op)
+        <span class="hljs-keyword">for</span> name, content := <span class="hljs-keyword">range</span> mdView.Spec.Markdowns {
+            cm.Data[name] = content
         }
+        <span class="hljs-keyword">return</span> ctrl.SetControllerReference(&amp;mdView, cm, r.Scheme)
+    })
 
-        rb := &amp;rbacv1.RoleBinding{}
-        rb.SetNamespace(name)
-        rb.SetName(name + <span class="hljs-string">&quot;-admin-rolebinding&quot;</span>)
-
-        op, err = ctrl.CreateOrUpdate(ctx, r.Client, rb, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
-            rb.RoleRef = rbacv1.RoleRef{
-                APIGroup: <span class="hljs-string">&quot;rbac.authorization.k8s.io&quot;</span>,
-                Kind:     <span class="hljs-string">&quot;ClusterRole&quot;</span>,
-                Name:     name + <span class="hljs-string">&quot;-admin-role&quot;</span>,
-            }
-            rb.Subjects = []rbacv1.Subject{tenant.Spec.Admin}
-            <span class="hljs-keyword">return</span> ctrl.SetControllerReference(&amp;tenant, rb, r.Scheme)
-        })
-        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-            log.Error(err, <span class="hljs-string">&quot;unable to create-or-update RoleBinding&quot;</span>)
-            <span class="hljs-keyword">return</span> updated, err
-        }
-
-        <span class="hljs-keyword">if</span> op != controllerutil.OperationResultNone {
-            updated = <span class="hljs-literal">true</span>
-            log.Info(<span class="hljs-string">&quot;reconcile RoleBinding successfully&quot;</span>, <span class="hljs-string">&quot;op&quot;</span>, op)
-        }
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        logger.Error(err, <span class="hljs-string">&quot;unable to create or update ConfigMap&quot;</span>)
+        <span class="hljs-keyword">return</span> err
     }
-    <span class="hljs-keyword">return</span> updated, <span class="hljs-literal">nil</span>
+    <span class="hljs-keyword">if</span> op != controllerutil.OperationResultNone {
+        logger.Info(<span class="hljs-string">&quot;reconcile ConfigMap successfully&quot;</span>, <span class="hljs-string">&quot;op&quot;</span>, op)
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+}
+</code></pre>
+<p>ここでは、<a href="client.html">クライアントの使い方</a>で紹介した<code>CreateOrUpdate</code>関数を利用しています。</p>
+<h3 id="reconciledeployment-reconcileservice">reconcileDeployment, reconcileService</h3>
+<p><code>reconcileDeployment</code>, <code>reconcileService</code>では、それぞれDeploymentとServiceリソースを作成します。</p>
+<p><code>reconcileConfigMap</code>と同様に<code>CreateOrUpdate</code>を利用したリソースの作成も可能なのですが、
+DeploymentやServiceリソースはフィールド数が多いこともあり、適切に差分を検出してリソースを更新することが面倒だったりします。</p>
+<p>そこで今回は、<a href="client.html">クライアントの使い方</a>で紹介したApplyConfigurationを利用したServer-Side Apply方式でリソースを作成します。</p>
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">reconcileService</span><span class="hljs-params">(ctx context.Context, mdView viewv1.MarkdownView)</span> <span class="hljs-title">error</span></span> {
+    logger := log.FromContext(ctx)
+    svcName := <span class="hljs-string">&quot;viewer-&quot;</span> + mdView.Name
+
+    owner, err := ownerRef(mdView, r.Scheme)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> err
+    }
+
+    svc := corev1apply.Service(svcName, mdView.Namespace).
+        WithLabels(labelSet(mdView)).
+        WithOwnerReferences(owner).
+        WithSpec(corev1apply.ServiceSpec().
+            WithSelector(labelSet(mdView)).
+            WithType(corev1.ServiceTypeClusterIP).
+            WithPorts(corev1apply.ServicePort().
+                WithProtocol(corev1.ProtocolTCP).
+                WithPort(<span class="hljs-number">80</span>).
+                WithTargetPort(intstr.FromInt(<span class="hljs-number">3000</span>)),
+            ),
+        )
+
+    obj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(svc)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> err
+    }
+    patch := &amp;unstructured.Unstructured{
+        Object: obj,
+    }
+
+    <span class="hljs-keyword">var</span> current corev1.Service
+    err = r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: svcName}, &amp;current)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &amp;&amp; !errors.IsNotFound(err) {
+        <span class="hljs-keyword">return</span> err
+    }
+
+    currApplyConfig, err := corev1apply.ExtractService(&amp;current, constants.ControllerName)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> err
+    }
+
+    <span class="hljs-keyword">if</span> equality.Semantic.DeepEqual(svc, currApplyConfig) {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+    }
+
+    err = r.Patch(ctx, patch, client.Apply, &amp;client.PatchOptions{
+        FieldManager: constants.ControllerName,
+    })
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        logger.Error(err, <span class="hljs-string">&quot;unable to create or update Service&quot;</span>)
+        <span class="hljs-keyword">return</span> err
+    }
+
+    logger.Info(<span class="hljs-string">&quot;reconcile Service successfully&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, mdView.Name)
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
 }
 </code></pre>
 <h3 id="ステータスの更新">ステータスの更新</h3>
-<p>最後に、テナントリソースの状況をユーザーに知らせるためにステータスの更新をおこないます。</p>
-<p>コントローラが扱うリソースに何も変更が加えられなかった場合は、ステータスを更新する必要もないでしょう。
-そこで下記のように更新をおこなったかどうかをフラグで返すようにしておきます。</p>
+<p>最後に、MarkdownViewリソースの状況をユーザーに知らせるためのステータスを更新します。</p>
 <blockquote>
-<p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *TenantReconciler)</span> <span class="hljs-title">reconcile</span><span class="hljs-params">(ctx context.Context, log logr.Logger, tenant multitenancyv1.Tenant)</span> <span class="hljs-params">(<span class="hljs-keyword">bool</span>, error)</span></span> {
-    nsUpdated, err := r.reconcileNamespaces(ctx, log, tenant)
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">updateStatus</span><span class="hljs-params">(ctx context.Context, mdView viewv1.MarkdownView)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
+    <span class="hljs-keyword">var</span> dep appsv1.Deployment
+    err := r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: <span class="hljs-string">&quot;viewer-&quot;</span> + mdView.Name}, &amp;dep)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> nsUpdated, err
-    }
-    rbUpdated, err := r.reconcileRBAC(ctx, log, tenant)
-    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> rbUpdated, err
-    }
-    <span class="hljs-keyword">return</span> nsUpdated || rbUpdated, <span class="hljs-literal">nil</span>
-}
-</code></pre>
-<p>上記の関数の戻り値に応じてステータスの更新をおこないます。
-Conditionsの更新には、<code>meta.SetStatusCondition()</code>という関数が用意されています。
-この関数を利用すると、同じタイプのConditionがすでに存在する場合は値を更新し、存在しない場合は追加してくれます。
-また、Condition.Statusの値が変化したときだけ<code>LastTransitionTime</code>が現在の時刻で更新されます。</p>
-<blockquote>
-<p><a id="tenant_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/controllers/tenant_controller.go" target="_blank">tenant_controller.go</a></p>
-</blockquote>
-<pre><code class="lang-golang">updated, err := r.reconcile(ctx, log, tenant)
-<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-    log.Error(err, <span class="hljs-string">&quot;unable to reconcile&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, tenant.Name)
-    r.Recorder.Eventf(&amp;tenant, corev1.EventTypeWarning, <span class="hljs-string">&quot;Failed&quot;</span>, <span class="hljs-string">&quot;failed to reconcile: %s&quot;</span>, err.Error())
-    meta.SetStatusCondition(&amp;tenant.Status.Conditions, metav1.Condition{
-        Type:    multitenancyv1.ConditionReady,
-        Status:  metav1.ConditionFalse,
-        Reason:  <span class="hljs-string">&quot;Failed&quot;</span>,
-        Message: err.Error(),
-    })
-    stErr := r.Status().Update(ctx, &amp;tenant)
-    <span class="hljs-keyword">if</span> stErr != <span class="hljs-literal">nil</span> {
-        log.Error(stErr, <span class="hljs-string">&quot;failed to update status&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, tenant.Name)
-    }
-    <span class="hljs-keyword">return</span> ctrl.Result{}, err
-}
-
-currentCond := meta.FindStatusCondition(tenant.Status.Conditions, multitenancyv1.ConditionReady)
-<span class="hljs-keyword">if</span> updated || currentCond == <span class="hljs-literal">nil</span> || currentCond.Status != metav1.ConditionTrue {
-    r.Recorder.Event(&amp;tenant, corev1.EventTypeNormal, <span class="hljs-string">&quot;Updated&quot;</span>, <span class="hljs-string">&quot;the tenant was updated&quot;</span>)
-    meta.SetStatusCondition(&amp;tenant.Status.Conditions, metav1.Condition{
-        Type:   multitenancyv1.ConditionReady,
-        Reason: <span class="hljs-string">&quot;OK&quot;</span>,
-        Status: metav1.ConditionTrue,
-    })
-    err = r.Status().Update(ctx, &amp;tenant)
-    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        log.Error(err, <span class="hljs-string">&quot;failed to update status&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, tenant.Name)
         <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
+
+    <span class="hljs-keyword">var</span> status viewv1.MarkdownViewStatus
+    <span class="hljs-keyword">if</span> dep.Status.AvailableReplicas == <span class="hljs-number">0</span> {
+        status = viewv1.MarkdownViewNotReady
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> dep.Status.AvailableReplicas == mdView.Spec.Replicas {
+        status = viewv1.MarkdownViewHealthy
+    } <span class="hljs-keyword">else</span> {
+        status = viewv1.MarkdownViewAvailable
+    }
+
+    <span class="hljs-keyword">if</span> mdView.Status != status {
+        mdView.Status = status
+        r.setMetrics(mdView)
+
+        r.Recorder.Event(&amp;mdView, corev1.EventTypeNormal, <span class="hljs-string">&quot;Updated&quot;</span>, fmt.Sprintf(<span class="hljs-string">&quot;MarkdownView(%s:%s) updated: %s&quot;</span>, mdView.Namespace, mdView.Name, mdView.Status))
+
+        err = r.Status().Update(ctx, &amp;mdView)
+        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+            <span class="hljs-keyword">return</span> ctrl.Result{}, err
+        }
+    }
+
+    <span class="hljs-keyword">if</span> mdView.Status != viewv1.MarkdownViewHealthy {
+        <span class="hljs-keyword">return</span> ctrl.Result{Requeue: <span class="hljs-literal">true</span>}, <span class="hljs-literal">nil</span>
+    }
+    <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
 }
 </code></pre>
-<p>これにより、ユーザーはテナントリソースのステータスを確認することが可能になります。</p>
+<p>ここでは、<code>reconcileDeployment</code>で作成したDeploymentリソースをチェックし、その状態に応じてMarkdownViewリソースの
+ステータスを決定しています。</p>
+<h2 id="動作確認">動作確認</h2>
+<p>Reconcile処理の実装が完了したら動作確認してみましょう。
+<a href="../kubebuilder/kind.html">カスタムコントローラーの動作確認</a>の手順通りにカスタムコントローラーをデプロイし、
+サンプルのMarkdownViewリソースを適用します。</p>
+<p>Deployment, Service, ConfigMapリソースが生成され、MarkdownViewリソースの状態がHealthyになっていることを確認しましょう。</p>
+<pre><code>$ kubectl get deployment,service,configmap
+NAME                                         READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/viewer-markdownview-sample   1/1     1            1           177m
+
+NAME                                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+service/viewer-markdownview-sample   ClusterIP   10.96.162.90   &lt;none&gt;        80/TCP    177m
+
+NAME                                      DATA   AGE
+configmap/markdowns-markdownview-sample   2      177m
+
+$ kubectl get markdownview markdownview-sample
+NAME                  REPLICAS   STATUS
+markdownview-sample   1          Healthy
+</code></pre><p>次にローカル環境から作成されたサービスにアクセスするため、Port Forwardをおこないます。</p>
+<pre><code>$ kubectl port-forward svc/viewer-markdownview-sample 3000:80
+</code></pre><p>最後にブラウザで<code>http://localhost:3000</code>にアクセスしてください。
+以下のようにレンダリングされたMarkdownが表示されれば成功です。</p>
+<p><img src="img/mdbook.png" alt="index"></p>
 
                                 
                                 </section>
@@ -873,7 +773,7 @@ currentCond := meta.FindStatusCondition(tenant.Status.Conditions, multitenancyv1
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"next":{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"previous":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/reconcile.md","mtime":"2021-04-29T10:17:23.660Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"next":{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"previous":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/reconcile.md","mtime":"2021-07-25T13:47:33.870Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -122,7 +122,7 @@
                 <a href="../introduction/basics.html">
             
                     
-                    カスタムコントローラの基礎
+                    カスタムコントローラーの基礎
             
                 </a>
             
@@ -135,7 +135,7 @@
                 <a href="../introduction/sample.html">
             
                     
-                    作成するカスタムコントローラ
+                    MarkdownViewコントローラー
             
                 </a>
             
@@ -219,20 +219,7 @@
                 <a href="kind.html">
             
                     
-                    kindで動かしてみよう
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.5" data-path="debug.html">
-            
-                <a href="debug.html">
-            
-                    
-                    手軽な動作確認
+                    カスタムコントローラーの動作確認
             
                 </a>
             
@@ -361,7 +348,7 @@
                 <a href="../controller-runtime/controller_test.html">
             
                     
-                    コントローラのテスト
+                    コントローラーのテスト
             
                 </a>
             
@@ -408,12 +395,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/monitoring.html">
             
-                <a href="../controller-runtime/metrics.html">
+                <a href="../controller-runtime/monitoring.html">
             
                     
-                    メトリクスの収集
+                    モニタリング
             
                 </a>
             
@@ -474,64 +461,57 @@
                                 <h1 id="webhookの生成">Webhookの生成</h1>
 <p>Kubernetesには、Admission Webhookと呼ばれる拡張機能があります。
 これは特定のリソースを作成・更新する際にWebhook APIを呼び出し、バリデーションやリソースの書き換えをおこなうための機能です。</p>
-<p><code>kubebuilder</code>コマンドでは、以下の3種類のオプションで生成するWebhookを指定することができます。</p>
+<p><code>kubebuilder</code>コマンドでは、以下の3種類のオプションで生成するWebhookを指定できます。</p>
 <ul>
 <li><code>--programmatic-validation</code>: リソースのバリデーションをおこなうためのWebhook</li>
 <li><code>--defaulting</code>: リソースのフィールドにデフォルト値を設定するためのWebhook</li>
 <li><code>--conversion</code>: カスタムリソースのバージョンアップ時にリソースの変換をおこなうためのWebhook</li>
 </ul>
-<p>ここでは<code>--programmatic-validation</code>と<code>--defaulting</code>を指定して、Tenantリソース用のWebhookを生成してみましょう。</p>
-<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> kubebuilder create webhook --group multitenancy --version v1 --kind Tenant --programmatic-validation --defaulting</span>
+<p>ここでは<code>--programmatic-validation</code>と<code>--defaulting</code>を指定して、MarkdownViewリソース用のWebhookを生成してみましょう。</p>
+<p>注意: kindにはPodやDeploymentなどの既存のリソースを指定できません。</p>
+<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> kubebuilder create webhook --group view --version v1 --kind MarkdownView --programmatic-validation --defaulting</span>
 <span class="hljs-meta">$</span><span class="bash"> make manifests</span>
 </code></pre>
 <p>以下のファイルが新たに追加されました。</p>
 <pre><code>├── api
 │    └── v1
-│        ├── tenant_webhook.go
+│        ├── markdownView_webhook.go
 │        └── webhook_suite_test.go
-├── config
-│    ├── certmanager
-│    │   ├── certificate.yaml
-│    │   ├── kustomization.yaml
-│    │   └── kus
-│    ├── crd
-│    │   └── patches
-│    │       ├── cainjection_in_tenants.yaml
-│    │       └── webhook_in_tenants.yaml
-│    ├── default
-│    │   ├── manager_webhook_patch.yaml
-│    │   └── webhookcainjection_patch.yaml
-│    └── webhook
-│        ├── kustomization.yaml
-│        ├── kustomizeconfig.yaml
-│        ├── manifests.yaml
-│        └── service.yaml
-├── default
-│    ├── manager_webhook_patch.yaml
-│    └── webhookcainjection_patch.yaml
-└── main.go
+└── config
+     ├── certmanager
+     │   ├── certificate.yaml
+     │   ├── kustomization.yaml
+     │   └── kustomizeconfig.yaml
+     ├── default
+     │   ├── manager_webhook_patch.yaml
+     │   └── webhookcainjection_patch.yaml
+     └── webhook
+         ├── kustomization.yaml
+         ├── kustomizeconfig.yaml
+         ├── manifests.yaml
+         └── service.yaml
 </code></pre><h2 id="apiv1">api/v1</h2>
-<p><code>tenant_webhook.go</code>がWebhook実装の雛形になります。
+<p><code>markdownview_webhook.go</code>がWebhook実装の雛形になります。
 このファイルにWebhookの実装を追加していくことになります。</p>
 <h3 id="configcertmanager">config/certmanager</h3>
-<p>Admission Webhook機能を提供するためには証明書が必要となります。
-certmanagerディレクトリ下のマニフェストを適用すると、<a href="https://github.com/jetstack/cert-manager" target="_blank">cert-manager</a>を利用して証明書を発行することができます。</p>
+<p>Admission Webhook機能を利用するためには証明書が必要となります。
+<a href="https://github.com/jetstack/cert-manager" target="_blank">cert-manager</a>を利用して証明書を発行するためのカスタムリソースが生成されています。</p>
 <h2 id="configwebhook">config/webhook</h2>
-<p><code>config/webhook</code>下のファイルは、Webhook機能を利用するために必要なマニフェストになります。
-基本的に編集する必要はありません。</p>
+<p><code>config/webhook</code>下は、Webhook機能を利用するために必要なマニフェストファイルです。
+manifests.yamlファイルは<code>make manifests</code>ファイルで自動生成されるため、基本的に手動で編集する必要はありません。</p>
 <h2 id="maingo">main.go</h2>
 <p><code>main.go</code>には、以下のようなWebhookの初期化をおこなうためのコードが追加されています。</p>
-<pre><code class="lang-go"><span class="hljs-keyword">if</span> err = (&amp;multitenancyv1.Tenant{}).SetupWebhookWithManager(mgr); err != <span class="hljs-literal">nil</span> {
-    setupLog.Error(err, <span class="hljs-string">&quot;unable to create webhook&quot;</span>, <span class="hljs-string">&quot;webhook&quot;</span>, <span class="hljs-string">&quot;Tenant&quot;</span>)
+<pre><code class="lang-go"><span class="hljs-keyword">if</span> err = (&amp;viewv1.MarkdownView{}).SetupWebhookWithManager(mgr); err != <span class="hljs-literal">nil</span> {
+    setupLog.Error(err, <span class="hljs-string">&quot;unable to create webhook&quot;</span>, <span class="hljs-string">&quot;webhook&quot;</span>, <span class="hljs-string">&quot;MarkdownView&quot;</span>)
     os.Exit(<span class="hljs-number">1</span>)
 }
 </code></pre>
 <h2 id="kustomizationyamlの編集">kustomization.yamlの編集</h2>
-<p>kubebuilderコマンドで生成した直後の状態では、<code>make manifests</code>コマンドでマニフェストを生成しても、Webhook機能が利用できるようにはなっていません。</p>
-<p><a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/config/default/kustomization.yaml" target="_blank">config/default/kustomization.yaml</a>ファイルを編集する必要があります。</p>
-<p>生成直後は<code>bases</code>の<code>../webhook</code>と<code>../certmanager</code>、<code>patchesStrategicMerge</code>の<code>manager_webhook_patch.yaml</code>と<code>webhookcainjection_patch.yaml</code>、<code>vars</code>がコメントアウトされていますが、これらのコメントを外します。</p>
+<p>Kubebuilderコマンドで生成した直後の状態では、<code>make manifests</code>コマンドでマニフェストを生成しても、Webhook機能が利用できるようにはなっていません。</p>
+<p><a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/config/default/kustomization.yaml" target="_blank">config/default/kustomization.yaml</a>ファイルを編集する必要があります。</p>
+<p>生成直後のkustomization.yamlは、<code>bases</code> の <code>../webhook</code> と <code>../certmanager</code>, <code>patchesStrategicMerge</code> の <code>manager_webhook_patch.yaml</code> と <code>webhookcainjection_patch.yaml</code>, <code>vars</code> がコメントアウトされていますが、これらのコメントを外します。</p>
 <blockquote>
-<p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
+<p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
 </blockquote>
 <pre><code class="lang-yaml"><span class="hljs-attr">bases:</span>
 <span class="hljs-comment"># [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in</span>
@@ -610,7 +590,7 @@ certmanagerディレクトリ下のマニフェストを適用すると、<a hre
                 </a>
                 
                 
-                <a href="kind.html" class="navigation navigation-next " aria-label="Next page: kindで動かしてみよう">
+                <a href="kind.html" class="navigation navigation-next " aria-label="Next page: カスタムコントローラーの動作確認">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -621,7 +601,7 @@ certmanagerディレクトリ下のマニフェストを適用すると、<a hre
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"next":{"title":"kindで動かしてみよう","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"previous":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/webhook.md","mtime":"2021-04-29T08:42:24.190Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"next":{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"previous":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/webhook.md","mtime":"2021-07-25T14:02:10.540Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -61,7 +61,7 @@
     <link rel="next" href="crd.html" />
     
     
-    <link rel="prev" href="../kubebuilder/debug.html" />
+    <link rel="prev" href="../kubebuilder/kind.html" />
     
 
     </head>
@@ -122,7 +122,7 @@
                 <a href="../introduction/basics.html">
             
                     
-                    カスタムコントローラの基礎
+                    カスタムコントローラーの基礎
             
                 </a>
             
@@ -135,7 +135,7 @@
                 <a href="../introduction/sample.html">
             
                     
-                    作成するカスタムコントローラ
+                    MarkdownViewコントローラー
             
                 </a>
             
@@ -219,20 +219,7 @@
                 <a href="../kubebuilder/kind.html">
             
                     
-                    kindで動かしてみよう
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
-            
-                <a href="../kubebuilder/debug.html">
-            
-                    
-                    手軽な動作確認
+                    カスタムコントローラーの動作確認
             
                 </a>
             
@@ -361,7 +348,7 @@
                 <a href="../controller-runtime/controller_test.html">
             
                     
-                    コントローラのテスト
+                    コントローラーのテスト
             
                 </a>
             
@@ -408,12 +395,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/monitoring.html">
             
-                <a href="../controller-runtime/metrics.html">
+                <a href="../controller-runtime/monitoring.html">
             
                     
-                    メトリクスの収集
+                    モニタリング
             
                 </a>
             
@@ -472,7 +459,7 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="controller-tools">controller-tools</h1>
-<p>Kubebuilderでは、カスタムコントローラの開発を補助するためのツール群として<a href="https://github.com/kubernetes-sigs/controller-tools" target="_blank">controller-tools</a>を提供しています。</p>
+<p>Kubebuilderでは、カスタムコントローラーの開発を補助するためのツール群として<a href="https://github.com/kubernetes-sigs/controller-tools" target="_blank">controller-tools</a>を提供しています。</p>
 <p>controller-toolsには下記のツールが含まれていますが、本資料ではcontroller-genのみを取り扱います。</p>
 <ul>
 <li>controller-gen</li>
@@ -481,7 +468,7 @@
 </ul>
 <h2 id="controller-gen">controller-gen</h2>
 <p><code>controller-gen</code>は、GoのソースコードをもとにしてマニフェストやGoのソースコードの生成をおこなうツールです。</p>
-<p><code>controller-gen</code>のヘルプを確認すると、下記の5種類のジェネレータが存在することがわかります。</p>
+<p><code>controller-gen</code>のヘルプを確認すると、下記の5種類のジェネレータの存在が確認できます。</p>
 <pre><code>generators
 
 +webhook                                                                                                  package  generates (partial) {Mutating,Validating}WebhookConfiguration objects.
@@ -489,9 +476,9 @@
 +rbac:roleName=&lt;string&gt;                                                                                   package  generates ClusterRole objects.
 +object[:headerFile=&lt;string&gt;][,year=&lt;string&gt;]                                                             package  generates code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
 +crd[:crdVersions=&lt;[]string&gt;][,maxDescLen=&lt;int&gt;][,preserveUnknownFields=&lt;bool&gt;][,trivialVersions=&lt;bool&gt;]  package  generates CustomResourceDefinition objects.
-</code></pre><p><code>kubebuilder</code>が生成した<a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/Makefile" target="_blank">Makefile</a>には、<code>make manifests</code>と<code>make generate</code>というターゲットが用意されており、<code>make manifests</code>では<code>webhook</code>, <code>rbac</code>, <code>crd</code>の生成、<code>make generate</code>では<code>object</code>の生成がおこなわれます。</p>
+</code></pre><p><code>kubebuilder</code>が生成したMakefileには、<code>make manifests</code>と<code>make generate</code>というターゲットが用意されており、<code>make manifests</code>では<code>webhook</code>, <code>rbac</code>, <code>crd</code>の生成、<code>make generate</code>では<code>object</code>の生成がおこなわれます。</p>
 <p><code>controller-gen</code>がマニフェストの生成をおこなう際には、Goのstructの構成と、ソースコード中に埋め込まれた<code>// +kubebuilder:</code>から始まるコメント(マーカーと呼ばれる)を目印にします。</p>
-<p>利用可能なマーカーは下記のコマンドで確認することができます。(<code>-ww</code>や<code>-www</code>を指定するとより詳細な説明が確認できます)</p>
+<p>利用可能なマーカーは下記のコマンドで確認できます。(<code>-ww</code>や<code>-www</code>を指定するとより詳細な説明が確認できます)</p>
 <pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> controller-gen crd -w</span>
 <span class="hljs-meta">$</span><span class="bash"> controller-gen webhook -w</span>
 </code></pre>
@@ -522,7 +509,7 @@
 
             
                 
-                <a href="../kubebuilder/debug.html" class="navigation navigation-prev " aria-label="Previous page: 手軽な動作確認">
+                <a href="../kubebuilder/kind.html" class="navigation navigation-prev " aria-label="Previous page: カスタムコントローラーの動作確認">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
@@ -538,7 +525,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"controller-tools","level":"1.3","depth":1,"next":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},"previous":{"title":"手軽な動作確認","level":"1.2.5","depth":2,"path":"kubebuilder/debug.md","ref":"kubebuilder/debug.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/README.md","mtime":"2021-04-29T09:23:27.570Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"controller-tools","level":"1.3","depth":1,"next":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},"previous":{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/README.md","mtime":"2021-07-25T13:55:10.560Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

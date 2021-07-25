@@ -122,7 +122,7 @@
                 <a href="../introduction/basics.html">
             
                     
-                    カスタムコントローラの基礎
+                    カスタムコントローラーの基礎
             
                 </a>
             
@@ -135,7 +135,7 @@
                 <a href="../introduction/sample.html">
             
                     
-                    作成するカスタムコントローラ
+                    MarkdownViewコントローラー
             
                 </a>
             
@@ -219,20 +219,7 @@
                 <a href="../kubebuilder/kind.html">
             
                     
-                    kindで動かしてみよう
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
-            
-                <a href="../kubebuilder/debug.html">
-            
-                    
-                    手軽な動作確認
+                    カスタムコントローラーの動作確認
             
                 </a>
             
@@ -361,7 +348,7 @@
                 <a href="controller_test.html">
             
                     
-                    コントローラのテスト
+                    コントローラーのテスト
             
                 </a>
             
@@ -408,12 +395,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="monitoring.html">
             
-                <a href="metrics.html">
+                <a href="monitoring.html">
             
                     
-                    メトリクスの収集
+                    モニタリング
             
                 </a>
             
@@ -472,25 +459,25 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="controller-runtime">controller-runtime</h1>
-<p>カスタムコントローラを開発するためには、Kubernetesが標準で提供している<a href="https://github.com/kubernetes/client-go" target="_blank">client-go</a>, <a href="https://github.com/kubernetes/apimachinery" target="_blank">apimachinery</a>, <a href="https://github.com/kubernetes/api" target="_blank">api</a>などのパッケージを利用することになります。</p>
-<p><a href="https://github.com/kubernetes-sigs/controller-runtime" target="_blank">controller-runtime</a>は、これらのパッケージを抽象化・隠蔽し、より簡単にカスタムコントローラを実装可能にしたライブラリです。</p>
+<p>カスタムコントローラーを開発するためには、Kubernetesが標準で提供している<a href="https://github.com/kubernetes/client-go" target="_blank">client-go</a>, <a href="https://github.com/kubernetes/apimachinery" target="_blank">apimachinery</a>, <a href="https://github.com/kubernetes/api" target="_blank">api</a>などのパッケージを利用することになります。</p>
+<p><a href="https://github.com/kubernetes-sigs/controller-runtime" target="_blank">controller-runtime</a>は、これらのパッケージを抽象化・隠蔽し、より簡単にカスタムコントローラーを実装可能にしたライブラリです。</p>
 <p>抽象化・隠蔽しているとは言っても、Kubernetesのコンセプトに準拠する形で実装されています。
-必要があればオプションを指定することにより、<code>client-go</code>や<code>apimachinery</code>が提供している機能のほとんどを利用することが可能です。
+必要があればオプションを指定することにより、<code>client-go</code>や<code>apimachinery</code>が提供している機能のほとんどを利用できます。
 controller-runtimeの設計コンセプトについて知りたい方は<a href="https://github.com/kubernetes-sigs/kubebuilder/blob/master/DESIGN.md#controller-runtime" target="_blank">KubeBuilder Design Principles</a>を参照してください。</p>
 <p>controller-runtimeが提供する代表的なコンポーネントには以下のものがあります。</p>
 <ul>
 <li><a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#Manager" target="_blank">manager.Manager</a><ul>
-<li>複数のコントローラをまとめて管理するためのコンポーネント。</li>
-<li>リーダー選出やメトリクスサーバーとしての機能など、カスタムコントローラを実装するために必要な数多くの機能を提供します。</li>
+<li>複数のコントローラーをまとめて管理するためのコンポーネント。</li>
+<li>リーダー選出やメトリクスサーバーとしての機能など、カスタムコントローラーを実装するために必要な数多くの機能を提供します。</li>
 </ul>
 </li>
 <li><a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client?tab=doc#Client" target="_blank">client.Client</a><ul>
-<li>KubernetesのAPI Serverとやり取りするためのクライアント。</li>
+<li>Kubernetesのkube-apiserverとやり取りするためのクライアント。</li>
 <li>監視対象のリソースをインメモリにキャッシュする機能などを持ち、カスタムリソースも型安全に扱うことが可能なクライアントとなっている。</li>
 </ul>
 </li>
 <li><a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Reconciler" target="_blank">reconcile.Reconciler</a><ul>
-<li>カスタムコントローラが実装すべきインタフェース。</li>
+<li>カスタムコントローラーが実装すべきインタフェース。</li>
 </ul>
 </li>
 </ul>
@@ -538,7 +525,7 @@ controller-runtimeの設計コンセプトについて知りたい方は<a href=
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"controller-runtime","level":"1.4","depth":1,"next":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"previous":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/README.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"controller-runtime","level":"1.4","depth":1,"next":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"previous":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/README.md","mtime":"2021-07-25T13:43:43.680Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

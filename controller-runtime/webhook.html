@@ -122,7 +122,7 @@
                 <a href="../introduction/basics.html">
             
                     
-                    カスタムコントローラの基礎
+                    カスタムコントローラーの基礎
             
                 </a>
             
@@ -135,7 +135,7 @@
                 <a href="../introduction/sample.html">
             
                     
-                    作成するカスタムコントローラ
+                    MarkdownViewコントローラー
             
                 </a>
             
@@ -219,20 +219,7 @@
                 <a href="../kubebuilder/kind.html">
             
                     
-                    kindで動かしてみよう
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
-            
-                <a href="../kubebuilder/debug.html">
-            
-                    
-                    手軽な動作確認
+                    カスタムコントローラーの動作確認
             
                 </a>
             
@@ -361,7 +348,7 @@
                 <a href="controller_test.html">
             
                     
-                    コントローラのテスト
+                    コントローラーのテスト
             
                 </a>
             
@@ -408,12 +395,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="monitoring.html">
             
-                <a href="metrics.html">
+                <a href="monitoring.html">
             
                     
-                    メトリクスの収集
+                    モニタリング
             
                 </a>
             
@@ -472,85 +459,113 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="webhookの実装">Webhookの実装</h1>
-<p><a href="../controller-tools/webhook.html">Webhookマニフェストの生成</a>で解説したように、テナントコントローラではリソースの作成時に
-デフォルト値を設定するためのWebhookと、リソースの更新時にバリデーションするためのWebhookを作成します。</p>
-<p>これらのWebhookの実装は非常に簡単で、controller-genで生成された関数に必要な処理を書いていくだけです。</p>
-<h2 id="デフォルト値設定のwebhook">デフォルト値設定のWebhook</h2>
-<p>まずはデフォルト値を設定するWebhookの実装です。</p>
+<p>Kubernetesでは、リソースの作成・更新・削除をおこなう直前にWebhookで任意の処理を実行するとことができます。
+MutatingWebhookではリソースの値を書き換えることができ、ValidatingWebhookでは値の検証をおこなうことができます。</p>
+<p>controller-runtimeでは、MutatingWebhookを実装するためのDefaulterとValidatingWebhookを実装するためのValidatorが用意されています。</p>
+<h2 id="defaulterの実装">Defaulterの実装</h2>
+<p>まずはDefaulterの実装です。
+Defaultメソッドでは、MarkdownViewリソースの値を書き換えることができます。</p>
 <blockquote>
-<p><a id="tenant_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_webhook.go" target="_blank">tenant_webhook.go</a></p>
+<p><a id="markdownview_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/api/v1/markdownview_webhook.go" target="_blank">markdownview_webhook.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">// Default implements webhook.Defaulter so a webhook will be registered for the type</span>
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *Tenant)</span> <span class="hljs-title">Default</span><span class="hljs-params">()</span></span> {
-    tenantlog.Info(<span class="hljs-string">&quot;default&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">Default</span><span class="hljs-params">()</span></span> {
+    markdownviewlog.Info(<span class="hljs-string">&quot;default&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
 
-    <span class="hljs-comment">// TODO(user): fill in your defaulting logic.</span>
-    <span class="hljs-keyword">if</span> r.Spec.NamespacePrefix == <span class="hljs-string">&quot;&quot;</span> {
-        r.Spec.NamespacePrefix = r.Name + <span class="hljs-string">&quot;-&quot;</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(r.Spec.ViewerImage) == <span class="hljs-number">0</span> {
+        r.Spec.ViewerImage = constants.DefaultViewerImage
     }
 }
 </code></pre>
-<p><code>namespacePrefix</code>フィールドが空だった場合は、テナントの名前に<code>-</code>を連結した文字列を<code>namespacePrefix</code>として利用します。</p>
-<h2 id="バリデーションのwebhook">バリデーションのWebhook</h2>
-<p>次にバリデーションWebhookの実装です。</p>
+<p>ここでは<code>r.Spec.ViewerImage</code>が空だった場合に、デフォルトのコンテナイメージを指定しています。</p>
+<h2 id="validatorの実装">Validatorの実装</h2>
+<p>次にValidatorの実装です。
+ValidateCreate, ValidateUpdate, ValidateDeleteは、それぞれリソースの作成・更新・削除のタイミングで呼び出される関数です。
+これらの関数の中でMarkdownViewリソースの内容をチェックし、エラーを返すことでリソースの操作を失敗させることができます。</p>
 <blockquote>
-<p><a id="tenant_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_webhook.go" target="_blank">tenant_webhook.go</a></p>
+<p><a id="markdownview_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/api/v1/markdownview_webhook.go" target="_blank">markdownview_webhook.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">// ValidateCreate implements webhook.Validator so a webhook will be registered for the type</span>
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *Tenant)</span> <span class="hljs-title">ValidateCreate</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
-    tenantlog.Info(<span class="hljs-string">&quot;validate create&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">ValidateCreate</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+    markdownviewlog.Info(<span class="hljs-string">&quot;validate create&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
 
-    <span class="hljs-comment">// TODO(user): fill in your validation logic upon object creation.</span>
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+    <span class="hljs-keyword">return</span> r.validate()
 }
 
 <span class="hljs-comment">// ValidateUpdate implements webhook.Validator so a webhook will be registered for the type</span>
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *Tenant)</span> <span class="hljs-title">ValidateUpdate</span><span class="hljs-params">(old runtime.Object)</span> <span class="hljs-title">error</span></span> {
-    tenantlog.Info(<span class="hljs-string">&quot;validate update&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">ValidateUpdate</span><span class="hljs-params">(old runtime.Object)</span> <span class="hljs-title">error</span></span> {
+    markdownviewlog.Info(<span class="hljs-string">&quot;validate update&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
 
-    <span class="hljs-comment">// TODO(user): fill in your validation logic upon object update.</span>
-    oldTenant := old.(*Tenant)
-    <span class="hljs-keyword">if</span> r.Spec.NamespacePrefix != oldTenant.Spec.NamespacePrefix {
-        <span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">&quot;spec.namespacePrefix field should not be changed&quot;</span>)
+    <span class="hljs-keyword">return</span> r.validate()
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">validate</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+    <span class="hljs-keyword">var</span> errs field.ErrorList
+
+    <span class="hljs-keyword">if</span> r.Spec.Replicas &lt; <span class="hljs-number">1</span> || r.Spec.Replicas &gt; <span class="hljs-number">5</span> {
+        errs = <span class="hljs-built_in">append</span>(errs, field.Invalid(field.NewPath(<span class="hljs-string">&quot;spec&quot;</span>, <span class="hljs-string">&quot;replicas&quot;</span>), r.Spec.Replicas, <span class="hljs-string">&quot;replicas must be in the range of 1 to 5.&quot;</span>))
     }
+
+    hasSummary := <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">for</span> name := <span class="hljs-keyword">range</span> r.Spec.Markdowns {
+        <span class="hljs-keyword">if</span> name == <span class="hljs-string">&quot;SUMMARY.md&quot;</span> {
+            hasSummary = <span class="hljs-literal">true</span>
+        }
+    }
+    <span class="hljs-keyword">if</span> !hasSummary {
+        errs = <span class="hljs-built_in">append</span>(errs, field.Required(field.NewPath(<span class="hljs-string">&quot;spec&quot;</span>, <span class="hljs-string">&quot;markdowns&quot;</span>), <span class="hljs-string">&quot;markdowns must have SUMMARY.md.&quot;</span>))
+    }
+
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(errs) &gt; <span class="hljs-number">0</span> {
+        err := apierrors.NewInvalid(schema.GroupKind{Group: GroupVersion.Group, Kind: <span class="hljs-string">&quot;MarkdownView&quot;</span>}, r.Name, errs)
+        markdownviewlog.Error(err, <span class="hljs-string">&quot;validation error&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
+        <span class="hljs-keyword">return</span> err
+    }
+
     <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
 }
 
 <span class="hljs-comment">// ValidateDelete implements webhook.Validator so a webhook will be registered for the type</span>
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *Tenant)</span> <span class="hljs-title">ValidateDelete</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
-    tenantlog.Info(<span class="hljs-string">&quot;validate delete&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">ValidateDelete</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+    markdownviewlog.Info(<span class="hljs-string">&quot;validate delete&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
 
-    <span class="hljs-comment">// TODO(user): fill in your validation logic upon object deletion.</span>
     <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
 }
 </code></pre>
-<p>今回はCreateとDelete時のバリデーションをおこなわないため、<code>ValidateUpdate</code>関数のみを実装します。
-更新前のリソースが引数で渡ってくるので、<code>namespacePrefix</code>フィールドが変更されていればバリデーションエラーとします。</p>
-<p>このようなバリデーションを実装することで、途中で<code>namespacePrefix</code>を変更できないようにすることが可能です。</p>
+<p>今回はValidateCreateとValidateUpdateで同じバリデーションをおこなうことにしましょう。
+<code>.Spec.Replicas</code>の値が1から5の範囲にない場合と、<code>.Spec.Markdowns</code>に<code>SUMMARY.md</code>が含まれない場合はエラーとします。</p>
+<p>なお、ValidationWebhookを実装する際には<code>&quot;k8s.io/apimachinery/pkg/util/validation/field&quot;</code>パッケージが役立ちます。
+このパッケージを利用してエラーの原因や問題のあるフィールドを指定することで、バリデーションエラー時のメッセージがわかりやすいものになります。</p>
 <h2 id="動作確認">動作確認</h2>
-<p>Webhookの動作確認をしてみましょう。</p>
-<p>Webhookの実装をおこなったカスタムコントローラをKubernetesクラスタにデプロイし、下記のような<code>namespacePrefix</code>を指定していないマニフェストを適用します。</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">multitenancy.example.com/v1</span>
-<span class="hljs-attr">kind:</span> <span class="hljs-string">Tenant</span>
+<p>それでは、Webhookの動作確認をしてみましょう。</p>
+<p>Webhookの実装をおこなったカスタムコントローラーをKubernetesクラスターにデプロイし、下記のような<code>ViewerImage</code>を指定していないマニフェストを適用します。</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">view.zoetrope.github.io/v1</span>
+<span class="hljs-attr">kind:</span> <span class="hljs-string">MarkdownView</span>
 <span class="hljs-attr">metadata:</span>
-  <span class="hljs-attr">name:</span> <span class="hljs-string">sample</span>
+  <span class="hljs-attr">name:</span> <span class="hljs-string">markdownview-sample</span>
 <span class="hljs-attr">spec:</span>
-  <span class="hljs-attr">namespaces:</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-string">test1</span>
-  <span class="hljs-attr">admin:</span>
-    <span class="hljs-attr">kind:</span> <span class="hljs-string">ServiceAccount</span>
-    <span class="hljs-attr">name:</span> <span class="hljs-string">default</span>
-    <span class="hljs-attr">namespace:</span> <span class="hljs-string">default</span>
+  <span class="hljs-attr">markdowns:</span>
+    <span class="hljs-attr">SUMMARY.md:</span> <span class="hljs-string">|
+      # Summary
+</span>
+      <span class="hljs-bullet">-</span> [<span class="hljs-string">Page1</span>]<span class="hljs-string">(page1.md)</span>
+    <span class="hljs-attr">page1.md:</span> <span class="hljs-string">|
+      # Page 1
+</span>
+      <span class="hljs-string">一ページ目のコンテンツです。</span>
+  <span class="hljs-attr">replicas:</span> <span class="hljs-number">1</span>
 </code></pre>
-<p>作成されたリソースを確認して、<code>namespacePrefix</code>に&quot;sample-&quot;という文字列が入っていれば成功です。</p>
-<pre><code>$ kubectl get tenant sample
-NAME     ADMIN     PREFIX    READY
-sample   default   sample-   True
+<p>作成されたリソースを確認して、<code>ViewerImage</code>にデフォルトのコンテナイメージ名が入っていれば成功です。</p>
+<pre><code>$ kubectl get markdownview markdownview-sample -o jsonpath=&quot;{.spec.viewerImage}&quot;
+peaceiris/mdbook:latest
 </code></pre><p>続いてバリデーションWebhookの動作も確認してみましょう。</p>
-<p>先ほど作成したリソースをeditして<code>namespacePrefix</code>を別の名前に変更しようとしたときに、下記のようなエラーが発生すれば成功です。</p>
-<pre><code>$ kubectl edit tenant sample
-error: tenants.multitenancy.example.com &quot;sample&quot; could not be patched: admission webhook &quot;vtenant.kb.io&quot; denied the request: spec.namespacePrefix field should not be changed
-You can run `kubectl replace -f /tmp/kubectl-edit-bwuei.yaml` to try this update again.
+<p>先ほど作成したリソースを編集して<code>replicas</code>を大きな値にしたり、<code>markdowns</code>に<code>SUMMARY.md</code>を含めないようにしたりしてみましょう。
+以下のようなエラーが発生すれば成功です。</p>
+<pre><code>$ kubectl edit markdownview markdownview-sample
+
+markdownviews.view.zoetrope.github.io &quot;markdownview-sample&quot; was not valid:
+ * spec.replicas: Invalid value: 10: replicas must be in the range of 1 to 5.
+ * spec.markdowns: Required value: markdowns must have SUMMARY.md.
 </code></pre>
                                 
                                 </section>
@@ -578,7 +593,7 @@ You can run `kubectl replace -f /tmp/kubectl-edit-bwuei.yaml` to try this update
 
             
                 
-                <a href="controller_test.html" class="navigation navigation-prev " aria-label="Previous page: コントローラのテスト">
+                <a href="controller_test.html" class="navigation navigation-prev " aria-label="Previous page: コントローラーのテスト">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
@@ -594,7 +609,7 @@ You can run `kubectl replace -f /tmp/kubectl-edit-bwuei.yaml` to try this update
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookの実装","level":"1.4.5","depth":2,"next":{"title":"Webhookのテスト","level":"1.4.6","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"previous":{"title":"コントローラのテスト","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/webhook.md","mtime":"2021-04-29T10:17:23.690Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookの実装","level":"1.4.5","depth":2,"next":{"title":"Webhookのテスト","level":"1.4.6","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"previous":{"title":"コントローラーのテスト","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/webhook.md","mtime":"2021-07-25T13:48:50.030Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

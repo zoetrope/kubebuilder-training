@@ -3,7 +3,7 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <title>カスタムコントローラの基礎 · つくって学ぶKubebuilder</title>
+        <title>カスタムコントローラーの基礎 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="HonKit 3.6.20">
@@ -122,7 +122,7 @@
                 <a href="basics.html">
             
                     
-                    カスタムコントローラの基礎
+                    カスタムコントローラーの基礎
             
                 </a>
             
@@ -135,7 +135,7 @@
                 <a href="sample.html">
             
                     
-                    作成するカスタムコントローラ
+                    MarkdownViewコントローラー
             
                 </a>
             
@@ -219,20 +219,7 @@
                 <a href="../kubebuilder/kind.html">
             
                     
-                    kindで動かしてみよう
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
-            
-                <a href="../kubebuilder/debug.html">
-            
-                    
-                    手軽な動作確認
+                    カスタムコントローラーの動作確認
             
                 </a>
             
@@ -361,7 +348,7 @@
                 <a href="../controller-runtime/controller_test.html">
             
                     
-                    コントローラのテスト
+                    コントローラーのテスト
             
                 </a>
             
@@ -408,12 +395,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/monitoring.html">
             
-                <a href="../controller-runtime/metrics.html">
+                <a href="../controller-runtime/monitoring.html">
             
                     
-                    メトリクスの収集
+                    モニタリング
             
                 </a>
             
@@ -456,7 +443,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >カスタムコントローラの基礎</a>
+        <a href=".." >カスタムコントローラーの基礎</a>
     </h1>
 </div>
 
@@ -471,89 +458,82 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="カスタムコントローラの基礎">カスタムコントローラの基礎</h1>
-<p>ここではカスタムコントローラを開発する上で必要となるKubernetesの知識を簡単に説明します。</p>
+                                <h1 id="カスタムコントローラーの基礎">カスタムコントローラーの基礎</h1>
+<p>ここではカスタムコントローラーを開発する上で必要となるKubernetesの基礎知識を解説します。</p>
 <h2 id="declarative">Declarative</h2>
 <p>Kubernetesにおいてもっとも重要なコンセプトがDeclarative(宣言的) APIです。</p>
-<p>例えば、以下のようなYAMLフォーマットで記述されたマニフェストファイルを用意して、KubernetesのAPIサーバーに登録します。
-この登録された情報のことをリソースと呼びます。</p>
+<p>例えば、Kubernetes上にNginxをデプロイしたい場合は、以下のようなYAML形式で記述されたマニフェストを用意して、Deploymentリソースを作成します。</p>
 <pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">apps/v1</span>
 <span class="hljs-attr">kind:</span> <span class="hljs-string">Deployment</span>
 <span class="hljs-attr">metadata:</span>
-  <span class="hljs-attr">name:</span> <span class="hljs-string">sample</span>
+  <span class="hljs-attr">name:</span> <span class="hljs-string">nginx-deployment</span>
 <span class="hljs-attr">spec:</span>
   <span class="hljs-attr">selector:</span>
     <span class="hljs-attr">matchLabels:</span>
-      <span class="hljs-attr">app:</span> <span class="hljs-string">httpd</span>
+      <span class="hljs-attr">app.kubernetes.io/name:</span> <span class="hljs-string">nginx</span>
   <span class="hljs-attr">replicas:</span> <span class="hljs-number">3</span>
   <span class="hljs-attr">template:</span>
     <span class="hljs-attr">metadata:</span>
       <span class="hljs-attr">labels:</span>
-        <span class="hljs-attr">app:</span> <span class="hljs-string">httpd</span>
+        <span class="hljs-attr">app.kubernetes.io/name:</span> <span class="hljs-string">nginx</span>
     <span class="hljs-attr">spec:</span>
       <span class="hljs-attr">containers:</span>
-      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">httpd</span>
-        <span class="hljs-attr">image:</span> <span class="hljs-string">quay.io/cybozu/testhttpd:0.1.0</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">nginx</span>
+        <span class="hljs-attr">image:</span> <span class="hljs-string">nginx:latest</span>
 </code></pre>
-<p>kube-controller-managerと呼ばれるプログラムは、APIサーバ上にDeploymentリソースが登録されるとReplicaSetリソースをAPIサーバーに登録し、
-さらにReplicaSetリソースが登録されると<code>spec.replicas</code>に指定された数のPodをAPIサーバーに登録します。
-次にkube-schedulerというプログラムは、APIサーバ上にPodリソースが登録されると、Podを配置するノードを決定しPodの情報を更新します。
+<p>Kubernetes内ではさまざまなリソースを管理するコントローラーが動いています。
+Deploymentを管理するコントローラーは、kube-apiserver上にDeploymentリソースが登録されると対応するReplicaSetリソースを新たに作成します。
+次にReplicaSetを管理するコントローラーは、ReplicaSetリソースが登録されると<code>spec.replicas</code>に指定された3つのPodを新たに作成します。
+さらににkube-schedulerというプログラムは、kube-apiserver上にPodリソースが登録されると、Podを配置するノードを決定しPodの情報を更新します。
 各ノードで動作しているkubeletというプログラムは、自分のノード名が記述されたPodリソースを見つけるとコンテナを立ち上げます。</p>
 <p><img src="img/declarative.png" alt="Declarative API"></p>
-<p>またDeploymentリソースの<code>spec.replicas</code>の数を増やすと、それに合わせてPodも追加され新しくコンテナが起動されます。逆に<code>spec.replicas</code>を減らすとPodとコンテナも削除されます。</p>
-<p>このようにKubernetesでは様々なプログラムAPIサーバーに登録された情報をもとに、システムがあるべき状態になるように調整していきます。</p>
+<p>Deploymentリソースの<code>spec.replicas</code>の数を増やすと、それに合わせてコントローラーはPodの数を増やします。逆に<code>spec.replicas</code>を減らすとPodを削除します。</p>
+<p>このようにKubernetesではユーザーが宣言したマニフェストをもとに複数のプログラムが連携し、システムがあるべき状態(ここでは3つのNginxのインスタンスが起動している状態)になるように調整していきます。</p>
+<p>Imperative(命令型)ではなくDeclarative(宣言的)な仕組みとすることで、Kubernetes上で動作するアプリケーションは高い可用性とスケーラビリティを実現できます。
+しかしながら、コントローラーはさまざまな状況を考慮する必要があるため、その実装はとても難しいものとなるでしょう。</p>
 <h2 id="crdcustom-resource-definitionとcrcustom-resource">CRD(Custom Resource Definition)とCR(Custom Resource)</h2>
 <p>KubernetesにはDeploymentやPodを始めとしてたくさんの標準リソースが用意されています。
-標準リソースだけでもある程度システムの構築は可能なもののの、より複雑なシステムを構築したい場合はリソースのカスタマイズがおこないたくなります。</p>
-<p>そこで、Kubernetesの利用者が自由に新しいリソース(CR: Custom Resource)を利用するための仕組みが用意されています。</p>
-<p>カスタムリソースを利用するためには、カスタムリソースの定義としてCRD(Custom Resource Definition)を用意する必要があります。
+標準リソースだけでもある程度システムの構築は可能なものの、例えば証明書発行やMySQLクラスターの管理をKubernetes上で自動化したい場合は独自のリソースが必要になるでしょう。</p>
+<p>そこで、Kubernetesの利用者が自由に新しいリソースを利用するための仕組みとしてカスタムリソース(CR: Custom Resource)が用意されています。</p>
+<p>カスタムリソースを利用するためには、その定義としてCRD(Custom Resource Definition)を用意する必要があります。
 CRDでは下記のようにOpenAPI v3.0の形式でバリデーションを記述することが可能になっています。</p>
 <ul>
-<li><a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/tenant/config/crd/bases/multitenancy.example.com_tenants.yaml" target="_blank">CRDの例</a></li>
+<li><a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/config/crd/bases/view.zoetrope.github.io_markdownviews.yaml" target="_blank">CRDの例</a></li>
 </ul>
-<h2 id="カスタムコントローラ">カスタムコントローラ</h2>
-<p>あるリソースの状態をチェックして、それをあるべき姿に持っていこうとするプログラムのことをコントローラと呼びます。
-先に紹介したkube-controller-managerは、PodコントローラやServiceコントローラなど、標準リソース用のコントローラの集合から構成されています。</p>
-<p>一方で、ユーザーが定義したカスタムリソースを対象としたコントローラのことをカスタムコントローラと呼びます。</p>
-<p>カスタムコントローラを実装する上で重要な考え方を以下に紹介します。</p>
+<h2 id="カスタムコントローラー">カスタムコントローラー</h2>
+<p>Kubernetesにおいて、あるリソースの状態をチェックして何らかの処理をおこなうプログラムのことをコントローラーと呼びます。
+例えば、Deploymentリソースに基づいてReplicaSetリソースを作成しているのも1つのコントローラーです。</p>
+<p>Kubernetesのソースコードを見てみると、標準リソースに対応する数多くのコントローラーが存在することを確認できます。</p>
+<ul>
+<li><a href="https://github.com/kubernetes/kubernetes/tree/master/pkg/controller" target="_blank">https://github.com/kubernetes/kubernetes/tree/master/pkg/controller</a></li>
+</ul>
+<p>これに対してユーザーが定義したカスタムリソースを対象としたコントローラーのことをカスタムコントローラーと呼びます。</p>
+<p>以降では、コントローラーを実装する上で重要な考え方を紹介します。</p>
 <h3 id="reconciliation-loop">Reconciliation Loop</h3>
-<p>Reconciliation Loopは、コントローラのメインロジックです。
-あるべき理想の状態と現在の状態を比較し、その差分がなくなるように調整する処理を実行し続けます。</p>
+<p>Reconciliation Loopは、コントローラーのメインロジックです。</p>
+<p>リソースに記述された状態を理想とし、システムの現在の状態と比較し、その差分がなくなるように調整する処理を実行し続けます。</p>
 <p><img src="img/reconcile_loop.png" alt="Reconcile Loop"></p>
-<p>リソースが新しく登録されたり、編集されたり、監視対象のシステムの状態が変更するなどの何らかのイベントが発生すると、Reconciliation Loopは呼び出されます。</p>
+<p>先ほどのDeploymentの例であれば、3つのPodの存在する状態が理想であり、Reconciliation LoopではPodの数を増やしたり減らしたりして理想の状態と一致するように処理します。</p>
 <h3 id="冪等">冪等</h3>
 <p>Reconciliation Loopは冪等性を備えていなければなりません。</p>
-<p>先ほど例に上げたPodコントローラを考えてみましょう。
-このコントローラは、あるべき状態としてPodが3つだと宣言されていたら、Reconcileを何度呼ばれてもPodの数が3つになるようにしなければなりません。
+<p>先ほど例に上げたPodコントローラーを考えてみましょう。
+このコントローラーはあるべき状態としてPodが3つだと宣言されていたら、Reconcileが何度呼ばれてもPodの数が3つにしなければなりません。
 Podが3つある状態でReconcileが呼び出されたときにさらに3つのPodをつくってしまったり、エラーを出してしまったりしてはいけないのです。</p>
-<p>これは当たり前のことのように感じられるかもしれませんが、Kubernetes登場前のインフラ自動化ツールでは、冪等性を備えていないものもよく見かけられました。</p>
+<p>これは当たり前のことのように感じられるかもしれませんが、Kubernetes登場前のImperativeなインフラ自動化ツールでは、冪等性を備えていないものもよく見かけられました。</p>
 <h3 id="エッジドリブントリガーとレベルドリブントリガー">エッジドリブントリガーとレベルドリブントリガー</h3>
-<p>エッジドリブントリガーとは状態の変化が発生した時点で処理を実行することで、レベルドリブントリガーとは状態を定期的にチェックし現在の状態に応じて処理を実行することです。
+<p>Reconciliation Loopは、リソースが新しく登録や編集されたり、対象のシステムの状態が変化したときに適切な処理をしなければなりません。
+先ほどの例であれば、Deploymentリソースに記述されたレプリカ数が増えた場合やサーバーが故障してPodの数が減ってしまった場合などには、新しいPodを作成する必要があります。</p>
+<p>このとき、状態が変化したイベントに応じて処理を実行することをエッジドリブントリガーと呼び、
+現在の状態に応じて処理を実行することをレベルドリブントリガーと呼びます。 
 (<a href="https://hackernoon.com/level-triggering-and-reconciliation-in-kubernetes-1f17fe30333d" target="_blank">参考</a>)</p>
 <p><img src="img/edge_level_trigger.png" alt="Edge-driven vs. Level-driven Trigger"></p>
-<p>Reconciliation Loopがエッジドリブントリガーのみで実行される場合、もしイベントが発生したときにコントローラが起動していなかったりすると、
-そのトリガーが発動せずあるべき状態と現在の状態がずれてしまうことになります。</p>
-<p>例えば<code>status.phase</code>フィールドで状態を保持し、その状態に応じて動作するコントローラを考えてみましょう。</p>
-<p>最初にコントローラのReconcileが実行されたときには状態はAでした。</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">status:</span>
-  <span class="hljs-attr">phase:</span> <span class="hljs-string">A</span>
-</code></pre>
-<p>次にコントローラのReconcileが実行されたときには状態はCに変化しました。</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">status:</span>
-  <span class="hljs-attr">phase:</span> <span class="hljs-string">C</span>
-</code></pre>
-<p>このとき実際にはphaseはA-&gt;B-&gt;Cと変化したにも関わらず、Bに変化したときのイベントをコントローラが取りこぼしていると、正しく処理ができない可能性があります。</p>
-<p>そこで上記のような状態の持たせ方はせずに、各状態のON/OFFをリストで表現すれば、Bに変化したことを取りこぼさずに必要な処理を実行させることが可能になります。</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">status:</span>
-  <span class="hljs-attr">conditions:</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">type:</span> <span class="hljs-string">A</span>
-    <span class="hljs-attr">status:</span> <span class="hljs-literal">True</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">type:</span> <span class="hljs-string">B</span>
-    <span class="hljs-attr">status:</span> <span class="hljs-literal">True</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">type:</span> <span class="hljs-string">C</span>
-    <span class="hljs-attr">status:</span> <span class="hljs-literal">False</span>
-</code></pre>
-<p><a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank">API Conventions</a></p>
+<p>図にあるように、Reconciliation Loopがイベント(Replica数の増減)のみを見ていた場合、
+もし何らかの原因(コントローラーの故障など)でイベントをロストしてしまうと、あるべき状態と現在の状態がずれてしまうことになります。
+一方で現在の状態(現在のReplica数)を見ていた場合は、イベントをロストしたとしてもあるべき状態に収束させることが可能です。</p>
+<p>Kubebuilderが提供するフレームワークでは、さまざまなイベントが発生したときにReconciliation Loopが呼び出されるようになっています。
+ただし、そのときにReconciliation Loopは、値がどのように変化したのかという情報を受け取りません。
+必ず現在の状態をチェックして、その状態に応じた処理を実装する必要があります。
+このような仕組みとすることで、イベントのロストや故障に強いコントローラーの実装が可能になっています。</p>
 
                                 
                                 </section>
@@ -586,7 +566,7 @@ Podが3つある状態でReconcileが呼び出されたときにさらに3つの
                 </a>
                 
                 
-                <a href="sample.html" class="navigation navigation-next " aria-label="Next page: 作成するカスタムコントローラ">
+                <a href="sample.html" class="navigation navigation-next " aria-label="Next page: MarkdownViewコントローラー">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -597,7 +577,7 @@ Podが3つある状態でReconcileが呼び出されたときにさらに3つの
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"カスタムコントローラの基礎","level":"1.1.2","depth":2,"next":{"title":"作成するカスタムコントローラ","level":"1.1.3","depth":2,"path":"introduction/sample.md","ref":"introduction/sample.md","articles":[]},"previous":{"title":"インストール","level":"1.1.1","depth":2,"path":"introduction/installation.md","ref":"introduction/installation.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"introduction/basics.md","mtime":"2021-04-29T07:34:20.880Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"カスタムコントローラーの基礎","level":"1.1.2","depth":2,"next":{"title":"MarkdownViewコントローラー","level":"1.1.3","depth":2,"path":"introduction/sample.md","ref":"introduction/sample.md","articles":[]},"previous":{"title":"インストール","level":"1.1.1","depth":2,"path":"introduction/installation.md","ref":"introduction/installation.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"introduction/basics.md","mtime":"2021-07-25T10:15:27.400Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

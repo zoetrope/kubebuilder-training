@@ -122,7 +122,7 @@
                 <a href="../introduction/basics.html">
             
                     
-                    カスタムコントローラの基礎
+                    カスタムコントローラーの基礎
             
                 </a>
             
@@ -135,7 +135,7 @@
                 <a href="../introduction/sample.html">
             
                     
-                    作成するカスタムコントローラ
+                    MarkdownViewコントローラー
             
                 </a>
             
@@ -219,20 +219,7 @@
                 <a href="kind.html">
             
                     
-                    kindで動かしてみよう
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.5" data-path="debug.html">
-            
-                <a href="debug.html">
-            
-                    
-                    手軽な動作確認
+                    カスタムコントローラーの動作確認
             
                 </a>
             
@@ -361,7 +348,7 @@
                 <a href="../controller-runtime/controller_test.html">
             
                     
-                    コントローラのテスト
+                    コントローラーのテスト
             
                 </a>
             
@@ -408,12 +395,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/monitoring.html">
             
-                <a href="../controller-runtime/metrics.html">
+                <a href="../controller-runtime/monitoring.html">
             
                     
-                    メトリクスの収集
+                    モニタリング
             
                 </a>
             
@@ -473,9 +460,9 @@
                                 
                                 <h1 id="プロジェクトの雛形作成">プロジェクトの雛形作成</h1>
 <p>それではさっそく<code>kubebuilder init</code>コマンドを利用して、プロジェクトの雛形を生成しましょう。</p>
-<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> mkdir tenant</span>
-<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> tenant</span>
-<span class="hljs-meta">$</span><span class="bash"> kubebuilder init --domain example.com --repo github.com/zoetrope/tenant</span>
+<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> mkdir markdown-view</span>
+<span class="hljs-meta">$</span><span class="bash"> <span class="hljs-built_in">cd</span> markdown-view</span>
+<span class="hljs-meta">$</span><span class="bash"> kubebuilder init --domain zoetrope.github.io --repo github.com/zoetrope/markdown-view</span>
 </code></pre>
 <p><code>--domain</code>で指定した名前はCRDのグループ名に使われます。
 あなたの所属する組織が保持するドメインなどを利用して、ユニークでvalidな名前を指定してください。</p>
@@ -512,9 +499,24 @@ GitHubにリポジトリを作る場合は<code>github.com/&lt;user_name&gt;/&lt
 ├── hack
 │    └── boilerplate.go.txt
 └── main.go
-</code></pre><p>生成されたファイルをそれぞれ見ていきましょう。</p>
+</code></pre><p>Kubebuilderによって生成されたgo.modおよびMakefileには、少し古いバージョンのcontroller-runtimeとcontroller-genが使われている場合があります。
+必要に応じて、最新のバージョンを利用するように以下のように書き換えておきましょう。
+なお、go.modを書き換えた後は<code>go mod tidy</code>コマンドを実行してください。</p>
+<ul>
+<li>go.mod</li>
+</ul>
+<pre><code class="lang-diff"><span class="hljs-deletion">-       sigs.k8s.io/controller-runtime v0.8.3</span>
+<span class="hljs-addition">+       sigs.k8s.io/controller-runtime v0.9.3</span>
+</code></pre>
+<ul>
+<li>Makefile</li>
+</ul>
+<pre><code class="lang-diff"><span class="hljs-deletion">-       $(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.4.1)</span>
+<span class="hljs-addition">+       $(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.6.1)</span>
+</code></pre>
+<p>それでは生成されたファイルをそれぞれ見ていきましょう。</p>
 <h2 id="makefile">Makefile</h2>
-<p>コード生成やコントローラのビルドなどをおこなうためのMakefileです。</p>
+<p>コード生成やコントローラーのビルドなどをおこなうためのMakefileです。</p>
 <p><code>make help</code>でターゲットの一覧を確認してみましょう。</p>
 <pre><code class="lang-console">make help
 
@@ -552,31 +554,31 @@ Deployment
 <p>自動生成されるソースコードの先頭に挿入されるボイラープレートです。</p>
 <p>デフォルトではApache 2 Licenseの文面が記述されているので、必要に応じて書き換えてください。</p>
 <h2 id="maingo">main.go</h2>
-<p>これから作成するカスタムコントローラのエントリーポイントとなるソースコードです。</p>
+<p>これから作成するカスタムコントローラーのエントリーポイントとなるソースコードです。</p>
 <p>ソースコード中に<code>//+kubebuilder:scaffold:imports</code>, <code>//+kubebuilder:scaffold:scheme</code>, <code>//+kubebuilder:scaffold:builder</code>などのコメントが記述されています。
 Kubebuilderはこれらのコメントを目印にソースコードの自動生成をおこなうので、決して削除しないように注意してください。</p>
 <h2 id="config">config</h2>
-<p>configディレクトリ配下には、カスタムコントローラをKubernetesクラスタにデプロイするためのマニフェストが生成されます。</p>
+<p>configディレクトリ配下には、カスタムコントローラーをKubernetesクラスターにデプロイするためのマニフェストが生成されます。</p>
 <p>実装する機能によっては必要のないマニフェストも含まれているので、適切に取捨選択してください。</p>
 <h3 id="manager">manager</h3>
-<p>カスタムコントローラのDeploymentリソースのマニフェストです。
-カスタムコントローラのコマンドラインオプションの変更をおこなった場合など、必要に応じて書き換えてください。</p>
+<p>カスタムコントローラーのDeploymentリソースのマニフェストです。
+カスタムコントローラーのコマンドラインオプションの変更をおこなった場合など、必要に応じて書き換えてください。</p>
 <h3 id="rbac">rbac</h3>
 <p>各種権限を設定するためのマニフェストです。</p>
 <p><code>auth_proxy_</code>から始まる4つのファイルは、<a href="https://github.com/brancz/kube-rbac-proxy" target="_blank">kube-auth-proxy</a>用のマニフェストです。
-kube-auth-proxyを利用するとメトリクスエンドポイントへのアクセスをRBACで制限することができます。</p>
+kube-auth-proxyを利用するとメトリクスエンドポイントへのアクセスをRBACで制限できます。</p>
 <p><code>leader_election_role.yaml</code>と<code>leader_election_role_binding.yaml</code>は、リーダーエレクション機能を利用するために必要な権限です。</p>
-<p><code>role.yaml</code>と<code>role_binding.yaml</code>は、コントローラが各種リソースにアクセスするための権限を設定するマニフェストです。
+<p><code>role.yaml</code>と<code>role_binding.yaml</code>は、コントローラーが各種リソースにアクセスするための権限を設定するマニフェストです。
 この2つのファイルは基本的に自動生成されるものなので、開発者が編集する必要はありません。</p>
 <p>必要のないファイルを削除した場合は、<code>kustomization.yaml</code>も編集してください。</p>
 <h3 id="prometheus">prometheus</h3>
 <p>Prometheus Operator用のカスタムリソースのマニフェストです。
-Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的にカスタムコントローラのメトリクスを収集してくれるようになります。</p>
+Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的にカスタムコントローラーのメトリクスを収集してくれるようになります。</p>
 <h3 id="default">default</h3>
 <p>上記のマニフェストをまとめて利用するための設定が記述されています。</p>
 <p><code>manager_auth_proxy_patch.yaml</code>は、<a href="https://github.com/brancz/kube-rbac-proxy" target="_blank">kube-auth-proxy</a>を利用するために必要なパッチです。
 kube-auth-proxyを利用しない場合は削除しても問題ありません。</p>
-<p><code>manager_config_patch.yaml</code>は、カスタムコントローラのオプションを引数ではなくConfigMapで指定するためのパッチファイルです。</p>
+<p><code>manager_config_patch.yaml</code>は、カスタムコントローラーのオプションを引数ではなくConfigMapで指定するためのパッチファイルです。</p>
 <p>利用するマニフェストに応じて、<code>kustomization.yaml</code>を編集してください。</p>
 
                                 
@@ -621,7 +623,7 @@ kube-auth-proxyを利用しない場合は削除しても問題ありません�
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"next":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"previous":{"title":"Kubebuilder","level":"1.2","depth":1,"path":"kubebuilder/README.md","ref":"kubebuilder/README.md","articles":[{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},{"title":"kindで動かしてみよう","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},{"title":"手軽な動作確認","level":"1.2.5","depth":2,"path":"kubebuilder/debug.md","ref":"kubebuilder/debug.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/new-project.md","mtime":"2021-04-29T08:09:52.870Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"next":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"previous":{"title":"Kubebuilder","level":"1.2","depth":1,"path":"kubebuilder/README.md","ref":"kubebuilder/README.md","articles":[{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/new-project.md","mtime":"2021-07-25T14:00:13.900Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

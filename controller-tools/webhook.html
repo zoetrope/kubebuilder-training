@@ -122,7 +122,7 @@
                 <a href="../introduction/basics.html">
             
                     
-                    カスタムコントローラの基礎
+                    カスタムコントローラーの基礎
             
                 </a>
             
@@ -135,7 +135,7 @@
                 <a href="../introduction/sample.html">
             
                     
-                    作成するカスタムコントローラ
+                    MarkdownViewコントローラー
             
                 </a>
             
@@ -219,20 +219,7 @@
                 <a href="../kubebuilder/kind.html">
             
                     
-                    kindで動かしてみよう
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/debug.html">
-            
-                <a href="../kubebuilder/debug.html">
-            
-                    
-                    手軽な動作確認
+                    カスタムコントローラーの動作確認
             
                 </a>
             
@@ -361,7 +348,7 @@
                 <a href="../controller-runtime/controller_test.html">
             
                     
-                    コントローラのテスト
+                    コントローラーのテスト
             
                 </a>
             
@@ -408,12 +395,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/monitoring.html">
             
-                <a href="../controller-runtime/metrics.html">
+                <a href="../controller-runtime/monitoring.html">
             
                     
-                    メトリクスの収集
+                    モニタリング
             
                 </a>
             
@@ -473,32 +460,97 @@
                                 
                                 <h1 id="webhookマニフェストの生成">Webhookマニフェストの生成</h1>
 <p>AdmissionWebhookを利用するためには、<code>MutatingWebhookConfiguration</code>や<code>ValidatingWebhookConfiguration</code>などのマニフェストを用意する必要があります。
-controller-genでは<code>// +kubebuilder:webhook</code>マーカーの記述に基づいてマニフェストを生成することができます。</p>
+controller-genは<code>// +kubebuilder:webhook</code>マーカーの記述に基づいてマニフェストを生成できます。</p>
 <p>まずはデフォルト値を設定するWebhookのマーカーを見てみましょう。</p>
 <blockquote>
-<p><a id="tenant_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_webhook.go" target="_blank">tenant_webhook.go</a></p>
+<p><a id="markdownview_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/api/v1/markdownview_webhook.go" target="_blank">markdownview_webhook.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-comment">//+kubebuilder:webhook:path=/mutate-multitenancy-example-com-v1-tenant,mutating=true,failurePolicy=fail,sideEffects=None,groups=multitenancy.example.com,resources=tenants,verbs=create,versions=v1,name=mtenant.kb.io,admissionReviewVersions={v1,v1beta1}</span>
+<pre><code class="lang-golang"><span class="hljs-comment">//+kubebuilder:webhook:path=/mutate-view-zoetrope-github-io-v1-markdownview,mutating=true,failurePolicy=fail,sideEffects=None,groups=view.zoetrope.github.io,resources=markdownviews,verbs=create;update,versions=v1,name=mmarkdownview.kb.io,admissionReviewVersions={v1,v1beta1}</span>
 
-<span class="hljs-keyword">var</span> _ webhook.Defaulter = &amp;Tenant{}
+<span class="hljs-keyword">var</span> _ webhook.Defaulter = &amp;MarkdownView{}
 </code></pre>
-<p><code>groups</code>,<code>versions</code>,<code>resource</code>には、Webhookの対象となるリソースのGVKを指定します。
-<code>path</code>はWebhookのパスを指定しますが、これはcontroller-runtimeが自動的に生成するパスなので基本的には変更せずに利用します。
-<code>mutating</code>にはMutatingWebhookかどうかを指定します。
-<code>failurePolicy</code>は、WebhookのAPIに接続できない場合など呼び出しに失敗したときの挙動を指定します。
-<code>verbs</code>はリソースに対してどの操作をおこなったときにWebhookを呼び出すかを指定できます。</p>
-<p>今回はテナントリソースが作成されたときだけデフォルト値を設定するように、<code>verbs</code>をcreateのみに変更しました。</p>
-<p>次にバリデーションWebhookのマーカーを見てみましょう。</p>
+<p>同様にバリデーションWebhookのマーカーを確認します。</p>
 <blockquote>
-<p><a id="tenant_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/tenant/api/v1/tenant_webhook.go" target="_blank">tenant_webhook.go</a></p>
+<p><a id="markdownview_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/api/v1/markdownview_webhook.go" target="_blank">markdownview_webhook.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">// TODO(user): change verbs to &quot;verbs=create;update;delete&quot; if you want to enable deletion validation.</span>
-<span class="hljs-comment">//+kubebuilder:webhook:path=/validate-multitenancy-example-com-v1-tenant,mutating=false,failurePolicy=fail,sideEffects=None,groups=multitenancy.example.com,resources=tenants,verbs=update,versions=v1,name=vtenant.kb.io,admissionReviewVersions={v1,v1beta1}</span>
+<span class="hljs-comment">//+kubebuilder:webhook:path=/validate-view-zoetrope-github-io-v1-markdownview,mutating=false,failurePolicy=fail,sideEffects=None,groups=view.zoetrope.github.io,resources=markdownviews,verbs=create;update,versions=v1,name=vmarkdownview.kb.io,admissionReviewVersions={v1,v1beta1}</span>
 
-<span class="hljs-keyword">var</span> _ webhook.Validator = &amp;Tenant{}
+<span class="hljs-keyword">var</span> _ webhook.Validator = &amp;MarkdownView{}
 </code></pre>
-<p>今回はテナントリソースが更新されたときだけバリデーションをおこなうように、<code>verbs</code>をupdateのみに変更しました。</p>
-<p><code>make manifests</code>を実行すると<a href="../../codes/tenant/config/webhook/manifests.yaml">config/webhook/manifests.yaml</a>が更新されます。</p>
+<ul>
+<li><code>path</code>: Webhookのパスを指定します。これはcontroller-runtimeが自動的に生成するパスなので基本的には変更せずに利用します。</li>
+<li><code>mutating</code>: Webhookで値を書き換えるかどうかを指定します。Defaulterでは<code>true</code>, Validatorでは<code>false</code>を指定します。</li>
+<li><code>failurePolicy</code>: Webhook APIの呼び出しに失敗したときの挙動を指定します。<code>fail</code>を指定するとWebhookが呼び出せない場合はリソースの作成もできません。<code>ignore</code>を指定するとWebhookが呼び出せなくてもリソースが作成できてしまいます。</li>
+<li><code>sideEffects</code>: Webhook APIの呼び出しに副作用があるかどうかを指定します。これはAPIサーバーをdry-runモードで呼び出したときの挙動に影響します。副作用がない場合は<code>None</code>, ある場合は<code>Some</code>を指定します。</li>
+<li><code>groups</code>,<code>versions</code>,<code>resource</code>: Webhookの対象となるリソースのGVKを指定します。</li>
+<li><code>verbs</code>: Webhookの対象となるリソースの操作を指定できます。<code>create</code>, <code>update</code>, <code>delete</code>などを指定できます。</li>
+<li><code>name</code>: Webhookの名前を指定します。ドットで区切られた3つ以上のセグメントを持つドメイン名でなければなりません。</li>
+<li><code>admissionReviewVersions</code>: WebhookがサポートするAdmissionReviewのバージョンを指定します。Kubernetes 1.16以降の環境でしか動作させないのであれば<code>v1</code>のみで問題ありません。1.15以前の環境で動作させたい場合は<code>v1beta1</code>も指定しましょう。</li>
+</ul>
+<p><code>make manifests</code>を実行すると、マーカーの内容に基づいて以下のようなマニフェストファイルが生成されます。</p>
+<blockquote>
+<p><a id="manifests.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/config/webhook/manifests.yaml" target="_blank">manifests.yaml</a></p>
+</blockquote>
+<pre><code class="lang-yaml">
+<span class="hljs-meta">---</span>
+<span class="hljs-attr">apiVersion:</span> <span class="hljs-string">admissionregistration.k8s.io/v1</span>
+<span class="hljs-attr">kind:</span> <span class="hljs-string">MutatingWebhookConfiguration</span>
+<span class="hljs-attr">metadata:</span>
+  <span class="hljs-attr">creationTimestamp:</span> <span class="hljs-literal">null</span>
+  <span class="hljs-attr">name:</span> <span class="hljs-string">mutating-webhook-configuration</span>
+<span class="hljs-attr">webhooks:</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">admissionReviewVersions:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">v1</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">v1beta1</span>
+  <span class="hljs-attr">clientConfig:</span>
+    <span class="hljs-attr">service:</span>
+      <span class="hljs-attr">name:</span> <span class="hljs-string">webhook-service</span>
+      <span class="hljs-attr">namespace:</span> <span class="hljs-string">system</span>
+      <span class="hljs-attr">path:</span> <span class="hljs-string">/mutate-view-zoetrope-github-io-v1-markdownview</span>
+  <span class="hljs-attr">failurePolicy:</span> <span class="hljs-string">Fail</span>
+  <span class="hljs-attr">name:</span> <span class="hljs-string">mmarkdownview.kb.io</span>
+  <span class="hljs-attr">rules:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">apiGroups:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">view.zoetrope.github.io</span>
+    <span class="hljs-attr">apiVersions:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">v1</span>
+    <span class="hljs-attr">operations:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">CREATE</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">UPDATE</span>
+    <span class="hljs-attr">resources:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">markdownviews</span>
+  <span class="hljs-attr">sideEffects:</span> <span class="hljs-string">None</span>
+
+<span class="hljs-meta">---</span>
+<span class="hljs-attr">apiVersion:</span> <span class="hljs-string">admissionregistration.k8s.io/v1</span>
+<span class="hljs-attr">kind:</span> <span class="hljs-string">ValidatingWebhookConfiguration</span>
+<span class="hljs-attr">metadata:</span>
+  <span class="hljs-attr">creationTimestamp:</span> <span class="hljs-literal">null</span>
+  <span class="hljs-attr">name:</span> <span class="hljs-string">validating-webhook-configuration</span>
+<span class="hljs-attr">webhooks:</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">admissionReviewVersions:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">v1</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">v1beta1</span>
+  <span class="hljs-attr">clientConfig:</span>
+    <span class="hljs-attr">service:</span>
+      <span class="hljs-attr">name:</span> <span class="hljs-string">webhook-service</span>
+      <span class="hljs-attr">namespace:</span> <span class="hljs-string">system</span>
+      <span class="hljs-attr">path:</span> <span class="hljs-string">/validate-view-zoetrope-github-io-v1-markdownview</span>
+  <span class="hljs-attr">failurePolicy:</span> <span class="hljs-string">Fail</span>
+  <span class="hljs-attr">name:</span> <span class="hljs-string">vmarkdownview.kb.io</span>
+  <span class="hljs-attr">rules:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">apiGroups:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">view.zoetrope.github.io</span>
+    <span class="hljs-attr">apiVersions:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">v1</span>
+    <span class="hljs-attr">operations:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">CREATE</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">UPDATE</span>
+    <span class="hljs-attr">resources:</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">markdownviews</span>
+  <span class="hljs-attr">sideEffects:</span> <span class="hljs-string">None</span>
+</code></pre>
 
                                 
                                 </section>
@@ -542,7 +594,7 @@ controller-genでは<code>// +kubebuilder:webhook</code>マーカーの記述に
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"next":{"title":"controller-runtime","level":"1.4","depth":1,"path":"controller-runtime/README.md","ref":"controller-runtime/README.md","articles":[{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},{"title":"コントローラのテスト","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},{"title":"Webhookのテスト","level":"1.4.6","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},{"title":"メトリクスの収集","level":"1.4.8","depth":2,"path":"controller-runtime/metrics.md","ref":"controller-runtime/metrics.md","articles":[]}]},"previous":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/webhook.md","mtime":"2020-11-03T03:23:06.390Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"next":{"title":"controller-runtime","level":"1.4","depth":1,"path":"controller-runtime/README.md","ref":"controller-runtime/README.md","articles":[{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},{"title":"コントローラーのテスト","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},{"title":"Webhookのテスト","level":"1.4.6","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},{"title":"モニタリング","level":"1.4.8","depth":2,"path":"controller-runtime/monitoring.md","ref":"controller-runtime/monitoring.md","articles":[]}]},"previous":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/webhook.md","mtime":"2021-07-25T13:55:28.980Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

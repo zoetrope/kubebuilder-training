@@ -120,7 +120,7 @@
                 <a href="introduction/basics.html">
             
                     
-                    カスタムコントローラの基礎
+                    カスタムコントローラーの基礎
             
                 </a>
             
@@ -133,7 +133,7 @@
                 <a href="introduction/sample.html">
             
                     
-                    作成するカスタムコントローラ
+                    MarkdownViewコントローラー
             
                 </a>
             
@@ -217,20 +217,7 @@
                 <a href="kubebuilder/kind.html">
             
                     
-                    kindで動かしてみよう
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.5" data-path="kubebuilder/debug.html">
-            
-                <a href="kubebuilder/debug.html">
-            
-                    
-                    手軽な動作確認
+                    カスタムコントローラーの動作確認
             
                 </a>
             
@@ -359,7 +346,7 @@
                 <a href="controller-runtime/controller_test.html">
             
                     
-                    コントローラのテスト
+                    コントローラーのテスト
             
                 </a>
             
@@ -406,12 +393,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="controller-runtime/metrics.html">
+        <li class="chapter " data-level="1.4.8" data-path="controller-runtime/monitoring.html">
             
-                <a href="controller-runtime/metrics.html">
+                <a href="controller-runtime/monitoring.html">
             
                     
-                    メトリクスの収集
+                    モニタリング
             
                 </a>
             
@@ -470,16 +457,25 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="つくって学ぶkubebuilder">つくって学ぶKubebuilder</h1>
-<p>本資料ではKubernetesを拡張するカスタムコントローラの実装を通して、Kubebuilderの利用方法やKubernetesプログラミングについて学びます。</p>
+<p>本資料ではKuberbuilderを利用してカスタムコントローラー/オペレーターを開発する方法について学びます。</p>
 <h2 id="kubebuilderとは">Kubebuilderとは</h2>
-<p>Kubebuilderは、Kubernetesを拡張するためのカスタムコントローラや、Admission Webhookなどを開発するためのフレームワークです。</p>
-<p>Kubernetes向けのカスタムコントローラは、Kubernetesが公式に提供している<a href="https://github.com/kubernetes/client-go" target="_blank">kubernetes/client-go</a>を利用するだけでも開発することができます。
-しかしそのためにはKubernetesの設計コンセプトを正しく理解する必要があり、たくさんのマニフェストを記述する必要もあるため、それほど簡単ではありません。</p>
-<p>そこでKubebuilderでは、client-goを使いやすく抽象化したライブラリと、マニフェストを自動生成するツール群を提供することで、簡単にカスタムコントローラを開発できるようになっています。</p>
+<p>Kubebuilderは、Kubernetesを拡張するためのカスタムコントローラー/オペレーターを開発するためのフレームワークです。</p>
+<p>Kubernetesでは、標準で用意されているDeploymentやServiceなどのリソースを利用することで、簡単にアプリケーションのデプロイやサービスの提供ができるようになっています。
+さらに標準リソースを利用するだけでなく、ユーザーが独自のカスタムリソースを定義してKubernetesを機能拡張することが可能になっています。
+このカスタムリソースを扱うためのプログラムをカスタムコントローラーと呼びます。
+また、カスタムコントローラーを利用して独自のソフトウェアのセットアップや運用を自動化するためのプログラムをオペレーターと呼びます。</p>
+<p>カスタムコントローラーやオペレーターの実装例として、次のようなものがあります。</p>
+<ul>
+<li><a href="https://cert-manager.io/docs/" target="_blank">cert-manager</a></li>
+<li><a href="https://github.com/cybozu-go/moco" target="_blank">MOCO</a></li>
+</ul>
+<p>cert-managerは、CertificateリソースやIssuerリソースなどのカスタムリソースを利用して、証明書の発行を自動化できるカスタムコントローラーです。
+MOCOは、MySQLClusterリソースやBackupPolicyリソースを利用して、MySQLクラスターの構築や自動バックアップを管理するためのオペレーターです。</p>
+<p>Kubebuilderでは、client-goを使いやすく抽象化したライブラリとマニフェストを自動生成するツールを提供することで、簡単にカスタムコントローラーやオペレーターを開発できます。</p>
 <p>Kubebuilderは、下記のツールとライブラリから構成されています。</p>
 <ul>
 <li><a href="https://github.com/kubernetes-sigs/kubebuilder" target="_blank">kubebuilder</a><ul>
-<li>カスタムコントローラのプロジェクトの雛形を生成するツール</li>
+<li>カスタムコントローラーのプロジェクトの雛形を生成するツール</li>
 </ul>
 </li>
 <li><a href="https://github.com/kubernetes-sigs/controller-tools" target="_blank">controller-tools</a><ul>
@@ -487,21 +483,22 @@
 </ul>
 </li>
 <li><a href="https://github.com/kubernetes-sigs/controller-runtime" target="_blank">controller-runtime</a><ul>
-<li>カスタムコントローラを実装するためのライブラリ</li>
+<li>カスタムコントローラーを実装するためのフレームワーク・ライブラリ</li>
 </ul>
 </li>
 </ul>
-<p>本資料ではカスタムコントローラをつくりながらこれらのツールの使い方を学んでいきます。</p>
+<p>本資料ではこれらのツールの利用してカスタムコントローラーを実装する方法を学んでいきます。</p>
 <h2 id="対応バージョン">対応バージョン</h2>
 <ul>
-<li>kubebuilder: v3.0.0</li>
-<li>controller-tools: v0.5.0</li>
-<li>controller-runtime: v0.8.3</li>
+<li>Kubebuilder: v3.1.0</li>
+<li>controller-tools: v0.6.1</li>
+<li>controller-runtime: v0.9.3</li>
 </ul>
 <h2 id="更新履歴">更新履歴</h2>
 <ul>
 <li>2020/07/30: 初版公開</li>
 <li>2021/04/29: Kubebuilder v3対応</li>
+<li>2021/07/25: サンプルをMarkdownViewコントローラに変更。本文の全面見直し。</li>
 </ul>
 
                                 
@@ -542,7 +539,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"つくって学ぶKubebuilder","level":"1.1","depth":1,"next":{"title":"インストール","level":"1.1.1","depth":2,"path":"introduction/installation.md","ref":"introduction/installation.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"README.md","mtime":"2021-04-29T07:22:35.250Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-04-29T10:33:41.564Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"つくって学ぶKubebuilder","level":"1.1","depth":1,"next":{"title":"インストール","level":"1.1.1","depth":2,"path":"introduction/installation.md","ref":"introduction/installation.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"README.md","mtime":"2021-07-25T14:11:44.900Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
