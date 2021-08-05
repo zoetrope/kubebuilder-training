@@ -346,6 +346,7 @@ func patchApply(ctx context.Context, cli client.Client) error {
 
 	err := cli.Patch(ctx, patch, client.Apply, &client.PatchOptions{
 		FieldManager: "client-sample",
+		Force: pointer.Bool(true),
 	})
 
 	return err
@@ -395,6 +396,7 @@ func patchApplyConfig(ctx context.Context, cli client.Client) error {
 
 	err = cli.Patch(ctx, patch, client.Apply, &client.PatchOptions{
 		FieldManager: "client-sample",
+		Force: pointer.Bool(true),
 	})
 	return err
 }

@@ -19,6 +19,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"k8s.io/utils/pointer"
 
 	viewv1 "github.com/zoetrope/markdown-view/api/v1"
 	"github.com/zoetrope/markdown-view/pkg/constants"
@@ -222,6 +223,7 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 
 	err = r.Patch(ctx, patch, client.Apply, &client.PatchOptions{
 		FieldManager: constants.ControllerName,
+		Force: pointer.Bool(true),
 	})
 
 	if err != nil {
@@ -280,6 +282,7 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 
 	err = r.Patch(ctx, patch, client.Apply, &client.PatchOptions{
 		FieldManager: constants.ControllerName,
+		Force: pointer.Bool(true),
 	})
 	if err != nil {
 		logger.Error(err, "unable to create or update Service")

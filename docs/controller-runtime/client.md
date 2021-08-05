@@ -137,6 +137,9 @@ Patchには`client.MergeFrom`や`client.StrategicMergeFrom`を利用する方法
 
 Server-Side Applyでは、以下のようにUnstructured型のパッチを用意してリソースの更新をおこないます。
 
+なお、[公式ドキュメントに記述](https://kubernetes.io/docs/reference/using-api/server-side-apply/#using-server-side-apply-in-a-controller)されているように、
+カスタムコントローラでServer-Side Applyをおこなう際には、常にForceオプションを有効にすることが推奨されています。
+
 [import:"patch-apply"](../../codes/client-sample/main.go)
 
 上記のようにServer-Side ApplyはUnstructured型を利用するため、型安全なコードが記述できませんでした。
