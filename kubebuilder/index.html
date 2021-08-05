@@ -3,10 +3,11 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <title>Kubebuilder · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 3.5.2">
         
         
         
@@ -67,7 +68,7 @@
     </head>
     <body>
         
-<div class="book honkit-cloak">
+<div class="book">
     <div class="book-summary">
         
             
@@ -459,12 +460,12 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="kubebuilder">Kubebuilder</h1>
-<p><code>kubebuilder</code>コマンドは、カスタムコントローラーのプロジェクトの雛形を自動生成するためのツールです。
-ソースコードだけでなく、MakefileやDockerfile、各種マニフェストなど数多くのファイルを生成します。</p>
-<p><code>kubebuilder</code>コマンドのヘルプを表示してみましょう。</p>
-<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> kubebuilder -h</span>
+<p><code>kubebuilder</code>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x306F;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x30D7;&#x30ED;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x96DB;&#x5F62;&#x3092;&#x81EA;&#x52D5;&#x751F;&#x6210;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30C4;&#x30FC;&#x30EB;&#x3067;&#x3059;&#x3002;
+&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3060;&#x3051;&#x3067;&#x306A;&#x304F;&#x3001;Makefile&#x3084;Dockerfile&#x3001;&#x5404;&#x7A2E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306A;&#x3069;&#x6570;&#x591A;&#x304F;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x3092;&#x751F;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p><code>kubebuilder</code>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x306E;&#x30D8;&#x30EB;&#x30D7;&#x3092;&#x8868;&#x793A;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<pre><code class="lang-console">$ kubebuilder -h
 
-(中略)
+(&#x4E2D;&#x7565;)
 
 Available Commands:
   alpha       Alpha-stage subcommands
@@ -480,8 +481,8 @@ Flags:
 
 Use &quot;kubebuilder [command] --help&quot; for more information about a command.
 </code></pre>
-<p><code>kubebuilder</code>には、プロジェクトの新規作成をおこなう<code>init</code>サブコマンド、新しいAPIやWebhookの生成をおこなう<code>create</code>サブコマンド、生成したプロジェクトの設定を変更する<code>edit</code>サブコマンドがあります。</p>
-<p>本資料では、<code>init</code>サブコマンドと<code>create</code>サブコマンドの使い方を紹介します。</p>
+<p><code>kubebuilder</code>&#x306B;&#x306F;&#x3001;&#x30D7;&#x30ED;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x65B0;&#x898F;&#x4F5C;&#x6210;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;<code>init</code>&#x30B5;&#x30D6;&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3001;&#x65B0;&#x3057;&#x3044;API&#x3084;Webhook&#x306E;&#x751F;&#x6210;&#x3092;&#x304A;&#x3053;&#x306A;&#x3046;<code>create</code>&#x30B5;&#x30D6;&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3001;&#x751F;&#x6210;&#x3057;&#x305F;&#x30D7;&#x30ED;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x8A2D;&#x5B9A;&#x3092;&#x5909;&#x66F4;&#x3059;&#x308B;<code>edit</code>&#x30B5;&#x30D6;&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x672C;&#x8CC7;&#x6599;&#x3067;&#x306F;&#x3001;<code>init</code>&#x30B5;&#x30D6;&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3068;<code>create</code>&#x30B5;&#x30D6;&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x306E;&#x4F7F;&#x3044;&#x65B9;&#x3092;&#x7D39;&#x4ECB;&#x3057;&#x307E;&#x3059;&#x3002;</p>
 
                                 
                                 </section>
@@ -525,56 +526,12 @@ Use &quot;kubebuilder [command] --help&quot; for more information about a comman
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Kubebuilder","level":"1.2","depth":1,"next":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},"previous":{"title":"参考情報","level":"1.1.4","depth":2,"path":"introduction/references.md","ref":"introduction/references.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/README.md","mtime":"2021-07-25T14:01:46.970Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Kubebuilder","level":"1.2","depth":1,"next":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},"previous":{"title":"参考情報","level":"1.1.4","depth":2,"path":"introduction/references.md","ref":"introduction/references.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/README.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2021-08-05T05:32:29.138Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
 
         
-    <noscript>
-        <style>
-            .honkit-cloak {
-                display: block !important;
-            }
-        </style>
-    </noscript>
-    <script>
-        // Restore sidebar state as critical path for prevent layout shift
-        function __init__getSidebarState(defaultValue){
-            var baseKey = "";
-            var key = baseKey + ":sidebar";
-            try {
-                var value = localStorage[key];
-                if (value === undefined) {
-                    return defaultValue;
-                }
-                var parsed = JSON.parse(value);
-                return parsed == null ? defaultValue : parsed;
-            } catch (e) {
-                return defaultValue;
-            }
-        }
-        function __init__restoreLastSidebarState() {
-            var isMobile = window.matchMedia("(max-width: 600px)").matches;
-            if (isMobile) {
-                // Init last state if not mobile
-                return;
-            }
-            var sidebarState = __init__getSidebarState(true);
-            var book = document.querySelector(".book");
-            // Show sidebar if it enabled
-            if (sidebarState && book) {
-                book.classList.add("without-animation", "with-summary");
-            }
-        }
-
-        try {
-            __init__restoreLastSidebarState();
-        } finally {
-            var book = document.querySelector(".book");
-            book.classList.remove("honkit-cloak");
-        }
-    </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
     

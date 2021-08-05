@@ -3,10 +3,11 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <title>つくって学ぶKubebuilder · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 3.5.2">
         
         
         
@@ -65,7 +66,7 @@
     </head>
     <body>
         
-<div class="book honkit-cloak">
+<div class="book">
     <div class="book-summary">
         
             
@@ -456,49 +457,49 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="つくって学ぶkubebuilder">つくって学ぶKubebuilder</h1>
-<p>本資料ではKuberbuilderを利用してカスタムコントローラー/オペレーターを開発する方法について学びます。</p>
-<h2 id="kubebuilderとは">Kubebuilderとは</h2>
-<p>Kubebuilderは、Kubernetesを拡張するためのカスタムコントローラー/オペレーターを開発するためのフレームワークです。</p>
-<p>Kubernetesでは、標準で用意されているDeploymentやServiceなどのリソースを利用することで、簡単にアプリケーションのデプロイやサービスの提供ができるようになっています。
-さらに標準リソースを利用するだけでなく、ユーザーが独自のカスタムリソースを定義してKubernetesを機能拡張することが可能になっています。
-このカスタムリソースを扱うためのプログラムをカスタムコントローラーと呼びます。
-また、カスタムコントローラーを利用して独自のソフトウェアのセットアップや運用を自動化するためのプログラムをオペレーターと呼びます。</p>
-<p>カスタムコントローラーやオペレーターの実装例として、次のようなものがあります。</p>
+                                <h1 id="&#x3064;&#x304F;&#x3063;&#x3066;&#x5B66;&#x3076;kubebuilder">&#x3064;&#x304F;&#x3063;&#x3066;&#x5B66;&#x3076;Kubebuilder</h1>
+<p>&#x672C;&#x8CC7;&#x6599;&#x3067;&#x306F;Kuberbuilder&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;/&#x30AA;&#x30DA;&#x30EC;&#x30FC;&#x30BF;&#x30FC;&#x3092;&#x958B;&#x767A;&#x3059;&#x308B;&#x65B9;&#x6CD5;&#x306B;&#x3064;&#x3044;&#x3066;&#x5B66;&#x3073;&#x307E;&#x3059;&#x3002;</p>
+<h2 id="kubebuilder&#x3068;&#x306F;">Kubebuilder&#x3068;&#x306F;</h2>
+<p>Kubebuilder&#x306F;&#x3001;Kubernetes&#x3092;&#x62E1;&#x5F35;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;/&#x30AA;&#x30DA;&#x30EC;&#x30FC;&#x30BF;&#x30FC;&#x3092;&#x958B;&#x767A;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30D5;&#x30EC;&#x30FC;&#x30E0;&#x30EF;&#x30FC;&#x30AF;&#x3067;&#x3059;&#x3002;</p>
+<p>Kubernetes&#x3067;&#x306F;&#x3001;&#x6A19;&#x6E96;&#x3067;&#x7528;&#x610F;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;Deployment&#x3084;Service&#x306A;&#x3069;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3053;&#x3068;&#x3067;&#x3001;&#x7C21;&#x5358;&#x306B;&#x30A2;&#x30D7;&#x30EA;&#x30B1;&#x30FC;&#x30B7;&#x30E7;&#x30F3;&#x306E;&#x30C7;&#x30D7;&#x30ED;&#x30A4;&#x3084;&#x30B5;&#x30FC;&#x30D3;&#x30B9;&#x306E;&#x63D0;&#x4F9B;&#x304C;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x306A;&#x3063;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+&#x3055;&#x3089;&#x306B;&#x6A19;&#x6E96;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3060;&#x3051;&#x3067;&#x306A;&#x304F;&#x3001;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x304C;&#x72EC;&#x81EA;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x5B9A;&#x7FA9;&#x3057;&#x3066;Kubernetes&#x3092;&#x6A5F;&#x80FD;&#x62E1;&#x5F35;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x53EF;&#x80FD;&#x306B;&#x306A;&#x3063;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
+&#x3053;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6271;&#x3046;&#x305F;&#x3081;&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x3092;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3068;&#x547C;&#x3073;&#x307E;&#x3059;&#x3002;
+&#x307E;&#x305F;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x72EC;&#x81EA;&#x306E;&#x30BD;&#x30D5;&#x30C8;&#x30A6;&#x30A7;&#x30A2;&#x306E;&#x30BB;&#x30C3;&#x30C8;&#x30A2;&#x30C3;&#x30D7;&#x3084;&#x904B;&#x7528;&#x3092;&#x81EA;&#x52D5;&#x5316;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30D7;&#x30ED;&#x30B0;&#x30E9;&#x30E0;&#x3092;&#x30AA;&#x30DA;&#x30EC;&#x30FC;&#x30BF;&#x30FC;&#x3068;&#x547C;&#x3073;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3084;&#x30AA;&#x30DA;&#x30EC;&#x30FC;&#x30BF;&#x30FC;&#x306E;&#x5B9F;&#x88C5;&#x4F8B;&#x3068;&#x3057;&#x3066;&#x3001;&#x6B21;&#x306E;&#x3088;&#x3046;&#x306A;&#x3082;&#x306E;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;</p>
 <ul>
 <li><a href="https://cert-manager.io/docs/" target="_blank">cert-manager</a></li>
 <li><a href="https://github.com/cybozu-go/moco" target="_blank">MOCO</a></li>
 </ul>
-<p>cert-managerは、CertificateリソースやIssuerリソースなどのカスタムリソースを利用して、証明書の発行を自動化できるカスタムコントローラーです。
-MOCOは、MySQLClusterリソースやBackupPolicyリソースを利用して、MySQLクラスターの構築や自動バックアップを管理するためのオペレーターです。</p>
-<p>Kubebuilderでは、client-goを使いやすく抽象化したライブラリとマニフェストを自動生成するツールを提供することで、簡単にカスタムコントローラーやオペレーターを開発できます。</p>
-<p>Kubebuilderは、下記のツールとライブラリから構成されています。</p>
+<p>cert-manager&#x306F;&#x3001;Certificate&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3084;Issuer&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306A;&#x3069;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3001;&#x8A3C;&#x660E;&#x66F8;&#x306E;&#x767A;&#x884C;&#x3092;&#x81EA;&#x52D5;&#x5316;&#x3067;&#x304D;&#x308B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3067;&#x3059;&#x3002;
+MOCO&#x306F;&#x3001;MySQLCluster&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3084;BackupPolicy&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3001;MySQL&#x30AF;&#x30E9;&#x30B9;&#x30BF;&#x30FC;&#x306E;&#x69CB;&#x7BC9;&#x3084;&#x81EA;&#x52D5;&#x30D0;&#x30C3;&#x30AF;&#x30A2;&#x30C3;&#x30D7;&#x3092;&#x7BA1;&#x7406;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30AA;&#x30DA;&#x30EC;&#x30FC;&#x30BF;&#x30FC;&#x3067;&#x3059;&#x3002;</p>
+<p>Kubebuilder&#x3067;&#x306F;&#x3001;client-go&#x3092;&#x4F7F;&#x3044;&#x3084;&#x3059;&#x304F;&#x62BD;&#x8C61;&#x5316;&#x3057;&#x305F;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;&#x3068;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x81EA;&#x52D5;&#x751F;&#x6210;&#x3059;&#x308B;&#x30C4;&#x30FC;&#x30EB;&#x3092;&#x63D0;&#x4F9B;&#x3059;&#x308B;&#x3053;&#x3068;&#x3067;&#x3001;&#x7C21;&#x5358;&#x306B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3084;&#x30AA;&#x30DA;&#x30EC;&#x30FC;&#x30BF;&#x30FC;&#x3092;&#x958B;&#x767A;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>Kubebuilder&#x306F;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x30C4;&#x30FC;&#x30EB;&#x3068;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;&#x304B;&#x3089;&#x69CB;&#x6210;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
 <ul>
 <li><a href="https://github.com/kubernetes-sigs/kubebuilder" target="_blank">kubebuilder</a><ul>
-<li>カスタムコントローラーのプロジェクトの雛形を生成するツール</li>
+<li>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x30D7;&#x30ED;&#x30B8;&#x30A7;&#x30AF;&#x30C8;&#x306E;&#x96DB;&#x5F62;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;&#x30C4;&#x30FC;&#x30EB;</li>
 </ul>
 </li>
 <li><a href="https://github.com/kubernetes-sigs/controller-tools" target="_blank">controller-tools</a><ul>
-<li>Goのソースコードからマニフェストを生成するツール</li>
+<li>Go&#x306E;&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x304B;&#x3089;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;&#x30C4;&#x30FC;&#x30EB;</li>
 </ul>
 </li>
 <li><a href="https://github.com/kubernetes-sigs/controller-runtime" target="_blank">controller-runtime</a><ul>
-<li>カスタムコントローラーを実装するためのフレームワーク・ライブラリ</li>
+<li>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3092;&#x5B9F;&#x88C5;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30D5;&#x30EC;&#x30FC;&#x30E0;&#x30EF;&#x30FC;&#x30AF;&#x30FB;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;</li>
 </ul>
 </li>
 </ul>
-<p>本資料ではこれらのツールの利用してカスタムコントローラーを実装する方法を学んでいきます。</p>
-<h2 id="対応バージョン">対応バージョン</h2>
+<p>&#x672C;&#x8CC7;&#x6599;&#x3067;&#x306F;&#x3053;&#x308C;&#x3089;&#x306E;&#x30C4;&#x30FC;&#x30EB;&#x306E;&#x5229;&#x7528;&#x3057;&#x3066;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3092;&#x5B9F;&#x88C5;&#x3059;&#x308B;&#x65B9;&#x6CD5;&#x3092;&#x5B66;&#x3093;&#x3067;&#x3044;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<h2 id="&#x5BFE;&#x5FDC;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;">&#x5BFE;&#x5FDC;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;</h2>
 <ul>
 <li>Kubebuilder: v3.1.0</li>
 <li>controller-tools: v0.6.1</li>
 <li>controller-runtime: v0.9.3</li>
 </ul>
-<h2 id="更新履歴">更新履歴</h2>
+<h2 id="&#x66F4;&#x65B0;&#x5C65;&#x6B74;">&#x66F4;&#x65B0;&#x5C65;&#x6B74;</h2>
 <ul>
-<li>2020/07/30: 初版公開</li>
-<li>2021/04/29: Kubebuilder v3対応</li>
-<li>2021/07/25: サンプルをMarkdownViewコントローラに変更。本文の全面見直し。</li>
+<li>2020/07/30: &#x521D;&#x7248;&#x516C;&#x958B;</li>
+<li>2021/04/29: Kubebuilder v3&#x5BFE;&#x5FDC;</li>
+<li>2021/07/25: &#x30B5;&#x30F3;&#x30D7;&#x30EB;&#x3092;MarkdownView&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306B;&#x5909;&#x66F4;&#x3002;&#x672C;&#x6587;&#x306E;&#x5168;&#x9762;&#x898B;&#x76F4;&#x3057;&#x3002;</li>
 </ul>
 
                                 
@@ -539,56 +540,12 @@ MOCOは、MySQLClusterリソースやBackupPolicyリソースを利用して、M
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"つくって学ぶKubebuilder","level":"1.1","depth":1,"next":{"title":"インストール","level":"1.1.1","depth":2,"path":"introduction/installation.md","ref":"introduction/installation.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"README.md","mtime":"2021-07-25T14:11:44.900Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"つくって学ぶKubebuilder","level":"1.1","depth":1,"next":{"title":"インストール","level":"1.1.1","depth":2,"path":"introduction/installation.md","ref":"introduction/installation.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"README.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2021-08-05T05:32:29.138Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
 
         
-    <noscript>
-        <style>
-            .honkit-cloak {
-                display: block !important;
-            }
-        </style>
-    </noscript>
-    <script>
-        // Restore sidebar state as critical path for prevent layout shift
-        function __init__getSidebarState(defaultValue){
-            var baseKey = "";
-            var key = baseKey + ":sidebar";
-            try {
-                var value = localStorage[key];
-                if (value === undefined) {
-                    return defaultValue;
-                }
-                var parsed = JSON.parse(value);
-                return parsed == null ? defaultValue : parsed;
-            } catch (e) {
-                return defaultValue;
-            }
-        }
-        function __init__restoreLastSidebarState() {
-            var isMobile = window.matchMedia("(max-width: 600px)").matches;
-            if (isMobile) {
-                // Init last state if not mobile
-                return;
-            }
-            var sidebarState = __init__getSidebarState(true);
-            var book = document.querySelector(".book");
-            // Show sidebar if it enabled
-            if (sidebarState && book) {
-                book.classList.add("without-animation", "with-summary");
-            }
-        }
-
-        try {
-            __init__restoreLastSidebarState();
-        } finally {
-            var book = document.querySelector(".book");
-            book.classList.remove("honkit-cloak");
-        }
-    </script>
     <script src="gitbook/gitbook.js"></script>
     <script src="gitbook/theme.js"></script>
     

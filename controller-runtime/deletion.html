@@ -3,10 +3,11 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <title>リソースの削除 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 3.5.2">
         
         
         
@@ -67,7 +68,7 @@
     </head>
     <body>
         
-<div class="book honkit-cloak">
+<div class="book">
     <div class="book-summary">
         
             
@@ -458,18 +459,18 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="リソースの削除">リソースの削除</h1>
-<p>ここではKubernetesにおけるリソースの削除処理について解説します。</p>
-<p>実はコントローラーにおいて削除処理は難しい問題です。
-例えばMarkdownViewリソースが削除されたら、そのMarkdownViewに紐付く形で作成されたConfigMap, Deployment, Serviceリソースも一緒に削除しなければなりません。
-しかし、もしMarkdownViewが削除されたというイベントを取りこぼしてしまうと、そのリソースに関する情報は消えてしまい、関連するどのリソースを削除すべきか判断できなくなってしまうからです。</p>
-<p>そこでKubernetesでは、ownerReferenceによるガベージコレクションと、Finalizerというリソース削除の仕組みを提供しています。</p>
-<h2 id="ownerreferenceによるガベージコレクション">ownerReferenceによるガベージコレクション</h2>
-<p>1つめのリソース削除の仕組みはownerReferenceによるガベージコレクションです。(<a href="https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/" target="_blank">参考</a>)
-これは親リソースが削除されると、そのリソースの子リソースもガベージコレクションにより自動的に削除されるという仕組みです。</p>
-<p>Kubernetesではリソースの親子関係を表すために<code>.metadata.ownerReferences</code>フィールドを利用します。</p>
-<p>例えば、以下のようにConfigMapリソースを作成する際に、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetControllerReference" target="_blank">controllerutil.SetControllerReference</a>
-というユーティリティ関数を利用していました。</p>
+                                <h1 id="&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;</h1>
+<p>&#x3053;&#x3053;&#x3067;&#x306F;Kubernetes&#x306B;&#x304A;&#x3051;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;&#x51E6;&#x7406;&#x306B;&#x3064;&#x3044;&#x3066;&#x89E3;&#x8AAC;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x5B9F;&#x306F;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306B;&#x304A;&#x3044;&#x3066;&#x524A;&#x9664;&#x51E6;&#x7406;&#x306F;&#x96E3;&#x3057;&#x3044;&#x554F;&#x984C;&#x3067;&#x3059;&#x3002;
+&#x4F8B;&#x3048;&#x3070;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x305F;&#x3089;&#x3001;&#x305D;&#x306E;MarkdownView&#x306B;&#x7D10;&#x4ED8;&#x304F;&#x5F62;&#x3067;&#x4F5C;&#x6210;&#x3055;&#x308C;&#x305F;ConfigMap, Deployment, Service&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3082;&#x4E00;&#x7DD2;&#x306B;&#x524A;&#x9664;&#x3057;&#x306A;&#x3051;&#x308C;&#x3070;&#x306A;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;
+&#x3057;&#x304B;&#x3057;&#x3001;&#x3082;&#x3057;MarkdownView&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x305F;&#x3068;&#x3044;&#x3046;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x3092;&#x53D6;&#x308A;&#x3053;&#x307C;&#x3057;&#x3066;&#x3057;&#x307E;&#x3046;&#x3068;&#x3001;&#x305D;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x95A2;&#x3059;&#x308B;&#x60C5;&#x5831;&#x306F;&#x6D88;&#x3048;&#x3066;&#x3057;&#x307E;&#x3044;&#x3001;&#x95A2;&#x9023;&#x3059;&#x308B;&#x3069;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3059;&#x3079;&#x304D;&#x304B;&#x5224;&#x65AD;&#x3067;&#x304D;&#x306A;&#x304F;&#x306A;&#x3063;&#x3066;&#x3057;&#x307E;&#x3046;&#x304B;&#x3089;&#x3067;&#x3059;&#x3002;</p>
+<p>&#x305D;&#x3053;&#x3067;Kubernetes&#x3067;&#x306F;&#x3001;ownerReference&#x306B;&#x3088;&#x308B;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x3068;&#x3001;Finalizer&#x3068;&#x3044;&#x3046;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x524A;&#x9664;&#x306E;&#x4ED5;&#x7D44;&#x307F;&#x3092;&#x63D0;&#x4F9B;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<h2 id="ownerreference&#x306B;&#x3088;&#x308B;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;">ownerReference&#x306B;&#x3088;&#x308B;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;</h2>
+<p>1&#x3064;&#x3081;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x524A;&#x9664;&#x306E;&#x4ED5;&#x7D44;&#x307F;&#x306F;ownerReference&#x306B;&#x3088;&#x308B;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x3067;&#x3059;&#x3002;(<a href="https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/" target="_blank">&#x53C2;&#x8003;</a>)
+&#x3053;&#x308C;&#x306F;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x308B;&#x3068;&#x3001;&#x305D;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x5B50;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3082;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x306B;&#x3088;&#x308A;&#x81EA;&#x52D5;&#x7684;&#x306B;&#x524A;&#x9664;&#x3055;&#x308C;&#x308B;&#x3068;&#x3044;&#x3046;&#x4ED5;&#x7D44;&#x307F;&#x3067;&#x3059;&#x3002;</p>
+<p>Kubernetes&#x3067;&#x306F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x89AA;&#x5B50;&#x95A2;&#x4FC2;&#x3092;&#x8868;&#x3059;&#x305F;&#x3081;&#x306B;<code>.metadata.ownerReferences</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x5229;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x4F8B;&#x3048;&#x3070;&#x3001;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306B;ConfigMap&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3059;&#x308B;&#x969B;&#x306B;&#x3001;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetControllerReference" target="_blank">controllerutil.SetControllerReference</a>
+&#x3068;&#x3044;&#x3046;&#x30E6;&#x30FC;&#x30C6;&#x30A3;&#x30EA;&#x30C6;&#x30A3;&#x95A2;&#x6570;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3044;&#x307E;&#x3057;&#x305F;&#x3002;</p>
 <blockquote>
 <p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
@@ -500,67 +501,67 @@
     <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
 }
 </code></pre>
-<p>この関数を利用すると、ConfigMapリソースに以下のような<code>.metadata.ownerReferences</code>が付与され、このリソースに親リソースの情報が設定されます。</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span>
-<span class="hljs-attr">kind:</span> <span class="hljs-string">ConfigMap</span>
+<p>&#x3053;&#x306E;&#x95A2;&#x6570;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3068;&#x3001;ConfigMap&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306A;<code>.metadata.ownerReferences</code>&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3001;&#x3053;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x60C5;&#x5831;&#x304C;&#x8A2D;&#x5B9A;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> v1
+<span class="hljs-attr">kind:</span> ConfigMap
 <span class="hljs-attr">metadata:</span>
-  <span class="hljs-attr">creationTimestamp:</span> <span class="hljs-string">&quot;2021-07-25T09:35:43Z&quot;</span>
-  <span class="hljs-attr">name:</span> <span class="hljs-string">markdowns-markdownview-sample</span>
-  <span class="hljs-attr">namespace:</span> <span class="hljs-string">default</span>
-  <span class="hljs-attr">ownerReferences:</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-attr">apiVersion:</span> <span class="hljs-string">view.zoetrope.github.io/v1</span>
-    <span class="hljs-attr">blockOwnerDeletion:</span> <span class="hljs-literal">true</span>
-    <span class="hljs-attr">controller:</span> <span class="hljs-literal">true</span>
-    <span class="hljs-attr">kind:</span> <span class="hljs-string">MarkdownView</span>
-    <span class="hljs-attr">name:</span> <span class="hljs-string">markdownview-sample</span>
-    <span class="hljs-attr">uid:</span> <span class="hljs-string">8e8701a6-fa67-4ab8-8e0c-29c21ae6e1ec</span>
-  <span class="hljs-attr">resourceVersion:</span> <span class="hljs-string">&quot;17582&quot;</span>
-  <span class="hljs-attr">uid:</span> <span class="hljs-string">8803226f-7d8f-4632-b3eb-e47dc36eabf3</span>
+<span class="hljs-attr">  creationTimestamp:</span> <span class="hljs-string">&quot;2021-07-25T09:35:43Z&quot;</span>
+<span class="hljs-attr">  name:</span> markdowns-markdownview-sample
+<span class="hljs-attr">  namespace:</span> default
+<span class="hljs-attr">  ownerReferences:</span>
+<span class="hljs-attr">  - apiVersion:</span> view.zoetrope.github.io/v1
+<span class="hljs-attr">    blockOwnerDeletion:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">    controller:</span> <span class="hljs-literal">true</span>
+<span class="hljs-attr">    kind:</span> MarkdownView
+<span class="hljs-attr">    name:</span> markdownview-sample
+<span class="hljs-attr">    uid:</span> <span class="hljs-number">8e8701</span>a6-fa67<span class="hljs-bullet">-4</span>ab8<span class="hljs-bullet">-8e0</span>c<span class="hljs-bullet">-29</span>c21ae6e1ec
+<span class="hljs-attr">  resourceVersion:</span> <span class="hljs-string">&quot;17582&quot;</span>
+<span class="hljs-attr">  uid:</span> <span class="hljs-number">8803226</span>f<span class="hljs-bullet">-7</span>d8f<span class="hljs-bullet">-4632</span>-b3eb-e47dc36eabf3
 <span class="hljs-attr">data:</span>
-  <span class="hljs-string">・・省略・・</span>
+  &#x30FB;&#x30FB;&#x7701;&#x7565;&#x30FB;&#x30FB;
 </code></pre>
-<p>この状態で親のMarkdownViewリソースを削除すると、子のConfigMapリソースも自動的に削除されます。</p>
-<p>なお、異なるnamespaceのリソースをownerにしたり、cluster-scopedリソースのownerにnamespace-scopedリソースを指定することはできません。</p>
-<p>また、<code>SetControllerReference</code>と似た関数で<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetOwnerReference" target="_blank">controllerutil.SetOwnerReference</a>もあります。
-<code>SetControllerReference</code>は、1つのリソースに1つのオーナーのみしか指定できず、<code>controller</code>フィールドと<code>blockOwnerDeletion</code>フィールドにtrueが指定されているため子リソースが削除されるまで親リソースの削除がブロックされます。
-一方の<code>SetOwnerReference</code>は1つのリソースに複数のオーナーを指定でき、子リソースの削除はブロックされません。</p>
+<p>&#x3053;&#x306E;&#x72B6;&#x614B;&#x3067;&#x89AA;&#x306E;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3059;&#x308B;&#x3068;&#x3001;&#x5B50;&#x306E;ConfigMap&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3082;&#x81EA;&#x52D5;&#x7684;&#x306B;&#x524A;&#x9664;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x306A;&#x304A;&#x3001;&#x7570;&#x306A;&#x308B;namespace&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;owner&#x306B;&#x3057;&#x305F;&#x308A;&#x3001;cluster-scoped&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;owner&#x306B;namespace-scoped&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6307;&#x5B9A;&#x3059;&#x308B;&#x3053;&#x3068;&#x306F;&#x3067;&#x304D;&#x307E;&#x305B;&#x3093;&#x3002;</p>
+<p>&#x307E;&#x305F;&#x3001;<code>SetControllerReference</code>&#x3068;&#x4F3C;&#x305F;&#x95A2;&#x6570;&#x3067;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetOwnerReference" target="_blank">controllerutil.SetOwnerReference</a>&#x3082;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;
+<code>SetControllerReference</code>&#x306F;&#x3001;1&#x3064;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;1&#x3064;&#x306E;&#x30AA;&#x30FC;&#x30CA;&#x30FC;&#x306E;&#x307F;&#x3057;&#x304B;&#x6307;&#x5B9A;&#x3067;&#x304D;&#x305A;&#x3001;<code>controller</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3068;<code>blockOwnerDeletion</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;true&#x304C;&#x6307;&#x5B9A;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x305F;&#x3081;&#x5B50;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x308B;&#x307E;&#x3067;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;&#x304C;&#x30D6;&#x30ED;&#x30C3;&#x30AF;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;
+&#x4E00;&#x65B9;&#x306E;<code>SetOwnerReference</code>&#x306F;1&#x3064;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x8907;&#x6570;&#x306E;&#x30AA;&#x30FC;&#x30CA;&#x30FC;&#x3092;&#x6307;&#x5B9A;&#x3067;&#x304D;&#x3001;&#x5B50;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;&#x306F;&#x30D6;&#x30ED;&#x30C3;&#x30AF;&#x3055;&#x308C;&#x307E;&#x305B;&#x3093;&#x3002;</p>
 <h2 id="finalizer">Finalizer</h2>
-<h3 id="finalizerの仕組み">Finalizerの仕組み</h3>
-<p>ownerReferenceとガベージコレクションにより、親リソースと一緒に子リソースを削除できると説明しました。
-しかし、この仕組だけでは削除できないケースもあります。直接の親ではないリソースを削除したいケースや、Kubernetesで管理していない外部のリソースなどを削除したいケースなどがあります。</p>
-<p>例えばTopoLVMでは、LogicalVolumeというカスタムリソースを作成すると、ノード上にLVM(Logical Volume Manager)のLV(Logical Volume)を作成します。
-Kubernetes上のLogicalVolumeカスタムリソースが削除されたら、それに合わせてノード上のLVも削除しなければなりません。</p>
-<p>そのようなリソースの削除には、Finalizerという仕組みを利用できます。</p>
-<p>Finalizerの仕組みを利用するためには、まず親リソースの<code>finalizers</code>フィールドにFinalizerの名前を指定します。
-なお、この名前はMarkdownViewコントローラーが管理しているFinalizerであると識別できるように、他のコントローラーと衝突しない名前にしておきましょう。</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">view.zoetrope.github.io/v1</span>
-<span class="hljs-attr">kind:</span> <span class="hljs-string">MarkdownView</span>
+<h3 id="finalizer&#x306E;&#x4ED5;&#x7D44;&#x307F;">Finalizer&#x306E;&#x4ED5;&#x7D44;&#x307F;</h3>
+<p>ownerReference&#x3068;&#x30AC;&#x30D9;&#x30FC;&#x30B8;&#x30B3;&#x30EC;&#x30AF;&#x30B7;&#x30E7;&#x30F3;&#x306B;&#x3088;&#x308A;&#x3001;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x4E00;&#x7DD2;&#x306B;&#x5B50;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3067;&#x304D;&#x308B;&#x3068;&#x8AAC;&#x660E;&#x3057;&#x307E;&#x3057;&#x305F;&#x3002;
+&#x3057;&#x304B;&#x3057;&#x3001;&#x3053;&#x306E;&#x4ED5;&#x7D44;&#x3060;&#x3051;&#x3067;&#x306F;&#x524A;&#x9664;&#x3067;&#x304D;&#x306A;&#x3044;&#x30B1;&#x30FC;&#x30B9;&#x3082;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;&#x76F4;&#x63A5;&#x306E;&#x89AA;&#x3067;&#x306F;&#x306A;&#x3044;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3057;&#x305F;&#x3044;&#x30B1;&#x30FC;&#x30B9;&#x3084;&#x3001;Kubernetes&#x3067;&#x7BA1;&#x7406;&#x3057;&#x3066;&#x3044;&#x306A;&#x3044;&#x5916;&#x90E8;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306A;&#x3069;&#x3092;&#x524A;&#x9664;&#x3057;&#x305F;&#x3044;&#x30B1;&#x30FC;&#x30B9;&#x306A;&#x3069;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x4F8B;&#x3048;&#x3070;TopoLVM&#x3067;&#x306F;&#x3001;LogicalVolume&#x3068;&#x3044;&#x3046;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3059;&#x308B;&#x3068;&#x3001;&#x30CE;&#x30FC;&#x30C9;&#x4E0A;&#x306B;LVM(Logical Volume Manager)&#x306E;LV(Logical Volume)&#x3092;&#x4F5C;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;
+Kubernetes&#x4E0A;&#x306E;LogicalVolume&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x305F;&#x3089;&#x3001;&#x305D;&#x308C;&#x306B;&#x5408;&#x308F;&#x305B;&#x3066;&#x30CE;&#x30FC;&#x30C9;&#x4E0A;&#x306E;LV&#x3082;&#x524A;&#x9664;&#x3057;&#x306A;&#x3051;&#x308C;&#x3070;&#x306A;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;</p>
+<p>&#x305D;&#x306E;&#x3088;&#x3046;&#x306A;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;&#x306B;&#x306F;&#x3001;Finalizer&#x3068;&#x3044;&#x3046;&#x4ED5;&#x7D44;&#x307F;&#x3092;&#x5229;&#x7528;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>Finalizer&#x306E;&#x4ED5;&#x7D44;&#x307F;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x306F;&#x3001;&#x307E;&#x305A;&#x89AA;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;<code>finalizers</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x306B;Finalizer&#x306E;&#x540D;&#x524D;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;
+&#x306A;&#x304A;&#x3001;&#x3053;&#x306E;&#x540D;&#x524D;&#x306F;MarkdownView&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x304C;&#x7BA1;&#x7406;&#x3057;&#x3066;&#x3044;&#x308B;Finalizer&#x3067;&#x3042;&#x308B;&#x3068;&#x8B58;&#x5225;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x3001;&#x4ED6;&#x306E;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3068;&#x885D;&#x7A81;&#x3057;&#x306A;&#x3044;&#x540D;&#x524D;&#x306B;&#x3057;&#x3066;&#x304A;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> view.zoetrope.github.io/v1
+<span class="hljs-attr">kind:</span> MarkdownView
 <span class="hljs-attr">metadata:</span>
-  <span class="hljs-attr">finalizers:</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-string">markdownview.finalizers.view.zoetrope.github.io</span>
-<span class="hljs-comment"># 以下省略</span>
+<span class="hljs-attr">  finalizers:</span>
+<span class="hljs-bullet">  -</span> markdownview.finalizers.view.zoetrope.github.io
+<span class="hljs-comment"># &#x4EE5;&#x4E0B;&#x7701;&#x7565;</span>
 </code></pre>
-<p><code>finalizers</code>フィールドが付与されているリソースは、リソースを削除しようとしても削除されません。
-代わりに、以下のように<code>deletionTimestamp</code>が付与されるだけです。</p>
-<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">view.zoetrope.github.io/v1</span>
-<span class="hljs-attr">kind:</span> <span class="hljs-string">MarkdownView</span>
+<p><code>finalizers</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;&#x3001;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3057;&#x3088;&#x3046;&#x3068;&#x3057;&#x3066;&#x3082;&#x524A;&#x9664;&#x3055;&#x308C;&#x307E;&#x305B;&#x3093;&#x3002;
+&#x4EE3;&#x308F;&#x308A;&#x306B;&#x3001;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306B;<code>deletionTimestamp</code>&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x308B;&#x3060;&#x3051;&#x3067;&#x3059;&#x3002;</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> view.zoetrope.github.io/v1
+<span class="hljs-attr">kind:</span> MarkdownView
 <span class="hljs-attr">metadata:</span>
-  <span class="hljs-attr">finalizers:</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-string">markdownview.finalizers.view.zoetrope.github.io</span>
-  <span class="hljs-attr">deletionTimestamp:</span> <span class="hljs-string">&quot;2021-07-24T15:23:54Z&quot;</span>
-<span class="hljs-comment"># 以下省略</span>
+<span class="hljs-attr">  finalizers:</span>
+<span class="hljs-bullet">    -</span> markdownview.finalizers.view.zoetrope.github.io
+<span class="hljs-attr">  deletionTimestamp:</span> <span class="hljs-string">&quot;2021-07-24T15:23:54Z&quot;</span>
+<span class="hljs-comment"># &#x4EE5;&#x4E0B;&#x7701;&#x7565;</span>
 </code></pre>
-<p>カスタムコントローラーは<code>deletionTimestamp</code>が付与されていることを発見すると、そのリソースに関連するリソースを削除し、その後に<code>finalizers</code>フィールドを削除します。
-<code>finalizers</code>フィールドが空になると、Kubernetesがこのリソースを完全に削除します。</p>
-<p>このような仕組みにより、コントローラーが削除イベントを取りこぼしたとしても、対象のリソースが削除されるまでは何度もReconcileが呼び出されるため、子のリソースの情報が失われて削除できなくなるという問題を回避できます。
-一方で、カスタムリソースよりも先にコントローラーを削除してしまった場合は、いつまでたってもカスタムリソースが削除されないという問題が発生することになるので注意しましょう。</p>
-<h3 id="finalizerの実装方法">Finalizerの実装方法</h3>
-<p>それではFinalizerを実装してみましょう。
-controller-runtimeでは、Finalizerを扱うためのユーティリティ関数として<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#ContainsFinalizer" target="_blank">controllerutil.ContainsFinalizer</a>、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#AddFinalizer" target="_blank">controllerutil.AddFinalizer</a>、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#RemoveFinalizer" target="_blank">controllerutil.RemoveFinalizer</a>などを提供しているのでこれを利用しましょう。</p>
-<p>以下のように、Finalizersフィールドを利用して、独自のリソース削除処理を実装できます。</p>
+<p>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306F;<code>deletionTimestamp</code>&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x3044;&#x308B;&#x3053;&#x3068;&#x3092;&#x767A;&#x898B;&#x3059;&#x308B;&#x3068;&#x3001;&#x305D;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x95A2;&#x9023;&#x3059;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3057;&#x3001;&#x305D;&#x306E;&#x5F8C;&#x306B;<code>finalizers</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x524A;&#x9664;&#x3057;&#x307E;&#x3059;&#x3002;
+<code>finalizers</code>&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x304C;&#x7A7A;&#x306B;&#x306A;&#x308B;&#x3068;&#x3001;Kubernetes&#x304C;&#x3053;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x5B8C;&#x5168;&#x306B;&#x524A;&#x9664;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>&#x3053;&#x306E;&#x3088;&#x3046;&#x306A;&#x4ED5;&#x7D44;&#x307F;&#x306B;&#x3088;&#x308A;&#x3001;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x304C;&#x524A;&#x9664;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x3092;&#x53D6;&#x308A;&#x3053;&#x307C;&#x3057;&#x305F;&#x3068;&#x3057;&#x3066;&#x3082;&#x3001;&#x5BFE;&#x8C61;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x308B;&#x307E;&#x3067;&#x306F;&#x4F55;&#x5EA6;&#x3082;Reconcile&#x304C;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x308B;&#x305F;&#x3081;&#x3001;&#x5B50;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x60C5;&#x5831;&#x304C;&#x5931;&#x308F;&#x308C;&#x3066;&#x524A;&#x9664;&#x3067;&#x304D;&#x306A;&#x304F;&#x306A;&#x308B;&#x3068;&#x3044;&#x3046;&#x554F;&#x984C;&#x3092;&#x56DE;&#x907F;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;
+&#x4E00;&#x65B9;&#x3067;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3088;&#x308A;&#x3082;&#x5148;&#x306B;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3092;&#x524A;&#x9664;&#x3057;&#x3066;&#x3057;&#x307E;&#x3063;&#x305F;&#x5834;&#x5408;&#x306F;&#x3001;&#x3044;&#x3064;&#x307E;&#x3067;&#x305F;&#x3063;&#x3066;&#x3082;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x306A;&#x3044;&#x3068;&#x3044;&#x3046;&#x554F;&#x984C;&#x304C;&#x767A;&#x751F;&#x3059;&#x308B;&#x3053;&#x3068;&#x306B;&#x306A;&#x308B;&#x306E;&#x3067;&#x6CE8;&#x610F;&#x3057;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<h3 id="finalizer&#x306E;&#x5B9F;&#x88C5;&#x65B9;&#x6CD5;">Finalizer&#x306E;&#x5B9F;&#x88C5;&#x65B9;&#x6CD5;</h3>
+<p>&#x305D;&#x308C;&#x3067;&#x306F;Finalizer&#x3092;&#x5B9F;&#x88C5;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;
+controller-runtime&#x3067;&#x306F;&#x3001;Finalizer&#x3092;&#x6271;&#x3046;&#x305F;&#x3081;&#x306E;&#x30E6;&#x30FC;&#x30C6;&#x30A3;&#x30EA;&#x30C6;&#x30A3;&#x95A2;&#x6570;&#x3068;&#x3057;&#x3066;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#ContainsFinalizer" target="_blank">controllerutil.ContainsFinalizer</a>&#x3001;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#AddFinalizer" target="_blank">controllerutil.AddFinalizer</a>&#x3001;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#RemoveFinalizer" target="_blank">controllerutil.RemoveFinalizer</a>&#x306A;&#x3069;&#x3092;&#x63D0;&#x4F9B;&#x3057;&#x3066;&#x3044;&#x308B;&#x306E;&#x3067;&#x3053;&#x308C;&#x3092;&#x5229;&#x7528;&#x3057;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p>&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306B;&#x3001;Finalizers&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3001;&#x72EC;&#x81EA;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x524A;&#x9664;&#x51E6;&#x7406;&#x3092;&#x5B9F;&#x88C5;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
 <pre><code class="lang-go">finalizerName := <span class="hljs-string">&quot;markdwonview.finalizers.view.zoetrope.github.io&quot;</span>
 <span class="hljs-keyword">if</span> mdView.ObjectMeta.DeletionTimestamp.IsZero() {
-    <span class="hljs-comment">// deletionTimestampが付与されていなければ、finalizersフィールドを追加します。</span>
+    <span class="hljs-comment">// deletionTimestamp&#x304C;&#x4ED8;&#x4E0E;&#x3055;&#x308C;&#x3066;&#x3044;&#x306A;&#x3051;&#x308C;&#x3070;&#x3001;finalizers&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x8FFD;&#x52A0;&#x3057;&#x307E;&#x3059;&#x3002;</span>
     <span class="hljs-keyword">if</span> !controllerutil.ContainsFinalizer(&amp;mdView, finalizerName) {
         controllerutil.AddFinalizer(&amp;mdView, finalizerName)
         err = r.Update(ctx, &amp;mdView)
@@ -569,14 +570,14 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
         }
     }
 } <span class="hljs-keyword">else</span> {
-    <span class="hljs-comment">// deletionTimestampがゼロではないということはリソースの削除が開始されたということ</span>
+    <span class="hljs-comment">// deletionTimestamp&#x304C;&#x30BC;&#x30ED;&#x3067;&#x306F;&#x306A;&#x3044;&#x3068;&#x3044;&#x3046;&#x3053;&#x3068;&#x306F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;&#x304C;&#x958B;&#x59CB;&#x3055;&#x308C;&#x305F;&#x3068;&#x3044;&#x3046;&#x3053;&#x3068;</span>
 
-    <span class="hljs-comment">// finalizersに上記で指定した名前が存在した場合は削除処理を実施する</span>
+    <span class="hljs-comment">// finalizers&#x306B;&#x4E0A;&#x8A18;&#x3067;&#x6307;&#x5B9A;&#x3057;&#x305F;&#x540D;&#x524D;&#x304C;&#x5B58;&#x5728;&#x3057;&#x305F;&#x5834;&#x5408;&#x306F;&#x524A;&#x9664;&#x51E6;&#x7406;&#x3092;&#x5B9F;&#x65BD;&#x3059;&#x308B;</span>
     <span class="hljs-keyword">if</span> controllerutil.ContainsFinalizer(&amp;mdView, finalizerName) {
-        <span class="hljs-comment">// ここで外部リソースを削除する</span>
+        <span class="hljs-comment">// &#x3053;&#x3053;&#x3067;&#x5916;&#x90E8;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3059;&#x308B;</span>
         deleteExternalResources()
 
-        <span class="hljs-comment">// finalizersフィールドをクリアしてリソースを削除できるようにする</span>
+        <span class="hljs-comment">// finalizers&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x3092;&#x30AF;&#x30EA;&#x30A2;&#x3057;&#x3066;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x524A;&#x9664;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x3059;&#x308B;</span>
         controllerutil.RemoveFinalizer(&amp;mdView, finalizerName)
         err = r.Update(ctx, &amp;mdView)
         <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
@@ -629,56 +630,12 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"リソースの削除","level":"1.4.3","depth":2,"next":{"title":"コントローラーのテスト","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"previous":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2021-07-25T13:28:15.390Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"リソースの削除","level":"1.4.3","depth":2,"next":{"title":"コントローラーのテスト","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"previous":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2021-08-05T05:32:29.138Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
 
         
-    <noscript>
-        <style>
-            .honkit-cloak {
-                display: block !important;
-            }
-        </style>
-    </noscript>
-    <script>
-        // Restore sidebar state as critical path for prevent layout shift
-        function __init__getSidebarState(defaultValue){
-            var baseKey = "";
-            var key = baseKey + ":sidebar";
-            try {
-                var value = localStorage[key];
-                if (value === undefined) {
-                    return defaultValue;
-                }
-                var parsed = JSON.parse(value);
-                return parsed == null ? defaultValue : parsed;
-            } catch (e) {
-                return defaultValue;
-            }
-        }
-        function __init__restoreLastSidebarState() {
-            var isMobile = window.matchMedia("(max-width: 600px)").matches;
-            if (isMobile) {
-                // Init last state if not mobile
-                return;
-            }
-            var sidebarState = __init__getSidebarState(true);
-            var book = document.querySelector(".book");
-            // Show sidebar if it enabled
-            if (sidebarState && book) {
-                book.classList.add("without-animation", "with-summary");
-            }
-        }
-
-        try {
-            __init__restoreLastSidebarState();
-        } finally {
-            var book = document.querySelector(".book");
-            book.classList.remove("honkit-cloak");
-        }
-    </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
     

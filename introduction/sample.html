@@ -3,10 +3,11 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <title>MarkdownViewコントローラー · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 3.5.2">
         
         
         
@@ -67,7 +68,7 @@
     </head>
     <body>
         
-<div class="book honkit-cloak">
+<div class="book">
     <div class="book-summary">
         
             
@@ -458,47 +459,47 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="markdownviewコントローラー">MarkdownViewコントローラー</h1>
-<p>本資料では、カスタムコントローラーの例としてMarkdownViewコントローラーを実装することとします。
-MarkdownViewコントローラーは、ユーザーが用意したMarkdownをレンダリングしてブラウザから閲覧できるようにサービスを提供するコントローラーです。</p>
-<p>MarkdownのレンダリングにはmdBookを利用することとします。</p>
+                                <h1 id="markdownview&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;">MarkdownView&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;</h1>
+<p>&#x672C;&#x8CC7;&#x6599;&#x3067;&#x306F;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x4F8B;&#x3068;&#x3057;&#x3066;MarkdownView&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3092;&#x5B9F;&#x88C5;&#x3059;&#x308B;&#x3053;&#x3068;&#x3068;&#x3057;&#x307E;&#x3059;&#x3002;
+MarkdownView&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306F;&#x3001;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x304C;&#x7528;&#x610F;&#x3057;&#x305F;Markdown&#x3092;&#x30EC;&#x30F3;&#x30C0;&#x30EA;&#x30F3;&#x30B0;&#x3057;&#x3066;&#x30D6;&#x30E9;&#x30A6;&#x30B6;&#x304B;&#x3089;&#x95B2;&#x89A7;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x30B5;&#x30FC;&#x30D3;&#x30B9;&#x3092;&#x63D0;&#x4F9B;&#x3059;&#x308B;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3067;&#x3059;&#x3002;</p>
+<p>Markdown&#x306E;&#x30EC;&#x30F3;&#x30C0;&#x30EA;&#x30F3;&#x30B0;&#x306B;&#x306F;mdBook&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3053;&#x3068;&#x3068;&#x3057;&#x307E;&#x3059;&#x3002;</p>
 <ul>
 <li><a href="https://rust-lang.github.io/mdBook/" target="_blank">https://rust-lang.github.io/mdBook/</a></li>
 </ul>
-<p>MarkdownViewコントローラーの主な処理の流れは次のようになります。</p>
+<p>MarkdownView&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x4E3B;&#x306A;&#x51E6;&#x7406;&#x306E;&#x6D41;&#x308C;&#x306F;&#x6B21;&#x306E;&#x3088;&#x3046;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
 <p><img src="img/markdownview_controller.png" alt="MarkdownView Controller"></p>
 <ul>
-<li>ユーザーはMarkdownViewカスタムリソースを作成します。</li>
-<li>MarkdownViewコントローラーは、作成されたMarkdownViewリソースの内容に応じて必要な各リソースを作成します。<ul>
-<li>カスタムリソースに記述されたMarkdownをConfigMapリソースとして作成します。</li>
-<li>MarkdownをレンダリングするためのmdBookをDeploymentリソースとして作成します。</li>
-<li>mdBookにアクセスするためのServiceリソースを作成します。</li>
+<li>&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x306F;MarkdownView&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;</li>
+<li>MarkdownView&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306F;&#x3001;&#x4F5C;&#x6210;&#x3055;&#x308C;&#x305F;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x5185;&#x5BB9;&#x306B;&#x5FDC;&#x3058;&#x3066;&#x5FC5;&#x8981;&#x306A;&#x5404;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;<ul>
+<li>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x8A18;&#x8FF0;&#x3055;&#x308C;&#x305F;Markdown&#x3092;ConfigMap&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x3057;&#x3066;&#x4F5C;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;</li>
+<li>Markdown&#x3092;&#x30EC;&#x30F3;&#x30C0;&#x30EA;&#x30F3;&#x30B0;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;mdBook&#x3092;Deployment&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x3057;&#x3066;&#x4F5C;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;</li>
+<li>mdBook&#x306B;&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;Service&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;</li>
 </ul>
 </li>
-<li>ユーザーは、作成されたサービスを経由して、レンダリングされたMarkdownを閲覧できます。</li>
+<li>&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x306F;&#x3001;&#x4F5C;&#x6210;&#x3055;&#x308C;&#x305F;&#x30B5;&#x30FC;&#x30D3;&#x30B9;&#x3092;&#x7D4C;&#x7531;&#x3057;&#x3066;&#x3001;&#x30EC;&#x30F3;&#x30C0;&#x30EA;&#x30F3;&#x30B0;&#x3055;&#x308C;&#x305F;Markdown&#x3092;&#x95B2;&#x89A7;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</li>
 </ul>
-<p>MarkdownViewカスタムリソースには、以下のようにMarkdownの内容とレンダリングに利用するmdBookのコンテナイメージおよびレプリカ数を指定できるようにします。</p>
+<p>MarkdownView&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x306F;&#x3001;&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306B;Markdown&#x306E;&#x5185;&#x5BB9;&#x3068;&#x30EC;&#x30F3;&#x30C0;&#x30EA;&#x30F3;&#x30B0;&#x306B;&#x5229;&#x7528;&#x3059;&#x308B;mdBook&#x306E;&#x30B3;&#x30F3;&#x30C6;&#x30CA;&#x30A4;&#x30E1;&#x30FC;&#x30B8;&#x304A;&#x3088;&#x3073;&#x30EC;&#x30D7;&#x30EA;&#x30AB;&#x6570;&#x3092;&#x6307;&#x5B9A;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x3057;&#x307E;&#x3059;&#x3002;</p>
 <blockquote>
 <p><a id="view_v1_markdownview.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/config/samples/view_v1_markdownview.yaml" target="_blank">view_v1_markdownview.yaml</a></p>
 </blockquote>
-<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">view.zoetrope.github.io/v1</span>
-<span class="hljs-attr">kind:</span> <span class="hljs-string">MarkdownView</span>
+<pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> view.zoetrope.github.io/v1
+<span class="hljs-attr">kind:</span> MarkdownView
 <span class="hljs-attr">metadata:</span>
-  <span class="hljs-attr">name:</span> <span class="hljs-string">markdownview-sample</span>
+<span class="hljs-attr">  name:</span> markdownview-sample
 <span class="hljs-attr">spec:</span>
-  <span class="hljs-attr">markdowns:</span>
-    <span class="hljs-attr">SUMMARY.md:</span> <span class="hljs-string">|
+<span class="hljs-attr">  markdowns:</span>
+    SUMMARY.md: <span class="hljs-string">|
       # Summary
-</span>
-      <span class="hljs-bullet">-</span> [<span class="hljs-string">Page1</span>]<span class="hljs-string">(page1.md)</span>
-    <span class="hljs-attr">page1.md:</span> <span class="hljs-string">|
+
+      - [Page1](page1.md)
+    page1.md: |
       # Page 1
-</span>
-      <span class="hljs-string">一ページ目のコンテンツです。</span>
-  <span class="hljs-attr">replicas:</span> <span class="hljs-number">1</span>
-  <span class="hljs-attr">viewerImage:</span> <span class="hljs-string">&quot;peaceiris/mdbook:latest&quot;</span>
+
+      &#x4E00;&#x30DA;&#x30FC;&#x30B8;&#x76EE;&#x306E;&#x30B3;&#x30F3;&#x30C6;&#x30F3;&#x30C4;&#x3067;&#x3059;&#x3002;
+</span><span class="hljs-attr">  replicas:</span> <span class="hljs-number">1</span>
+<span class="hljs-attr">  viewerImage:</span> <span class="hljs-string">&quot;peaceiris/mdbook:latest&quot;</span>
 </code></pre>
-<p>ソースコードは以下にあるので参考にしてください。</p>
+<p>&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x306F;&#x4EE5;&#x4E0B;&#x306B;&#x3042;&#x308B;&#x306E;&#x3067;&#x53C2;&#x8003;&#x306B;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
 <ul>
 <li><a href="https://github.com/zoetrope/kubebuilder-training/tree/master/codes/markdown-view" target="_blank">https://github.com/zoetrope/kubebuilder-training/tree/master/codes/markdown-view</a></li>
 </ul>
@@ -545,56 +546,12 @@ MarkdownViewコントローラーは、ユーザーが用意したMarkdownをレ
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"MarkdownViewコントローラー","level":"1.1.3","depth":2,"next":{"title":"参考情報","level":"1.1.4","depth":2,"path":"introduction/references.md","ref":"introduction/references.md","articles":[]},"previous":{"title":"カスタムコントローラーの基礎","level":"1.1.2","depth":2,"path":"introduction/basics.md","ref":"introduction/basics.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"introduction/sample.md","mtime":"2021-07-25T14:05:57.610Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-07-25T14:14:07.144Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"MarkdownViewコントローラー","level":"1.1.3","depth":2,"next":{"title":"参考情報","level":"1.1.4","depth":2,"path":"introduction/references.md","ref":"introduction/references.md","articles":[]},"previous":{"title":"カスタムコントローラーの基礎","level":"1.1.2","depth":2,"path":"introduction/basics.md","ref":"introduction/basics.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"introduction/sample.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2021-08-05T05:32:29.138Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
 
         
-    <noscript>
-        <style>
-            .honkit-cloak {
-                display: block !important;
-            }
-        </style>
-    </noscript>
-    <script>
-        // Restore sidebar state as critical path for prevent layout shift
-        function __init__getSidebarState(defaultValue){
-            var baseKey = "";
-            var key = baseKey + ":sidebar";
-            try {
-                var value = localStorage[key];
-                if (value === undefined) {
-                    return defaultValue;
-                }
-                var parsed = JSON.parse(value);
-                return parsed == null ? defaultValue : parsed;
-            } catch (e) {
-                return defaultValue;
-            }
-        }
-        function __init__restoreLastSidebarState() {
-            var isMobile = window.matchMedia("(max-width: 600px)").matches;
-            if (isMobile) {
-                // Init last state if not mobile
-                return;
-            }
-            var sidebarState = __init__getSidebarState(true);
-            var book = document.querySelector(".book");
-            // Show sidebar if it enabled
-            if (sidebarState && book) {
-                book.classList.add("without-animation", "with-summary");
-            }
-        }
-
-        try {
-            __init__restoreLastSidebarState();
-        } finally {
-            var book = document.querySelector(".book");
-            book.classList.remove("honkit-cloak");
-        }
-    </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
     
