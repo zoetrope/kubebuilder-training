@@ -27,8 +27,7 @@ type MarkdownViewSpec struct {
 	// Markdowns contain the markdown files you want to display.
 	// The key indicates the file name and must not overlap with the keys.
 	// The value is the content in markdown format.
-	//+kubebuiler:validation:Required
-	//+kubebuiler:validation:MinItems=1
+	//+kubebuilder:validation:Required
 	Markdowns map[string]string `json:"markdowns,omitempty"`
 
 	// Replicas is the number of viewers.
