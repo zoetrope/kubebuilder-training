@@ -28,6 +28,7 @@ type MarkdownViewSpec struct {
 	// The key indicates the file name and must not overlap with the keys.
 	// The value is the content in markdown format.
 	//+kubebuilder:validation:Required
+	//+kubebuilder:validation:MinProperties=1
 	Markdowns map[string]string `json:"markdowns,omitempty"`
 
 	// Replicas is the number of viewers.
