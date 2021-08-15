@@ -17,7 +17,6 @@ type TenantSpec struct {
 
 	// Namespaces are the names of the namespaces that belong to the tenant
 	//+kubebuiler:validation:Required
-	//+kubebuiler:validation:MinItems=1
 	Namespaces []string `json:"namespaces"`
 	// NamespacePrefix is the prefix for the name of namespaces
 	//+optional
