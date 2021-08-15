@@ -68,6 +68,7 @@ spec:
                 description: Namespaces are the names of the namespaces that belong to the tenant
                 items:
                   type: string
+                minItems: 1
                 type: array
             required:
             - admin
