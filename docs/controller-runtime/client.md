@@ -127,7 +127,7 @@ Patchには`client.MergeFrom`や`client.StrategicMergeFrom`を利用する方法
 `client.MergeFrom`でリストを更新すると指定した要素で上書きされますが、`client.StrategicMergeFrom`ではリストはpatchStrategyに応じて
 要素が追加されたり更新されたりします。
 
-`client.MergeFrom`を利用してDeploymentの利プリカ数のみを更新する例を以下に示します。
+`client.MergeFrom`を利用してDeploymentのレプリカ数のみを更新する例を以下に示します。
 
 [import:"patch-merge"](../../codes/client-sample/main.go)
 

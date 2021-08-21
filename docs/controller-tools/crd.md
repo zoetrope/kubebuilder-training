@@ -106,10 +106,7 @@ type SampleSpec struct {
 
 ### Validation
 
-`Markdowns`フィールドには`// +kubebuiler:validation:MinItems=1`というマーカーが付与されています。
-これは最低1つ以上の要素を記述しないと、カスタムリソースを作成するときにバリデーションエラーとなることを示しています。
-
-`MinItems`以外にも下記のようなバリデーションが用意されています。
+Kubebuilderには`Required`以外にも様々なバリデーションが用意されています。
 詳しくは`controller-gen crd -w`コマンドで確認してください。
 
 - リストの最小要素数、最大要素数

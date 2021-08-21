@@ -16,14 +16,14 @@ type TenantSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Namespaces are the names of the namespaces that belong to the tenant
-	//+kubebuiler:validation:Required
-	//+kubebuiler:validation:MinItems=1
+	//+kubebuilder:validation:Required
+	//+kubebuilder:validation:MinItems=1
 	Namespaces []string `json:"namespaces"`
 	// NamespacePrefix is the prefix for the name of namespaces
 	//+optional
 	NamespacePrefix string `json:"namespacePrefix,omitempty"`
 	// Admin is the identity with admin for the tenant
-	//+kubebuiler:validation:Required
+	//+kubebuilder:validation:Required
 	Admin rbacv1.Subject `json:"admin"`
 }
 
