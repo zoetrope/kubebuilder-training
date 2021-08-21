@@ -3,11 +3,10 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <title>controller-runtime · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.5.2">
+        <meta name="generator" content="HonKit 3.6.20">
         
         
         
@@ -68,7 +67,7 @@
     </head>
     <body>
         
-<div class="book">
+<div class="book honkit-cloak">
     <div class="book-summary">
         
             
@@ -460,29 +459,29 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="controller-runtime">controller-runtime</h1>
-<p>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3092;&#x958B;&#x767A;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x306F;&#x3001;Kubernetes&#x304C;&#x6A19;&#x6E96;&#x3067;&#x63D0;&#x4F9B;&#x3057;&#x3066;&#x3044;&#x308B;<a href="https://github.com/kubernetes/client-go" target="_blank">client-go</a>, <a href="https://github.com/kubernetes/apimachinery" target="_blank">apimachinery</a>, <a href="https://github.com/kubernetes/api" target="_blank">api</a>&#x306A;&#x3069;&#x306E;&#x30D1;&#x30C3;&#x30B1;&#x30FC;&#x30B8;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3053;&#x3068;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
-<p><a href="https://github.com/kubernetes-sigs/controller-runtime" target="_blank">controller-runtime</a>&#x306F;&#x3001;&#x3053;&#x308C;&#x3089;&#x306E;&#x30D1;&#x30C3;&#x30B1;&#x30FC;&#x30B8;&#x3092;&#x62BD;&#x8C61;&#x5316;&#x30FB;&#x96A0;&#x853D;&#x3057;&#x3001;&#x3088;&#x308A;&#x7C21;&#x5358;&#x306B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3092;&#x5B9F;&#x88C5;&#x53EF;&#x80FD;&#x306B;&#x3057;&#x305F;&#x30E9;&#x30A4;&#x30D6;&#x30E9;&#x30EA;&#x3067;&#x3059;&#x3002;</p>
-<p>&#x62BD;&#x8C61;&#x5316;&#x30FB;&#x96A0;&#x853D;&#x3057;&#x3066;&#x3044;&#x308B;&#x3068;&#x306F;&#x8A00;&#x3063;&#x3066;&#x3082;&#x3001;Kubernetes&#x306E;&#x30B3;&#x30F3;&#x30BB;&#x30D7;&#x30C8;&#x306B;&#x6E96;&#x62E0;&#x3059;&#x308B;&#x5F62;&#x3067;&#x5B9F;&#x88C5;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
-&#x5FC5;&#x8981;&#x304C;&#x3042;&#x308C;&#x3070;&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x3092;&#x6307;&#x5B9A;&#x3059;&#x308B;&#x3053;&#x3068;&#x306B;&#x3088;&#x308A;&#x3001;<code>client-go</code>&#x3084;<code>apimachinery</code>&#x304C;&#x63D0;&#x4F9B;&#x3057;&#x3066;&#x3044;&#x308B;&#x6A5F;&#x80FD;&#x306E;&#x307B;&#x3068;&#x3093;&#x3069;&#x3092;&#x5229;&#x7528;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;
-controller-runtime&#x306E;&#x8A2D;&#x8A08;&#x30B3;&#x30F3;&#x30BB;&#x30D7;&#x30C8;&#x306B;&#x3064;&#x3044;&#x3066;&#x77E5;&#x308A;&#x305F;&#x3044;&#x65B9;&#x306F;<a href="https://github.com/kubernetes-sigs/kubebuilder/blob/master/DESIGN.md#controller-runtime" target="_blank">KubeBuilder Design Principles</a>&#x3092;&#x53C2;&#x7167;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
-<p>controller-runtime&#x304C;&#x63D0;&#x4F9B;&#x3059;&#x308B;&#x4EE3;&#x8868;&#x7684;&#x306A;&#x30B3;&#x30F3;&#x30DD;&#x30FC;&#x30CD;&#x30F3;&#x30C8;&#x306B;&#x306F;&#x4EE5;&#x4E0B;&#x306E;&#x3082;&#x306E;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>カスタムコントローラーを開発するためには、Kubernetesが標準で提供している<a href="https://github.com/kubernetes/client-go" target="_blank">client-go</a>, <a href="https://github.com/kubernetes/apimachinery" target="_blank">apimachinery</a>, <a href="https://github.com/kubernetes/api" target="_blank">api</a>などのパッケージを利用することになります。</p>
+<p><a href="https://github.com/kubernetes-sigs/controller-runtime" target="_blank">controller-runtime</a>は、これらのパッケージを抽象化・隠蔽し、より簡単にカスタムコントローラーを実装可能にしたライブラリです。</p>
+<p>抽象化・隠蔽しているとは言っても、Kubernetesのコンセプトに準拠する形で実装されています。
+必要があればオプションを指定することにより、<code>client-go</code>や<code>apimachinery</code>が提供している機能のほとんどを利用できます。
+controller-runtimeの設計コンセプトについて知りたい方は<a href="https://github.com/kubernetes-sigs/kubebuilder/blob/master/DESIGN.md#controller-runtime" target="_blank">KubeBuilder Design Principles</a>を参照してください。</p>
+<p>controller-runtimeが提供する代表的なコンポーネントには以下のものがあります。</p>
 <ul>
 <li><a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#Manager" target="_blank">manager.Manager</a><ul>
-<li>&#x8907;&#x6570;&#x306E;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3092;&#x307E;&#x3068;&#x3081;&#x3066;&#x7BA1;&#x7406;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30B3;&#x30F3;&#x30DD;&#x30FC;&#x30CD;&#x30F3;&#x30C8;&#x3002;</li>
-<li>&#x30EA;&#x30FC;&#x30C0;&#x30FC;&#x9078;&#x51FA;&#x3084;&#x30E1;&#x30C8;&#x30EA;&#x30AF;&#x30B9;&#x30B5;&#x30FC;&#x30D0;&#x30FC;&#x3068;&#x3057;&#x3066;&#x306E;&#x6A5F;&#x80FD;&#x306A;&#x3069;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3092;&#x5B9F;&#x88C5;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x5FC5;&#x8981;&#x306A;&#x6570;&#x591A;&#x304F;&#x306E;&#x6A5F;&#x80FD;&#x3092;&#x63D0;&#x4F9B;&#x3057;&#x307E;&#x3059;&#x3002;</li>
+<li>複数のコントローラーをまとめて管理するためのコンポーネント。</li>
+<li>リーダー選出やメトリクスサーバーとしての機能など、カスタムコントローラーを実装するために必要な数多くの機能を提供します。</li>
 </ul>
 </li>
 <li><a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client?tab=doc#Client" target="_blank">client.Client</a><ul>
-<li>Kubernetes&#x306E;kube-apiserver&#x3068;&#x3084;&#x308A;&#x53D6;&#x308A;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x3002;</li>
-<li>&#x76E3;&#x8996;&#x5BFE;&#x8C61;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x30A4;&#x30F3;&#x30E1;&#x30E2;&#x30EA;&#x306B;&#x30AD;&#x30E3;&#x30C3;&#x30B7;&#x30E5;&#x3059;&#x308B;&#x6A5F;&#x80FD;&#x306A;&#x3069;&#x3092;&#x6301;&#x3061;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3082;&#x578B;&#x5B89;&#x5168;&#x306B;&#x6271;&#x3046;&#x3053;&#x3068;&#x304C;&#x53EF;&#x80FD;&#x306A;&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x3068;&#x306A;&#x3063;&#x3066;&#x3044;&#x308B;&#x3002;</li>
+<li>Kubernetesのkube-apiserverとやり取りするためのクライアント。</li>
+<li>監視対象のリソースをインメモリにキャッシュする機能などを持ち、カスタムリソースも型安全に扱うことが可能なクライアントとなっている。</li>
 </ul>
 </li>
 <li><a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Reconciler" target="_blank">reconcile.Reconciler</a><ul>
-<li>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x304C;&#x5B9F;&#x88C5;&#x3059;&#x3079;&#x304D;&#x30A4;&#x30F3;&#x30BF;&#x30D5;&#x30A7;&#x30FC;&#x30B9;&#x3002;</li>
+<li>カスタムコントローラーが実装すべきインタフェース。</li>
 </ul>
 </li>
 </ul>
-<p>&#x4EE5;&#x964D;&#x306E;&#x30DA;&#x30FC;&#x30B8;&#x3067;&#x306F;&#x3053;&#x308C;&#x3089;&#x306E;&#x6A5F;&#x80FD;&#x3092;&#x8A73;&#x7D30;&#x306B;&#x89E3;&#x8AAC;&#x3057;&#x3066;&#x3044;&#x304D;&#x307E;&#x3059;&#x3002;</p>
+<p>以降のページではこれらの機能を詳細に解説していきます。</p>
 
                                 
                                 </section>
@@ -526,12 +525,56 @@ controller-runtime&#x306E;&#x8A2D;&#x8A08;&#x30B3;&#x30F3;&#x30BB;&#x30D7;&#x30C
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"controller-runtime","level":"1.4","depth":1,"next":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"previous":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/README.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2021-08-05T05:32:29.138Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"controller-runtime","level":"1.4","depth":1,"next":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"previous":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/README.md","mtime":"2021-07-25T14:24:47.120Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-08-21T08:24:02.434Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
 
         
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
     

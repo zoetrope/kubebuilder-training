@@ -3,11 +3,10 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <title>APIの雛形作成 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.5.2">
+        <meta name="generator" content="HonKit 3.6.20">
         
         
         
@@ -68,7 +67,7 @@
     </head>
     <body>
         
-<div class="book">
+<div class="book honkit-cloak">
     <div class="book-summary">
         
             
@@ -459,59 +458,59 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="api&#x306E;&#x96DB;&#x5F62;&#x4F5C;&#x6210;">API&#x306E;&#x96DB;&#x5F62;&#x4F5C;&#x6210;</h1>
-<p><code>kubebuilder create api</code>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3068;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x5B9F;&#x88C5;&#x306E;&#x96DB;&#x5F62;&#x3092;&#x751F;&#x6210;&#x3067;&#x304D;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x4EE5;&#x4E0B;&#x306E;&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x3092;&#x5B9F;&#x884C;&#x3057;&#x3066;&#x3001;MarkdownView&#x3092;&#x8868;&#x73FE;&#x3059;&#x308B;&#x305F;&#x3081;&#x306E;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x3001;MarkdownView&#x3092;&#x6271;&#x3046;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3092;&#x751F;&#x6210;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
-<p>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3068;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x30BD;&#x30FC;&#x30B9;&#x30B3;&#x30FC;&#x30C9;&#x3092;&#x751F;&#x6210;&#x3059;&#x308B;&#x304B;&#x3069;&#x3046;&#x304B;&#x805E;&#x304B;&#x308C;&#x308B;&#x306E;&#x3067;&#x3001;&#x4ECA;&#x56DE;&#x306F;&#x3069;&#x3061;&#x3089;&#x3082;<code>y</code>&#x3068;&#x56DE;&#x7B54;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<pre><code class="lang-console">$ kubebuilder create api --group view --version v1 --kind MarkdownView
+                                <h1 id="apiの雛形作成">APIの雛形作成</h1>
+<p><code>kubebuilder create api</code>コマンドを利用すると、カスタムリソースとカスタムコントローラーの実装の雛形を生成できます。</p>
+<p>以下のコマンドを実行して、MarkdownViewを表現するためのカスタムリソースと、MarkdownViewを扱うカスタムコントローラーを生成してみましょう。</p>
+<p>カスタムリソースとコントローラーのソースコードを生成するかどうか聞かれるので、今回はどちらも<code>y</code>と回答します。</p>
+<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> kubebuilder create api --group view --version v1 --kind MarkdownView</span>
 Create Resource [y/n]
 y
 Create Controller [y/n]
 y
-$ make manifests
+<span class="hljs-meta">$</span><span class="bash"> make manifests</span>
 </code></pre>
-<p><code>--group</code>,<code>--version</code>, <code>--kind</code>&#x30AA;&#x30D7;&#x30B7;&#x30E7;&#x30F3;&#x306F;&#x3001;&#x751F;&#x6210;&#x3059;&#x308B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;GVK&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p><code>--group</code>,<code>--version</code>, <code>--kind</code>オプションは、生成するカスタムリソースのGVKを指定します。</p>
 <ul>
-<li><code>--kind</code>: &#x4F5C;&#x6210;&#x3059;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x540D;&#x524D;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;</li>
-<li><code>--group</code>: &#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x5C5E;&#x3059;&#x308B;&#x30B0;&#x30EB;&#x30FC;&#x30D7;&#x540D;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;</li>
-<li><code>--version</code>: &#x9069;&#x5207;&#x306A;&#x30D0;&#x30FC;&#x30B8;&#x30E7;&#x30F3;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;&#x4ECA;&#x5F8C;&#x4ED5;&#x69D8;&#x304C;&#x5909;&#x308F;&#x308B;&#x53EF;&#x80FD;&#x6027;&#x304C;&#x3042;&#x308A;&#x305D;&#x3046;&#x306A;&#x3089;<code>v1alpha1</code>&#x3084;<code>v1beta1</code>&#x3092;&#x6307;&#x5B9A;&#x3057;&#x3001;&#x5B89;&#x5B9A;&#x7248;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3059;&#x308B;&#x306E;&#x3067;&#x3042;&#x308C;&#x3070;<code>v1</code>&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;</li>
+<li><code>--kind</code>: 作成するリソースの名前を指定します。</li>
+<li><code>--group</code>: リソースが属するグループ名を指定します。</li>
+<li><code>--version</code>: 適切なバージョンを指定します。今後仕様が変わる可能性がありそうなら<code>v1alpha1</code>や<code>v1beta1</code>を指定し、安定版のリソースを作成するのであれば<code>v1</code>を指定します。</li>
 </ul>
-<p>&#x30B3;&#x30DE;&#x30F3;&#x30C9;&#x306E;&#x5B9F;&#x884C;&#x306B;&#x6210;&#x529F;&#x3059;&#x308B;&#x3068;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x304C;&#x65B0;&#x305F;&#x306B;&#x751F;&#x6210;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
-<pre><code>&#x251C;&#x2500;&#x2500; api
-&#x2502;    &#x2514;&#x2500;&#x2500; v1
-&#x2502;        &#x251C;&#x2500;&#x2500; groupversion_info.go
-&#x2502;        &#x251C;&#x2500;&#x2500; markdownview_types.go
-&#x2502;        &#x2514;&#x2500;&#x2500; zz_generated.deepcopy.go
-&#x251C;&#x2500;&#x2500; config
-&#x2502;    &#x251C;&#x2500;&#x2500; crd
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; bases
-&#x2502;    &#x2502;    &#x2502;    &#x2514;&#x2500;&#x2500; view.zoetrope.github.io_markdownviews.yaml
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; patches
-&#x2502;    &#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; cainjection_in_markdownviews.yaml
-&#x2502;    &#x2502;    &#x2502;    &#x2514;&#x2500;&#x2500; webhook_in_markdownviews.yaml
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; kustomization.yaml
-&#x2502;    &#x2502;    &#x2514;&#x2500;&#x2500; kustomizeconfig.yaml
-&#x2502;    &#x251C;&#x2500;&#x2500; rbac
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; role.yaml
-&#x2502;    &#x2502;    &#x251C;&#x2500;&#x2500; markdownview_editor_role.yaml
-&#x2502;    &#x2502;    &#x2514;&#x2500;&#x2500; markdownview_viewer_role.yaml
-&#x2502;    &#x2514;&#x2500;&#x2500; samples
-&#x2502;        &#x2514;&#x2500;&#x2500; view_v1_markdownview.yaml
-&#x2514;&#x2500;&#x2500; controllers
-     &#x251C;&#x2500;&#x2500; markdownview_controller.go
-     &#x2514;&#x2500;&#x2500; suite_test.go
-</code></pre><p>&#x305D;&#x308C;&#x305E;&#x308C;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x306E;&#x5185;&#x5BB9;&#x3092;&#x307F;&#x3066;&#x3044;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p>コマンドの実行に成功すると、下記のようなファイルが新たに生成されます。</p>
+<pre><code>├── api
+│    └── v1
+│        ├── groupversion_info.go
+│        ├── markdownview_types.go
+│        └── zz_generated.deepcopy.go
+├── config
+│    ├── crd
+│    │    ├── bases
+│    │    │    └── view.zoetrope.github.io_markdownviews.yaml
+│    │    ├── patches
+│    │    │    ├── cainjection_in_markdownviews.yaml
+│    │    │    └── webhook_in_markdownviews.yaml
+│    │    ├── kustomization.yaml
+│    │    └── kustomizeconfig.yaml
+│    ├── rbac
+│    │    ├── role.yaml
+│    │    ├── markdownview_editor_role.yaml
+│    │    └── markdownview_viewer_role.yaml
+│    └── samples
+│        └── view_v1_markdownview.yaml
+└── controllers
+     ├── markdownview_controller.go
+     └── suite_test.go
+</code></pre><p>それぞれのファイルの内容をみていきましょう。</p>
 <h2 id="apiv1">api/v1</h2>
-<p><code>markdownview_types.go</code>&#x306F;&#x3001;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;Go&#x8A00;&#x8A9E;&#x306E;struct&#x3067;&#x8868;&#x73FE;&#x3057;&#x305F;&#x3082;&#x306E;&#x3067;&#x3059;&#x3002;
-&#x4ECA;&#x5F8C;&#x3001;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x5B9A;&#x7FA9;&#x3092;&#x5909;&#x66F4;&#x3059;&#x308B;&#x5834;&#x5408;&#x306B;&#x306F;&#x3053;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x3092;&#x7DE8;&#x96C6;&#x3057;&#x3066;&#x3044;&#x304F;&#x3053;&#x3068;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
-<p><code>groupversion_info.go</code>&#x306F;&#x521D;&#x671F;&#x751F;&#x6210;&#x5F8C;&#x306B;&#x7DE8;&#x96C6;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x306F;&#x3042;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;
-<code>zz_generated.deepcopy.go</code>&#x306F;<code>markdownview_types.go</code>&#x306E;&#x5185;&#x5BB9;&#x304B;&#x3089;&#x81EA;&#x52D5;&#x751F;&#x6210;&#x3055;&#x308C;&#x308B;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x306A;&#x306E;&#x3067;&#x7DE8;&#x96C6;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x306F;&#x3042;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;</p>
+<p><code>markdownview_types.go</code>は、MarkdownViewリソースをGo言語のstructで表現したものです。
+今後、MarkdownViewリソースの定義を変更する場合にはこのファイルを編集していくことになります。</p>
+<p><code>groupversion_info.go</code>は初期生成後に編集する必要はありません。
+<code>zz_generated.deepcopy.go</code>は<code>markdownview_types.go</code>の内容から自動生成されるファイルなので編集する必要はありません。</p>
 <h2 id="controllers">controllers</h2>
-<p><code>markdownview_controller.go</code>&#x306F;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x30E1;&#x30A4;&#x30F3;&#x30ED;&#x30B8;&#x30C3;&#x30AF;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
-&#x4ECA;&#x5F8C;&#x3001;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x51E6;&#x7406;&#x306F;&#x57FA;&#x672C;&#x7684;&#x306B;&#x3053;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x306B;&#x66F8;&#x3044;&#x3066;&#x3044;&#x304F;&#x3053;&#x3068;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
-<p><code>suite_test.go</code>&#x306F;&#x30C6;&#x30B9;&#x30C8;&#x30B3;&#x30FC;&#x30C9;&#x3067;&#x3059;&#x3002;&#x8A73;&#x7D30;&#x306F;<a href="../controller-runtime/controller_test.html">&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x306E;&#x30C6;&#x30B9;&#x30C8;</a>&#x3067;&#x89E3;&#x8AAC;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p><code>markdownview_controller.go</code>は、カスタムコントローラーのメインロジックになります。
+今後、カスタムコントローラーの処理は基本的にこのファイルに書いていくことになります。</p>
+<p><code>suite_test.go</code>はテストコードです。詳細は<a href="../controller-runtime/controller_test.html">コントローラのテスト</a>で解説します。</p>
 <h2 id="maingo">main.go</h2>
-<p><code>main.go</code>&#x306B;&#x306F;&#x3001;&#x4E0B;&#x8A18;&#x306E;&#x3088;&#x3046;&#x306A;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x521D;&#x671F;&#x5316;&#x51E6;&#x7406;&#x304C;&#x8FFD;&#x52A0;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p><code>main.go</code>には、下記のようなコントローラーの初期化処理が追加されています。</p>
 <pre><code class="lang-go"><span class="hljs-keyword">if</span> err = (&amp;controllers.MarkdownViewReconciler{
     Client: mgr.GetClient(),
     Scheme: mgr.GetScheme(),
@@ -521,18 +520,18 @@ $ make manifests
 }
 </code></pre>
 <h2 id="config">config</h2>
-<p>config&#x30C7;&#x30A3;&#x30EC;&#x30AF;&#x30C8;&#x30EA;&#x4E0B;&#x306B;&#x306F;&#x3001;&#x3044;&#x304F;&#x3064;&#x304B;&#x306E;&#x30D5;&#x30A1;&#x30A4;&#x30EB;&#x304C;&#x8FFD;&#x52A0;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p>configディレクトリ下には、いくつかのファイルが追加されています。</p>
 <h3 id="crd">crd</h3>
-<p>crd&#x30C7;&#x30A3;&#x30EC;&#x30AF;&#x30C8;&#x30EA;&#x306B;&#x306F;CRD(Custom Resource Definition)&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x304C;&#x8FFD;&#x52A0;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x3053;&#x308C;&#x3089;&#x306E;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x306F;<code>api/v1/markdownView_types.go</code>&#x304B;&#x3089;&#x81EA;&#x52D5;&#x751F;&#x6210;&#x3055;&#x308C;&#x308B;&#x3082;&#x306E;&#x306A;&#x306E;&#x3067;&#x3001;&#x57FA;&#x672C;&#x7684;&#x306B;&#x624B;&#x52D5;&#x3067;&#x7DE8;&#x96C6;&#x3059;&#x308B;&#x5FC5;&#x8981;&#x306F;&#x3042;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;
-&#x305F;&#x3060;&#x3057;&#x3001;Conversion Webhook&#x3092;&#x5229;&#x7528;&#x3057;&#x305F;&#x3044;&#x5834;&#x5408;&#x306F;&#x3001;<code>cainjection_in_markdownViews.yaml</code>&#x3068;<code>webhook_in_markdownViews.yaml</code>&#x306E;&#x30D1;&#x30C3;&#x30C1;&#x3092;&#x5229;&#x7528;&#x3059;&#x308B;&#x3088;&#x3046;&#x306B;<code>kustomization.yaml</code>&#x3092;&#x66F8;&#x304D;&#x63DB;&#x3048;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
+<p>crdディレクトリにはCRD(Custom Resource Definition)のマニフェストが追加されています。</p>
+<p>これらのマニフェストは<code>api/v1/markdownView_types.go</code>から自動生成されるものなので、基本的に手動で編集する必要はありません。
+ただし、Conversion Webhookを利用したい場合は、<code>cainjection_in_markdownViews.yaml</code>と<code>webhook_in_markdownViews.yaml</code>のパッチを利用するように<code>kustomization.yaml</code>を書き換えてください。</p>
 <h3 id="rbac">rbac</h3>
-<p><code>role.yaml</code>&#x306B;&#x306F;&#x3001;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6271;&#x3046;&#x305F;&#x3081;&#x306E;&#x6A29;&#x9650;&#x304C;&#x8FFD;&#x52A0;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<p><code>markdownview_editor_role.yaml</code>&#x3068;<code>markdownview_viewer_role.yaml</code>&#x306F;&#x3001;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x7DE8;&#x96C6;&#x30FB;&#x8AAD;&#x307F;&#x53D6;&#x308A;&#x306E;&#x6A29;&#x9650;&#x3067;&#x3059;&#x3002;
-&#x5FC5;&#x8981;&#x306B;&#x5FDC;&#x3058;&#x3066;&#x5229;&#x7528;&#x3057;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p><code>role.yaml</code>には、MarkdownViewリソースを扱うための権限が追加されています。</p>
+<p><code>markdownview_editor_role.yaml</code>と<code>markdownview_viewer_role.yaml</code>は、MarkdownViewリソースの編集・読み取りの権限です。
+必要に応じて利用しましょう。</p>
 <h3 id="samples">samples</h3>
-<p>&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x30B5;&#x30F3;&#x30D7;&#x30EB;&#x30DE;&#x30CB;&#x30D5;&#x30A7;&#x30B9;&#x30C8;&#x3067;&#x3059;&#x3002;
-&#x30C6;&#x30B9;&#x30C8;&#x3067;&#x5229;&#x7528;&#x3057;&#x305F;&#x308A;&#x3001;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x5411;&#x3051;&#x306B;&#x63D0;&#x4F9B;&#x3067;&#x304D;&#x308B;&#x3088;&#x3046;&#x306B;&#x8A18;&#x8FF0;&#x3057;&#x3066;&#x304A;&#x304D;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p>カスタムリソースのサンプルマニフェストです。
+テストで利用したり、ユーザー向けに提供できるように記述しておきましょう。</p>
 
                                 
                                 </section>
@@ -576,12 +575,56 @@ $ make manifests
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"next":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},"previous":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/api.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2021-08-05T05:32:29.138Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"next":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},"previous":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/api.md","mtime":"2021-07-25T14:24:47.120Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-08-21T08:24:02.434Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
 
         
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
     

@@ -3,11 +3,10 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <title>Reconcileの実装 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.5.2">
+        <meta name="generator" content="HonKit 3.6.20">
         
         
         
@@ -68,7 +67,7 @@
     </head>
     <body>
         
-<div class="book">
+<div class="book honkit-cloak">
     <div class="book-summary">
         
             
@@ -460,40 +459,40 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="reconcile">Reconcile</h1>
-<p>Reconcile&#x306F;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x30B3;&#x30A2;&#x30ED;&#x30B8;&#x30C3;&#x30AF;&#x3067;&#x3059;&#x3002;
-&#x3042;&#x308B;&#x3079;&#x304D;&#x72B6;&#x614B;(&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x304C;&#x4F5C;&#x6210;&#x3057;&#x305F;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;)&#x3068;&#x3001;&#x5B9F;&#x969B;&#x306E;&#x30B7;&#x30B9;&#x30C6;&#x30E0;&#x306E;&#x72B6;&#x614B;&#x3092;&#x6BD4;&#x8F03;&#x3057;&#x3001;&#x5DEE;&#x5206;&#x304C;&#x3042;&#x308C;&#x3070;&#x305D;&#x308C;&#x3092;&#x57CB;&#x3081;&#x308B;&#x305F;&#x3081;&#x306E;&#x51E6;&#x7406;&#x3092;&#x5B9F;&#x884C;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<h2 id="reconciler&#x306E;&#x4ED5;&#x7D44;&#x307F;">Reconciler&#x306E;&#x4ED5;&#x7D44;&#x307F;</h2>
-<h3 id="reconciler&#x30A4;&#x30F3;&#x30BF;&#x30D5;&#x30A7;&#x30FC;&#x30B9;">Reconciler&#x30A4;&#x30F3;&#x30BF;&#x30D5;&#x30A7;&#x30FC;&#x30B9;</h3>
-<p>controller-runtime&#x3067;&#x306F;&#x3001;Reconcile&#x51E6;&#x7406;&#x306F;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Reconciler" target="_blank">reconcile.Reconciler</a>&#x30A4;&#x30F3;&#x30BF;&#x30D5;&#x30A7;&#x30FC;&#x30B9;&#x3092;&#x5B9F;&#x88C5;&#x3059;&#x308B;&#x3053;&#x3068;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
+<p>Reconcileはカスタムコントローラーのコアロジックです。
+あるべき状態(ユーザーが作成したカスタムリソース)と、実際のシステムの状態を比較し、差分があればそれを埋めるための処理を実行します。</p>
+<h2 id="reconcilerの仕組み">Reconcilerの仕組み</h2>
+<h3 id="reconcilerインタフェース">Reconcilerインタフェース</h3>
+<p>controller-runtimeでは、Reconcile処理は<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Reconciler" target="_blank">reconcile.Reconciler</a>インタフェースを実装することになります。</p>
 <pre><code class="lang-go"><span class="hljs-keyword">type</span> Reconciler <span class="hljs-keyword">interface</span> {
     Reconcile(context.Context, Request) (Result, error)
 }
 </code></pre>
-<p>&#x5F15;&#x6570;&#x306E;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Request" target="_blank">reconcile.Request</a>&#x306B;&#x306F;&#x3001;
-&#x3053;&#x306E;Reconciler&#x304C;&#x5BFE;&#x8C61;&#x3068;&#x3059;&#x308B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;Namespace&#x3068;Name&#x304C;&#x5165;&#x3063;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x623B;&#x308A;&#x5024;&#x306E;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Result" target="_blank">reconcile.Result</a>&#x306B;&#x306F;&#x3001;
-<code>Requeue</code>, <code>RequeueAfter</code>&#x3068;&#x3044;&#x3046;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x304C;&#x3042;&#x308A;&#x307E;&#x3059;&#x3002;
-Requeue&#x306B;True&#x3092;&#x6307;&#x5B9A;&#x3057;&#x3066;&#x623B;&#x308A;&#x5024;&#x3092;&#x8FD4;&#x3059;&#x3068;&#x3001;Reconcile&#x51E6;&#x7406;&#x304C;&#x30AD;&#x30E5;&#x30FC;&#x306B;&#x7A4D;&#x307E;&#x308C;&#x3066;&#x518D;&#x5EA6;&#x5B9F;&#x884C;&#x3055;&#x308C;&#x308B;&#x3053;&#x3068;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
-RequeueAfter&#x3092;&#x6307;&#x5B9A;&#x3057;&#x305F;&#x5834;&#x5408;&#x306F;&#x3001;&#x6307;&#x5B9A;&#x3057;&#x305F;&#x6642;&#x9593;&#x304C;&#x7D4C;&#x904E;&#x3057;&#x305F;&#x3042;&#x3068;&#x306B;&#x518D;&#x5EA6;Reconcile&#x51E6;&#x7406;&#x304C;&#x5B9F;&#x884C;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x307E;&#x305F;&#x3001;Recnocile&#x304C;&#x30A8;&#x30E9;&#x30FC;&#x3092;&#x8FD4;&#x3057;&#x305F;&#x5834;&#x5408;&#x3082;Reconcile&#x51E6;&#x7406;&#x304C;&#x30AD;&#x30E5;&#x30FC;&#x306B;&#x7A4D;&#x307E;&#x308C;&#x3066;&#x518D;&#x5EA6;&#x5B9F;&#x884C;&#x3055;&#x308C;&#x308B;&#x3053;&#x3068;&#x306B;&#x306A;&#x308B;&#x306E;&#x3067;&#x3059;&#x304C;&#x3001;
-&#x5931;&#x6557;&#x3059;&#x308B;&#x305F;&#x3073;&#x306B;&#x5F85;&#x3061;&#x6642;&#x9593;&#x304C;&#x6307;&#x6570;&#x95A2;&#x6570;&#x7684;&#x306B;&#x5897;&#x52A0;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<p>Reconcile&#x306F;&#x8907;&#x6570;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x7BA1;&#x7406;&#x3057;&#x3066;&#x3044;&#x308B;&#x305F;&#x3081;&#x3001;1&#x3064;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x51E6;&#x7406;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x591A;&#x304F;&#x306E;&#x6642;&#x9593;&#x3092;&#x304B;&#x3051;&#x308B;&#x3079;&#x304D;&#x3067;&#x306F;&#x3042;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;
-&#x4F55;&#x3089;&#x304B;&#x306E;&#x5F85;&#x3061;&#x304C;&#x767A;&#x751F;&#x3059;&#x308B;&#x5834;&#x5408;&#x306F;&#x3001;<code>Requeue</code>&#x3084;<code>RequeueAfter</code>&#x3092;&#x6307;&#x5B9A;&#x3057;&#x3066;Reconcile&#x3092;&#x3059;&#x3050;&#x306B;&#x629C;&#x3051;&#x308B;&#x3088;&#x3046;&#x306B;&#x3057;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
-<h3 id="reconcile&#x306E;&#x5B9F;&#x884C;&#x30BF;&#x30A4;&#x30DF;&#x30F3;&#x30B0;">Reconcile&#x306E;&#x5B9F;&#x884C;&#x30BF;&#x30A4;&#x30DF;&#x30F3;&#x30B0;</h3>
-<p>Reconcile&#x51E6;&#x7406;&#x306F;&#x4E0B;&#x8A18;&#x306E;&#x30BF;&#x30A4;&#x30DF;&#x30F3;&#x30B0;&#x3067;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x307E;&#x3059;&#x3002;</p>
+<p>引数の<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Request" target="_blank">reconcile.Request</a>には、
+このReconcilerが対象とするカスタムリソースのNamespaceとNameが入っています。</p>
+<p>戻り値の<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Result" target="_blank">reconcile.Result</a>には、
+<code>Requeue</code>, <code>RequeueAfter</code>というフィールドがあります。
+RequeueにTrueを指定して戻り値を返すと、Reconcile処理がキューに積まれて再度実行されることになります。
+RequeueAfterを指定した場合は、指定した時間が経過したあとに再度Reconcile処理が実行されます。</p>
+<p>また、Recnocileがエラーを返した場合もReconcile処理がキューに積まれて再度実行されることになるのですが、
+失敗するたびに待ち時間が指数関数的に増加します。</p>
+<p>Reconcileは複数のリソースを管理しているため、1つのリソースを処理するために多くの時間をかけるべきではありません。
+何らかの待ちが発生する場合は、<code>Requeue</code>や<code>RequeueAfter</code>を指定してReconcileをすぐに抜けるようにしましょう。</p>
+<h3 id="reconcileの実行タイミング">Reconcileの実行タイミング</h3>
+<p>Reconcile処理は下記のタイミングで呼び出されます。</p>
 <ul>
-<li>&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x6271;&#x3046;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x4F5C;&#x6210;&#x3001;&#x66F4;&#x65B0;&#x3001;&#x524A;&#x9664;&#x3055;&#x308C;&#x305F;&#x3068;&#x304D;</li>
-<li>Reconcile&#x306B;&#x5931;&#x6557;&#x3057;&#x3066;&#x30EA;&#x30AF;&#x30A8;&#x30B9;&#x30C8;&#x304C;&#x518D;&#x5EA6;&#x30AD;&#x30E5;&#x30FC;&#x306B;&#x7A4D;&#x307E;&#x308C;&#x305F;&#x3068;&#x304D;</li>
-<li>&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x8D77;&#x52D5;&#x6642;</li>
-<li>&#x5916;&#x90E8;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x304C;&#x767A;&#x751F;&#x3057;&#x305F;&#x3068;&#x304D;</li>
-<li>&#x30AD;&#x30E3;&#x30C3;&#x30B7;&#x30E5;&#x3092;&#x518D;&#x540C;&#x671F;&#x3059;&#x308B;&#x3068;&#x304D;(&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x3067;&#x306F;10&#x6642;&#x9593;&#x306B;1&#x56DE;)</li>
+<li>コントローラーの扱うリソースが作成、更新、削除されたとき</li>
+<li>Reconcileに失敗してリクエストが再度キューに積まれたとき</li>
+<li>コントローラーの起動時</li>
+<li>外部イベントが発生したとき</li>
+<li>キャッシュを再同期するとき(デフォルトでは10時間に1回)</li>
 </ul>
-<p>&#x3053;&#x306E;&#x3088;&#x3046;&#x306A;&#x69D8;&#x3005;&#x306A;&#x30BF;&#x30A4;&#x30DF;&#x30F3;&#x30B0;&#x3067;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x308B;&#x306E;&#x3067;&#x3001;Reconcile&#x51E6;&#x7406;&#x306F;&#x5FC5;&#x305A;&#x51AA;&#x7B49;(&#x540C;&#x3058;&#x30EA;&#x30AF;&#x30A8;&#x30B9;&#x30C8;&#x3067;&#x4F55;&#x5EA6;&#x547C;&#x3073;&#x51FA;&#x3057;&#x3066;&#x3082;&#x540C;&#x3058;&#x7D50;&#x679C;&#x306B;&#x306A;&#x308B;&#x3053;&#x3068;)&#x3067;&#x306A;&#x3051;&#x308C;&#x3070;&#x306A;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;</p>
-<p>&#x306A;&#x304A;&#x3001;Reconcile&#x51E6;&#x7406;&#x306F;&#x30C7;&#x30D5;&#x30A9;&#x30EB;&#x30C8;&#x3067;&#x306F;1&#x79D2;&#x9593;&#x306B;10&#x56DE;&#x4EE5;&#x4E0A;&#x5B9F;&#x884C;&#x3055;&#x308C;&#x306A;&#x3044;&#x3088;&#x3046;&#x306B;&#x5236;&#x9650;&#x3055;&#x308C;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x307E;&#x305F;&#x3001;&#x3053;&#x308C;&#x3089;&#x306E;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x304C;&#x9AD8;&#x3044;&#x983B;&#x5EA6;&#x3067;&#x767A;&#x751F;&#x3059;&#x308B;&#x5834;&#x5408;&#x306F;&#x3001;Reconciliation Loop&#x3092;&#x4E26;&#x5217;&#x5B9F;&#x884C;&#x3059;&#x308B;&#x3088;&#x3046;&#x306B;&#x8A2D;&#x5B9A;&#x53EF;&#x80FD;&#x3067;&#x3059;&#x3002;</p>
-<h3 id="&#x76E3;&#x8996;&#x5BFE;&#x8C61;&#x306E;&#x5236;&#x5FA1;">&#x76E3;&#x8996;&#x5BFE;&#x8C61;&#x306E;&#x5236;&#x5FA1;</h3>
-<p>Reconcile&#x51E6;&#x7406;&#x306F;&#x3001;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x6271;&#x3046;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x4F5C;&#x6210;&#x3001;&#x66F4;&#x65B0;&#x3001;&#x524A;&#x9664;&#x3055;&#x308C;&#x305F;&#x3068;&#x304D;&#x306B;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x308B;&#x3068;&#x8AAC;&#x660E;&#x3057;&#x307E;&#x3057;&#x305F;&#x3002;
-&#x300C;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x6271;&#x3046;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x300D;&#x3092;&#x6307;&#x5B9A;&#x3059;&#x308B;&#x305F;&#x3081;&#x306B;&#x3001;<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/builder#ControllerManagedBy" target="_blank">NewControllerManagedBy</a>&#x95A2;&#x6570;&#x3092;&#x5229;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p>このような様々なタイミングで呼び出されるので、Reconcile処理は必ず冪等(同じリクエストで何度呼び出しても同じ結果になること)でなければなりません。</p>
+<p>なお、Reconcile処理はデフォルトでは1秒間に10回以上実行されないように制限されています。</p>
+<p>また、これらのイベントが高い頻度で発生する場合は、Reconciliation Loopを並列実行するように設定可能です。</p>
+<h3 id="監視対象の制御">監視対象の制御</h3>
+<p>Reconcile処理は、コントローラーの扱うリソースが作成、更新、削除されたときに呼び出されると説明しました。
+「コントローラーの扱うリソース」を指定するために、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/builder#ControllerManagedBy" target="_blank">NewControllerManagedBy</a>関数を利用します。</p>
 <blockquote>
 <p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
@@ -507,23 +506,23 @@ RequeueAfter&#x3092;&#x6307;&#x5B9A;&#x3057;&#x305F;&#x5834;&#x5408;&#x306F;&#x3
 }
 </code></pre>
 <h4 id="for">For</h4>
-<p><code>For</code>&#x306B;&#x306F;&#x3053;&#x306E;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;Reconcile&#x5BFE;&#x8C61;&#x3068;&#x306A;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x578B;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x4ECA;&#x56DE;&#x306F;MarkdownView&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;
-&#x3053;&#x308C;&#x306B;&#x3088;&#x308A;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x5909;&#x66F4;&#x30FB;&#x524A;&#x9664;&#x304C;&#x304A;&#x3053;&#x306A;&#x308F;&#x308C;&#x308B;&#x3068;&#x3001;Reconcile&#x95A2;&#x6570;&#x304C;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x308B;&#x3053;&#x3068;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
-&#x305D;&#x3057;&#x3066;&#x3001;Reconcile&#x95A2;&#x6570;&#x306E;&#x5F15;&#x6570;&#x3067;&#x6E21;&#x3055;&#x308C;&#x308B;Request&#x306F;&#x3001;MarkdownView&#x306E;&#x60C5;&#x5831;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x306A;&#x304A;&#x3001;<code>For</code>&#x306B;&#x6307;&#x5B9A;&#x3067;&#x304D;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;1&#x7A2E;&#x985E;&#x3060;&#x3051;&#x3067;&#x3059;&#x3002;</p>
+<p><code>For</code>にはこのコントローラーのReconcile対象となるリソースの型を指定します。</p>
+<p>今回はMarkdownViewカスタムリソースを指定します。
+これによりMarkdownViewリソースの作成・変更・削除がおこなわれると、Reconcile関数が呼び出されることになります。
+そして、Reconcile関数の引数で渡されるRequestは、MarkdownViewの情報になります。</p>
+<p>なお、<code>For</code>に指定できるリソースは1種類だけです。</p>
 <h4 id="owns">Owns</h4>
-<p><code>Owns</code>&#x306B;&#x306F;&#x3053;&#x306E;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x304C;&#x751F;&#x6210;&#x3059;&#x308B;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x578B;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;<code>For</code>&#x3068;&#x306F;&#x7570;&#x306A;&#x308A;&#x3001;<code>Owns</code>&#x306F;&#x8907;&#x6570;&#x6307;&#x5B9A;&#x304C;&#x53EF;&#x80FD;&#x3067;&#x3059;&#x3002;</p>
-<p>MarkdownView&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306F;&#x3001;ConfigMap, Deployment, Service&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3059;&#x308B;&#x3053;&#x3068;&#x306B;&#x306A;&#x308B;&#x305F;&#x3081;&#x3001;&#x3053;&#x308C;&#x3089;&#x3092;<code>Owns</code>&#x306B;&#x6307;&#x5B9A;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x3053;&#x308C;&#x306B;&#x3088;&#x308A;&#x3001;MarkdownView&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x304C;&#x4F5C;&#x6210;&#x3057;&#x305F;ConfigMap, Deployment, Service&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x4F55;&#x3089;&#x304B;&#x306E;&#x5909;&#x66F4;&#x304C;&#x767A;&#x751F;&#x3057;&#x305F;&#x969B;&#x306B;Reconcile&#x304C;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x308B;&#x3088;&#x3046;&#x306B;&#x306A;&#x308A;&#x307E;&#x3059;&#x3002;
-&#x305F;&#x3060;&#x3057;&#x3053;&#x306E;&#x3068;&#x304D;&#x3001;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x304C;&#x4F5C;&#x6210;&#x3057;&#x305F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;<code>ownerReferences</code>&#x306B;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x6307;&#x5B9A;&#x3057;&#x306A;&#x3051;&#x308C;&#x3070;&#x306A;&#x308A;&#x307E;&#x305B;&#x3093;&#x3002;
-<code>ownerReferences</code>&#x306E;&#x8A2D;&#x5B9A;&#x65B9;&#x6CD5;&#x306F;<a href="deletion.html">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;</a>)&#x3092;&#x53C2;&#x7167;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;</p>
-<p>&#x306A;&#x304A;&#x3001;<code>Owns</code>&#x306B;&#x6307;&#x5B9A;&#x3057;&#x305F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x5909;&#x66F4;&#x306B;&#x3088;&#x3063;&#x3066;Reconcile&#x304C;&#x547C;&#x3073;&#x51FA;&#x3055;&#x308C;&#x305F;&#x5834;&#x5408;&#x3067;&#x3082;&#x3001;
-Request&#x306B;&#x306F;&#x3053;&#x308C;&#x3089;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;owner&#x3067;&#x3042;&#x308B;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x540D;&#x524D;&#x304C;&#x5165;&#x3063;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<h2 id="reconcile&#x306E;&#x5B9F;&#x88C5;">Reconcile&#x306E;&#x5B9F;&#x88C5;</h2>
-<p>&#x3044;&#x3088;&#x3044;&#x3088;Reconcile&#x306E;&#x672C;&#x4F53;&#x3092;&#x5B9F;&#x88C5;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<h3 id="reconcile&#x51E6;&#x7406;&#x306E;&#x6D41;&#x308C;">Reconcile&#x51E6;&#x7406;&#x306E;&#x6D41;&#x308C;</h3>
-<p>Reconcile&#x51E6;&#x7406;&#x306E;&#x304A;&#x304A;&#x307E;&#x304B;&#x306A;&#x6D41;&#x308C;&#x3092;&#x78BA;&#x8A8D;&#x3057;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p><code>Owns</code>にはこのコントローラーが生成するリソースの型を指定します。<code>For</code>とは異なり、<code>Owns</code>は複数指定が可能です。</p>
+<p>MarkdownViewコントローラーは、ConfigMap, Deployment, Serviceリソースを作成することになるため、これらを<code>Owns</code>に指定します。</p>
+<p>これにより、MarkdownViewコントローラーが作成したConfigMap, Deployment, Serviceリソースに何らかの変更が発生した際にReconcileが呼び出されるようになります。
+ただしこのとき、コントローラーが作成したリソースの<code>ownerReferences</code>にMarkdownViewリソースを指定しなければなりません。
+<code>ownerReferences</code>の設定方法は<a href="deletion.html">リソースの削除</a>)を参照してください。</p>
+<p>なお、<code>Owns</code>に指定したリソースの変更によってReconcileが呼び出された場合でも、
+RequestにはこれらのリソースのownerであるMarkdownViewリソースの名前が入っています。</p>
+<h2 id="reconcileの実装">Reconcileの実装</h2>
+<p>いよいよReconcileの本体を実装します。</p>
+<h3 id="reconcile処理の流れ">Reconcile処理の流れ</h3>
+<p>Reconcile処理のおおまかな流れを確認しましょう。</p>
 <blockquote>
 <p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
@@ -561,16 +560,16 @@ Request&#x306B;&#x306F;&#x3053;&#x308C;&#x3089;&#x306E;&#x30EA;&#x30BD;&#x30FC;&
     <span class="hljs-keyword">return</span> r.updateStatus(ctx, mdView)
 }
 </code></pre>
-<p>Reconcile&#x306E;&#x5F15;&#x6570;&#x3068;&#x3057;&#x3066;&#x6E21;&#x3063;&#x3066;&#x304D;&#x305F;Request&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3001;&#x5BFE;&#x8C61;&#x3068;&#x306A;&#x308B;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x53D6;&#x5F97;&#x3092;&#x304A;&#x3053;&#x306A;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x3053;&#x3053;&#x3067;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x5B58;&#x5728;&#x3057;&#x306A;&#x304B;&#x3063;&#x305F;&#x5834;&#x5408;&#x306F;&#x3001;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x524A;&#x9664;&#x3055;&#x308C;&#x305F;&#x3068;&#x3044;&#x3046;&#x3053;&#x3068;&#x3067;&#x3059;&#x3002;
-&#x7D42;&#x4E86;&#x51E6;&#x7406;&#x3092;&#x304A;&#x3053;&#x306A;&#x3063;&#x3066;&#x95A2;&#x6570;&#x3092;&#x629C;&#x3051;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;(&#x3053;&#x3053;&#x3067;&#x306F;&#x30E1;&#x30C8;&#x30EA;&#x30AF;&#x30B9;&#x306E;&#x524A;&#x9664;&#x51E6;&#x7406;&#x3092;&#x304A;&#x3053;&#x306A;&#x3063;&#x3066;&#x3044;&#x307E;&#x3059;)</p>
-<p>&#x6B21;&#x306B;<code>DeletionTimestamp</code>&#x306E;&#x78BA;&#x8A8D;&#x3092;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;
-<code>DeletionTimestamp</code>&#x304C;&#x30BC;&#x30ED;&#x3067;&#x306A;&#x3044;&#x5834;&#x5408;&#x306F;&#x3001;&#x5BFE;&#x8C61;&#x306E;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;&#x304C;&#x958B;&#x59CB;&#x3055;&#x308C;&#x305F;&#x3068;&#x3044;&#x3046;&#x3053;&#x3068;&#x3067;&#x3059;&#x3002;(&#x8A73;&#x3057;&#x304F;&#x306F;<a href="deletion.html">&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x524A;&#x9664;</a>&#x3092;&#x53C2;&#x7167;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;)
-&#x3053;&#x306E;&#x5834;&#x5408;&#x3082;&#x3059;&#x3050;&#x306B;&#x95A2;&#x6570;&#x3092;&#x629C;&#x3051;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
-<p>&#x305D;&#x3057;&#x3066;&#x3001;<code>reconcileConfigMap</code>, <code>reconcileDeployment</code>, <code>reconcileService</code>&#x3067;&#x3001;&#x305D;&#x308C;&#x305E;&#x308C;ConfigMap, Deployment, Service&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x4F5C;&#x6210;&#x30FB;&#x66F4;&#x65B0;&#x51E6;&#x7406;&#x3092;&#x304A;&#x3053;&#x306A;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x6700;&#x5F8C;&#x306B;<code>updateStatus</code>&#x3067;&#x30B9;&#x30C6;&#x30FC;&#x30BF;&#x30B9;&#x306E;&#x66F4;&#x65B0;&#x3092;&#x304A;&#x3053;&#x306A;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p>Reconcileの引数として渡ってきたRequestを利用して、対象となるMarkdownViewリソースの取得をおこないます。</p>
+<p>ここでMarkdownViewリソースが存在しなかった場合は、MarkdownViewリソースが削除されたということです。
+終了処理をおこなって関数を抜けましょう。(ここではメトリクスの削除処理をおこなっています)</p>
+<p>次に<code>DeletionTimestamp</code>の確認をしています。
+<code>DeletionTimestamp</code>がゼロでない場合は、対象のリソースの削除が開始されたということです。(詳しくは<a href="deletion.html">リソースの削除</a>を参照してください。)
+この場合もすぐに関数を抜けましょう。</p>
+<p>そして、<code>reconcileConfigMap</code>, <code>reconcileDeployment</code>, <code>reconcileService</code>で、それぞれConfigMap, Deployment, Serviceリソースの作成・更新処理をおこないます。</p>
+<p>最後に<code>updateStatus</code>でステータスの更新をおこないます。</p>
 <h3 id="reconcileconfigmap">reconcileConfigMap</h3>
-<p><code>reconcileConfigMap</code>&#x3067;&#x306F;&#x3001;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306B;&#x8A18;&#x8FF0;&#x3055;&#x308C;&#x305F;Markdown&#x306E;&#x5185;&#x5BB9;&#x3092;&#x3082;&#x3068;&#x306B;&#x3001;ConfigMap&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p><code>reconcileConfigMap</code>では、MarkdownViewリソースに記述されたMarkdownの内容をもとに、ConfigMapリソースを作成します。</p>
 <blockquote>
 <p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
@@ -601,12 +600,12 @@ Request&#x306B;&#x306F;&#x3053;&#x308C;&#x3089;&#x306E;&#x30EA;&#x30BD;&#x30FC;&
     <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
 }
 </code></pre>
-<p>&#x3053;&#x3053;&#x3067;&#x306F;&#x3001;<a href="client.html">&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a>&#x3067;&#x7D39;&#x4ECB;&#x3057;&#x305F;<code>CreateOrUpdate</code>&#x95A2;&#x6570;&#x3092;&#x5229;&#x7528;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+<p>ここでは、<a href="client.html">クライアントの使い方</a>で紹介した<code>CreateOrUpdate</code>関数を利用しています。</p>
 <h3 id="reconciledeployment-reconcileservice">reconcileDeployment, reconcileService</h3>
-<p><code>reconcileDeployment</code>, <code>reconcileService</code>&#x3067;&#x306F;&#x3001;&#x305D;&#x308C;&#x305E;&#x308C;Deployment&#x3068;Service&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<p><code>reconcileConfigMap</code>&#x3068;&#x540C;&#x69D8;&#x306B;<code>CreateOrUpdate</code>&#x3092;&#x5229;&#x7528;&#x3057;&#x305F;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x4F5C;&#x6210;&#x3082;&#x53EF;&#x80FD;&#x306A;&#x306E;&#x3067;&#x3059;&#x304C;&#x3001;
-Deployment&#x3084;Service&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;&#x30D5;&#x30A3;&#x30FC;&#x30EB;&#x30C9;&#x6570;&#x304C;&#x591A;&#x3044;&#x3053;&#x3068;&#x3082;&#x3042;&#x308A;&#x3001;&#x9069;&#x5207;&#x306B;&#x5DEE;&#x5206;&#x3092;&#x691C;&#x51FA;&#x3057;&#x3066;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x66F4;&#x65B0;&#x3059;&#x308B;&#x3053;&#x3068;&#x304C;&#x9762;&#x5012;&#x3060;&#x3063;&#x305F;&#x308A;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<p>&#x305D;&#x3053;&#x3067;&#x4ECA;&#x56DE;&#x306F;&#x3001;<a href="client.html">&#x30AF;&#x30E9;&#x30A4;&#x30A2;&#x30F3;&#x30C8;&#x306E;&#x4F7F;&#x3044;&#x65B9;</a>&#x3067;&#x7D39;&#x4ECB;&#x3057;&#x305F;ApplyConfiguration&#x3092;&#x5229;&#x7528;&#x3057;&#x305F;Server-Side Apply&#x65B9;&#x5F0F;&#x3067;&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x4F5C;&#x6210;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<p><code>reconcileDeployment</code>, <code>reconcileService</code>では、それぞれDeploymentとServiceリソースを作成します。</p>
+<p><code>reconcileConfigMap</code>と同様に<code>CreateOrUpdate</code>を利用したリソースの作成も可能なのですが、
+DeploymentやServiceリソースはフィールド数が多いこともあり、適切に差分を検出してリソースを更新することが面倒だったりします。</p>
+<p>そこで今回は、<a href="client.html">クライアントの使い方</a>で紹介したApplyConfigurationを利用したServer-Side Apply方式でリソースを作成します。</p>
 <blockquote>
 <p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
@@ -668,8 +667,8 @@ Deployment&#x3084;Service&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;&#x30D5;&#x30A3
     <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
 }
 </code></pre>
-<h3 id="&#x30B9;&#x30C6;&#x30FC;&#x30BF;&#x30B9;&#x306E;&#x66F4;&#x65B0;">&#x30B9;&#x30C6;&#x30FC;&#x30BF;&#x30B9;&#x306E;&#x66F4;&#x65B0;</h3>
-<p>&#x6700;&#x5F8C;&#x306B;&#x3001;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x72B6;&#x6CC1;&#x3092;&#x30E6;&#x30FC;&#x30B6;&#x30FC;&#x306B;&#x77E5;&#x3089;&#x305B;&#x308B;&#x305F;&#x3081;&#x306E;&#x30B9;&#x30C6;&#x30FC;&#x30BF;&#x30B9;&#x3092;&#x66F4;&#x65B0;&#x3057;&#x307E;&#x3059;&#x3002;</p>
+<h3 id="ステータスの更新">ステータスの更新</h3>
+<p>最後に、MarkdownViewリソースの状況をユーザーに知らせるためのステータスを更新します。</p>
 <blockquote>
 <p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
@@ -707,13 +706,13 @@ Deployment&#x3084;Service&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306F;&#x30D5;&#x30A3
     <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
 }
 </code></pre>
-<p>&#x3053;&#x3053;&#x3067;&#x306F;&#x3001;<code>reconcileDeployment</code>&#x3067;&#x4F5C;&#x6210;&#x3057;&#x305F;Deployment&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x30C1;&#x30A7;&#x30C3;&#x30AF;&#x3057;&#x3001;&#x305D;&#x306E;&#x72B6;&#x614B;&#x306B;&#x5FDC;&#x3058;&#x3066;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;
-&#x30B9;&#x30C6;&#x30FC;&#x30BF;&#x30B9;&#x3092;&#x6C7A;&#x5B9A;&#x3057;&#x3066;&#x3044;&#x307E;&#x3059;&#x3002;</p>
-<h2 id="&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;">&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;</h2>
-<p>Reconcile&#x51E6;&#x7406;&#x306E;&#x5B9F;&#x88C5;&#x304C;&#x5B8C;&#x4E86;&#x3057;&#x305F;&#x3089;&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;&#x3057;&#x3066;&#x307F;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;
-<a href="../kubebuilder/kind.html">&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x306E;&#x52D5;&#x4F5C;&#x78BA;&#x8A8D;</a>&#x306E;&#x624B;&#x9806;&#x901A;&#x308A;&#x306B;&#x30AB;&#x30B9;&#x30BF;&#x30E0;&#x30B3;&#x30F3;&#x30C8;&#x30ED;&#x30FC;&#x30E9;&#x30FC;&#x3092;&#x30C7;&#x30D7;&#x30ED;&#x30A4;&#x3057;&#x3001;
-&#x30B5;&#x30F3;&#x30D7;&#x30EB;&#x306E;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x3092;&#x9069;&#x7528;&#x3057;&#x307E;&#x3059;&#x3002;</p>
-<p>Deployment, Service, ConfigMap&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x304C;&#x751F;&#x6210;&#x3055;&#x308C;&#x3001;MarkdownView&#x30EA;&#x30BD;&#x30FC;&#x30B9;&#x306E;&#x72B6;&#x614B;&#x304C;Healthy&#x306B;&#x306A;&#x3063;&#x3066;&#x3044;&#x308B;&#x3053;&#x3068;&#x3092;&#x78BA;&#x8A8D;&#x3057;&#x307E;&#x3057;&#x3087;&#x3046;&#x3002;</p>
+<p>ここでは、<code>reconcileDeployment</code>で作成したDeploymentリソースをチェックし、その状態に応じてMarkdownViewリソースの
+ステータスを決定しています。</p>
+<h2 id="動作確認">動作確認</h2>
+<p>Reconcile処理の実装が完了したら動作確認してみましょう。
+<a href="../kubebuilder/kind.html">カスタムコントローラーの動作確認</a>の手順通りにカスタムコントローラーをデプロイし、
+サンプルのMarkdownViewリソースを適用します。</p>
+<p>Deployment, Service, ConfigMapリソースが生成され、MarkdownViewリソースの状態がHealthyになっていることを確認しましょう。</p>
 <pre><code>$ kubectl get deployment,service,configmap
 NAME                                         READY   UP-TO-DATE   AVAILABLE   AGE
 deployment.apps/viewer-markdownview-sample   1/1     1            1           177m
@@ -727,10 +726,10 @@ configmap/markdowns-markdownview-sample   2      177m
 $ kubectl get markdownview markdownview-sample
 NAME                  REPLICAS   STATUS
 markdownview-sample   1          Healthy
-</code></pre><p>&#x6B21;&#x306B;&#x30ED;&#x30FC;&#x30AB;&#x30EB;&#x74B0;&#x5883;&#x304B;&#x3089;&#x4F5C;&#x6210;&#x3055;&#x308C;&#x305F;&#x30B5;&#x30FC;&#x30D3;&#x30B9;&#x306B;&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x3059;&#x308B;&#x305F;&#x3081;&#x3001;Port Forward&#x3092;&#x304A;&#x3053;&#x306A;&#x3044;&#x307E;&#x3059;&#x3002;</p>
+</code></pre><p>次にローカル環境から作成されたサービスにアクセスするため、Port Forwardをおこないます。</p>
 <pre><code>$ kubectl port-forward svc/viewer-markdownview-sample 3000:80
-</code></pre><p>&#x6700;&#x5F8C;&#x306B;&#x30D6;&#x30E9;&#x30A6;&#x30B6;&#x3067;<code>http://localhost:3000</code>&#x306B;&#x30A2;&#x30AF;&#x30BB;&#x30B9;&#x3057;&#x3066;&#x304F;&#x3060;&#x3055;&#x3044;&#x3002;
-&#x4EE5;&#x4E0B;&#x306E;&#x3088;&#x3046;&#x306B;&#x30EC;&#x30F3;&#x30C0;&#x30EA;&#x30F3;&#x30B0;&#x3055;&#x308C;&#x305F;Markdown&#x304C;&#x8868;&#x793A;&#x3055;&#x308C;&#x308C;&#x3070;&#x6210;&#x529F;&#x3067;&#x3059;&#x3002;</p>
+</code></pre><p>最後にブラウザで<code>http://localhost:3000</code>にアクセスしてください。
+以下のようにレンダリングされたMarkdownが表示されれば成功です。</p>
 <p><img src="img/mdbook.png" alt="index"></p>
 
                                 
@@ -775,12 +774,56 @@ markdownview-sample   1          Healthy
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"next":{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"previous":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/reconcile.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.5.2","time":"2021-08-05T05:32:29.138Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"next":{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"previous":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/reconcile.md","mtime":"2021-07-25T14:24:47.120Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-08-21T08:24:02.434Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
 
         
+    <noscript>
+        <style>
+            .honkit-cloak {
+                display: block !important;
+            }
+        </style>
+    </noscript>
+    <script>
+        // Restore sidebar state as critical path for prevent layout shift
+        function __init__getSidebarState(defaultValue){
+            var baseKey = "";
+            var key = baseKey + ":sidebar";
+            try {
+                var value = localStorage[key];
+                if (value === undefined) {
+                    return defaultValue;
+                }
+                var parsed = JSON.parse(value);
+                return parsed == null ? defaultValue : parsed;
+            } catch (e) {
+                return defaultValue;
+            }
+        }
+        function __init__restoreLastSidebarState() {
+            var isMobile = window.matchMedia("(max-width: 600px)").matches;
+            if (isMobile) {
+                // Init last state if not mobile
+                return;
+            }
+            var sidebarState = __init__getSidebarState(true);
+            var book = document.querySelector(".book");
+            // Show sidebar if it enabled
+            if (sidebarState && book) {
+                book.classList.add("without-animation", "with-summary");
+            }
+        }
+
+        try {
+            __init__restoreLastSidebarState();
+        } finally {
+            var book = document.querySelector(".book");
+            book.classList.remove("honkit-cloak");
+        }
+    </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
     
