@@ -11,6 +11,8 @@
   - client-go, Kubebuilder, Operator SDKを利用したコントローラーの実装方法が解説されています。
 - [Programming Kubernetes](https://learning.oreilly.com/library/view/programming-kubernetes/9781492047094/)
   - client-goやカスタムリソースなど、コントローラーを開発する上で必要なKubernetesの構成要素を詳細に解説している書籍です。
+- [Zenn - zoetroの記事一覧](https://zenn.dev/zoetro)
+  - ReconcileループでServer Side Applyを利用する方法や、controller-runtimeのロギング機能など、本資料の補足的な内容の記事を書いています。
 
 ## 参考実装
 
@@ -29,3 +31,7 @@
   - MySQLクラスターの構築を自動化するオペレーター
 - [Coil](https://github.com/cybozu-go/coil)
   - CNIプラグイン
+- [Accurate](https://github.com/cybozu-go/accurate)
+  - Subnamespaceの管理やリソースの伝播をおこなうためのコントローラー
+- [Pod Security Admission](https://github.com/cybozu-go/pod-security-admission)
+  - Podのセキュリティ関連のポリシーを適用するAdmission WebHook実装
