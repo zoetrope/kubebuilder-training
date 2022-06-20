@@ -472,6 +472,7 @@ GitHubにリポジトリを作る場合は<code>github.com/&lt;user_name&gt;/&lt
 <pre><code>├── Dockerfile
 ├── Makefile
 ├── PROJECT
+├── README.md
 ├── config
 │    ├── default
 │    │    ├── kustomization.yaml
@@ -505,14 +506,14 @@ GitHubにリポジトリを作る場合は<code>github.com/&lt;user_name&gt;/&lt
 <ul>
 <li>go.mod</li>
 </ul>
-<pre><code class="lang-diff"><span class="hljs-deletion">-       sigs.k8s.io/controller-runtime v0.8.3</span>
-<span class="hljs-addition">+       sigs.k8s.io/controller-runtime v0.9.3</span>
+<pre><code class="lang-diff"><span class="hljs-deletion">-       sigs.k8s.io/controller-runtime v0.11.2</span>
+<span class="hljs-addition">+       sigs.k8s.io/controller-runtime v0.12.1</span>
 </code></pre>
 <ul>
 <li>Makefile</li>
 </ul>
-<pre><code class="lang-diff"><span class="hljs-deletion">-       $(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.4.1)</span>
-<span class="hljs-addition">+       $(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.6.1)</span>
+<pre><code class="lang-diff"><span class="hljs-deletion">-CONTROLLER_TOOLS_VERSION ?= v0.8.0</span>
+<span class="hljs-addition">+CONTROLLER_TOOLS_VERSION ?= v0.9.0</span>
 </code></pre>
 <p>それでは生成されたファイルをそれぞれ見ていきましょう。</p>
 <h2 id="makefile">Makefile</h2>
@@ -541,11 +542,14 @@ Build
 
 Deployment
   install          Install CRDs into the K8s cluster specified in ~/.kube/config.
-  uninstall        Uninstall CRDs from the K8s cluster specified in ~/.kube/config.
+  uninstall        Uninstall CRDs from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
   deploy           Deploy controller to the K8s cluster specified in ~/.kube/config.
-  undeploy         Undeploy controller from the K8s cluster specified in ~/.kube/config.
-  controller-gen   Download controller-gen locally if necessary.
+  undeploy         Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
+
+Build Dependencies
   kustomize        Download kustomize locally if necessary.
+  controller-gen   Download controller-gen locally if necessary.
+  envtest          Download envtest-setup locally if necessary.
 </code></pre>
 <h2 id="project">PROJECT</h2>
 <p>ドメイン名やリポジトリのURLや生成したAPIの情報などが記述されています。
@@ -623,7 +627,7 @@ kube-auth-proxyを利用しない場合は削除しても問題ありません�
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"next":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"previous":{"title":"Kubebuilder","level":"1.2","depth":1,"path":"kubebuilder/README.md","ref":"kubebuilder/README.md","articles":[{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/new-project.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-08-24T02:23:15.751Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"next":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"previous":{"title":"Kubebuilder","level":"1.2","depth":1,"path":"kubebuilder/README.md","ref":"kubebuilder/README.md","articles":[{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/new-project.md","mtime":"2022-06-20T04:44:38.515Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

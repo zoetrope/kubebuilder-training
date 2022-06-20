@@ -476,24 +476,21 @@
 <blockquote>
 <p><a id="Makefile" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/Makefile" target="_blank">Makefile</a></p>
 </blockquote>
-<pre><code>SETUP_ENVTEST := $(shell pwd)/bin/setup-envtest
-.PHONY: setup-envtest
-setup-envtest: ## Download setup-envtest locally if necessary
-    # see https://github.com/kubernetes-sigs/controller-runtime/tree/master/tools/setup-envtest
-    GOBIN=$(shell pwd)/bin go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+<pre><code>Error: marker `setup-envtest` not found
 </code></pre><p>testターゲットは以下のように書き換えます。</p>
 <blockquote>
 <p><a id="Makefile" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/Makefile" target="_blank">Makefile</a></p>
 </blockquote>
-<pre><code>test: manifests generate fmt vet setup-envtest ## Run tests.
-    source &lt;($(SETUP_ENVTEST) use -p env); go test ./... -coverprofile cover.out
+<pre><code>.PHONY: test
+test: manifests generate fmt vet envtest ## Run tests.
+    KUBEBUILDER_ASSETS=&quot;$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)&quot; go test ./... -coverprofile cover.out
 </code></pre><h2 id="テスト環境のセットアップ">テスト環境のセットアップ</h2>
 <p>controller-genによって自動生成された<a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/controllers/suite_test.go" target="_blank">controllers/suite_test.go</a>を見てみましょう。</p>
 <blockquote>
 <p><a id="controllers/suite_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/suite_test.go" target="_blank">controllers/suite_test.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">/*
-Copyright 2021.
+Copyright 2022.
 
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -553,6 +550,7 @@ limitations under the License.
     }
 
     <span class="hljs-keyword">var</span> err error
+    <span class="hljs-comment">// cfg is defined in this file globally.</span>
     cfg, err = testEnv.Start()
     Expect(err).NotTo(HaveOccurred())
     Expect(cfg).NotTo(BeNil())
@@ -755,7 +753,7 @@ Envtestは実際のKubernetesクラスターとは異なるということを意
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"コントローラーのテスト","level":"1.4.4","depth":2,"next":{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-08-24T02:23:15.751Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"コントローラーのテスト","level":"1.4.4","depth":2,"next":{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

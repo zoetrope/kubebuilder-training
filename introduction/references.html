@@ -492,11 +492,11 @@
 <li>Ingress Controller <a href="https://github.com/projectcontour/contour" target="_blank">Contour</a>を機能拡張するためのコントローラー</li>
 </ul>
 </li>
-<li><a href="https://github.com/cybozu/neco-containers/tree/master/admission" target="_blank">neco-admission</a><ul>
+<li><a href="https://github.com/cybozu/neco-containers/tree/main/admission" target="_blank">neco-admission</a><ul>
 <li>カスタムポリシーを適用するためのAdmission WebHook実装</li>
 </ul>
 </li>
-<li><a href="https://github.com/cybozu/neco-containers/tree/master/local-pv-provisioner" target="_blank">local-pv-provisioner</a><ul>
+<li><a href="https://github.com/cybozu/neco-containers/tree/main/local-pv-provisioner" target="_blank">local-pv-provisioner</a><ul>
 <li>指定した条件にマッチしたデバイスから自動的にlocal Persistent Volumeリソースを作成するコントローラー</li>
 </ul>
 </li>
@@ -514,6 +514,10 @@
 </li>
 <li><a href="https://github.com/cybozu-go/pod-security-admission" target="_blank">Pod Security Admission</a><ul>
 <li>Podのセキュリティ関連のポリシーを適用するAdmission WebHook実装</li>
+</ul>
+</li>
+<li><a href="https://github.com/cybozu-go/cattage" target="_blank">Cattage</a><ul>
+<li>Argo CDのマルチテナント機能を強化するためのカスタムコントローラー</li>
 </ul>
 </li>
 </ul>
@@ -560,7 +564,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"参考情報","level":"1.1.4","depth":2,"next":{"title":"Kubebuilder","level":"1.2","depth":1,"path":"kubebuilder/README.md","ref":"kubebuilder/README.md","articles":[{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]}]},"previous":{"title":"MarkdownViewコントローラー","level":"1.1.3","depth":2,"path":"introduction/sample.md","ref":"introduction/sample.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"introduction/references.md","mtime":"2021-08-24T02:22:23.898Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2021-08-24T02:23:15.751Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"参考情報","level":"1.1.4","depth":2,"next":{"title":"Kubebuilder","level":"1.2","depth":1,"path":"kubebuilder/README.md","ref":"kubebuilder/README.md","articles":[{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]}]},"previous":{"title":"MarkdownViewコントローラー","level":"1.1.3","depth":2,"path":"introduction/sample.md","ref":"introduction/sample.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"introduction/references.md","mtime":"2022-06-20T04:38:06.790Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
