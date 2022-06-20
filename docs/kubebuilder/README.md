@@ -20,7 +20,9 @@ Available Commands:
   version     Print the kubebuilder version
 
 Flags:
-  -h, --help   help for kubebuilder
+  -h, --help                     help for kubebuilder
+      --plugins strings          plugin keys to be used for this subcommand execution
+      --project-version string   project version (default "3")
 
 Use "kubebuilder [command] --help" for more information about a command.
 ```

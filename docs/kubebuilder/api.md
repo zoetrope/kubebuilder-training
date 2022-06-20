@@ -31,12 +31,12 @@ $ make manifests
 ├── config
 │    ├── crd
 │    │    ├── bases
-│    │    │    └── view.zoetrope.github.io_markdownviews.yaml
-│    │    ├── patches
-│    │    │    ├── cainjection_in_markdownviews.yaml
-│    │    │    └── webhook_in_markdownviews.yaml
+│    │    │   └── view.zoetrope.github.io_markdownviews.yaml
 │    │    ├── kustomization.yaml
-│    │    └── kustomizeconfig.yaml
+│    │    ├── kustomizeconfig.yaml
+│    │    └── patches
+│    │        ├── cainjection_in_markdownviews.yaml
+│    │        └── webhook_in_markdownviews.yaml
 │    ├── rbac
 │    │    ├── role.yaml
 │    │    ├── markdownview_editor_role.yaml

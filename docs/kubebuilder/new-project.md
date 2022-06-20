@@ -20,6 +20,7 @@ GitHubにリポジトリを作る場合は`github.com/<user_name>/<product_name>
 ├── Dockerfile
 ├── Makefile
 ├── PROJECT
+├── README.md
 ├── config
 │    ├── default
 │    │    ├── kustomization.yaml
@@ -56,15 +57,15 @@ Kubebuilderによって生成されたgo.modおよびMakefileには、少し古�
 - go.mod
 
 ```diff
--       sigs.k8s.io/controller-runtime v0.8.3
-+       sigs.k8s.io/controller-runtime v0.9.3
+-       sigs.k8s.io/controller-runtime v0.11.2
++       sigs.k8s.io/controller-runtime v0.12.1
 ```
 
 - Makefile
 
 ```diff
--       $(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.4.1)
-+       $(call go-get-tool,$(CONTROLLER_GEN),sigs.k8s.io/controller-tools/cmd/controller-gen@v0.6.1)
+-CONTROLLER_TOOLS_VERSION ?= v0.8.0
++CONTROLLER_TOOLS_VERSION ?= v0.9.0
 ```
 
 
@@ -100,11 +101,14 @@ Build
 
 Deployment
   install          Install CRDs into the K8s cluster specified in ~/.kube/config.
-  uninstall        Uninstall CRDs from the K8s cluster specified in ~/.kube/config.
+  uninstall        Uninstall CRDs from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
   deploy           Deploy controller to the K8s cluster specified in ~/.kube/config.
-  undeploy         Undeploy controller from the K8s cluster specified in ~/.kube/config.
-  controller-gen   Download controller-gen locally if necessary.
+  undeploy         Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
+
+Build Dependencies
   kustomize        Download kustomize locally if necessary.
+  controller-gen   Download controller-gen locally if necessary.
+  envtest          Download envtest-setup locally if necessary.
 ```
 
 ## PROJECT
