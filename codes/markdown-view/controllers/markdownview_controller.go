@@ -1,5 +1,5 @@
 /*
-Copyright 2021.
+Copyright 2022.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ type MarkdownViewReconciler struct {
 // the user.
 //
 // For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.8.3/pkg/reconcile
+// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.11.2/pkg/reconcile
 //! [reconcile]
 func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
@@ -223,7 +223,7 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 
 	err = r.Patch(ctx, patch, client.Apply, &client.PatchOptions{
 		FieldManager: constants.ControllerName,
-		Force: pointer.Bool(true),
+		Force:        pointer.Bool(true),
 	})
 
 	if err != nil {
@@ -282,7 +282,7 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 
 	err = r.Patch(ctx, patch, client.Apply, &client.PatchOptions{
 		FieldManager: constants.ControllerName,
-		Force: pointer.Bool(true),
+		Force:        pointer.Bool(true),
 	})
 	if err != nil {
 		logger.Error(err, "unable to create or update Service")
