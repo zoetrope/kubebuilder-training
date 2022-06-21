@@ -75,7 +75,7 @@ func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request
 	var mdView viewv1.MarkdownView
 	err := r.Get(ctx, req.NamespacedName, &mdView)
 	if errors.IsNotFound(err) {
-		r.removeMetrics(mdView)
+		r.removeMetrics(req)
 		return ctrl.Result{}, nil
 	}
 	if err != nil {
@@ -353,10 +353,10 @@ func (r *MarkdownViewReconciler) setMetrics(mdView viewv1.MarkdownView) {
 //! [set-metrics]
 
 //! [remove-metrics]
-func (r *MarkdownViewReconciler) removeMetrics(mdView viewv1.MarkdownView) {
-	metrics.NotReadyVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
-	metrics.AvailableVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
-	metrics.HealthyVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
+func (r *MarkdownViewReconciler) removeMetrics(req ctrl.Request) {
+	metrics.NotReadyVec.DeleteLabelValues(req.Name, req.Namespace)
+	metrics.AvailableVec.DeleteLabelValues(req.Name, req.Namespace)
+	metrics.HealthyVec.DeleteLabelValues(req.Name, req.Namespace)
 }
 
 //! [remove-metrics]
