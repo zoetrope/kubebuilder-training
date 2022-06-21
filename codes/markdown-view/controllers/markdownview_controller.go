@@ -336,17 +336,17 @@ func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewv1
 func (r *MarkdownViewReconciler) setMetrics(mdView viewv1.MarkdownView) {
 	switch mdView.Status {
 	case viewv1.MarkdownViewNotReady:
-		metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
-		metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(1)
+		metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(0)
+		metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(0)
 	case viewv1.MarkdownViewAvailable:
-		metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
-		metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(0)
+		metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(1)
+		metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(0)
 	case viewv1.MarkdownViewHealthy:
-		metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
+		metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(0)
+		metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(0)
+		metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(1)
 	}
 }
 
@@ -354,9 +354,9 @@ func (r *MarkdownViewReconciler) setMetrics(mdView viewv1.MarkdownView) {
 
 //! [remove-metrics]
 func (r *MarkdownViewReconciler) removeMetrics(mdView viewv1.MarkdownView) {
-	metrics.NotReadyVec.DeleteLabelValues(mdView.Name, mdView.Name)
-	metrics.AvailableVec.DeleteLabelValues(mdView.Name, mdView.Name)
-	metrics.HealthyVec.DeleteLabelValues(mdView.Name, mdView.Name)
+	metrics.NotReadyVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
+	metrics.AvailableVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
+	metrics.HealthyVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
 }
 
 //! [remove-metrics]
