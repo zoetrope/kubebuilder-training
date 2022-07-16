@@ -9,24 +9,12 @@ envtestはetcdとkube-apiserverを立ち上げてテスト用の環境を構築�
 Envtestでは、etcdとkube-apiserverのみを立ち上げており、controller-managerやschedulerは動いていません。
 そのため、DeploymentやCronJobリソースを作成しても、Podは作成されないので注意してください。
 
-なおcontroller-genが生成するテストコードでは、[Ginkgo](https://github.com/onsi/ginkgo)というテストフレームワークを利用しています。
-このフレームワークの利用方法については[Ginkgoのドキュメント](https://onsi.github.io/ginkgo/)を御覧ください。
-
-## Envtest Binaries Manager
-
 controller-runtimeは、[Envtest Binaries Manager](https://github.com/kubernetes-sigs/controller-runtime/tree/master/tools/setup-envtest)
 というツールを提供しています。
 このツールを利用することで、Envtestで利用するetcdやkube-apiserverの任意のバージョンのバイナリをセットアップできます。
 
-Kubebuilder v3.1時点では、Envtest Binaries Managerが利用されるようになっていないので、Makefileを書き換えておきましょう。
-
-まず、Envtest Binaries Managerをインストールするためのターゲットを追加します。
-
-[import:"setup-envtest"](../../codes/markdown-view/Makefile)
-
-testターゲットは以下のように書き換えます。
-
-[import:"test"](../../codes/markdown-view/Makefile)
+なおcontroller-genが生成するテストコードでは、[Ginkgo](https://github.com/onsi/ginkgo)というテストフレームワークを利用しています。
+このフレームワークの利用方法については[Ginkgoのドキュメント](https://onsi.github.io/ginkgo/)を御覧ください。
 
 ## テスト環境のセットアップ
 
