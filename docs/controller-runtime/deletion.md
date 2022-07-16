@@ -55,7 +55,9 @@ data:
 ### Finalizerの仕組み
 
 ownerReferenceとガベージコレクションにより、親リソースと一緒に子リソースを削除できると説明しました。
-しかし、この仕組だけでは削除できないケースもあります。直接の親ではないリソースを削除したいケースや、Kubernetesで管理していない外部のリソースなどを削除したいケースなどがあります。
+しかし、この仕組だけでは削除できないケースもあります。
+例えば、親リソースと異なるnamespaceやスコープの子リソースを削除したい場合や、Kubernetesで管理していない外部のリソースを削除したい場合
+などは、ガベージコレクション機能は利用できません。
 
 例えばTopoLVMでは、LogicalVolumeというカスタムリソースを作成すると、ノード上にLVM(Logical Volume Manager)のLV(Logical Volume)を作成します。
 Kubernetes上のLogicalVolumeカスタムリソースが削除されたら、それに合わせてノード上のLVも削除しなければなりません。
@@ -102,16 +104,7 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
 
 ```go
 finalizerName := "markdwonview.finalizers.view.zoetrope.github.io"
-if mdView.ObjectMeta.DeletionTimestamp.IsZero() {
-    // deletionTimestampが付与されていなければ、finalizersフィールドを追加します。
-    if !controllerutil.ContainsFinalizer(&mdView, finalizerName) {
-        controllerutil.AddFinalizer(&mdView, finalizerName)
-        err = r.Update(ctx, &mdView)
-        if err != nil {
-            return ctrl.Result{}, err
-        }
-    }
-} else {
+if !mdView.ObjectMeta.DeletionTimestamp.IsZero() {
     // deletionTimestampがゼロではないということはリソースの削除が開始されたということ
 
     // finalizersに上記で指定した名前が存在した場合は削除処理を実施する
@@ -127,6 +120,15 @@ if mdView.ObjectMeta.DeletionTimestamp.IsZero() {
         }
     }
     return ctrl.Result{}, nil
+}
+
+// deletionTimestampが付与されていなければ、finalizersフィールドを追加します。
+if !controllerutil.ContainsFinalizer(&mdView, finalizerName) {
+    controllerutil.AddFinalizer(&mdView, finalizerName)
+    err = r.Update(ctx, &mdView)
+    if err != nil {
+        return ctrl.Result{}, err
+    }
 }
 ```
 
