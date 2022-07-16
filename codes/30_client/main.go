@@ -96,9 +96,8 @@ func main() {
 
 	//! [init-reconciler]
 	if err = (&controllers.MarkdownViewReconciler{
-		Client:   mgr.GetClient(),
-		Scheme:   mgr.GetScheme(),
-		Recorder: mgr.GetEventRecorderFor("markdownview-controller"),
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "MarkdownView")
 		os.Exit(1)
@@ -112,7 +111,6 @@ func main() {
 	//! [init-webhook]
 	//+kubebuilder:scaffold:builder
 
-	//! [health]
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
 		setupLog.Error(err, "unable to set up health check")
 		os.Exit(1)
@@ -121,7 +119,6 @@ func main() {
 		setupLog.Error(err, "unable to set up ready check")
 		os.Exit(1)
 	}
-	//! [health]
 
 	setupLog.Info("starting manager")
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {

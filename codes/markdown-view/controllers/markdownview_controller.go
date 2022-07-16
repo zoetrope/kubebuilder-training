@@ -19,9 +19,7 @@ package controllers
 import (
 	"context"
 	"fmt"
-	"k8s.io/utils/pointer"
 
-	viewv1 "github.com/zoetrope/markdown-view/api/v1"
 	"github.com/zoetrope/markdown-view/pkg/constants"
 	"github.com/zoetrope/markdown-view/pkg/metrics"
 	appsv1 "k8s.io/api/apps/v1"
@@ -35,19 +33,25 @@ import (
 	corev1apply "k8s.io/client-go/applyconfigurations/core/v1"
 	metav1apply "k8s.io/client-go/applyconfigurations/meta/v1"
 	"k8s.io/client-go/tools/record"
+	"k8s.io/utils/pointer"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
+
+	viewv1 "github.com/zoetrope/markdown-view/api/v1"
 )
 
 // MarkdownViewReconciler reconciles a MarkdownView object
+//! [reconciler]
 type MarkdownViewReconciler struct {
 	client.Client
 	Scheme   *runtime.Scheme
 	Recorder record.EventRecorder
 }
+
+//! [reconciler]
 
 //! [rbac]
 //+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews,verbs=get;list;watch;create;update;patch;delete

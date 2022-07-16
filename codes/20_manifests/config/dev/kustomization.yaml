@@ -1,4 +1,4 @@
 resources:
-  - ../../../markdown-view/config/default
+  - ../default
 patchesStrategicMerge:
   - manager.yaml
