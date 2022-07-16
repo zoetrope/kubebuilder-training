@@ -159,8 +159,6 @@ Status更新用のクライアントを利用することになります。
 
 [import:"update-status"](../../codes/client-sample/main.go)
 
-なお、現状ではカスタムリソースのStatusサブリソースはServer-Side Applyをサポートしていません。
-
 ## Delete/DeleteAllOf
 
 最後にリソースを削除する`Delete`と`DeleteAllOf`を見てみましょう。
