@@ -128,12 +128,12 @@ $ kind load docker-image controller:latest
 
 - CRDに変更がある場合は下記のコマンドを実行します。ただし、互換性のない変更をおこなった場合はこのコマンドに失敗するため、事前に`make uninstall`を実行してください。
 ```
-make install
+$ make install
 ```
 
 - CRD以外のマニフェストファイルに変更がある場合は下記のコマンドを実行します。ただし、互換性のない変更をおこなった場合はこのコマンドに失敗するため、事前に`make undeploy`を実行してください。
 ```
-make deploy
+$ make deploy
 ```
 
 - 次のコマンドでカスタムコントローラーを再起動します。
@@ -146,7 +146,44 @@ $ kubectl rollout restart -n markdown-view-system deployment markdown-view-contr
 前述したようにカスタムコントローラーの開発時は、ソースコードやマニフェストを変更するたびに複数のmakeコマンドを何度も実行する必要があり、
 非常に面倒です。
 
-[Tilt](https://tilt.dev)というツールを利用すると、これらの面倒なコマンド実行が不要になります。
-興味のある方は下記の記事を参考に導入してみてください。
+[Tilt](https://tilt.dev)を利用すると、ソースコードやマニフェストの変更を監視し、
+コンテナイメージの再ビルド、Kubernetesクラスタへのマニフェストの適用、Podの再起動などを自動的におこなってくれます。
+
+興味のある方は下記の記事をご覧ください。
 
 - [Tiltでカスタムコントローラーの開発を効率化しよう](https://zenn.dev/zoetro/articles/fba4c77a7fa3fb)
+
+なお、本書のサンプルプログラムではTiltが利用できるようにセットアップしてあります。
+詳細は以下のコードをご覧ください。
+
+- https://github.com/zoetrope/kubebuilder-training/tree/master/codes/10_tilt
+
+まず、以下のページを参考に[aqua](https://aquaproj.github.io)をインストールします。
+
+- https://aquaproj.github.io/docs/reference/install
+
+次にaquaを使って、各種ツールをインストールします。
+
+```console
+$ aqua i
+```
+
+続いて以下のコマンドを実行して、Kubernetesクラスタとコンテナレジストリを立ち上げ、cert-managerをデプロイします。
+
+```console
+$ make start
+```
+
+最後にtiltを立ち上げて、ブラウザで http://localhost:10350 にアクセスします。
+
+```console
+$ tilt up
+```
+
+正常に動作していれば、ソースコードやマニフェストの変更に応じて、kind上のリソースが自動的に更新されるはずです。
+
+終了時には以下のコマンドを実行してください。
+
+```console
+$ make stop
+```

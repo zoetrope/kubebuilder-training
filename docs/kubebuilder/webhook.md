@@ -74,6 +74,6 @@ Kubebuilderコマンドで生成した直後の状態では、`make manifests`�
 
 生成直後のkustomization.yamlは、`bases` の `../webhook` と `../certmanager`, `patchesStrategicMerge` の `manager_webhook_patch.yaml` と `webhookcainjection_patch.yaml`, `vars` がコメントアウトされていますが、これらのコメントを外します。
 
-[import:"bases,enable-webhook,patches,enable-webhook-patch,vars"](../../codes/markdown-view/config/default/kustomization.yaml)
+[import:"bases,enable-webhook,patches,enable-webhook-patch,vars"](../../codes/00_scaffold/config/default/kustomization.yaml)
 
 [cert-manager]: https://github.com/jetstack/cert-manager
