@@ -57,15 +57,15 @@ Kubebuilderによって生成されたgo.modおよびMakefileには、少し古�
 - go.mod
 
 ```diff
--       sigs.k8s.io/controller-runtime v0.11.2
-+       sigs.k8s.io/controller-runtime v0.12.1
+-       sigs.k8s.io/controller-runtime v0.12.1
++       sigs.k8s.io/controller-runtime v0.12.3
 ```
 
 - Makefile
 
 ```diff
--CONTROLLER_TOOLS_VERSION ?= v0.8.0
-+CONTROLLER_TOOLS_VERSION ?= v0.9.0
+-CONTROLLER_TOOLS_VERSION ?= v0.9.0
++CONTROLLER_TOOLS_VERSION ?= v0.9.2
 ```
 
 
