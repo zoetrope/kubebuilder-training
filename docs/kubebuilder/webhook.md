@@ -59,12 +59,7 @@ manifests.yamlファイルは`make manifests`ファイルで自動生成され�
 
 `main.go`には、以下のようなWebhookの初期化をおこなうためのコードが追加されています。
 
-```go
-if err = (&viewv1.MarkdownView{}).SetupWebhookWithManager(mgr); err != nil {
-	setupLog.Error(err, "unable to create webhook", "webhook", "MarkdownView")
-	os.Exit(1)
-}
-```
+[import:"init-webhook",unindent="true"](../../codes/00_scaffold/main.go)
 
 ## kustomization.yamlの編集
 

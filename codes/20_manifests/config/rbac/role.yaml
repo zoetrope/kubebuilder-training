@@ -1,0 +1,33 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - view.zoetrope.github.io
+  resources:
+  - markdownviews
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - view.zoetrope.github.io
+  resources:
+  - markdownviews/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - view.zoetrope.github.io
+  resources:
+  - markdownviews/status
+  verbs:
+  - get
+  - patch
+  - update

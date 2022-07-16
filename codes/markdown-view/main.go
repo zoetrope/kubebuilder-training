@@ -93,6 +93,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	//! [init-reconciler]
 	if err = (&controllers.MarkdownViewReconciler{
 		Client:   mgr.GetClient(),
 		Scheme:   mgr.GetScheme(),
@@ -101,10 +102,13 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "MarkdownView")
 		os.Exit(1)
 	}
+	//! [init-reconciler]
+	//! [init-webhook]
 	if err = (&viewv1.MarkdownView{}).SetupWebhookWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create webhook", "webhook", "MarkdownView")
 		os.Exit(1)
 	}
+	//! [init-webhook]
 	//+kubebuilder:scaffold:builder
 
 	//! [health]

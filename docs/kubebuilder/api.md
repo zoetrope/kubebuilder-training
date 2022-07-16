@@ -69,15 +69,7 @@ $ make manifests
 
 `main.go`には、下記のようなコントローラーの初期化処理が追加されています。
 
-```go
-if err = (&controllers.MarkdownViewReconciler{
-	Client: mgr.GetClient(),
-	Scheme: mgr.GetScheme(),
-}).SetupWithManager(mgr); err != nil {
-	setupLog.Error(err, "unable to create controller", "controller", "MarkdownView")
-	os.Exit(1)
-}
-```
+[import:"init-reconciler",unindent="true"](../../codes/00_scaffold/main.go)
 
 ## config
 
