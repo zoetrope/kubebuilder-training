@@ -5,7 +5,7 @@
 Webhookもコントローラーのテストと同じくEnvtestを利用できます。
 Kubebuilderによってテストを実行するためのコードが以下のように生成されています。
 
-[import, title="api/v1/webhook_suite_test.go"](../../codes/markdown-view/api/v1/webhook_suite_test.go)
+[import, title="api/v1/webhook_suite_test.go"](../../codes/40_reconcile/api/v1/webhook_suite_test.go)
 
 基本的にはコントローラーのテストコードと似ていますが、`envtest.Environment`を作成する際に、Webhook用のマニフェストのパスを指定したり、
 `ctrl.NewManager`を呼び出す際に`Host`,`Port`,`CertDir`のパラメータをtestEnvのパラメータで上書きする必要があります。
@@ -14,7 +14,7 @@ Kubebuilderによってテストを実行するためのコードが以下のよ
 
 Webhookのテストコードを書いてみましょう。
 
-[import, title="api/v1/markdownview_webhook_test.go"](../../codes/markdown-view/api/v1/markdownview_webhook_test.go)
+[import, title="api/v1/markdownview_webhook_test.go"](../../codes/40_reconcile/api/v1/markdownview_webhook_test.go)
 
 MutatingWebhookのテストでは、入力となるマニフェストファイル(before.yaml)を利用してリソースを作成し、
 作成されたリソースが期待値となるマニフェストファイル(after.yaml)の内容と一致することを確認しています。

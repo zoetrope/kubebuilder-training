@@ -1,0 +1,11 @@
+apiVersion: ctlptl.dev/v1alpha1
+kind: Registry
+name: mdview-registry
+port: 5000
+---
+apiVersion: ctlptl.dev/v1alpha1
+kind: Cluster
+name: kind-mdview-dev
+product: kind
+kubernetesVersion: v1.24.0
+registry: mdview-registry

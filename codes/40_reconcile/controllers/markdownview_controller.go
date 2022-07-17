@@ -19,7 +19,6 @@ package controllers
 //! [import]
 import (
 	"context"
-	"fmt"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -31,11 +30,9 @@ import (
 	appsv1apply "k8s.io/client-go/applyconfigurations/apps/v1"
 	corev1apply "k8s.io/client-go/applyconfigurations/core/v1"
 	metav1apply "k8s.io/client-go/applyconfigurations/meta/v1"
-	"k8s.io/client-go/tools/record"
 	"k8s.io/utils/pointer"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
@@ -48,8 +45,7 @@ import (
 //! [reconciler]
 type MarkdownViewReconciler struct {
 	client.Client
-	Scheme   *runtime.Scheme
-	Recorder record.EventRecorder
+	Scheme *runtime.Scheme
 }
 
 //! [reconciler]
@@ -80,7 +76,6 @@ func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request
 	var mdView viewv1.MarkdownView
 	err := r.Get(ctx, req.NamespacedName, &mdView)
 	if errors.IsNotFound(err) {
-		r.removeMetrics(mdView)
 		return ctrl.Result{}, nil
 	}
 	if err != nil {
@@ -125,7 +120,7 @@ func (r *MarkdownViewReconciler) reconcileConfigMap(ctx context.Context, mdView 
 		for name, content := range mdView.Spec.Markdowns {
 			cm.Data[name] = content
 		}
-		return ctrl.SetControllerReference(&mdView, cm, r.Scheme)
+		return nil
 	})
 
 	if err != nil {
@@ -140,6 +135,7 @@ func (r *MarkdownViewReconciler) reconcileConfigMap(ctx context.Context, mdView 
 
 //! [reconcile-configmap]
 
+//! [reconcile-deployment]
 func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView viewv1.MarkdownView) error {
 	logger := log.FromContext(ctx)
 
@@ -149,19 +145,25 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 		viewerImage = mdView.Spec.ViewerImage
 	}
 
-	owner, err := ownerRef(mdView, r.Scheme)
-	if err != nil {
-		return err
-	}
-
 	dep := appsv1apply.Deployment(depName, mdView.Namespace).
-		WithLabels(labelSet(mdView)).
-		WithOwnerReferences(owner).
+		WithLabels(map[string]string{
+			"app.kubernetes.io/name":       "mdbook",
+			"app.kubernetes.io/instance":   mdView.Name,
+			"app.kubernetes.io/created-by": "markdown-view-controller",
+		}).
 		WithSpec(appsv1apply.DeploymentSpec().
 			WithReplicas(mdView.Spec.Replicas).
-			WithSelector(metav1apply.LabelSelector().WithMatchLabels(labelSet(mdView))).
+			WithSelector(metav1apply.LabelSelector().WithMatchLabels(map[string]string{
+				"app.kubernetes.io/name":       "mdbook",
+				"app.kubernetes.io/instance":   mdView.Name,
+				"app.kubernetes.io/created-by": "markdown-view-controller",
+			})).
 			WithTemplate(corev1apply.PodTemplateSpec().
-				WithLabels(labelSet(mdView)).
+				WithLabels(map[string]string{
+					"app.kubernetes.io/name":       "mdbook",
+					"app.kubernetes.io/instance":   mdView.Name,
+					"app.kubernetes.io/created-by": "markdown-view-controller",
+				}).
 				WithSpec(corev1apply.PodSpec().
 					WithContainers(corev1apply.Container().
 						WithName("mdbook").
@@ -239,21 +241,25 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 	return nil
 }
 
+//! [reconcile-deployment]
+
 //! [reconcile-service]
 func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView viewv1.MarkdownView) error {
 	logger := log.FromContext(ctx)
 	svcName := "viewer-" + mdView.Name
 
-	owner, err := ownerRef(mdView, r.Scheme)
-	if err != nil {
-		return err
-	}
-
 	svc := corev1apply.Service(svcName, mdView.Namespace).
-		WithLabels(labelSet(mdView)).
-		WithOwnerReferences(owner).
+		WithLabels(map[string]string{
+			"app.kubernetes.io/name":       "mdbook",
+			"app.kubernetes.io/instance":   mdView.Name,
+			"app.kubernetes.io/created-by": "markdown-view-controller",
+		}).
 		WithSpec(corev1apply.ServiceSpec().
-			WithSelector(labelSet(mdView)).
+			WithSelector(map[string]string{
+				"app.kubernetes.io/name":       "mdbook",
+				"app.kubernetes.io/instance":   mdView.Name,
+				"app.kubernetes.io/created-by": "markdown-view-controller",
+			}).
 			WithType(corev1.ServiceTypeClusterIP).
 			WithPorts(corev1apply.ServicePort().
 				WithProtocol(corev1.ProtocolTCP).
@@ -319,10 +325,6 @@ func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewv1
 
 	if mdView.Status != status {
 		mdView.Status = status
-		r.setMetrics(mdView)
-
-		r.Recorder.Event(&mdView, corev1.EventTypeNormal, "Updated", fmt.Sprintf("MarkdownView(%s:%s) updated: %s", mdView.Namespace, mdView.Name, mdView.Status))
-
 		err = r.Status().Update(ctx, &mdView)
 		if err != nil {
 			return ctrl.Result{}, err
@@ -336,59 +338,6 @@ func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewv1
 }
 
 //! [update-status]
-
-//! [set-metrics]
-func (r *MarkdownViewReconciler) setMetrics(mdView viewv1.MarkdownView) {
-	switch mdView.Status {
-	case viewv1.MarkdownViewNotReady:
-		NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
-		AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-	case viewv1.MarkdownViewAvailable:
-		NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
-		HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-	case viewv1.MarkdownViewHealthy:
-		NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
-	}
-}
-
-//! [set-metrics]
-
-//! [remove-metrics]
-func (r *MarkdownViewReconciler) removeMetrics(mdView viewv1.MarkdownView) {
-	NotReadyVec.DeleteLabelValues(mdView.Name, mdView.Name)
-	AvailableVec.DeleteLabelValues(mdView.Name, mdView.Name)
-	HealthyVec.DeleteLabelValues(mdView.Name, mdView.Name)
-}
-
-//! [remove-metrics]
-
-func ownerRef(mdView viewv1.MarkdownView, scheme *runtime.Scheme) (*metav1apply.OwnerReferenceApplyConfiguration, error) {
-	gvk, err := apiutil.GVKForObject(&mdView, scheme)
-	if err != nil {
-		return nil, err
-	}
-	ref := metav1apply.OwnerReference().
-		WithAPIVersion(gvk.GroupVersion().String()).
-		WithKind(gvk.Kind).
-		WithName(mdView.Name).
-		WithUID(mdView.GetUID()).
-		WithBlockOwnerDeletion(true).
-		WithController(true)
-	return ref, nil
-}
-
-func labelSet(mdView viewv1.MarkdownView) map[string]string {
-	labels := map[string]string{
-		"app.kubernetes.io/name":       "mdbook",
-		"app.kubernetes.io/instance":   mdView.Name,
-		"app.kubernetes.io/created-by": "markdown-view-controller",
-	}
-	return labels
-}
 
 // SetupWithManager sets up the controller with the Manager.
 //! [managedby]
