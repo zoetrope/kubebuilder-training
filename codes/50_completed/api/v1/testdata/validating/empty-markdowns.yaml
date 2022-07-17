@@ -1,0 +1,10 @@
+apiVersion: view.zoetrope.github.io/v1
+kind: MarkdownView
+metadata:
+  name: empty-markdowns
+  namespace: default
+  annotations:
+    message: 'admission webhook "vmarkdownview.kb.io" denied the request: MarkdownView.view.zoetrope.github.io "empty-markdowns" is invalid: spec.markdowns: Required value: markdowns must have SUMMARY.md.'
+spec:
+  replicas: 1
+  viewerImage: "peaceiris/mdbook:latest"

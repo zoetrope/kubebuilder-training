@@ -33,7 +33,6 @@ spec:
         # versions < 1.19 or on vendors versions which do NOT support this field by default (i.e. Openshift < 4.11 ).
         # seccompProfile:
         #   type: RuntimeDefault
-      #! [containers]
       containers:
       - command:
         - /manager
@@ -42,12 +41,12 @@ spec:
         image: controller:latest
         imagePullPolicy: IfNotPresent
         name: manager
-      #! [containers]
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
               - "ALL"
+        #! [probe]
         livenessProbe:
           httpGet:
             path: /healthz
@@ -60,6 +59,7 @@ spec:
             port: 8081
           initialDelaySeconds: 5
           periodSeconds: 10
+        #! [probe]
         # TODO(user): Configure the resources accordingly based on the project requirements.
         # More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
         resources:

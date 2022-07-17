@@ -15,10 +15,12 @@
 
 Kubernetesではリソースの親子関係を表すために`.metadata.ownerReferences`フィールドを利用します。
 
-例えば、以下のようにConfigMapリソースを作成する際に、[controllerutil.SetControllerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetControllerReference)
-というユーティリティ関数を利用していました。
+controller-runtimeが提供している[controllerutil.SetControllerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetControllerReference)
+関数を利用することで、指定したリソースにownerReferenceを設定することができます。
 
-[import:"reconcile-configmap",unindent:"true"](../../codes/markdown-view/controllers/markdownview_controller.go)
+先ほど作成した、`reconcileConfigMap`関数で`controllerutil.SetControllerReference`を利用してみましょう。
+
+[import:"reconcile-configmap",unindent:"true"](../../codes/50_completed/controllers/markdownview_controller.go)
 
 この関数を利用すると、ConfigMapリソースに以下のような`.metadata.ownerReferences`が付与され、このリソースに親リソースの情報が設定されます。
 
@@ -49,6 +51,16 @@ data:
 また、`SetControllerReference`と似た関数で[controllerutil.SetOwnerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetOwnerReference)もあります。
 `SetControllerReference`は、1つのリソースに1つのオーナーのみしか指定できず、`controller`フィールドと`blockOwnerDeletion`フィールドにtrueが指定されているため子リソースが削除されるまで親リソースの削除がブロックされます。
 一方の`SetOwnerReference`は1つのリソースに複数のオーナーを指定でき、子リソースの削除はブロックされません。
+
+`controllerutil.SetControllerReference`は、Server-Side Applyで利用するApplyConfiguration型には対応していません。
+そこで、以下のような補助関数を用意しましょう。
+
+[import:"controller-reference",unindent:"true"](../../codes/50_completed/controllers/markdownview_controller.go)
+
+Server-Side Applyでガベージコレクションを利用する際は、この補助関数を利用してApplyConfiguration型を作成するときに
+ownerReferenceを設定します。
+
+[import:"service-apply-configuration",unindent:"true"](../../codes/50_completed/controllers/markdownview_controller.go)
 
 ## Finalizer
 

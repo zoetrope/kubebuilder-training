@@ -77,12 +77,14 @@ type MarkdownViewReconciler struct {
 func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
 
+	//! [call-remove-metrics]
 	var mdView viewv1.MarkdownView
 	err := r.Get(ctx, req.NamespacedName, &mdView)
 	if errors.IsNotFound(err) {
 		r.removeMetrics(mdView)
 		return ctrl.Result{}, nil
 	}
+	//! [call-remove-metrics]
 	if err != nil {
 		logger.Error(err, "unable to get MarkdownView", "name", req.NamespacedName)
 		return ctrl.Result{}, err
@@ -150,7 +152,7 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 		viewerImage = mdView.Spec.ViewerImage
 	}
 
-	owner, err := ownerRef(mdView, r.Scheme)
+	owner, err := controllerReference(mdView, r.Scheme)
 	if err != nil {
 		return err
 	}
@@ -257,9 +259,10 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 //! [reconcile-service]
 func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView viewv1.MarkdownView) error {
 	logger := log.FromContext(ctx)
+	//! [service-apply-configuration]
 	svcName := "viewer-" + mdView.Name
 
-	owner, err := ownerRef(mdView, r.Scheme)
+	owner, err := controllerReference(mdView, r.Scheme)
 	if err != nil {
 		return err
 	}
@@ -284,6 +287,7 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 				WithTargetPort(intstr.FromInt(3000)),
 			),
 		)
+	//! [service-apply-configuration]
 
 	obj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(svc)
 	if err != nil {
@@ -342,9 +346,13 @@ func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewv1
 
 	if mdView.Status != status {
 		mdView.Status = status
+		//! [call-set-metrics]
 		r.setMetrics(mdView)
+		//! [call-set-metrics]
 
+		//! [call-recorder-event]
 		r.Recorder.Event(&mdView, corev1.EventTypeNormal, "Updated", fmt.Sprintf("MarkdownView(%s:%s) updated: %s", mdView.Namespace, mdView.Name, mdView.Status))
+		//! [call-recorder-event]
 
 		err = r.Status().Update(ctx, &mdView)
 		if err != nil {
@@ -364,17 +372,17 @@ func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewv1
 func (r *MarkdownViewReconciler) setMetrics(mdView viewv1.MarkdownView) {
 	switch mdView.Status {
 	case viewv1.MarkdownViewNotReady:
-		NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
-		AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		NotReadyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(1)
+		AvailableVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(0)
+		HealthyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(0)
 	case viewv1.MarkdownViewAvailable:
-		NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
-		HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		NotReadyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(0)
+		AvailableVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(1)
+		HealthyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(0)
 	case viewv1.MarkdownViewHealthy:
-		NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
+		NotReadyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(0)
+		AvailableVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(0)
+		HealthyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(1)
 	}
 }
 
@@ -382,14 +390,15 @@ func (r *MarkdownViewReconciler) setMetrics(mdView viewv1.MarkdownView) {
 
 //! [remove-metrics]
 func (r *MarkdownViewReconciler) removeMetrics(mdView viewv1.MarkdownView) {
-	NotReadyVec.DeleteLabelValues(mdView.Name, mdView.Name)
-	AvailableVec.DeleteLabelValues(mdView.Name, mdView.Name)
-	HealthyVec.DeleteLabelValues(mdView.Name, mdView.Name)
+	NotReadyVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
+	AvailableVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
+	HealthyVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
 }
 
 //! [remove-metrics]
 
-func ownerRef(mdView viewv1.MarkdownView, scheme *runtime.Scheme) (*metav1apply.OwnerReferenceApplyConfiguration, error) {
+//! [controller-reference]
+func controllerReference(mdView viewv1.MarkdownView, scheme *runtime.Scheme) (*metav1apply.OwnerReferenceApplyConfiguration, error) {
 	gvk, err := apiutil.GVKForObject(&mdView, scheme)
 	if err != nil {
 		return nil, err
@@ -404,14 +413,7 @@ func ownerRef(mdView viewv1.MarkdownView, scheme *runtime.Scheme) (*metav1apply.
 	return ref, nil
 }
 
-func labelSet(mdView viewv1.MarkdownView) map[string]string {
-	labels := map[string]string{
-		"app.kubernetes.io/name":       "mdbook",
-		"app.kubernetes.io/instance":   mdView.Name,
-		"app.kubernetes.io/created-by": "markdown-view-controller",
-	}
-	return labels
-}
+//! [controller-reference]
 
 // SetupWithManager sets up the controller with the Manager.
 //! [managedby]

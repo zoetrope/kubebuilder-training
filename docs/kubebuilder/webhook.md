@@ -65,7 +65,7 @@ manifests.yamlファイルは`make manifests`ファイルで自動生成され�
 
 Kubebuilderコマンドで生成した直後の状態では、`make manifests`コマンドでマニフェストを生成しても、Webhook機能が利用できるようにはなっていません。
 
-[config/default/kustomization.yaml](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/config/default/kustomization.yaml)ファイルを編集する必要があります。
+`config/default/kustomization.yaml`ファイルを編集する必要があります。
 
 生成直後のkustomization.yamlは、`bases` の `../webhook` と `../certmanager`, `patchesStrategicMerge` の `manager_webhook_patch.yaml` と `webhookcainjection_patch.yaml`, `vars` がコメントアウトされていますが、これらのコメントを外します。
 
