@@ -29,7 +29,7 @@ watch_file('./config/')
 k8s_yaml(kustomize('./config/dev'))
 
 local_resource(
-    'Watch & Compile', generate() + binary(), deps=['controllers', 'api', 'pkg', 'main.go'],
+    'Watch & Compile', generate() + binary(), deps=['controllers', 'api', 'main.go'],
     ignore=['*/*/zz_generated.deepcopy.go'])
 
 docker_build_with_restart(

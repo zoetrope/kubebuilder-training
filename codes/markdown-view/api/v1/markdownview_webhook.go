@@ -17,7 +17,6 @@ limitations under the License.
 package v1
 
 import (
-	"github.com/zoetrope/markdown-view/pkg/constants"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -52,7 +51,7 @@ func (r *MarkdownView) Default() {
 	markdownviewlog.Info("default", "name", r.Name)
 
 	if len(r.Spec.ViewerImage) == 0 {
-		r.Spec.ViewerImage = constants.DefaultViewerImage
+		r.Spec.ViewerImage = "peaceiris/mdbook:latest"
 	}
 }
 

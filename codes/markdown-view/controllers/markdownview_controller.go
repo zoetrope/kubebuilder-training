@@ -20,8 +20,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/zoetrope/markdown-view/pkg/constants"
-	"github.com/zoetrope/markdown-view/pkg/metrics"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
@@ -143,7 +141,7 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 	logger := log.FromContext(ctx)
 
 	depName := "viewer-" + mdView.Name
-	viewerImage := constants.DefaultViewerImage
+	viewerImage := "peaceiris/mdbook:latest"
 	if len(mdView.Spec.ViewerImage) != 0 {
 		viewerImage = mdView.Spec.ViewerImage
 	}
@@ -163,7 +161,7 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 				WithLabels(labelSet(mdView)).
 				WithSpec(corev1apply.PodSpec().
 					WithContainers(corev1apply.Container().
-						WithName(constants.ViewerName).
+						WithName("mdbook").
 						WithImage(viewerImage).
 						WithImagePullPolicy(corev1.PullIfNotPresent).
 						WithCommand("mdbook").
@@ -216,7 +214,7 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 		return err
 	}
 
-	currApplyConfig, err := appsv1apply.ExtractDeployment(&current, constants.ControllerName)
+	currApplyConfig, err := appsv1apply.ExtractDeployment(&current, "markdown-view-controller")
 	if err != nil {
 		return err
 	}
@@ -226,7 +224,7 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 	}
 
 	err = r.Patch(ctx, patch, client.Apply, &client.PatchOptions{
-		FieldManager: constants.ControllerName,
+		FieldManager: "markdown-view-controller",
 		Force:        pointer.Bool(true),
 	})
 
@@ -275,7 +273,7 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 		return err
 	}
 
-	currApplyConfig, err := corev1apply.ExtractService(&current, constants.ControllerName)
+	currApplyConfig, err := corev1apply.ExtractService(&current, "markdown-view-controller")
 	if err != nil {
 		return err
 	}
@@ -285,7 +283,7 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 	}
 
 	err = r.Patch(ctx, patch, client.Apply, &client.PatchOptions{
-		FieldManager: constants.ControllerName,
+		FieldManager: "markdown-view-controller",
 		Force:        pointer.Bool(true),
 	})
 	if err != nil {
@@ -340,17 +338,17 @@ func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewv1
 func (r *MarkdownViewReconciler) setMetrics(mdView viewv1.MarkdownView) {
 	switch mdView.Status {
 	case viewv1.MarkdownViewNotReady:
-		metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
-		metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
+		AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
 	case viewv1.MarkdownViewAvailable:
-		metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
-		metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
+		HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
 	case viewv1.MarkdownViewHealthy:
-		metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
-		metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
+		NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(0)
+		HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(1)
 	}
 }
 
@@ -358,9 +356,9 @@ func (r *MarkdownViewReconciler) setMetrics(mdView viewv1.MarkdownView) {
 
 //! [remove-metrics]
 func (r *MarkdownViewReconciler) removeMetrics(mdView viewv1.MarkdownView) {
-	metrics.NotReadyVec.DeleteLabelValues(mdView.Name, mdView.Name)
-	metrics.AvailableVec.DeleteLabelValues(mdView.Name, mdView.Name)
-	metrics.HealthyVec.DeleteLabelValues(mdView.Name, mdView.Name)
+	NotReadyVec.DeleteLabelValues(mdView.Name, mdView.Name)
+	AvailableVec.DeleteLabelValues(mdView.Name, mdView.Name)
+	HealthyVec.DeleteLabelValues(mdView.Name, mdView.Name)
 }
 
 //! [remove-metrics]
@@ -382,9 +380,9 @@ func ownerRef(mdView viewv1.MarkdownView, scheme *runtime.Scheme) (*metav1apply.
 
 func labelSet(mdView viewv1.MarkdownView) map[string]string {
 	labels := map[string]string{
-		constants.LabelAppName:      constants.ViewerName,
-		constants.LabelAppInstance:  mdView.Name,
-		constants.LabelAppCreatedBy: constants.ControllerName,
+		"app.kubernetes.io/name":       "mdbook",
+		"app.kubernetes.io/instance":   mdView.Name,
+		"app.kubernetes.io/created-by": "markdown-view-controller",
 	}
 	return labels
 }
