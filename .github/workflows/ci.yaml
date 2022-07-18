@@ -1,0 +1,35 @@
+name: main
+on:
+  pull_request:
+  push:
+    branches:
+      - 'main'
+    tags-ignore:
+      - '*'
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aquaproj/aqua-installer@v1.0.0
+        with:
+          working_directory: ./codes/50_completed
+          aqua_version: v1.17.1
+      - run: make test
+        working-directory: ./codes/50_completed
+  tilt:
+    name: Run tilt ci
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aquaproj/aqua-installer@v1.0.0
+        with:
+          working_directory: ./codes/10_tilt
+          aqua_version: v1.17.1
+      - run: make controller-gen
+        working-directory: ./codes/10_tilt
+      - run: make start
+        working-directory: ./codes/10_tilt
+      - run: tilt ci
+        working-directory: ./codes/10_tilt
