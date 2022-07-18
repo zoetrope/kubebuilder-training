@@ -330,20 +330,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
-            
-                <a href="../controller-runtime/deletion.html">
-            
-                    
-                    リソースの削除
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -369,12 +356,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
                     
                     Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/deletion.html">
+            
+                <a href="../controller-runtime/deletion.html">
+            
+                    
+                    リソースの削除
             
                 </a>
             
@@ -501,17 +501,20 @@
 manifests.yamlファイルは<code>make manifests</code>ファイルで自動生成されるため、基本的に手動で編集する必要はありません。</p>
 <h2 id="maingo">main.go</h2>
 <p><code>main.go</code>には、以下のようなWebhookの初期化をおこなうためのコードが追加されています。</p>
-<pre><code class="lang-go"><span class="hljs-keyword">if</span> err = (&amp;viewv1.MarkdownView{}).SetupWebhookWithManager(mgr); err != <span class="hljs-literal">nil</span> {
+<blockquote>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/00_scaffold/main.go" target="_blank">main.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-keyword">if</span> err = (&amp;viewv1.MarkdownView{}).SetupWebhookWithManager(mgr); err != <span class="hljs-literal">nil</span> {
     setupLog.Error(err, <span class="hljs-string">&quot;unable to create webhook&quot;</span>, <span class="hljs-string">&quot;webhook&quot;</span>, <span class="hljs-string">&quot;MarkdownView&quot;</span>)
     os.Exit(<span class="hljs-number">1</span>)
 }
 </code></pre>
 <h2 id="kustomizationyamlの編集">kustomization.yamlの編集</h2>
 <p>Kubebuilderコマンドで生成した直後の状態では、<code>make manifests</code>コマンドでマニフェストを生成しても、Webhook機能が利用できるようにはなっていません。</p>
-<p><a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/config/default/kustomization.yaml" target="_blank">config/default/kustomization.yaml</a>ファイルを編集する必要があります。</p>
+<p><code>config/default/kustomization.yaml</code>ファイルを編集する必要があります。</p>
 <p>生成直後のkustomization.yamlは、<code>bases</code> の <code>../webhook</code> と <code>../certmanager</code>, <code>patchesStrategicMerge</code> の <code>manager_webhook_patch.yaml</code> と <code>webhookcainjection_patch.yaml</code>, <code>vars</code> がコメントアウトされていますが、これらのコメントを外します。</p>
 <blockquote>
-<p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
+<p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/00_scaffold/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
 </blockquote>
 <pre><code class="lang-yaml"><span class="hljs-attr">bases:</span>
 <span class="hljs-comment"># [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in</span>
@@ -601,7 +604,7 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"next":{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"previous":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/webhook.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"next":{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"previous":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/webhook.md","mtime":"2022-07-17T08:07:07.130Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-07-17T07:03:07.757Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -653,6 +656,10 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
     </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

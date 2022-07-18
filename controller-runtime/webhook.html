@@ -330,20 +330,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="deletion.html">
-            
-                <a href="deletion.html">
-            
-                    
-                    リソースの削除
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.4" data-path="controller_test.html">
+        <li class="chapter " data-level="1.4.3" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.5" data-path="webhook.html">
+        <li class="chapter active" data-level="1.4.4" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -369,12 +356,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
                     
                     Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="deletion.html">
+            
+                <a href="deletion.html">
+            
+                    
+                    リソースの削除
             
                 </a>
             
@@ -466,14 +466,39 @@ MutatingWebhookではリソースの値を書き換えることができ、Valid
 <p>まずはDefaulterの実装です。
 Defaultメソッドでは、MarkdownViewリソースの値を書き換えることができます。</p>
 <blockquote>
-<p><a id="markdownview_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/api/v1/markdownview_webhook.go" target="_blank">markdownview_webhook.go</a></p>
+<p><a id="markdownview_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/api/v1/markdownview_webhook.go" target="_blank">markdownview_webhook.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-comment">// Default implements webhook.Defaulter so a webhook will be registered for the type</span>
+<pre><code class="lang-golang"><span class="hljs-keyword">package</span> v1
+
+<span class="hljs-keyword">import</span> (
+    apierrors <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/api/errors&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/runtime&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/runtime/schema&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/util/validation/field&quot;</span>
+    ctrl <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime&quot;</span>
+    logf <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log&quot;</span>
+    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/webhook&quot;</span>
+)
+
+<span class="hljs-comment">// log is for logging in this package.</span>
+<span class="hljs-keyword">var</span> markdownviewlog = logf.Log.WithName(<span class="hljs-string">&quot;markdownview-resource&quot;</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">SetupWebhookWithManager</span><span class="hljs-params">(mgr ctrl.Manager)</span> <span class="hljs-title">error</span></span> {
+    <span class="hljs-keyword">return</span> ctrl.NewWebhookManagedBy(mgr).
+        For(r).
+        Complete()
+}
+
+<span class="hljs-comment">//+kubebuilder:webhook:path=/mutate-view-zoetrope-github-io-v1-markdownview,mutating=true,failurePolicy=fail,sideEffects=None,groups=view.zoetrope.github.io,resources=markdownviews,verbs=create;update,versions=v1,name=mmarkdownview.kb.io,admissionReviewVersions=v1</span>
+
+<span class="hljs-keyword">var</span> _ webhook.Defaulter = &amp;MarkdownView{}
+
+<span class="hljs-comment">// Default implements webhook.Defaulter so a webhook will be registered for the type</span>
 <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">Default</span><span class="hljs-params">()</span></span> {
     markdownviewlog.Info(<span class="hljs-string">&quot;default&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
 
     <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(r.Spec.ViewerImage) == <span class="hljs-number">0</span> {
-        r.Spec.ViewerImage = constants.DefaultViewerImage
+        r.Spec.ViewerImage = <span class="hljs-string">&quot;peaceiris/mdbook:latest&quot;</span>
     }
 }
 </code></pre>
@@ -483,9 +508,35 @@ Defaultメソッドでは、MarkdownViewリソースの値を書き換えるこ�
 ValidateCreate, ValidateUpdate, ValidateDeleteは、それぞれリソースの作成・更新・削除のタイミングで呼び出される関数です。
 これらの関数の中でMarkdownViewリソースの内容をチェックし、エラーを返すことでリソースの操作を失敗させることができます。</p>
 <blockquote>
-<p><a id="markdownview_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/api/v1/markdownview_webhook.go" target="_blank">markdownview_webhook.go</a></p>
+<p><a id="markdownview_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/api/v1/markdownview_webhook.go" target="_blank">markdownview_webhook.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-comment">// ValidateCreate implements webhook.Validator so a webhook will be registered for the type</span>
+<pre><code class="lang-golang"><span class="hljs-keyword">package</span> v1
+
+<span class="hljs-keyword">import</span> (
+    apierrors <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/api/errors&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/runtime&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/runtime/schema&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/util/validation/field&quot;</span>
+    ctrl <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime&quot;</span>
+    logf <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log&quot;</span>
+    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/webhook&quot;</span>
+)
+
+<span class="hljs-comment">// log is for logging in this package.</span>
+<span class="hljs-keyword">var</span> markdownviewlog = logf.Log.WithName(<span class="hljs-string">&quot;markdownview-resource&quot;</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">SetupWebhookWithManager</span><span class="hljs-params">(mgr ctrl.Manager)</span> <span class="hljs-title">error</span></span> {
+    <span class="hljs-keyword">return</span> ctrl.NewWebhookManagedBy(mgr).
+        For(r).
+        Complete()
+}
+
+<span class="hljs-comment">// TODO(user): change verbs to &quot;verbs=create;update;delete&quot; if you want to enable deletion validation.</span>
+<span class="hljs-comment">//+kubebuilder:webhook:path=/validate-view-zoetrope-github-io-v1-markdownview,mutating=false,failurePolicy=fail,sideEffects=None,groups=view.zoetrope.github.io,resources=markdownviews,verbs=create;update,versions=v1,name=vmarkdownview.kb.io,admissionReviewVersions=v1</span>
+
+<span class="hljs-keyword">var</span> _ webhook.Validator = &amp;MarkdownView{}
+
+<span class="hljs-comment">// ValidateCreate implements webhook.Validator so a webhook will be registered for the type</span>
 <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">ValidateCreate</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
     markdownviewlog.Info(<span class="hljs-string">&quot;validate create&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
 
@@ -609,7 +660,7 @@ markdownviews.view.zoetrope.github.io &quot;markdownview-sample&quot; was not va
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookの実装","level":"1.4.5","depth":2,"next":{"title":"Webhookのテスト","level":"1.4.6","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"previous":{"title":"コントローラーのテスト","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/webhook.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookの実装","level":"1.4.4","depth":2,"next":{"title":"Webhookのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"previous":{"title":"コントローラーのテスト","level":"1.4.3","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/webhook.md","mtime":"2022-07-17T07:17:09.920Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-07-17T07:03:07.757Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -661,6 +712,10 @@ markdownviews.view.zoetrope.github.io &quot;markdownview-sample&quot; was not va
     </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

@@ -328,20 +328,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="controller-runtime/deletion.html">
-            
-                <a href="controller-runtime/deletion.html">
-            
-                    
-                    リソースの削除
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.4" data-path="controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.3" data-path="controller-runtime/controller_test.html">
             
                 <a href="controller-runtime/controller_test.html">
             
@@ -354,7 +341,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.4" data-path="controller-runtime/webhook.html">
             
                 <a href="controller-runtime/webhook.html">
             
@@ -367,12 +354,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.5" data-path="controller-runtime/webhook_test.html">
             
                 <a href="controller-runtime/webhook_test.html">
             
                     
                     Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="controller-runtime/deletion.html">
+            
+                <a href="controller-runtime/deletion.html">
+            
+                    
+                    リソースの削除
             
                 </a>
             
@@ -490,16 +490,17 @@ MOCOは、MySQLClusterリソースやBackupPolicyリソースを利用して、M
 <p>本資料ではこれらのツールの利用してカスタムコントローラーを実装する方法を学んでいきます。</p>
 <h2 id="対応バージョン">対応バージョン</h2>
 <ul>
-<li>Kubebuilder: v3.4.1</li>
-<li>controller-tools: v0.9.0</li>
-<li>controller-runtime: v0.12.1</li>
+<li>Kubebuilder: v3.5.0</li>
+<li>controller-tools: v0.9.2</li>
+<li>controller-runtime: v0.12.3</li>
 </ul>
 <h2 id="更新履歴">更新履歴</h2>
 <ul>
 <li>2020/07/30: 初版公開</li>
 <li>2021/04/29: Kubebuilder v3対応</li>
-<li>2021/07/25: サンプルをMarkdownViewコントローラーに変更。本文の全面見直し。</li>
+<li>2021/07/25: サンプルをMarkdownViewコントローラーに変更、本文の全面見直し</li>
 <li>2022/06/20: Kubebuilder v3.4.1対応</li>
+<li>2022/07/18: Kubebuilder v3.5.0対応、サンプルコードの見直し</li>
 </ul>
 
                                 
@@ -540,7 +541,7 @@ MOCOは、MySQLClusterリソースやBackupPolicyリソースを利用して、M
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"つくって学ぶKubebuilder","level":"1.1","depth":1,"next":{"title":"インストール","level":"1.1.1","depth":2,"path":"introduction/installation.md","ref":"introduction/installation.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"README.md","mtime":"2022-06-20T04:32:50.987Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"つくって学ぶKubebuilder","level":"1.1","depth":1,"next":{"title":"インストール","level":"1.1.1","depth":2,"path":"introduction/installation.md","ref":"introduction/installation.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"README.md","mtime":"2022-07-16T05:10:14.220Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-07-17T07:03:07.757Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
@@ -592,6 +593,10 @@ MOCOは、MySQLClusterリソースやBackupPolicyリソースを利用して、M
     </script>
     <script src="gitbook/gitbook.js"></script>
     <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
     
         
         <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>

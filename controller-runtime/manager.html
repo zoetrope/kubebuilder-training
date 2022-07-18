@@ -61,7 +61,7 @@
     <link rel="next" href="monitoring.html" />
     
     
-    <link rel="prev" href="webhook_test.html" />
+    <link rel="prev" href="deletion.html" />
     
 
     </head>
@@ -330,20 +330,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="deletion.html">
-            
-                <a href="deletion.html">
-            
-                    
-                    リソースの削除
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.4" data-path="controller_test.html">
+        <li class="chapter " data-level="1.4.3" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.4" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -369,12 +356,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
                     
                     Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="deletion.html">
+            
+                <a href="deletion.html">
+            
+                    
+                    リソースの削除
             
                 </a>
             
@@ -470,7 +470,7 @@
 <p>リーダー選出の利用方法は、<code>NewManager</code>のオプションの<code>LeaderElection</code>にtrueを指定し、<code>LeaderElectionID</code>にリーダー選出用のIDを指定するだけです。
 リーダー選出は、同じ<code>LeaderElectionID</code>を指定したプロセスの中から1つだけリーダーを選ぶという挙動になります。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/main.go" target="_blank">main.go</a></p>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/main.go" target="_blank">main.go</a></p>
 </blockquote>
 <pre><code class="lang-golang">mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
     Scheme:                 scheme,
@@ -478,25 +478,24 @@
     Port:                   <span class="hljs-number">9443</span>,
     HealthProbeBindAddress: probeAddr,
     LeaderElection:         enableLeaderElection,
-    LeaderElectionID:       <span class="hljs-string">&quot;c124e721.zoetrope.github.io&quot;</span>,
+    LeaderElectionID:       <span class="hljs-string">&quot;3ca5b296.zoetrope.github.io&quot;</span>,
+    <span class="hljs-comment">// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily</span>
+    <span class="hljs-comment">// when the Manager ends. This requires the binary to immediately end when the</span>
+    <span class="hljs-comment">// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly</span>
+    <span class="hljs-comment">// speeds up voluntary leader transitions as the new leader don&apos;t have to wait</span>
+    <span class="hljs-comment">// LeaseDuration time first.</span>
+    <span class="hljs-comment">//</span>
+    <span class="hljs-comment">// In the default scaffold provided, the program ends immediately after</span>
+    <span class="hljs-comment">// the manager stops, so would be fine to enable this option. However,</span>
+    <span class="hljs-comment">// if you are doing or is intended to do any operation such as perform cleanups</span>
+    <span class="hljs-comment">// after the manager stops then its usage might be unsafe.</span>
+    <span class="hljs-comment">// LeaderElectionReleaseOnCancel: true,</span>
 })
 </code></pre>
-<p>それでは、<a href="../../codes/markdown-view/config/manager/manager.yaml">config/manager/manager.yaml</a>の<code>replicas</code>フィールドを2に変更して、MarkdownViewコントローラーをデプロイしてみましょう。</p>
-<p>デプロイされた2つのPodのログを表示させてみると、リーダーに選出された方のPodだけがReconcile処理をおこなっている様子が確認できます。</p>
-<p>リーダー選出の機能にはConfigMapが利用されています。
-下記のようにConfigMapを表示させてみると、<code>metadata.annotations[&quot;control-plane.alpha.kubernetes.io/leader&quot;]</code>に、現在のリーダーの情報が保存されていることがわかります。</p>
-<pre><code>$ kubectl get configmap -n markdown-view-system c124e721.zoetrope.github.io -o yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  annotations:
-    control-plane.alpha.kubernetes.io/leader: &apos;{&quot;holderIdentity&quot;:&quot;markdown-view-controller-manager-87dcb5f6-7ql9f_ece9f1fd-d5e0-4f10-9627-f6214ed9af8a&quot;,&quot;leaseDurationSeconds&quot;:15,&quot;acquireTime&quot;:&quot;2021-07-24T06:41:44Z&quot;,&quot;renewTime&quot;:&quot;2021-07-24T10:33:47Z&quot;,&quot;leaderTransitions&quot;:1}&apos;
-  creationTimestamp: &quot;2021-07-24T05:56:03Z&quot;
-  name: c124e721.zoetrope.github.io
-  namespace: markdown-view-system
-  resourceVersion: &quot;64771&quot;
-  uid: d47a3dba-988b-4839-804f-2b6f0ac9c9c1
-</code></pre><p>なお、Admission Webhook処理は競合の心配がないため、リーダーではないプロセスも呼び出されます。</p>
+<p>それでは、<a href="../../codes/50_completed/config/manager/manager.yaml">config/manager/manager.yaml</a>の<code>replicas</code>フィールドを2に変更して、MarkdownViewコントローラーをデプロイしてみましょう。</p>
+<p>デプロイされた2つのPodのログを表示させてみると、リーダーに選出された方のPodだけがReconcile処理をおこなっている様子が確認できます。
+リーダーに選出されたPodを終了させると、もう片方のPodにリーダーが切り替わる様子を確認できます。</p>
+<p>なお、Admission Webhook処理は競合の心配がないため、リーダーではないプロセスも呼び出されます。</p>
 <h2 id="runnable">Runnable</h2>
 <p>カスタムコントローラーの実装において、Reconcile Loop以外にもgoroutineを立ち上げて定期的に実行したり、何らかのイベントを待ち受けたりしたい場合があります。
 Managerではそのような処理を実現するための仕組みを提供しています。</p>
@@ -544,19 +543,42 @@ NeedLeaderElectionメソッドで <code>false</code> を返すようにします
 <h2 id="eventrecorder">EventRecorder</h2>
 <p>カスタムリソースのStatusには、現在の状態が保存されています。
 一方、これまでどのような処理が実施されてきたのかを記録したい場合、Kubernetesが提供する<a href="https://pkg.go.dev/k8s.io/api/core/v1?tab=doc#Event" target="_blank">Event</a>リソースを利用できます。</p>
-<p>Managerはイベントを記録するための機能を提供しており、以下のように取得できます。</p>
-<pre><code class="lang-go">recorder := mgr.GetEventRecorderFor(<span class="hljs-string">&quot;markdownview-controller&quot;</span>)
+<p>Managerはイベントを記録するための機能を提供しており、<code>GetEventRecorderFor</code>で<a href="https://pkg.go.dev/k8s.io/client-go/tools/record?tab=doc#EventRecorder" target="_blank">EventRecorder</a>を取得できます。
+以下のように、Reconcilerを初期化する際にEventRecorderを渡します。</p>
+<blockquote>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/main.go" target="_blank">main.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-keyword">if</span> err = (&amp;controllers.MarkdownViewReconciler{
+    Client:   mgr.GetClient(),
+    Scheme:   mgr.GetScheme(),
+    Recorder: mgr.GetEventRecorderFor(<span class="hljs-string">&quot;markdownview-controller&quot;</span>),
+}).SetupWithManager(mgr); err != <span class="hljs-literal">nil</span> {
+    setupLog.Error(err, <span class="hljs-string">&quot;unable to create controller&quot;</span>, <span class="hljs-string">&quot;controller&quot;</span>, <span class="hljs-string">&quot;MarkdownView&quot;</span>)
+    os.Exit(<span class="hljs-number">1</span>)
+}
 </code></pre>
-<p>この<a href="https://pkg.go.dev/k8s.io/client-go/tools/record?tab=doc#EventRecorder" target="_blank">EventRecorder</a>をReconcilerに渡して利用します。</p>
+<p>Reconcilerではこれをフィールドとして持っておきます。</p>
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-keyword">type</span> MarkdownViewReconciler <span class="hljs-keyword">struct</span> {
+    client.Client
+    Scheme   *runtime.Scheme
+    Recorder record.EventRecorder
+}
+</code></pre>
 <p>Eventを記録するための関数として、<code>Event</code>, <code>Eventf</code>, <code>AnnotatedEventf</code>などが用意されています。
 ここでは、ステータス更新時に以下のようなイベントを記録することにしましょう。なお、イベントタイプには<code>EventTypeNormal</code>, <code>EventTypeWarning</code>のみ指定できます。</p>
-<pre><code class="lang-go">r.Recorder.Event(&amp;mdView, corev1.EventTypeNormal, <span class="hljs-string">&quot;Updated&quot;</span>, fmt.Sprintf(<span class="hljs-string">&quot;MarkdownView(%s:%s) updated: %s&quot;</span>, mdView.Namespace, mdView.Name, mdView.Status))
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang">r.Recorder.Event(&amp;mdView, corev1.EventTypeNormal, <span class="hljs-string">&quot;Updated&quot;</span>, fmt.Sprintf(<span class="hljs-string">&quot;MarkdownView(%s:%s) updated: %s&quot;</span>, mdView.Namespace, mdView.Name, mdView.Status))
 </code></pre>
 <p>このEventリソースは第1引数で指定したリソースに結びいており、そのリソースと同じnamespaceにEventリソースが作成されます。
 カスタムコントローラーがEventリソースを作成できるように、以下のようなRBACのマーカーを追加し、<code>make manifests</code>でマニフェストを更新しておきます。</p>
 <pre><code class="lang-go"><span class="hljs-comment">//+kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch</span>
 </code></pre>
-<p>それでは作成されたEventリソースを確認してみましょう。なお、Eventリソースはデフォルト設定では1時間経つと消えてしまいます。</p>
+<p>コントローラーを実行し、作成したEventリソースを確認してみましょう。なお、Eventリソースはデフォルト設定では1時間経つと消えてしまいます。</p>
 <pre><code>$ kubectl get events -n default
 LAST SEEN   TYPE     REASON    OBJECT                             MESSAGE
 14s         Normal   Updated   markdownview/markdownview-sample   MarkdownView(default:markdownview-sample) updated: NotReady
@@ -565,7 +587,7 @@ LAST SEEN   TYPE     REASON    OBJECT                             MESSAGE
 <p>Managerには、ヘルスチェック用のAPIのエンドポイントを作成する機能が用意されています。</p>
 <p>ヘルスチェック機能を利用するには、Managerの作成時に<code>HealthProbeBindAddress</code>でエンドポイントのアドレスを指定します。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/main.go" target="_blank">main.go</a></p>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/main.go" target="_blank">main.go</a></p>
 </blockquote>
 <pre><code class="lang-golang">mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
     Scheme:                 scheme,
@@ -573,13 +595,24 @@ LAST SEEN   TYPE     REASON    OBJECT                             MESSAGE
     Port:                   <span class="hljs-number">9443</span>,
     HealthProbeBindAddress: probeAddr,
     LeaderElection:         enableLeaderElection,
-    LeaderElectionID:       <span class="hljs-string">&quot;c124e721.zoetrope.github.io&quot;</span>,
+    LeaderElectionID:       <span class="hljs-string">&quot;3ca5b296.zoetrope.github.io&quot;</span>,
+    <span class="hljs-comment">// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily</span>
+    <span class="hljs-comment">// when the Manager ends. This requires the binary to immediately end when the</span>
+    <span class="hljs-comment">// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly</span>
+    <span class="hljs-comment">// speeds up voluntary leader transitions as the new leader don&apos;t have to wait</span>
+    <span class="hljs-comment">// LeaseDuration time first.</span>
+    <span class="hljs-comment">//</span>
+    <span class="hljs-comment">// In the default scaffold provided, the program ends immediately after</span>
+    <span class="hljs-comment">// the manager stops, so would be fine to enable this option. However,</span>
+    <span class="hljs-comment">// if you are doing or is intended to do any operation such as perform cleanups</span>
+    <span class="hljs-comment">// after the manager stops then its usage might be unsafe.</span>
+    <span class="hljs-comment">// LeaderElectionReleaseOnCancel: true,</span>
 })
 </code></pre>
 <p>そして、<code>AddHealthzCheck</code>と<code>AddReadyzCheck</code>で、ハンドラの登録をおこないます。
 デフォルトでは<code>healthz.Ping</code>という何もしない関数を利用していますが、独自関数の登録も可能です。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/main.go" target="_blank">main.go</a></p>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/main.go" target="_blank">main.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-keyword">if</span> err := mgr.AddHealthzCheck(<span class="hljs-string">&quot;healthz&quot;</span>, healthz.Ping); err != <span class="hljs-literal">nil</span> {
     setupLog.Error(err, <span class="hljs-string">&quot;unable to set up health check&quot;</span>)
@@ -592,7 +625,7 @@ LAST SEEN   TYPE     REASON    OBJECT                             MESSAGE
 </code></pre>
 <p>カスタムコントローラーのマニフェストでは、このヘルスチェックAPIを<code>livenessProbe</code>と<code>readinessProbe</code>として利用するように指定されています。</p>
 <blockquote>
-<p><a id="manager.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/config/manager/manager.yaml" target="_blank">manager.yaml</a></p>
+<p><a id="manager.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/config/manager/manager.yaml" target="_blank">manager.yaml</a></p>
 </blockquote>
 <pre><code class="lang-yaml"><span class="hljs-attr">livenessProbe:</span>
   <span class="hljs-attr">httpGet:</span>
@@ -677,7 +710,7 @@ err := r.List(ctx, &amp;cms, client.MatchingFields(<span class="hljs-keyword">ma
 
             
                 
-                <a href="webhook_test.html" class="navigation navigation-prev " aria-label="Previous page: Webhookのテスト">
+                <a href="deletion.html" class="navigation navigation-prev " aria-label="Previous page: リソースの削除">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
@@ -693,7 +726,7 @@ err := r.List(ctx, &amp;cms, client.MatchingFields(<span class="hljs-keyword">ma
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.7","depth":2,"next":{"title":"モニタリング","level":"1.4.8","depth":2,"path":"controller-runtime/monitoring.md","ref":"controller-runtime/monitoring.md","articles":[]},"previous":{"title":"Webhookのテスト","level":"1.4.6","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.7","depth":2,"next":{"title":"モニタリング","level":"1.4.8","depth":2,"path":"controller-runtime/monitoring.md","ref":"controller-runtime/monitoring.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.6","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2022-07-17T07:56:44.370Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-07-17T07:03:07.757Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -745,6 +778,10 @@ err := r.List(ctx, &amp;cms, client.MatchingFields(<span class="hljs-keyword">ma
     </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

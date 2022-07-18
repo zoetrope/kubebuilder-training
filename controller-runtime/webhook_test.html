@@ -58,7 +58,7 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="manager.html" />
+    <link rel="next" href="deletion.html" />
     
     
     <link rel="prev" href="webhook.html" />
@@ -330,20 +330,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="deletion.html">
-            
-                <a href="deletion.html">
-            
-                    
-                    リソースの削除
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.4" data-path="controller_test.html">
+        <li class="chapter " data-level="1.4.3" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.4" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -369,12 +356,25 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.6" data-path="webhook_test.html">
+        <li class="chapter active" data-level="1.4.5" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
                     
                     Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="deletion.html">
+            
+                <a href="deletion.html">
+            
+                    
+                    リソースの削除
             
                 </a>
             
@@ -463,7 +463,7 @@
 <p>Webhookもコントローラーのテストと同じくEnvtestを利用できます。
 Kubebuilderによってテストを実行するためのコードが以下のように生成されています。</p>
 <blockquote>
-<p><a id="api/v1/webhook_suite_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/api/v1/webhook_suite_test.go" target="_blank">api/v1/webhook_suite_test.go</a></p>
+<p><a id="api/v1/webhook_suite_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/api/v1/webhook_suite_test.go" target="_blank">api/v1/webhook_suite_test.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">/*
 Copyright 2022.
@@ -606,7 +606,7 @@ limitations under the License.
 <h2 id="webhookのテスト">Webhookのテスト</h2>
 <p>Webhookのテストコードを書いてみましょう。</p>
 <blockquote>
-<p><a id="api/v1/markdownview_webhook_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/api/v1/markdownview_webhook_test.go" target="_blank">api/v1/markdownview_webhook_test.go</a></p>
+<p><a id="api/v1/markdownview_webhook_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/api/v1/markdownview_webhook_test.go" target="_blank">api/v1/markdownview_webhook_test.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-keyword">package</span> v1
 
@@ -619,7 +619,7 @@ limitations under the License.
 
     . <span class="hljs-string">&quot;github.com/onsi/ginkgo&quot;</span>
     . <span class="hljs-string">&quot;github.com/onsi/gomega&quot;</span>
-    k8serrors <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/api/errors&quot;</span>
+    apierrors <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/api/errors&quot;</span>
     <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/types&quot;</span>
     <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/util/yaml&quot;</span>
 )
@@ -666,7 +666,7 @@ limitations under the License.
         Expect(err).NotTo(HaveOccurred(), <span class="hljs-string">&quot;MarkdownView: %v&quot;</span>, view)
     } <span class="hljs-keyword">else</span> {
         Expect(err).To(HaveOccurred(), <span class="hljs-string">&quot;MarkdownView: %v&quot;</span>, view)
-        statusErr := &amp;k8serrors.StatusError{}
+        statusErr := &amp;apierrors.StatusError{}
         Expect(errors.As(err, &amp;statusErr)).To(BeTrue())
         expected := view.Annotations[<span class="hljs-string">&quot;message&quot;</span>]
         Expect(statusErr.ErrStatus.Message).To(ContainSubstring(expected))
@@ -728,7 +728,7 @@ Invalidなマニフェストファイル(empty-markdowns.yaml, invalid-replicas.
                 </a>
                 
                 
-                <a href="manager.html" class="navigation navigation-next " aria-label="Next page: Manager">
+                <a href="deletion.html" class="navigation navigation-next " aria-label="Next page: リソースの削除">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -739,7 +739,7 @@ Invalidなマニフェストファイル(empty-markdowns.yaml, invalid-replicas.
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookのテスト","level":"1.4.6","depth":2,"next":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"previous":{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/webhook_test.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookのテスト","level":"1.4.5","depth":2,"next":{"title":"リソースの削除","level":"1.4.6","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"previous":{"title":"Webhookの実装","level":"1.4.4","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/webhook_test.md","mtime":"2022-07-17T07:18:04.810Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-07-17T07:03:07.757Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -791,6 +791,10 @@ Invalidなマニフェストファイル(empty-markdowns.yaml, invalid-replicas.
     </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

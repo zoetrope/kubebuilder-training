@@ -330,20 +330,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="deletion.html">
-            
-                <a href="deletion.html">
-            
-                    
-                    リソースの削除
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.4" data-path="controller_test.html">
+        <li class="chapter " data-level="1.4.3" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.4" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -369,12 +356,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
                     
                     Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="deletion.html">
+            
+                <a href="deletion.html">
+            
+                    
+                    リソースの削除
             
                 </a>
             
@@ -459,13 +459,15 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="クライアントの使い方">クライアントの使い方</h1>
+<p>カスタムコントローラーを実装する前に、Kubernetes APIにアクセスするためのクライアントライブラリの使い方を確認しましょう。</p>
 <p>controller-runtimeでは、Kubernetes APIにアクセスするためのクライアントライブラリ(<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client?tab=doc#Client" target="_blank">client.Client</a>)を提供しています。</p>
 <p>このクライアントは標準リソースとカスタムリソースを同じように扱うことができ、型安全で簡単に利用できます。</p>
 <h2 id="クライアントの作成">クライアントの作成</h2>
 <p>クライアントを作成するためにはまず<a href="https://pkg.go.dev/k8s.io/apimachinery/pkg/runtime?tab=doc#Scheme" target="_blank">Scheme</a>を用意する必要があります。</p>
 <p>SchemeはGoのstructとGroupVersionKindを相互に変換したり、異なるバージョン間でのSchemeの変換をおこなったりするための機能です。</p>
+<p>kubebuilderが生成したコードでは、以下のように初期化処理をおこなっています。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/main.go" target="_blank">main.go</a></p>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/main.go" target="_blank">main.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-keyword">var</span> (
     scheme   = runtime.NewScheme()
@@ -484,10 +486,28 @@
 <code>viewv1.AddToScheme</code>では、MarkdownViewカスタムリソースの型をschemeに追加しています。</p>
 <p>このSchemeを利用することで、標準リソースとMarkdownViewリソースを扱うことができるクライアントを作成できます。</p>
 <p>つぎに<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client/config?tab=doc#GetConfigOrDie" target="_blank">GetConfigOrDie</a>でクライアントの設定を取得しています。</p>
-<pre><code class="lang-go">mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-    Scheme: scheme,
-})
-client := mgr.GetClient()
+<blockquote>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/main.go" target="_blank">main.go</a></p>
+</blockquote>
+<pre><code class="lang-golang">    mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
+        Scheme:                 scheme,
+        MetricsBindAddress:     metricsAddr,
+        Port:                   <span class="hljs-number">9443</span>,
+        HealthProbeBindAddress: probeAddr,
+        LeaderElection:         enableLeaderElection,
+        LeaderElectionID:       <span class="hljs-string">&quot;3ca5b296.zoetrope.github.io&quot;</span>,
+        <span class="hljs-comment">// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily</span>
+        <span class="hljs-comment">// when the Manager ends. This requires the binary to immediately end when the</span>
+        <span class="hljs-comment">// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly</span>
+        <span class="hljs-comment">// speeds up voluntary leader transitions as the new leader don&apos;t have to wait</span>
+        <span class="hljs-comment">// LeaseDuration time first.</span>
+        <span class="hljs-comment">//</span>
+        <span class="hljs-comment">// In the default scaffold provided, the program ends immediately after</span>
+        <span class="hljs-comment">// the manager stops, so would be fine to enable this option. However,</span>
+        <span class="hljs-comment">// if you are doing or is intended to do any operation such as perform cleanups</span>
+        <span class="hljs-comment">// after the manager stops then its usage might be unsafe.</span>
+        <span class="hljs-comment">// LeaderElectionReleaseOnCancel: true,</span>
+    })
 </code></pre>
 <p>GetConfigOrDie関数は、下記のいずれかの設定を読み込みます。</p>
 <ul>
@@ -496,8 +516,76 @@ client := mgr.GetClient()
 <li>Kubernetesクラスター上でPodとして動いているのであれば、カスタムコントローラーが持つサービスアカウントの認証情報を利用</li>
 </ul>
 <p>カスタムコントローラーは通常Kubernetesクラスター上で動いているので、サービスアカウントの認証情報が利用されます。</p>
-<p>このSchemeとConfigを利用してManagerを作成し、<code>GetClient()</code>でクライアントを取得できます。
-ただし、Managerの<code>Start()</code>を呼び出す前にクライアントは利用できないので注意しましょう。</p>
+<p>このSchemeとConfigを利用してManagerを作成し、<code>GetClient()</code>でクライアントを取得できます。</p>
+<p>以下のようにManagerから取得したクライアントを、MarkdownViewReconcilerに渡します。</p>
+<blockquote>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/main.go" target="_blank">main.go</a></p>
+</blockquote>
+<pre><code class="lang-golang">    mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
+        Scheme:                 scheme,
+        MetricsBindAddress:     metricsAddr,
+        Port:                   <span class="hljs-number">9443</span>,
+        HealthProbeBindAddress: probeAddr,
+        LeaderElection:         enableLeaderElection,
+        LeaderElectionID:       <span class="hljs-string">&quot;3ca5b296.zoetrope.github.io&quot;</span>,
+        <span class="hljs-comment">// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily</span>
+        <span class="hljs-comment">// when the Manager ends. This requires the binary to immediately end when the</span>
+        <span class="hljs-comment">// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly</span>
+        <span class="hljs-comment">// speeds up voluntary leader transitions as the new leader don&apos;t have to wait</span>
+        <span class="hljs-comment">// LeaseDuration time first.</span>
+        <span class="hljs-comment">//</span>
+        <span class="hljs-comment">// In the default scaffold provided, the program ends immediately after</span>
+        <span class="hljs-comment">// the manager stops, so would be fine to enable this option. However,</span>
+        <span class="hljs-comment">// if you are doing or is intended to do any operation such as perform cleanups</span>
+        <span class="hljs-comment">// after the manager stops then its usage might be unsafe.</span>
+        <span class="hljs-comment">// LeaderElectionReleaseOnCancel: true,</span>
+    })
+</code></pre>
+<p>ただし、Managerの<code>Start()</code>を呼び出す前にクライアントは利用できないので注意しましょう。</p>
+<h2 id="reconcile関数の中でクライアントの使い方">Reconcile関数の中でクライアントの使い方</h2>
+<p>Managerから渡されたクライアントは、以下のようにMarkdownViewReconcilerの埋め込みフィールドとなります。</p>
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-keyword">type</span> MarkdownViewReconciler <span class="hljs-keyword">struct</span> {
+    client.Client
+    Scheme *runtime.Scheme
+}
+</code></pre>
+<p>そのため、Reconcile関数内ではクライアントのメソッドを<code>r.Get(...)</code>や<code>r.Create(...)</code>のように呼び出すことができます。</p>
+<p>また、クライアントを利用してDeploymentやServiceなどKubernetesの標準リソースを扱う際には、利用したいリソースのグループバージョンに
+応じたパッケージをimportする必要があります。
+例えばDeploymentリソースであれば<code>&quot;k8s.io/api/apps/v1&quot;</code>パッケージ、Serviceリソースであれば<code>&quot;k8s.io/api/core/v1&quot;</code>パッケージが必要となります。</p>
+<p>しかし、これをそのままインポートすると<code>v1</code>というパッケージ名が衝突してしまうため、
+<code>import appsv1 &quot;k8s.io/api/apps/v1&quot;</code>のようにエイリアスをつけてインポートするのが一般的です。</p>
+<p>本ページのサンプルでは、以下のimportを利用します。</p>
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-keyword">import</span> (
+    <span class="hljs-string">&quot;context&quot;</span>
+    <span class="hljs-string">&quot;fmt&quot;</span>
+
+    viewv1 <span class="hljs-string">&quot;github.com/zoetrope/markdown-view/api/v1&quot;</span>
+    appsv1 <span class="hljs-string">&quot;k8s.io/api/apps/v1&quot;</span>
+    corev1 <span class="hljs-string">&quot;k8s.io/api/core/v1&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/api/equality&quot;</span>
+    apierrors <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/api/errors&quot;</span>
+    metav1 <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/apis/meta/v1/unstructured&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/labels&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/runtime&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/runtime/schema&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/util/intstr&quot;</span>
+    applyappsv1 <span class="hljs-string">&quot;k8s.io/client-go/applyconfigurations/apps/v1&quot;</span>
+    applycorev1 <span class="hljs-string">&quot;k8s.io/client-go/applyconfigurations/core/v1&quot;</span>
+    applymetav1 <span class="hljs-string">&quot;k8s.io/client-go/applyconfigurations/meta/v1&quot;</span>
+    <span class="hljs-string">&quot;k8s.io/utils/pointer&quot;</span>
+    ctrl <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime&quot;</span>
+    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;</span>
+    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/controller/controllerutil&quot;</span>
+)
+</code></pre>
 <h2 id="getlist">Get/List</h2>
 <p>クライアントを利用して、リソースを取得する方法を見ていきます。</p>
 <h3 id="getの使い方">Getの使い方</h3>
@@ -505,16 +593,16 @@ client := mgr.GetClient()
 そして第3引数に指定した変数で結果を受け取ることができます。
 なお、どの種類のリソースを取得するのかは、第3引数に渡した変数の型で自動的に判別されます。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/client-sample/main.go" target="_blank">main.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">get</span><span class="hljs-params">(ctx context.Context, cli client.Client)</span> <span class="hljs-title">error</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">Reconcile_get</span><span class="hljs-params">(ctx context.Context, req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
     <span class="hljs-keyword">var</span> deployment appsv1.Deployment
-    err := cli.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;default&quot;</span>, Name: <span class="hljs-string">&quot;sample&quot;</span>}, &amp;deployment)
+    err := r.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;default&quot;</span>, Name: <span class="hljs-string">&quot;sample&quot;</span>}, &amp;deployment)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> err
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
     fmt.Printf(<span class="hljs-string">&quot;Got Deployment: %#v\n&quot;</span>, deployment)
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+    <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
 }
 </code></pre>
 <h3 id="クライアントのキャッシュ機構">クライアントのキャッシュ機構</h3>
@@ -533,49 +621,49 @@ client := mgr.GetClient()
 <p>下記の例では、LabelSelectorやNamespaceを指定してリソースの取得をおこなっています。
 なお、Namespaceを指定しなかった場合は、全Namespaceのリソースを取得します。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/client-sample/main.go" target="_blank">main.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">list</span><span class="hljs-params">(ctx context.Context, cli client.Client)</span> <span class="hljs-title">error</span></span> {
-    <span class="hljs-keyword">var</span> pods corev1.PodList
-    err := cli.List(ctx, &amp;pods, &amp;client.ListOptions{
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">Reconcile_list</span><span class="hljs-params">(ctx context.Context, req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
+    <span class="hljs-keyword">var</span> services corev1.ServiceList
+    err := r.List(ctx, &amp;services, &amp;client.ListOptions{
         Namespace:     <span class="hljs-string">&quot;default&quot;</span>,
         LabelSelector: labels.SelectorFromSet(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;app&quot;</span>: <span class="hljs-string">&quot;sample&quot;</span>}),
     })
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> err
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
-    <span class="hljs-keyword">for</span> _, pod := <span class="hljs-keyword">range</span> pods.Items {
-        fmt.Println(pod.Name)
+    <span class="hljs-keyword">for</span> _, svc := <span class="hljs-keyword">range</span> services.Items {
+        fmt.Println(svc.Name)
     }
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+    <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
 }
 </code></pre>
 <p><code>Limit</code>と<code>Continue</code>を利用することで、ページネーションをおこなうことも可能です。
 下記の例では1回のAPI呼び出しで3件ずつリソースを取得して表示しています。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/client-sample/main.go" target="_blank">main.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">pagination</span><span class="hljs-params">(ctx context.Context, cli client.Client)</span> <span class="hljs-title">error</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">Reconcile_pagination</span><span class="hljs-params">(ctx context.Context, req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
     token := <span class="hljs-string">&quot;&quot;</span>
     <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; ; i++ {
-        <span class="hljs-keyword">var</span> pods corev1.PodList
-        err := cli.List(ctx, &amp;pods, &amp;client.ListOptions{
+        <span class="hljs-keyword">var</span> services corev1.ServiceList
+        err := r.List(ctx, &amp;services, &amp;client.ListOptions{
             Limit:    <span class="hljs-number">3</span>,
             Continue: token,
         })
         <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-            <span class="hljs-keyword">return</span> err
+            <span class="hljs-keyword">return</span> ctrl.Result{}, err
         }
 
         fmt.Printf(<span class="hljs-string">&quot;Page %d:\n&quot;</span>, i)
-        <span class="hljs-keyword">for</span> _, pod := <span class="hljs-keyword">range</span> pods.Items {
-            fmt.Println(pod.Name)
+        <span class="hljs-keyword">for</span> _, svc := <span class="hljs-keyword">range</span> services.Items {
+            fmt.Println(svc.Name)
         }
         fmt.Println()
 
-        token = pods.ListMeta.Continue
+        token = services.ListMeta.Continue
         <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(token) == <span class="hljs-number">0</span> {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+            <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
         }
     }
 }
@@ -586,9 +674,9 @@ client := mgr.GetClient()
 <p>リソースの作成は<code>Create()</code>、更新には<code>Update()</code>を利用します。
 例えば、Deploymentリソースは以下のように作成できます。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/client-sample/main.go" target="_blank">main.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">create</span><span class="hljs-params">(ctx context.Context, cli client.Client)</span> <span class="hljs-title">error</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">Reconcile_create</span><span class="hljs-params">(ctx context.Context, req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
     dep := appsv1.Deployment{
         ObjectMeta: metav1.ObjectMeta{
             Name:      <span class="hljs-string">&quot;sample&quot;</span>,
@@ -614,11 +702,11 @@ client := mgr.GetClient()
             },
         },
     }
-    err := cli.Create(ctx, &amp;dep)
+    err := r.Create(ctx, &amp;dep)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> err
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+    <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
 }
 </code></pre>
 <p>なお、リソースがすでに存在する状態で<code>Create()</code>を呼んだり、リソースが存在しない状態で<code>Update()</code>を呼び出したりするとエラーになります。</p>
@@ -626,40 +714,33 @@ client := mgr.GetClient()
 <p><code>Get()</code>でリソースを取得して、リソースが存在しなければ<code>Create()</code>を呼び、存在すれば<code>Update()</code>を呼び出すという処理は頻出パターンです。
 そこで、controller-runtimeには<code>CreateOrUpdate()</code>という便利な関数が用意されています。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/client-sample/main.go" target="_blank">main.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createOrUpdate</span><span class="hljs-params">(ctx context.Context, cli client.Client)</span> <span class="hljs-title">error</span></span> {
-    dep := &amp;appsv1.Deployment{}
-    dep.SetNamespace(<span class="hljs-string">&quot;default&quot;</span>)
-    dep.SetName(<span class="hljs-string">&quot;sample&quot;</span>)
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">Reconcile_createOrUpdate</span><span class="hljs-params">(ctx context.Context, req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
+    svc := &amp;corev1.Service{}
+    svc.SetNamespace(<span class="hljs-string">&quot;default&quot;</span>)
+    svc.SetName(<span class="hljs-string">&quot;sample&quot;</span>)
 
-    op, err := ctrl.CreateOrUpdate(ctx, cli, dep, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
-        dep.Spec.Replicas = pointer.Int32Ptr(<span class="hljs-number">1</span>)
-        dep.Spec.Selector = &amp;metav1.LabelSelector{
-            MatchLabels: <span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;app&quot;</span>: <span class="hljs-string">&quot;nginx&quot;</span>},
-        }
-        dep.Spec.Template = corev1.PodTemplateSpec{
-            ObjectMeta: metav1.ObjectMeta{
-                Labels: <span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;app&quot;</span>: <span class="hljs-string">&quot;nginx&quot;</span>},
-            },
-            Spec: corev1.PodSpec{
-                Containers: []corev1.Container{
-                    {
-                        Name:  <span class="hljs-string">&quot;nginx&quot;</span>,
-                        Image: <span class="hljs-string">&quot;nginx:latest&quot;</span>,
-                    },
-                },
+    op, err := ctrl.CreateOrUpdate(ctx, r.Client, svc, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+        svc.Spec.Type = corev1.ServiceTypeClusterIP
+        svc.Spec.Selector = <span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;app&quot;</span>: <span class="hljs-string">&quot;nginx&quot;</span>}
+        svc.Spec.Ports = []corev1.ServicePort{
+            {
+                Name:       <span class="hljs-string">&quot;http&quot;</span>,
+                Protocol:   corev1.ProtocolTCP,
+                Port:       <span class="hljs-number">80</span>,
+                TargetPort: intstr.FromInt(<span class="hljs-number">80</span>),
             },
         }
         <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
     })
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> err
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
     <span class="hljs-keyword">if</span> op != controllerutil.OperationResultNone {
         fmt.Printf(<span class="hljs-string">&quot;Deployment %s\n&quot;</span>, op)
     }
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+    <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
 }
 </code></pre>
 <p>この関数の第3引数に渡すオブジェクトには、NameとNamespaceのみを指定します(ただしクラスターリソースの場合はNamespace不要)。</p>
@@ -678,22 +759,22 @@ client := mgr.GetClient()
 要素が追加されたり更新されたりします。</p>
 <p><code>client.MergeFrom</code>を利用してDeploymentのレプリカ数のみを更新する例を以下に示します。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/client-sample/main.go" target="_blank">main.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">patchMerge</span><span class="hljs-params">(ctx context.Context, cli client.Client)</span> <span class="hljs-title">error</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">Reconcile_patchMerge</span><span class="hljs-params">(ctx context.Context, req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
     <span class="hljs-keyword">var</span> dep appsv1.Deployment
-    err := cli.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;default&quot;</span>, Name: <span class="hljs-string">&quot;sample&quot;</span>}, &amp;dep)
+    err := r.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;default&quot;</span>, Name: <span class="hljs-string">&quot;sample&quot;</span>}, &amp;dep)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> err
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
 
     newDep := dep.DeepCopy()
     newDep.Spec.Replicas = pointer.Int32Ptr(<span class="hljs-number">3</span>)
     patch := client.MergeFrom(&amp;dep)
 
-    err = cli.Patch(ctx, newDep, patch)
+    err = r.Patch(ctx, newDep, patch)
 
-    <span class="hljs-keyword">return</span> err
+    <span class="hljs-keyword">return</span> ctrl.Result{}, err
 }
 </code></pre>
 <p>一方のServer-Side ApplyはKubernetes v1.14で導入されたリソースの更新方法です。
@@ -703,9 +784,9 @@ client := mgr.GetClient()
 <p>なお、<a href="https://kubernetes.io/docs/reference/using-api/server-side-apply/#using-server-side-apply-in-a-controller" target="_blank">公式ドキュメントに記述</a>されているように、
 カスタムコントローラでServer-Side Applyをおこなう際には、常にForceオプションを有効にすることが推奨されています。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/client-sample/main.go" target="_blank">main.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">patchApply</span><span class="hljs-params">(ctx context.Context, cli client.Client)</span> <span class="hljs-title">error</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">Reconcile_patchApply</span><span class="hljs-params">(ctx context.Context, req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
     patch := &amp;unstructured.Unstructured{}
     patch.SetGroupVersionKind(schema.GroupVersionKind{
         Group:   <span class="hljs-string">&quot;apps&quot;</span>,
@@ -738,28 +819,28 @@ client := mgr.GetClient()
         },
     }
 
-    err := cli.Patch(ctx, patch, client.Apply, &amp;client.PatchOptions{
+    err := r.Patch(ctx, patch, client.Apply, &amp;client.PatchOptions{
         FieldManager: <span class="hljs-string">&quot;client-sample&quot;</span>,
-        Force: pointer.Bool(<span class="hljs-literal">true</span>),
+        Force:        pointer.Bool(<span class="hljs-literal">true</span>),
     })
 
-    <span class="hljs-keyword">return</span> err
+    <span class="hljs-keyword">return</span> ctrl.Result{}, err
 }
 </code></pre>
 <p>上記のようにServer-Side ApplyはUnstructured型を利用するため、型安全なコードが記述できませんでした。</p>
-<p>Kubernetes v1.21ではApplyConfigurationが導入され、以下のように型安全なServer-Side Applyのコードが書けるようになりました。</p>
+<p>Kubernetes v1.21からApplyConfigurationが導入され、以下のように型安全なServer-Side Applyのコードが書けるようになりました。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/client-sample/main.go" target="_blank">main.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">patchApplyConfig</span><span class="hljs-params">(ctx context.Context, cli client.Client)</span> <span class="hljs-title">error</span></span> {
-    dep := appsv1apply.Deployment(<span class="hljs-string">&quot;sample3&quot;</span>, <span class="hljs-string">&quot;default&quot;</span>).
-        WithSpec(appsv1apply.DeploymentSpec().
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">Reconcile_patchApplyConfig</span><span class="hljs-params">(ctx context.Context, req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
+    dep := applyappsv1.Deployment(<span class="hljs-string">&quot;sample3&quot;</span>, <span class="hljs-string">&quot;default&quot;</span>).
+        WithSpec(applyappsv1.DeploymentSpec().
             WithReplicas(<span class="hljs-number">3</span>).
-            WithSelector(metav1apply.LabelSelector().WithMatchLabels(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;app&quot;</span>: <span class="hljs-string">&quot;nginx&quot;</span>})).
-            WithTemplate(corev1apply.PodTemplateSpec().
+            WithSelector(applymetav1.LabelSelector().WithMatchLabels(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;app&quot;</span>: <span class="hljs-string">&quot;nginx&quot;</span>})).
+            WithTemplate(applycorev1.PodTemplateSpec().
                 WithLabels(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;app&quot;</span>: <span class="hljs-string">&quot;nginx&quot;</span>}).
-                WithSpec(corev1apply.PodSpec().
-                    WithContainers(corev1apply.Container().
+                WithSpec(applycorev1.PodSpec().
+                    WithContainers(applycorev1.Container().
                         WithName(<span class="hljs-string">&quot;nginx&quot;</span>).
                         WithImage(<span class="hljs-string">&quot;nginx:latest&quot;</span>),
                     ),
@@ -769,32 +850,32 @@ client := mgr.GetClient()
 
     obj, err := runtime.DefaultUnstructuredConverter.ToUnstructured(dep)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> err
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
     patch := &amp;unstructured.Unstructured{
         Object: obj,
     }
 
     <span class="hljs-keyword">var</span> current appsv1.Deployment
-    err = cli.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;default&quot;</span>, Name: <span class="hljs-string">&quot;sample3&quot;</span>}, &amp;current)
-    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &amp;&amp; !errors.IsNotFound(err) {
-        <span class="hljs-keyword">return</span> err
+    err = r.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;default&quot;</span>, Name: <span class="hljs-string">&quot;sample3&quot;</span>}, &amp;current)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &amp;&amp; !apierrors.IsNotFound(err) {
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
 
-    currApplyConfig, err := appsv1apply.ExtractDeployment(&amp;current, <span class="hljs-string">&quot;client-sample&quot;</span>)
+    currApplyConfig, err := applyappsv1.ExtractDeployment(&amp;current, <span class="hljs-string">&quot;client-sample&quot;</span>)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> err
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
 
     <span class="hljs-keyword">if</span> equality.Semantic.DeepEqual(dep, currApplyConfig) {
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+        <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
     }
 
-    err = cli.Patch(ctx, patch, client.Apply, &amp;client.PatchOptions{
+    err = r.Patch(ctx, patch, client.Apply, &amp;client.PatchOptions{
         FieldManager: <span class="hljs-string">&quot;client-sample&quot;</span>,
-        Force: pointer.Bool(<span class="hljs-literal">true</span>),
+        Force:        pointer.Bool(<span class="hljs-literal">true</span>),
     })
-    <span class="hljs-keyword">return</span> err
+    <span class="hljs-keyword">return</span> ctrl.Result{}, err
 }
 </code></pre>
 <h2 id="statusupdatepatch">Status.Update/Patch</h2>
@@ -804,33 +885,32 @@ Status更新用のクライアントを利用することになります。</p>
 以下のようにstatusフィールドを変更し、<code>Status().Update()</code>を呼び出します。
 (このコードはあくまでもサンプルです。Deploymentリソースのステータスを勝手に書き換えるべきではありません。)</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/client-sample/main.go" target="_blank">main.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">updateStatus</span><span class="hljs-params">(ctx context.Context, cli client.Client)</span> <span class="hljs-title">error</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">updateStatus</span><span class="hljs-params">(ctx context.Context, req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
     <span class="hljs-keyword">var</span> dep appsv1.Deployment
-    err := cli.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;default&quot;</span>, Name: <span class="hljs-string">&quot;sample&quot;</span>}, &amp;dep)
+    err := r.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;default&quot;</span>, Name: <span class="hljs-string">&quot;sample&quot;</span>}, &amp;dep)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> err
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
 
     dep.Status.AvailableReplicas = <span class="hljs-number">3</span>
-    err = cli.Status().Update(ctx, &amp;dep)
-    <span class="hljs-keyword">return</span> err
+    err = r.Status().Update(ctx, &amp;dep)
+    <span class="hljs-keyword">return</span> ctrl.Result{}, err
 }
 </code></pre>
-<p>なお、現状ではカスタムリソースのStatusサブリソースはServer-Side Applyをサポートしていません。</p>
 <h2 id="deletedeleteallof">Delete/DeleteAllOf</h2>
 <p>最後にリソースを削除する<code>Delete</code>と<code>DeleteAllOf</code>を見てみましょう。</p>
 <p><code>Delete</code>と<code>DeleteAllOf</code>には<code>Preconditions</code>という特殊なオプションがあります。
 以下のコードは<code>Preconditions</code>オプションを利用した例です。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/client-sample/main.go" target="_blank">main.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">deleteWithPreConditions</span><span class="hljs-params">(ctx context.Context, cli client.Client)</span> <span class="hljs-title">error</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">Reconcile_deleteWithPreConditions</span><span class="hljs-params">(ctx context.Context, req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
     <span class="hljs-keyword">var</span> deploy appsv1.Deployment
-    err := cli.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;default&quot;</span>, Name: <span class="hljs-string">&quot;sample&quot;</span>}, &amp;deploy)
+    err := r.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;default&quot;</span>, Name: <span class="hljs-string">&quot;sample&quot;</span>}, &amp;deploy)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> err
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
     uid := deploy.GetUID()
     resourceVersion := deploy.GetResourceVersion()
@@ -838,10 +918,10 @@ Status更新用のクライアントを利用することになります。</p>
         UID:             &amp;uid,
         ResourceVersion: &amp;resourceVersion,
     }
-    err = cli.Delete(ctx, &amp;deploy, &amp;client.DeleteOptions{
+    err = r.Delete(ctx, &amp;deploy, &amp;client.DeleteOptions{
         Preconditions: &amp;cond,
     })
-    <span class="hljs-keyword">return</span> err
+    <span class="hljs-keyword">return</span> ctrl.Result{}, err
 }
 </code></pre>
 <p>リソースを削除する際、リソース取得してから削除のリクエストを投げるまでの間に、同じ名前の別のリソースが作り直される場合があります。
@@ -849,11 +929,11 @@ Status更新用のクライアントを利用することになります。</p>
 そこでこの例では再作成したリソースを間違って消してしまわないように、<code>Preconditions</code>オプションを利用してUIDとResourceVersionが一致するリソースを削除しています。</p>
 <p><code>DeleteAllOf</code>は、以下のように指定した種類のリソースをまとめて削除できます。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/client-sample/main.go" target="_blank">main.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/30_client/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">deleteAllOfDeployment</span><span class="hljs-params">(ctx context.Context, cli client.Client)</span> <span class="hljs-title">error</span></span> {
-    err := cli.DeleteAllOf(ctx, &amp;appsv1.Deployment{}, client.InNamespace(<span class="hljs-string">&quot;default&quot;</span>))
-    <span class="hljs-keyword">return</span> err
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">Reconcile_deleteAllOfDeployment</span><span class="hljs-params">(ctx context.Context, req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
+    err := r.DeleteAllOf(ctx, &amp;appsv1.Deployment{}, client.InNamespace(<span class="hljs-string">&quot;default&quot;</span>))
+    <span class="hljs-keyword">return</span> ctrl.Result{}, err
 }
 </code></pre>
 <p>なお、Serviceリソースなど<code>DeleteAllOf</code>が利用できないリソースもあるので注意しましょう。</p>
@@ -900,7 +980,7 @@ Status更新用のクライアントを利用することになります。</p>
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"next":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"previous":{"title":"controller-runtime","level":"1.4","depth":1,"path":"controller-runtime/README.md","ref":"controller-runtime/README.md","articles":[{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},{"title":"コントローラーのテスト","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},{"title":"Webhookのテスト","level":"1.4.6","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},{"title":"モニタリング","level":"1.4.8","depth":2,"path":"controller-runtime/monitoring.md","ref":"controller-runtime/monitoring.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/client.md","mtime":"2021-08-24T02:14:48.588Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"next":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"previous":{"title":"controller-runtime","level":"1.4","depth":1,"path":"controller-runtime/README.md","ref":"controller-runtime/README.md","articles":[{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},{"title":"コントローラーのテスト","level":"1.4.3","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},{"title":"Webhookの実装","level":"1.4.4","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},{"title":"Webhookのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},{"title":"リソースの削除","level":"1.4.6","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},{"title":"モニタリング","level":"1.4.8","depth":2,"path":"controller-runtime/monitoring.md","ref":"controller-runtime/monitoring.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/client.md","mtime":"2022-07-16T13:55:40.760Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-07-17T07:03:07.757Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -952,6 +1032,10 @@ Status更新用のクライアントを利用することになります。</p>
     </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

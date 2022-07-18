@@ -330,20 +330,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
-            
-                <a href="../controller-runtime/deletion.html">
-            
-                    
-                    リソースの削除
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -369,12 +356,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
                     
                     Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/deletion.html">
+            
+                <a href="../controller-runtime/deletion.html">
+            
+                    
+                    リソースの削除
             
                 </a>
             
@@ -463,7 +463,7 @@
 controller-genは<code>// +kubebuilder:webhook</code>マーカーの記述に基づいてマニフェストを生成できます。</p>
 <p>まずはデフォルト値を設定するWebhookのマーカーを見てみましょう。</p>
 <blockquote>
-<p><a id="markdownview_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/api/v1/markdownview_webhook.go" target="_blank">markdownview_webhook.go</a></p>
+<p><a id="markdownview_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/20_manifests/api/v1/markdownview_webhook.go" target="_blank">markdownview_webhook.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">//+kubebuilder:webhook:path=/mutate-view-zoetrope-github-io-v1-markdownview,mutating=true,failurePolicy=fail,sideEffects=None,groups=view.zoetrope.github.io,resources=markdownviews,verbs=create;update,versions=v1,name=mmarkdownview.kb.io,admissionReviewVersions=v1</span>
 
@@ -471,7 +471,7 @@ controller-genは<code>// +kubebuilder:webhook</code>マーカーの記述に基
 </code></pre>
 <p>同様にバリデーションWebhookのマーカーを確認します。</p>
 <blockquote>
-<p><a id="markdownview_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/api/v1/markdownview_webhook.go" target="_blank">markdownview_webhook.go</a></p>
+<p><a id="markdownview_webhook.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/20_manifests/api/v1/markdownview_webhook.go" target="_blank">markdownview_webhook.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">// TODO(user): change verbs to &quot;verbs=create;update;delete&quot; if you want to enable deletion validation.</span>
 <span class="hljs-comment">//+kubebuilder:webhook:path=/validate-view-zoetrope-github-io-v1-markdownview,mutating=false,failurePolicy=fail,sideEffects=None,groups=view.zoetrope.github.io,resources=markdownviews,verbs=create;update,versions=v1,name=vmarkdownview.kb.io,admissionReviewVersions=v1</span>
@@ -490,7 +490,7 @@ controller-genは<code>// +kubebuilder:webhook</code>マーカーの記述に基
 </ul>
 <p><code>make manifests</code>を実行すると、マーカーの内容に基づいて以下のようなマニフェストファイルが生成されます。</p>
 <blockquote>
-<p><a id="manifests.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/config/webhook/manifests.yaml" target="_blank">manifests.yaml</a></p>
+<p><a id="manifests.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/20_manifests/config/webhook/manifests.yaml" target="_blank">manifests.yaml</a></p>
 </blockquote>
 <pre><code class="lang-yaml"><span class="hljs-meta">---</span>
 <span class="hljs-attr">apiVersion:</span> <span class="hljs-string">admissionregistration.k8s.io/v1</span>
@@ -590,7 +590,7 @@ controller-genは<code>// +kubebuilder:webhook</code>マーカーの記述に基
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"next":{"title":"controller-runtime","level":"1.4","depth":1,"path":"controller-runtime/README.md","ref":"controller-runtime/README.md","articles":[{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},{"title":"リソースの削除","level":"1.4.3","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},{"title":"コントローラーのテスト","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},{"title":"Webhookのテスト","level":"1.4.6","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},{"title":"モニタリング","level":"1.4.8","depth":2,"path":"controller-runtime/monitoring.md","ref":"controller-runtime/monitoring.md","articles":[]}]},"previous":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/webhook.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"next":{"title":"controller-runtime","level":"1.4","depth":1,"path":"controller-runtime/README.md","ref":"controller-runtime/README.md","articles":[{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},{"title":"コントローラーのテスト","level":"1.4.3","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},{"title":"Webhookの実装","level":"1.4.4","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},{"title":"Webhookのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},{"title":"リソースの削除","level":"1.4.6","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},{"title":"モニタリング","level":"1.4.8","depth":2,"path":"controller-runtime/monitoring.md","ref":"controller-runtime/monitoring.md","articles":[]}]},"previous":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/webhook.md","mtime":"2022-07-16T12:17:06.580Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-07-17T07:03:07.757Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -642,6 +642,10 @@ controller-genは<code>// +kubebuilder:webhook</code>マーカーの記述に基
     </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

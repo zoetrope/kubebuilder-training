@@ -330,20 +330,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
-            
-                <a href="../controller-runtime/deletion.html">
-            
-                    
-                    リソースの削除
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -369,12 +356,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
                     
                     Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/deletion.html">
+            
+                <a href="../controller-runtime/deletion.html">
+            
+                    
+                    リソースの削除
             
                 </a>
             
@@ -487,7 +487,19 @@ cert-manager-webhook-6bdffc7c9d-hkr8h      1/1     Running   0          26s
 </code></pre>
 <p>なおコンテナイメージのタグ名に<code>latest</code>を指定した場合、ImagePullPolicyが<code>Always</code>になり、ロードしたコンテナイメージが利用されない場合があります。
 (<a href="https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster" target="_blank">参考</a>)</p>
-<p>そこで、<a href="https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/config/manager/manager.yaml" target="_blank">config/manager/manager.yaml</a>に<code>imagePullPolicy: IfNotPresent</code>を追加しておきます。</p>
+<p>そこで、<code>config/manager/manager.yaml</code>に<code>imagePullPolicy: IfNotPresent</code>を追加しておきます。</p>
+<blockquote>
+<p><a id="manager.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/10_tilt/config/manager/manager.yaml" target="_blank">manager.yaml</a></p>
+</blockquote>
+<pre><code class="lang-yaml">      <span class="hljs-attr">containers:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">command:</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-string">/manager</span>
+        <span class="hljs-attr">args:</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-string">--leader-elect</span>
+        <span class="hljs-attr">image:</span> <span class="hljs-string">controller:latest</span>
+        <span class="hljs-attr">imagePullPolicy:</span> <span class="hljs-string">IfNotPresent</span>
+        <span class="hljs-attr">name:</span> <span class="hljs-string">manager</span>
+</code></pre>
 <h2 id="コントローラーの動作確認">コントローラーの動作確認</h2>
 <p>次にCRDをKubernetesクラスターに適用します。</p>
 <pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> make install</span>
@@ -541,10 +553,10 @@ I0710 09:29:49.409787       1 leaderelection.go:253] successfully acquired lease
 $ kind load docker-image controller:latest
 </code></pre></li>
 <li><p>CRDに変更がある場合は下記のコマンドを実行します。ただし、互換性のない変更をおこなった場合はこのコマンドに失敗するため、事前に<code>make uninstall</code>を実行してください。</p>
-<pre><code>make install
+<pre><code>$ make install
 </code></pre></li>
 <li><p>CRD以外のマニフェストファイルに変更がある場合は下記のコマンドを実行します。ただし、互換性のない変更をおこなった場合はこのコマンドに失敗するため、事前に<code>make undeploy</code>を実行してください。</p>
-<pre><code>make deploy
+<pre><code>$ make deploy
 </code></pre></li>
 <li><p>次のコマンドでカスタムコントローラーを再起動します。</p>
 <pre><code>$ kubectl rollout restart -n markdown-view-system deployment markdown-view-controller-manager
@@ -553,11 +565,34 @@ $ kind load docker-image controller:latest
 <h2 id="tiltによる効率的な開発">Tiltによる効率的な開発</h2>
 <p>前述したようにカスタムコントローラーの開発時は、ソースコードやマニフェストを変更するたびに複数のmakeコマンドを何度も実行する必要があり、
 非常に面倒です。</p>
-<p><a href="https://tilt.dev" target="_blank">Tilt</a>というツールを利用すると、これらの面倒なコマンド実行が不要になります。
-興味のある方は下記の記事を参考に導入してみてください。</p>
+<p><a href="https://tilt.dev" target="_blank">Tilt</a>を利用すると、ソースコードやマニフェストの変更を監視し、
+コンテナイメージの再ビルド、Kubernetesクラスタへのマニフェストの適用、Podの再起動などを自動的におこなってくれます。</p>
+<p>興味のある方は下記の記事をご覧ください。</p>
 <ul>
 <li><a href="https://zenn.dev/zoetro/articles/fba4c77a7fa3fb" target="_blank">Tiltでカスタムコントローラーの開発を効率化しよう</a></li>
 </ul>
+<p>なお、本書のサンプルプログラムではTiltが利用できるようにセットアップしてあります。
+詳細は以下のコードをご覧ください。</p>
+<ul>
+<li><a href="https://github.com/zoetrope/kubebuilder-training/tree/master/codes/10_tilt" target="_blank">https://github.com/zoetrope/kubebuilder-training/tree/master/codes/10_tilt</a></li>
+</ul>
+<p>まず、以下のページを参考に<a href="https://aquaproj.github.io" target="_blank">aqua</a>をインストールします。</p>
+<ul>
+<li><a href="https://aquaproj.github.io/docs/reference/install" target="_blank">https://aquaproj.github.io/docs/reference/install</a></li>
+</ul>
+<p>次にaquaを使って、各種ツールをインストールします。</p>
+<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> aqua i</span>
+</code></pre>
+<p>続いて以下のコマンドを実行して、Kubernetesクラスタとコンテナレジストリを立ち上げ、cert-managerをデプロイします。</p>
+<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> make start</span>
+</code></pre>
+<p>最後にtiltを立ち上げて、ブラウザで <a href="http://localhost:10350" target="_blank">http://localhost:10350</a> にアクセスします。</p>
+<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> tilt up</span>
+</code></pre>
+<p>正常に動作していれば、ソースコードやマニフェストの変更に応じて、kind上のリソースが自動的に更新されるはずです。</p>
+<p>終了時には以下のコマンドを実行してください。</p>
+<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> make stop</span>
+</code></pre>
 
                                 
                                 </section>
@@ -601,7 +636,7 @@ $ kind load docker-image controller:latest
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"next":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"previous":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/kind.md","mtime":"2022-06-20T05:01:17.779Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"next":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"previous":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/kind.md","mtime":"2022-07-17T08:04:33.830Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-07-17T07:03:07.757Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -653,6 +688,10 @@ $ kind load docker-image controller:latest
     </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

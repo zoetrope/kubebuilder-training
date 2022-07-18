@@ -328,20 +328,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="deletion.html">
-            
-                <a href="deletion.html">
-            
-                    
-                    リソースの削除
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.4" data-path="controller_test.html">
+        <li class="chapter " data-level="1.4.3" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
@@ -354,7 +341,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.4" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -367,12 +354,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
                     
                     Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="deletion.html">
+            
+                <a href="deletion.html">
+            
+                    
+                    リソースの削除
             
                 </a>
             
@@ -467,7 +467,7 @@ CPUやメモリの使用量や、Reconcileにかかった時間やKubernetesク�
 <p>どのようなメトリクスが公開されているのか見てみましょう。
 <code>NewManager</code>のオプションの<code>MetricsBindAddress</code>で指定されたアドレスにアクセスすると、公開されているメトリクスを確認できます。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/main.go" target="_blank">main.go</a></p>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/main.go" target="_blank">main.go</a></p>
 </blockquote>
 <pre><code class="lang-golang">mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
     Scheme:                 scheme,
@@ -475,7 +475,18 @@ CPUやメモリの使用量や、Reconcileにかかった時間やKubernetesク�
     Port:                   <span class="hljs-number">9443</span>,
     HealthProbeBindAddress: probeAddr,
     LeaderElection:         enableLeaderElection,
-    LeaderElectionID:       <span class="hljs-string">&quot;c124e721.zoetrope.github.io&quot;</span>,
+    LeaderElectionID:       <span class="hljs-string">&quot;3ca5b296.zoetrope.github.io&quot;</span>,
+    <span class="hljs-comment">// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily</span>
+    <span class="hljs-comment">// when the Manager ends. This requires the binary to immediately end when the</span>
+    <span class="hljs-comment">// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly</span>
+    <span class="hljs-comment">// speeds up voluntary leader transitions as the new leader don&apos;t have to wait</span>
+    <span class="hljs-comment">// LeaseDuration time first.</span>
+    <span class="hljs-comment">//</span>
+    <span class="hljs-comment">// In the default scaffold provided, the program ends immediately after</span>
+    <span class="hljs-comment">// the manager stops, so would be fine to enable this option. However,</span>
+    <span class="hljs-comment">// if you are doing or is intended to do any operation such as perform cleanups</span>
+    <span class="hljs-comment">// after the manager stops then its usage might be unsafe.</span>
+    <span class="hljs-comment">// LeaderElectionReleaseOnCancel: true,</span>
 })
 </code></pre>
 <p>まずはメトリクス用のポートをPort Forwardします。</p>
@@ -515,9 +526,9 @@ controller_runtime_webhook_requests_total{code=&quot;500&quot;,webhook=&quot;/va
 <p>ここではMarkdownViewリソースのステータスをメトリクスとして公開してみましょう。
 MarkdownViewには3種類のステータスがあるので、Gauge Vectorも3つ用意します。</p>
 <blockquote>
-<p><a id="metrics.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/pkg/metrics/metrics.go" target="_blank">metrics.go</a></p>
+<p><a id="metrics.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/metrics.go" target="_blank">metrics.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">package</span> metrics
+<pre><code class="lang-golang"><span class="hljs-keyword">package</span> controllers
 
 <span class="hljs-keyword">import</span> (
     <span class="hljs-string">&quot;github.com/prometheus/client_golang/prometheus&quot;</span>
@@ -552,36 +563,52 @@ MarkdownViewには3種類のステータスがあるので、Gauge Vectorも3つ
     metrics.Registry.MustRegister(NotReadyVec, AvailableVec, HealthyVec)
 }
 </code></pre>
-<p>Statusを更新する際に以下の関数を呼び出して、メトリクスを更新することとします。</p>
+<p>メトリクスを更新するための関数を用意します。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">setMetrics</span><span class="hljs-params">(mdView viewv1.MarkdownView)</span></span> {
     <span class="hljs-keyword">switch</span> mdView.Status {
     <span class="hljs-keyword">case</span> viewv1.MarkdownViewNotReady:
-        metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(<span class="hljs-number">1</span>)
-        metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(<span class="hljs-number">0</span>)
-        metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(<span class="hljs-number">0</span>)
+        NotReadyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(<span class="hljs-number">1</span>)
+        AvailableVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(<span class="hljs-number">0</span>)
+        HealthyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(<span class="hljs-number">0</span>)
     <span class="hljs-keyword">case</span> viewv1.MarkdownViewAvailable:
-        metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(<span class="hljs-number">0</span>)
-        metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(<span class="hljs-number">1</span>)
-        metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(<span class="hljs-number">0</span>)
+        NotReadyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(<span class="hljs-number">0</span>)
+        AvailableVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(<span class="hljs-number">1</span>)
+        HealthyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(<span class="hljs-number">0</span>)
     <span class="hljs-keyword">case</span> viewv1.MarkdownViewHealthy:
-        metrics.NotReadyVec.WithLabelValues(mdView.Name, mdView.Name).Set(<span class="hljs-number">0</span>)
-        metrics.AvailableVec.WithLabelValues(mdView.Name, mdView.Name).Set(<span class="hljs-number">0</span>)
-        metrics.HealthyVec.WithLabelValues(mdView.Name, mdView.Name).Set(<span class="hljs-number">1</span>)
+        NotReadyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(<span class="hljs-number">0</span>)
+        AvailableVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(<span class="hljs-number">0</span>)
+        HealthyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(<span class="hljs-number">1</span>)
     }
 }
 </code></pre>
-<p>また、MarkdownViewリソースが削除された場合には、以下の関数を実行してメトリクスも削除しておきましょう。
-すでに存在しないリソースのメトリクスが残ったままになっていると、誤った警告が検出されてしまう可能性があります。</p>
+<p>Statusを更新する際にこの関数を呼び出します。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang">r.setMetrics(mdView)
+</code></pre>
+<p>また、メトリクスを削除するための関数も用意します。</p>
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">removeMetrics</span><span class="hljs-params">(mdView viewv1.MarkdownView)</span></span> {
-    metrics.NotReadyVec.DeleteLabelValues(mdView.Name, mdView.Name)
-    metrics.AvailableVec.DeleteLabelValues(mdView.Name, mdView.Name)
-    metrics.HealthyVec.DeleteLabelValues(mdView.Name, mdView.Name)
+    NotReadyVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
+    AvailableVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
+    HealthyVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
+}
+</code></pre>
+<p>以下のように、リソースが削除された際にメトリクスを削除するようにしましょう。</p>
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-keyword">var</span> mdView viewv1.MarkdownView
+err := r.Get(ctx, req.NamespacedName, &amp;mdView)
+<span class="hljs-keyword">if</span> errors.IsNotFound(err) {
+    r.removeMetrics(mdView)
+    <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
 }
 </code></pre>
 <p>先ほどと同様にメトリクスを確認してみましょう。
@@ -603,7 +630,7 @@ kube-rbac-proxyを利用すると、メトリクスのエンドポイントに�
 PrometheusにのみメトリクスのAPIをアクセス可能にすることで、任意のユーザーにメトリクスを取得されることを防ぐことができます。</p>
 <p>kube-rbac-proxyを利用するためには下記の<code>manager_auth_proxy_patch.yaml</code>のコメントアウトを解除します。</p>
 <blockquote>
-<p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
+<p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
 </blockquote>
 <pre><code class="lang-yaml"><span class="hljs-attr">patchesStrategicMerge:</span>
 <span class="hljs-comment"># Protect the /metrics endpoint by putting it behind auth.</span>
@@ -613,7 +640,7 @@ PrometheusにのみメトリクスのAPIをアクセス可能にすることで�
 </code></pre>
 <p>さらに、<code>auto_proxy_</code>から始まる4つのマニフェストも有効にします。</p>
 <blockquote>
-<p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/config/rbac/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
+<p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/config/rbac/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
 </blockquote>
 <pre><code class="lang-yaml"><span class="hljs-attr">resources:</span>
 <span class="hljs-comment"># All RBAC will be applied under this service account in</span>
@@ -637,13 +664,13 @@ PrometheusにのみメトリクスのAPIをアクセス可能にすることで�
 <h2 id="grafanaでの可視化">Grafanaでの可視化</h2>
 <p>それでは実際にPrometheusとGrafanaを使って、コントローラーのメトリクスを可視化してみましょう。</p>
 <p>まずはマニフェストの準備をします。
-下記のコメントアウトを解除してください。</p>
+<code>config/default/kustomization.yaml</code>の下記のコメントを解除してください。</p>
 <blockquote>
-<p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
+<p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
 </blockquote>
 <pre><code class="lang-yaml"><span class="hljs-attr">bases:</span>
 <span class="hljs-comment"># [PROMETHEUS] To enable prometheus monitor, uncomment all sections with &apos;PROMETHEUS&apos;.</span>
-<span class="hljs-comment">#- ../prometheus</span>
+<span class="hljs-bullet">-</span> <span class="hljs-string">../prometheus</span>
 </code></pre>
 <p><code>make manifests</code>を実行してマニフェストを生成し、Kubernetesクラスターに適用しておきます。</p>
 <p>Prometheus Operatorをセットアップするために、下記の手順に従ってHelmをインストールします。</p>
@@ -659,7 +686,7 @@ helm install prometheus prometheus-community/kube-prometheus-stack --namespace=p
 kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
 </code></pre><p>起動したPrometheusにメトリクスを読み取る権限を付与する必要があるので、下記のマニフェストを適用します。</p>
 <blockquote>
-<p><a id="prometheus_role_binding.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/config/rbac/prometheus_role_binding.yaml" target="_blank">prometheus_role_binding.yaml</a></p>
+<p><a id="prometheus_role_binding.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/config/rbac/prometheus_role_binding.yaml" target="_blank">prometheus_role_binding.yaml</a></p>
 </blockquote>
 <pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">rbac.authorization.k8s.io/v1</span>
 <span class="hljs-attr">kind:</span> <span class="hljs-string">ClusterRoleBinding</span>
@@ -724,7 +751,7 @@ kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"モニタリング","level":"1.4.8","depth":2,"previous":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/monitoring.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"モニタリング","level":"1.4.8","depth":2,"previous":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/monitoring.md","mtime":"2022-07-17T08:00:11.730Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-07-17T07:03:07.757Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -776,6 +803,10 @@ kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
     </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

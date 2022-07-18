@@ -58,10 +58,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="controller_test.html" />
+    <link rel="next" href="manager.html" />
     
     
-    <link rel="prev" href="reconcile.html" />
+    <link rel="prev" href="webhook_test.html" />
     
 
     </head>
@@ -330,20 +330,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.3" data-path="deletion.html">
-            
-                <a href="deletion.html">
-            
-                    
-                    リソースの削除
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.4" data-path="controller_test.html">
+        <li class="chapter " data-level="1.4.3" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.4" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -369,12 +356,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
                     
                     Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.4.6" data-path="deletion.html">
+            
+                <a href="deletion.html">
+            
+                    
+                    リソースの削除
             
                 </a>
             
@@ -468,10 +468,11 @@
 <p>1つめのリソース削除の仕組みはownerReferenceによるガベージコレクションです。(<a href="https://kubernetes.io/docs/concepts/workloads/controllers/garbage-collection/" target="_blank">参考</a>)
 これは親リソースが削除されると、そのリソースの子リソースもガベージコレクションにより自動的に削除されるという仕組みです。</p>
 <p>Kubernetesではリソースの親子関係を表すために<code>.metadata.ownerReferences</code>フィールドを利用します。</p>
-<p>例えば、以下のようにConfigMapリソースを作成する際に、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetControllerReference" target="_blank">controllerutil.SetControllerReference</a>
-というユーティリティ関数を利用していました。</p>
+<p>controller-runtimeが提供している<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetControllerReference" target="_blank">controllerutil.SetControllerReference</a>
+関数を利用することで、指定したリソースにownerReferenceを設定することができます。</p>
+<p>先ほど作成した、<code>reconcileConfigMap</code>関数で<code>controllerutil.SetControllerReference</code>を利用してみましょう。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">reconcileConfigMap</span><span class="hljs-params">(ctx context.Context, mdView viewv1.MarkdownView)</span> <span class="hljs-title">error</span></span> {
     logger := log.FromContext(ctx)
@@ -524,10 +525,65 @@
 <p>また、<code>SetControllerReference</code>と似た関数で<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetOwnerReference" target="_blank">controllerutil.SetOwnerReference</a>もあります。
 <code>SetControllerReference</code>は、1つのリソースに1つのオーナーのみしか指定できず、<code>controller</code>フィールドと<code>blockOwnerDeletion</code>フィールドにtrueが指定されているため子リソースが削除されるまで親リソースの削除がブロックされます。
 一方の<code>SetOwnerReference</code>は1つのリソースに複数のオーナーを指定でき、子リソースの削除はブロックされません。</p>
+<p><code>controllerutil.SetControllerReference</code>は、Server-Side Applyで利用するApplyConfiguration型には対応していません。
+そこで、以下のような補助関数を用意しましょう。</p>
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">controllerReference</span><span class="hljs-params">(mdView viewv1.MarkdownView, scheme *runtime.Scheme)</span> <span class="hljs-params">(*metav1apply.OwnerReferenceApplyConfiguration, error)</span></span> {
+    gvk, err := apiutil.GVKForObject(&amp;mdView, scheme)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err
+    }
+    ref := metav1apply.OwnerReference().
+        WithAPIVersion(gvk.GroupVersion().String()).
+        WithKind(gvk.Kind).
+        WithName(mdView.Name).
+        WithUID(mdView.GetUID()).
+        WithBlockOwnerDeletion(<span class="hljs-literal">true</span>).
+        WithController(<span class="hljs-literal">true</span>)
+    <span class="hljs-keyword">return</span> ref, <span class="hljs-literal">nil</span>
+}
+</code></pre>
+<p>Server-Side Applyでガベージコレクションを利用する際は、この補助関数を利用してApplyConfiguration型を作成するときに
+ownerReferenceを設定します。</p>
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang">svcName := <span class="hljs-string">&quot;viewer-&quot;</span> + mdView.Name
+
+owner, err := controllerReference(mdView, r.Scheme)
+<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    <span class="hljs-keyword">return</span> err
+}
+
+svc := corev1apply.Service(svcName, mdView.Namespace).
+    WithLabels(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{
+        <span class="hljs-string">&quot;app.kubernetes.io/name&quot;</span>:       <span class="hljs-string">&quot;mdbook&quot;</span>,
+        <span class="hljs-string">&quot;app.kubernetes.io/instance&quot;</span>:   mdView.Name,
+        <span class="hljs-string">&quot;app.kubernetes.io/created-by&quot;</span>: <span class="hljs-string">&quot;markdown-view-controller&quot;</span>,
+    }).
+    WithOwnerReferences(owner).
+    WithSpec(corev1apply.ServiceSpec().
+        WithSelector(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{
+            <span class="hljs-string">&quot;app.kubernetes.io/name&quot;</span>:       <span class="hljs-string">&quot;mdbook&quot;</span>,
+            <span class="hljs-string">&quot;app.kubernetes.io/instance&quot;</span>:   mdView.Name,
+            <span class="hljs-string">&quot;app.kubernetes.io/created-by&quot;</span>: <span class="hljs-string">&quot;markdown-view-controller&quot;</span>,
+        }).
+        WithType(corev1.ServiceTypeClusterIP).
+        WithPorts(corev1apply.ServicePort().
+            WithProtocol(corev1.ProtocolTCP).
+            WithPort(<span class="hljs-number">80</span>).
+            WithTargetPort(intstr.FromInt(<span class="hljs-number">3000</span>)),
+        ),
+    )
+</code></pre>
 <h2 id="finalizer">Finalizer</h2>
 <h3 id="finalizerの仕組み">Finalizerの仕組み</h3>
 <p>ownerReferenceとガベージコレクションにより、親リソースと一緒に子リソースを削除できると説明しました。
-しかし、この仕組だけでは削除できないケースもあります。直接の親ではないリソースを削除したいケースや、Kubernetesで管理していない外部のリソースなどを削除したいケースなどがあります。</p>
+しかし、この仕組だけでは削除できないケースもあります。
+例えば、親リソースと異なるnamespaceやスコープの子リソースを削除したい場合や、Kubernetesで管理していない外部のリソースを削除したい場合
+などは、ガベージコレクション機能は利用できません。</p>
 <p>例えばTopoLVMでは、LogicalVolumeというカスタムリソースを作成すると、ノード上にLVM(Logical Volume Manager)のLV(Logical Volume)を作成します。
 Kubernetes上のLogicalVolumeカスタムリソースが削除されたら、それに合わせてノード上のLVも削除しなければなりません。</p>
 <p>そのようなリソースの削除には、Finalizerという仕組みを利用できます。</p>
@@ -559,16 +615,7 @@ Kubernetes上のLogicalVolumeカスタムリソースが削除されたら、そ
 controller-runtimeでは、Finalizerを扱うためのユーティリティ関数として<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#ContainsFinalizer" target="_blank">controllerutil.ContainsFinalizer</a>、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#AddFinalizer" target="_blank">controllerutil.AddFinalizer</a>、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#RemoveFinalizer" target="_blank">controllerutil.RemoveFinalizer</a>などを提供しているのでこれを利用しましょう。</p>
 <p>以下のように、Finalizersフィールドを利用して、独自のリソース削除処理を実装できます。</p>
 <pre><code class="lang-go">finalizerName := <span class="hljs-string">&quot;markdwonview.finalizers.view.zoetrope.github.io&quot;</span>
-<span class="hljs-keyword">if</span> mdView.ObjectMeta.DeletionTimestamp.IsZero() {
-    <span class="hljs-comment">// deletionTimestampが付与されていなければ、finalizersフィールドを追加します。</span>
-    <span class="hljs-keyword">if</span> !controllerutil.ContainsFinalizer(&amp;mdView, finalizerName) {
-        controllerutil.AddFinalizer(&amp;mdView, finalizerName)
-        err = r.Update(ctx, &amp;mdView)
-        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-            <span class="hljs-keyword">return</span> ctrl.Result{}, err
-        }
-    }
-} <span class="hljs-keyword">else</span> {
+<span class="hljs-keyword">if</span> !mdView.ObjectMeta.DeletionTimestamp.IsZero() {
     <span class="hljs-comment">// deletionTimestampがゼロではないということはリソースの削除が開始されたということ</span>
 
     <span class="hljs-comment">// finalizersに上記で指定した名前が存在した場合は削除処理を実施する</span>
@@ -584,6 +631,15 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
         }
     }
     <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
+}
+
+<span class="hljs-comment">// deletionTimestampが付与されていなければ、finalizersフィールドを追加します。</span>
+<span class="hljs-keyword">if</span> !controllerutil.ContainsFinalizer(&amp;mdView, finalizerName) {
+    controllerutil.AddFinalizer(&amp;mdView, finalizerName)
+    err = r.Update(ctx, &amp;mdView)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
+    }
 }
 </code></pre>
 
@@ -613,12 +669,12 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
 
             
                 
-                <a href="reconcile.html" class="navigation navigation-prev " aria-label="Previous page: Reconcileの実装">
+                <a href="webhook_test.html" class="navigation navigation-prev " aria-label="Previous page: Webhookのテスト">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="controller_test.html" class="navigation navigation-next " aria-label="Next page: コントローラーのテスト">
+                <a href="manager.html" class="navigation navigation-next " aria-label="Next page: Manager">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -629,7 +685,7 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"リソースの削除","level":"1.4.3","depth":2,"next":{"title":"コントローラーのテスト","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"previous":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"リソースの削除","level":"1.4.6","depth":2,"next":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"previous":{"title":"Webhookのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2022-07-17T07:38:36.050Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-07-17T07:03:07.757Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -681,6 +737,10 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
     </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>

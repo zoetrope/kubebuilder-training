@@ -330,20 +330,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/deletion.html">
-            
-                <a href="../controller-runtime/deletion.html">
-            
-                    
-                    リソースの削除
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
@@ -356,7 +343,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -369,12 +356,25 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
                     
                     Webhookのテスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/deletion.html">
+            
+                <a href="../controller-runtime/deletion.html">
+            
+                    
+                    リソースの削除
             
                 </a>
             
@@ -463,7 +463,10 @@
 カスタムコントローラーにおいても、利用するリソースにのみアクセスできるように適切な権限を設定する必要があります。</p>
 <p>controller-genでは、Goのソースコード中に埋め込まれたマーカーを元にRBACのマニフェストを生成できます。</p>
 <p>まずはKubebuilderによって生成されたマーカーを見てみましょう。</p>
-<pre><code class="lang-go"><span class="hljs-comment">//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews,verbs=get;list;watch;create;update;patch;delete</span>
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/00_scaffold/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-comment">//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews,verbs=get;list;watch;create;update;patch;delete</span>
 <span class="hljs-comment">//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/status,verbs=get;update;patch</span>
 <span class="hljs-comment">//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/finalizers,verbs=update</span>
 </code></pre>
@@ -476,7 +479,7 @@
 なお、サブリソースはlistやcreate,delete操作をおこなえないので<code>get;update;patch</code>の権限のみが付与されています。</p>
 <p>これらに加えてMarkdownViewコントローラーが作成するConfigMap, Deployment, Service, Eventリソースを操作する権限のマーカーを追加しましょう。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/20_manifests/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews,verbs=get;list;watch;create;update;patch;delete</span>
 <span class="hljs-comment">//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/status,verbs=get;update;patch</span>
@@ -490,7 +493,7 @@
 そのためgetしかしない場合でも、get, list, watchを許可しておきましょう。</p>
 <p><code>make manifests</code>を実行すると以下のように<code>config/rbac/role.yaml</code>が更新されます。</p>
 <blockquote>
-<p><a id="role.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/markdown-view/config/rbac/role.yaml" target="_blank">role.yaml</a></p>
+<p><a id="role.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/20_manifests/config/rbac/role.yaml" target="_blank">role.yaml</a></p>
 </blockquote>
 <pre><code class="lang-yaml"><span class="hljs-meta">---</span>
 <span class="hljs-attr">apiVersion:</span> <span class="hljs-string">rbac.authorization.k8s.io/v1</span>
@@ -613,7 +616,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"next":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]},"previous":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/rbac.md","mtime":"2021-07-27T05:53:10.750Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-06-20T06:15:29.061Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"next":{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]},"previous":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock","livereload"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/rbac.md","mtime":"2022-07-16T12:15:47.680Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-07-17T07:03:07.757Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
@@ -665,6 +668,10 @@
     </script>
     <script src="../gitbook/gitbook.js"></script>
     <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
     
         
         <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
