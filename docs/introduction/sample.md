@@ -20,8 +20,20 @@ MarkdownViewコントローラーの主な処理の流れは次のようにな�
 
 MarkdownViewカスタムリソースには、以下のようにMarkdownの内容とレンダリングに利用するmdBookのコンテナイメージおよびレプリカ数を指定できるようにします。
 
-[import](../../codes/markdown-view/config/samples/view_v1_markdownview.yaml)
+[import](../../codes/50_completed/config/samples/view_v1_markdownview.yaml)
 
 ソースコードは以下にあるので参考にしてください。
 
-- https://github.com/zoetrope/kubebuilder-training/tree/master/codes/markdown-view
+- https://github.com/zoetrope/kubebuilder-training/tree/master/codes
+
+ディレクトリ構成は以下の通りです。
+
+```
+codes
+├── 00_scaffold:  Kubebuilderで生成したコード
+├── 10_tilt:      Tiltを利用した開発環境のセットアップを追加
+├── 20_manifests: CRD, RBAC, Webhook用のマニフェストを生成
+├── 30_client:    クライアントライブラリの利用例を追加
+├── 40_reconcile: Reconcile処理、およびWebhookを実装
+└── 50_completed: Finalizer, Recorder, モニタリングのコードを追加
+```

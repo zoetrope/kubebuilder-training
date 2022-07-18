@@ -21,12 +21,6 @@
 
 - [TopoLVM](https://github.com/topolvm/topolvm)
   - LVMを利用したDynamic Provisioning可能なCSIプラグイン実装
-- [Contour Plus](https://github.com/cybozu-go/contour-plus)
-  - Ingress Controller [Contour](https://github.com/projectcontour/contour)を機能拡張するためのコントローラー
-- [neco-admission](https://github.com/cybozu/neco-containers/tree/main/admission)
-  - カスタムポリシーを適用するためのAdmission WebHook実装
-- [local-pv-provisioner](https://github.com/cybozu/neco-containers/tree/main/local-pv-provisioner)
-  - 指定した条件にマッチしたデバイスから自動的にlocal Persistent Volumeリソースを作成するコントローラー
 - [MOCO](https://github.com/cybozu-go/moco)
   - MySQLクラスターの構築を自動化するオペレーター
 - [Coil](https://github.com/cybozu-go/coil)
