@@ -14,7 +14,7 @@ CPUやメモリの使用量や、Reconcileにかかった時間やKubernetesク�
 どのようなメトリクスが公開されているのか見てみましょう。
 `NewManager`のオプションの`MetricsBindAddress`で指定されたアドレスにアクセスすると、公開されているメトリクスを確認できます。
 
-[import:"new-manager",unindent:"true"](../../codes/markdown-view/main.go)
+[import:"new-manager",unindent:"true"](../../codes/50_completed/main.go)
 
 まずはメトリクス用のポートをPort Forwardします。
 
@@ -64,16 +64,23 @@ controller-runtimeが提供するメトリクスだけでなく、カスタム�
 ここではMarkdownViewリソースのステータスをメトリクスとして公開してみましょう。
 MarkdownViewには3種類のステータスがあるので、Gauge Vectorも3つ用意します。
 
-[import, title="metrics.go"](../../codes/markdown-view/pkg/metrics/metrics.go)
+[import, title="metrics.go"](../../codes/50_completed/controllers/metrics.go)
 
-Statusを更新する際に以下の関数を呼び出して、メトリクスを更新することとします。
+メトリクスを更新するための関数を用意します。
 
-[import:"set-metrics",unindent="true"](../../codes/markdown-view/controllers/markdownview_controller.go)
+[import:"set-metrics",unindent="true"](../../codes/50_completed/controllers/markdownview_controller.go)
 
-また、MarkdownViewリソースが削除された場合には、以下の関数を実行してメトリクスも削除しておきましょう。
-すでに存在しないリソースのメトリクスが残ったままになっていると、誤った警告が検出されてしまう可能性があります。
+Statusを更新する際にこの関数を呼び出します。
 
-[import:"remove-metrics",unindent="true"](../../codes/markdown-view/controllers/markdownview_controller.go)
+[import:"call-set-metrics",unindent="true"](../../codes/50_completed/controllers/markdownview_controller.go)
+
+また、メトリクスを削除するための関数も用意します。
+
+[import:"remove-metrics",unindent="true"](../../codes/50_completed/controllers/markdownview_controller.go)
+
+以下のように、リソースが削除された際にメトリクスを削除するようにしましょう。
+
+[import:"call-remove-metrics",unindent="true"](../../codes/50_completed/controllers/markdownview_controller.go)
 
 先ほどと同様にメトリクスを確認してみましょう。
 下記の項目が出力されていれば成功です。
@@ -100,20 +107,20 @@ PrometheusにのみメトリクスのAPIをアクセス可能にすることで�
 
 kube-rbac-proxyを利用するためには下記の`manager_auth_proxy_patch.yaml`のコメントアウトを解除します。
 
-[import:"patches,enable-auth-proxy"](../../codes/markdown-view/config/default/kustomization.yaml)
+[import:"patches,enable-auth-proxy"](../../codes/50_completed/config/default/kustomization.yaml)
 
 さらに、`auto_proxy_`から始まる4つのマニフェストも有効にします。
 
-[import](../../codes/markdown-view/config/rbac/kustomization.yaml)
+[import](../../codes/50_completed/config/rbac/kustomization.yaml)
 
 ## Grafanaでの可視化
 
 それでは実際にPrometheusとGrafanaを使って、コントローラーのメトリクスを可視化してみましょう。
 
 まずはマニフェストの準備をします。
-下記のコメントアウトを解除してください。
+`config/default/kustomization.yaml`の下記のコメントを解除してください。
 
-[import:"bases,enable-prometheus"](../../codes/markdown-view/config/default/kustomization.yaml)
+[import:"bases,enable-prometheus"](../../codes/50_completed/config/default/kustomization.yaml)
 
 `make manifests`を実行してマニフェストを生成し、Kubernetesクラスターに適用しておきます。
 
@@ -137,7 +144,7 @@ kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
 
 起動したPrometheusにメトリクスを読み取る権限を付与する必要があるので、下記のマニフェストを適用します。
 
-[import](../../codes/markdown-view/config/rbac/prometheus_role_binding.yaml)
+[import](../../codes/50_completed/config/rbac/prometheus_role_binding.yaml)
 
 ```
 kubectl apply -f ./config/rbac/prometheus_role_binding.yaml

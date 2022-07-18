@@ -16,28 +16,12 @@
 リーダー選出の利用方法は、`NewManager`のオプションの`LeaderElection`にtrueを指定し、`LeaderElectionID`にリーダー選出用のIDを指定するだけです。
 リーダー選出は、同じ`LeaderElectionID`を指定したプロセスの中から1つだけリーダーを選ぶという挙動になります。
 
-[import:"new-manager",unindent:"true"](../../codes/markdown-view/main.go)
+[import:"new-manager",unindent:"true"](../../codes/50_completed/main.go)
 
-それでは、[config/manager/manager.yaml](../../codes/markdown-view/config/manager/manager.yaml)の`replicas`フィールドを2に変更して、MarkdownViewコントローラーをデプロイしてみましょう。
+それでは、[config/manager/manager.yaml](../../codes/50_completed/config/manager/manager.yaml)の`replicas`フィールドを2に変更して、MarkdownViewコントローラーをデプロイしてみましょう。
 
 デプロイされた2つのPodのログを表示させてみると、リーダーに選出された方のPodだけがReconcile処理をおこなっている様子が確認できます。
-
-リーダー選出の機能にはConfigMapが利用されています。
-下記のようにConfigMapを表示させてみると、`metadata.annotations["control-plane.alpha.kubernetes.io/leader"]`に、現在のリーダーの情報が保存されていることがわかります。
-
-```
-$ kubectl get configmap -n markdown-view-system c124e721.zoetrope.github.io -o yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  annotations:
-    control-plane.alpha.kubernetes.io/leader: '{"holderIdentity":"markdown-view-controller-manager-87dcb5f6-7ql9f_ece9f1fd-d5e0-4f10-9627-f6214ed9af8a","leaseDurationSeconds":15,"acquireTime":"2021-07-24T06:41:44Z","renewTime":"2021-07-24T10:33:47Z","leaderTransitions":1}'
-  creationTimestamp: "2021-07-24T05:56:03Z"
-  name: c124e721.zoetrope.github.io
-  namespace: markdown-view-system
-  resourceVersion: "64771"
-  uid: d47a3dba-988b-4839-804f-2b6f0ac9c9c1
-```
+リーダーに選出されたPodを終了させると、もう片方のPodにリーダーが切り替わる様子を確認できます。
 
 なお、Admission Webhook処理は競合の心配がないため、リーダーではないプロセスも呼び出されます。
 
@@ -99,20 +83,19 @@ NeedLeaderElectionメソッドで `false` を返すようにします。
 カスタムリソースのStatusには、現在の状態が保存されています。
 一方、これまでどのような処理が実施されてきたのかを記録したい場合、Kubernetesが提供する[Event](https://pkg.go.dev/k8s.io/api/core/v1?tab=doc#Event)リソースを利用できます。
 
-Managerはイベントを記録するための機能を提供しており、以下のように取得できます。
+Managerはイベントを記録するための機能を提供しており、`GetEventRecorderFor`で[EventRecorder](https://pkg.go.dev/k8s.io/client-go/tools/record?tab=doc#EventRecorder)を取得できます。
+以下のように、Reconcilerを初期化する際にEventRecorderを渡します。
 
-```go
-recorder := mgr.GetEventRecorderFor("markdownview-controller")
-```
+[import:"init-reconciler",unindent:"true"](../../codes/50_completed/main.go)
 
-この[EventRecorder](https://pkg.go.dev/k8s.io/client-go/tools/record?tab=doc#EventRecorder)をReconcilerに渡して利用します。
+Reconcilerではこれをフィールドとして持っておきます。
+
+[import:"reconciler",unindent:"true"](../../codes/50_completed/controllers/markdownview_controller.go)
 
 Eventを記録するための関数として、`Event`, `Eventf`, `AnnotatedEventf`などが用意されています。
 ここでは、ステータス更新時に以下のようなイベントを記録することにしましょう。なお、イベントタイプには`EventTypeNormal`, `EventTypeWarning`のみ指定できます。
 
-```go
-r.Recorder.Event(&mdView, corev1.EventTypeNormal, "Updated", fmt.Sprintf("MarkdownView(%s:%s) updated: %s", mdView.Namespace, mdView.Name, mdView.Status))
-```
+[import:"call-recorder-event",unindent:"true"](../../codes/50_completed/controllers/markdownview_controller.go)
 
 このEventリソースは第1引数で指定したリソースに結びいており、そのリソースと同じnamespaceにEventリソースが作成されます。
 カスタムコントローラーがEventリソースを作成できるように、以下のようなRBACのマーカーを追加し、`make manifests`でマニフェストを更新しておきます。
@@ -121,7 +104,7 @@ r.Recorder.Event(&mdView, corev1.EventTypeNormal, "Updated", fmt.Sprintf("Markdo
 //+kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch
 ```
 
-それでは作成されたEventリソースを確認してみましょう。なお、Eventリソースはデフォルト設定では1時間経つと消えてしまいます。
+コントローラーを実行し、作成したEventリソースを確認してみましょう。なお、Eventリソースはデフォルト設定では1時間経つと消えてしまいます。
 
 ```
 $ kubectl get events -n default
@@ -136,16 +119,16 @@ Managerには、ヘルスチェック用のAPIのエンドポイントを作成�
 
 ヘルスチェック機能を利用するには、Managerの作成時に`HealthProbeBindAddress`でエンドポイントのアドレスを指定します。
 
-[import:"new-manager",unindent:"true"](../../codes/markdown-view/main.go)
+[import:"new-manager",unindent:"true"](../../codes/50_completed/main.go)
 
 そして、`AddHealthzCheck`と`AddReadyzCheck`で、ハンドラの登録をおこないます。
 デフォルトでは`healthz.Ping`という何もしない関数を利用していますが、独自関数の登録も可能です。
 
-[import:"health",unindent:"true"](../../codes/markdown-view/main.go)
+[import:"health",unindent:"true"](../../codes/50_completed/main.go)
 
 カスタムコントローラーのマニフェストでは、このヘルスチェックAPIを`livenessProbe`と`readinessProbe`として利用するように指定されています。
 
-[import:"probe",unindent:"true"](../../codes/markdown-view/config/manager/manager.yaml)
+[import:"probe",unindent:"true"](../../codes/50_completed/config/manager/manager.yaml)
 
 ## FieldIndexer
 

@@ -20,10 +20,10 @@
   * [クライアントの使い方](controller-runtime/client.md)
   <!-- * [Server Side Apply](controller-runtime/ssa.md) -->
   * [Reconcileの実装](controller-runtime/reconcile.md)
-  * [リソースの削除](controller-runtime/deletion.md)
   * [コントローラーのテスト](controller-runtime/controller_test.md)
   * [Webhookの実装](controller-runtime/webhook.md)
   * [Webhookのテスト](controller-runtime/webhook_test.md)
+  * [リソースの削除](controller-runtime/deletion.md)
   * [Manager](controller-runtime/manager.md)
   * [モニタリング](controller-runtime/monitoring.md)
   <!-- * [応用テクニック](controller-runtime/advanced.md) -->

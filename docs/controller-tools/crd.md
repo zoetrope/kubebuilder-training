@@ -1,41 +1,13 @@
 # CRDマニフェストの生成
 
 コントローラーでカスタムリソースを扱うためには、そのリソースのCRD(Custom Resource Definition)を定義する必要があります。
-下記の例の様にCRDは長くなりがちで、手書きで作成するには少々手間がかかります。
-
-- [CRDの例](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/config/crd/bases/view.zoetrope.github.io_markdownviews.yaml)
+CRDのマニフェストは複雑で、手書きで作成するにはかなりの手間がかかります。
 
 そこでKubebuilderではcontroller-genというツールを提供しており、Goで記述したstructからCRDを生成できます。
 
-まずは`kubebuilder create api`コマンドで生成された[api/v1/markdownview_types.go](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/api/v1/markdownview_types.go)を見てみましょう。
+まずは`kubebuilder create api`コマンドで生成されたmarkdownview_types.goを見てみましょう。
 
-```go
-type MarkdownViewSpec struct {
-	Foo string `json:"foo,omitempty"`
-}
-
-type MarkdownViewStatus struct {
-}
-
-//+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
-
-type MarkdownView struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
-
-	Spec   MarkdownViewSpec   `json:"spec,omitempty"`
-	Status MarkdownViewStatus `json:"status,omitempty"`
-}
-
-//+kubebuilder:object:root=true
-
-type MarkdownViewList struct {
-	metav1.TypeMeta `json:",inline"`
-	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []MarkdownView `json:"items"`
-}
-```
+[import](../../codes/00_scaffold/api/v1/markdownview_types.go)
 
 `MarkdownViewSpec`, `MarkdownViewStatus`, `MarkdownView`, `MarkdownViewList`という構造体が定義されており、`//+kubebuilder:`から始まるマーカーコメントがいくつか付与されています。
 controller-genは、これらの構造体とマーカーを頼りにCRDの生成をおこないます。
@@ -52,11 +24,11 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 
 [作成するカスタムコントローラ](../introduction/sample.md)において、MarkdownViewコントローラーが扱うカスタムリソースとして下記のようなマニフェストを例示しました。
 
-[import](../../codes/markdown-view/config/samples/view_v1_markdownview.yaml)
+[import](../../codes/20_manifests/config/samples/view_v1_markdownview.yaml)
 
 上記のマニフェストを扱うための構造体を用意しましょう。
 
-[import:"spec"](../../codes/markdown-view/api/v1/markdownview_types.go)
+[import:"spec"](../../codes/20_manifests/api/v1/markdownview_types.go)
 
 まず下記の3つのフィールドを定義します。
 
@@ -119,7 +91,7 @@ Kubebuilderには`Required`以外にも様々なバリデーションが用意�
 
 次にMarkdownViewリソースの状態を表現するための`MarkdownViewStatus`を書き換えます。
 
-[import:"status"](../../codes/markdown-view/api/v1/markdownview_types.go)
+[import:"status"](../../codes/20_manifests/api/v1/markdownview_types.go)
 
 今回のカスタムコントローラーでは、`MarkdownViewStatus`を文字列型とし、`NotReady`,`Available`,`Healty`の3つの状態をあらわすようにしました。
 
@@ -129,7 +101,7 @@ Kubebuilderには`Required`以外にも様々なバリデーションが用意�
 
 続いて`MarkdownView`構造体のマーカーを見てみましょう。
 
-[import:"markdown-view"](../../codes/markdown-view/api/v1/markdownview_types.go)
+[import:"markdown-view"](../../codes/20_manifests/api/v1/markdownview_types.go)
 
 Kubebuilderが生成した初期状態では、`+kubebuilder:object:root=true`と`+kubebuilder:subresource`の2つのマーカーが指定されています。
 ここではさらに`+kubebuilder:printcolumn`を追加することとします。
@@ -168,3 +140,17 @@ $ kubectl get markdownview
 NAME                  REPLICAS   STATUS
 MarkdownView-sample   1          healthy
 ```
+
+## CRDマニフェストの生成
+
+最後にGoで記述したstructからCRDを生成してみましょう。
+
+以下のコマンドを実行してください。
+
+```console
+$ make manifests
+```
+
+すると、以下のようなCRDのマニフェストファイルが生成されます。
+
+[import](../../codes/20_manifests/config/crd/bases/view.zoetrope.github.io_markdownviews.yaml)

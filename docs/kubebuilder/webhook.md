@@ -59,21 +59,16 @@ manifests.yamlファイルは`make manifests`ファイルで自動生成され�
 
 `main.go`には、以下のようなWebhookの初期化をおこなうためのコードが追加されています。
 
-```go
-if err = (&viewv1.MarkdownView{}).SetupWebhookWithManager(mgr); err != nil {
-	setupLog.Error(err, "unable to create webhook", "webhook", "MarkdownView")
-	os.Exit(1)
-}
-```
+[import:"init-webhook",unindent="true"](../../codes/00_scaffold/main.go)
 
 ## kustomization.yamlの編集
 
 Kubebuilderコマンドで生成した直後の状態では、`make manifests`コマンドでマニフェストを生成しても、Webhook機能が利用できるようにはなっていません。
 
-[config/default/kustomization.yaml](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/markdown-view/config/default/kustomization.yaml)ファイルを編集する必要があります。
+`config/default/kustomization.yaml`ファイルを編集する必要があります。
 
 生成直後のkustomization.yamlは、`bases` の `../webhook` と `../certmanager`, `patchesStrategicMerge` の `manager_webhook_patch.yaml` と `webhookcainjection_patch.yaml`, `vars` がコメントアウトされていますが、これらのコメントを外します。
 
-[import:"bases,enable-webhook,patches,enable-webhook-patch,vars"](../../codes/markdown-view/config/default/kustomization.yaml)
+[import:"bases,enable-webhook,patches,enable-webhook-patch,vars"](../../codes/00_scaffold/config/default/kustomization.yaml)
 
 [cert-manager]: https://github.com/jetstack/cert-manager

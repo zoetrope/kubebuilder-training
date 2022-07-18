@@ -10,7 +10,7 @@ controller-runtimeでは、MutatingWebhookを実装するためのDefaulterとVa
 まずはDefaulterの実装です。
 Defaultメソッドでは、MarkdownViewリソースの値を書き換えることができます。
 
-[import:"default"](../../codes/markdown-view/api/v1/markdownview_webhook.go)
+[import:"head,webhook-defaulter,default"](../../codes/40_reconcile/api/v1/markdownview_webhook.go)
 
 ここでは`r.Spec.ViewerImage`が空だった場合に、デフォルトのコンテナイメージを指定しています。
 
@@ -20,7 +20,7 @@ Defaultメソッドでは、MarkdownViewリソースの値を書き換えるこ�
 ValidateCreate, ValidateUpdate, ValidateDeleteは、それぞれリソースの作成・更新・削除のタイミングで呼び出される関数です。
 これらの関数の中でMarkdownViewリソースの内容をチェックし、エラーを返すことでリソースの操作を失敗させることができます。
 
-[import:"validate"](../../codes/markdown-view/api/v1/markdownview_webhook.go)
+[import:"head,webhook-validator,validate"](../../codes/40_reconcile/api/v1/markdownview_webhook.go)
 
 今回はValidateCreateとValidateUpdateで同じバリデーションをおこなうことにしましょう。
 `.Spec.Replicas`の値が1から5の範囲にない場合と、`.Spec.Markdowns`に`SUMMARY.md`が含まれない場合はエラーとします。

@@ -15,10 +15,12 @@
 
 Kubernetesではリソースの親子関係を表すために`.metadata.ownerReferences`フィールドを利用します。
 
-例えば、以下のようにConfigMapリソースを作成する際に、[controllerutil.SetControllerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetControllerReference)
-というユーティリティ関数を利用していました。
+controller-runtimeが提供している[controllerutil.SetControllerReference](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#SetControllerReference)
+関数を利用することで、指定したリソースにownerReferenceを設定することができます。
 
-[import:"reconcile-configmap",unindent:"true"](../../codes/markdown-view/controllers/markdownview_controller.go)
+先ほど作成した、`reconcileConfigMap`関数で`controllerutil.SetControllerReference`を利用してみましょう。
+
+[import:"reconcile-configmap",unindent:"true"](../../codes/50_completed/controllers/markdownview_controller.go)
 
 この関数を利用すると、ConfigMapリソースに以下のような`.metadata.ownerReferences`が付与され、このリソースに親リソースの情報が設定されます。
 
@@ -50,12 +52,24 @@ data:
 `SetControllerReference`は、1つのリソースに1つのオーナーのみしか指定できず、`controller`フィールドと`blockOwnerDeletion`フィールドにtrueが指定されているため子リソースが削除されるまで親リソースの削除がブロックされます。
 一方の`SetOwnerReference`は1つのリソースに複数のオーナーを指定でき、子リソースの削除はブロックされません。
 
+`controllerutil.SetControllerReference`は、Server-Side Applyで利用するApplyConfiguration型には対応していません。
+そこで、以下のような補助関数を用意しましょう。
+
+[import:"controller-reference",unindent:"true"](../../codes/50_completed/controllers/markdownview_controller.go)
+
+Server-Side Applyでガベージコレクションを利用する際は、この補助関数を利用してApplyConfiguration型を作成するときに
+ownerReferenceを設定します。
+
+[import:"service-apply-configuration",unindent:"true"](../../codes/50_completed/controllers/markdownview_controller.go)
+
 ## Finalizer
 
 ### Finalizerの仕組み
 
 ownerReferenceとガベージコレクションにより、親リソースと一緒に子リソースを削除できると説明しました。
-しかし、この仕組だけでは削除できないケースもあります。直接の親ではないリソースを削除したいケースや、Kubernetesで管理していない外部のリソースなどを削除したいケースなどがあります。
+しかし、この仕組だけでは削除できないケースもあります。
+例えば、親リソースと異なるnamespaceやスコープの子リソースを削除したい場合や、Kubernetesで管理していない外部のリソースを削除したい場合
+などは、ガベージコレクション機能は利用できません。
 
 例えばTopoLVMでは、LogicalVolumeというカスタムリソースを作成すると、ノード上にLVM(Logical Volume Manager)のLV(Logical Volume)を作成します。
 Kubernetes上のLogicalVolumeカスタムリソースが削除されたら、それに合わせてノード上のLVも削除しなければなりません。
@@ -102,16 +116,7 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
 
 ```go
 finalizerName := "markdwonview.finalizers.view.zoetrope.github.io"
-if mdView.ObjectMeta.DeletionTimestamp.IsZero() {
-    // deletionTimestampが付与されていなければ、finalizersフィールドを追加します。
-    if !controllerutil.ContainsFinalizer(&mdView, finalizerName) {
-        controllerutil.AddFinalizer(&mdView, finalizerName)
-        err = r.Update(ctx, &mdView)
-        if err != nil {
-            return ctrl.Result{}, err
-        }
-    }
-} else {
+if !mdView.ObjectMeta.DeletionTimestamp.IsZero() {
     // deletionTimestampがゼロではないということはリソースの削除が開始されたということ
 
     // finalizersに上記で指定した名前が存在した場合は削除処理を実施する
@@ -127,6 +132,15 @@ if mdView.ObjectMeta.DeletionTimestamp.IsZero() {
         }
     }
     return ctrl.Result{}, nil
+}
+
+// deletionTimestampが付与されていなければ、finalizersフィールドを追加します。
+if !controllerutil.ContainsFinalizer(&mdView, finalizerName) {
+    controllerutil.AddFinalizer(&mdView, finalizerName)
+    err = r.Update(ctx, &mdView)
+    if err != nil {
+        return ctrl.Result{}, err
+    }
 }
 ```
 

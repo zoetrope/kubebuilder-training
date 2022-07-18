@@ -34,13 +34,14 @@ Kubebuilderは、下記のツールとライブラリから構成されていま
 
 ## 対応バージョン
 
-* Kubebuilder: v3.4.1
-* controller-tools: v0.9.0
-* controller-runtime: v0.12.1
+* Kubebuilder: v3.5.0
+* controller-tools: v0.9.2
+* controller-runtime: v0.12.3
 
 ## 更新履歴
 
 * 2020/07/30: 初版公開
 * 2021/04/29: Kubebuilder v3対応
-* 2021/07/25: サンプルをMarkdownViewコントローラーに変更。本文の全面見直し。
+* 2021/07/25: サンプルをMarkdownViewコントローラーに変更、本文の全面見直し
 * 2022/06/20: Kubebuilder v3.4.1対応
+* 2022/07/18: Kubebuilder v3.5.0対応、サンプルコードの見直し
