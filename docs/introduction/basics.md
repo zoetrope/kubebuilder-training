@@ -53,7 +53,7 @@ KubernetesにはDeploymentやPodを始めとしてたくさんの標準リソー
 カスタムリソースを利用するためには、その定義としてCRD(Custom Resource Definition)を用意する必要があります。
 CRDでは下記のようにOpenAPI v3.0の形式でバリデーションを記述することが可能になっています。
 
-- [CRDの例](https://github.com/zoetrope/kubebuilder-training/blob/master/codes/50_completed/config/crd/bases/view.zoetrope.github.io_markdownviews.yaml)
+- [CRDの例](https://github.com/zoetrope/kubebuilder-training/blob/main/codes/50_completed/config/crd/bases/view.zoetrope.github.io_markdownviews.yaml)
 
 ## カスタムコントローラー
 
