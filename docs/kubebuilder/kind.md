@@ -158,7 +158,7 @@ $ kubectl rollout restart -n markdown-view-system deployment markdown-view-contr
 なお、本書のサンプルプログラムではTiltが利用できるようにセットアップしてあります。
 詳細は以下のコードをご覧ください。
 
-- https://github.com/zoetrope/kubebuilder-training/tree/master/codes/10_tilt
+- https://github.com/zoetrope/kubebuilder-training/tree/main/codes/10_tilt
 
 まず、以下のページを参考に[aqua](https://aquaproj.github.io)をインストールします。
 

@@ -24,7 +24,7 @@ MarkdownViewカスタムリソースには、以下のようにMarkdownの内容
 
 ソースコードは以下にあるので参考にしてください。
 
-- https://github.com/zoetrope/kubebuilder-training/tree/master/codes
+- https://github.com/zoetrope/kubebuilder-training/tree/main/codes
 
 ディレクトリ構成は以下の通りです。
 
