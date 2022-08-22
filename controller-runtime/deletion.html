@@ -593,7 +593,7 @@ Kubernetes上のLogicalVolumeカスタムリソースが削除されたら、そ
 <span class="hljs-attr">kind:</span> <span class="hljs-string">MarkdownView</span>
 <span class="hljs-attr">metadata:</span>
   <span class="hljs-attr">finalizers:</span>
-  <span class="hljs-bullet">-</span> <span class="hljs-string">markdownview.finalizers.view.zoetrope.github.io</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-string">markdownview.view.zoetrope.github.io/finalizer</span>
 <span class="hljs-comment"># 以下省略</span>
 </code></pre>
 <p><code>finalizers</code>フィールドが付与されているリソースは、リソースを削除しようとしても削除されません。
@@ -602,7 +602,7 @@ Kubernetes上のLogicalVolumeカスタムリソースが削除されたら、そ
 <span class="hljs-attr">kind:</span> <span class="hljs-string">MarkdownView</span>
 <span class="hljs-attr">metadata:</span>
   <span class="hljs-attr">finalizers:</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-string">markdownview.finalizers.view.zoetrope.github.io</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-string">markdownview.view.zoetrope.github.io/finalizer</span>
   <span class="hljs-attr">deletionTimestamp:</span> <span class="hljs-string">&quot;2021-07-24T15:23:54Z&quot;</span>
 <span class="hljs-comment"># 以下省略</span>
 </code></pre>
@@ -614,7 +614,7 @@ Kubernetes上のLogicalVolumeカスタムリソースが削除されたら、そ
 <p>それではFinalizerを実装してみましょう。
 controller-runtimeでは、Finalizerを扱うためのユーティリティ関数として<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#ContainsFinalizer" target="_blank">controllerutil.ContainsFinalizer</a>、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#AddFinalizer" target="_blank">controllerutil.AddFinalizer</a>、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#RemoveFinalizer" target="_blank">controllerutil.RemoveFinalizer</a>などを提供しているのでこれを利用しましょう。</p>
 <p>以下のように、Finalizersフィールドを利用して、独自のリソース削除処理を実装できます。</p>
-<pre><code class="lang-go">finalizerName := <span class="hljs-string">&quot;markdwonview.finalizers.view.zoetrope.github.io&quot;</span>
+<pre><code class="lang-go">finalizerName := <span class="hljs-string">&quot;markdwonview.view.zoetrope.github.io/finalizer&quot;</span>
 <span class="hljs-keyword">if</span> !mdView.ObjectMeta.DeletionTimestamp.IsZero() {
     <span class="hljs-comment">// deletionTimestampがゼロではないということはリソースの削除が開始されたということ</span>
 
@@ -685,7 +685,7 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"リソースの削除","level":"1.4.6","depth":2,"next":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"previous":{"title":"Webhookのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2022-07-18T10:02:03.375Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-07-18T10:48:52.648Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"リソースの削除","level":"1.4.6","depth":2,"next":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"previous":{"title":"Webhookのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2022-08-22T09:13:21.145Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2022-08-22T09:14:15.095Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
