@@ -84,7 +84,7 @@ apiVersion: view.zoetrope.github.io/v1
 kind: MarkdownView
 metadata:
   finalizers:
-  - markdownview.finalizers.view.zoetrope.github.io
+  - markdownview.view.zoetrope.github.io/finalizer
 # 以下省略
 ```
 
@@ -96,7 +96,7 @@ apiVersion: view.zoetrope.github.io/v1
 kind: MarkdownView
 metadata:
   finalizers:
-    - markdownview.finalizers.view.zoetrope.github.io
+    - markdownview.view.zoetrope.github.io/finalizer
   deletionTimestamp: "2021-07-24T15:23:54Z"
 # 以下省略
 ```
@@ -115,7 +115,7 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
 以下のように、Finalizersフィールドを利用して、独自のリソース削除処理を実装できます。
 
 ```go
-finalizerName := "markdwonview.finalizers.view.zoetrope.github.io"
+finalizerName := "markdwonview.view.zoetrope.github.io/finalizer"
 if !mdView.ObjectMeta.DeletionTimestamp.IsZero() {
     // deletionTimestampがゼロではないということはリソースの削除が開始されたということ
 
