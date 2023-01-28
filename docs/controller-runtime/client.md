@@ -38,7 +38,7 @@ GetConfigOrDie関数は、下記のいずれかの設定を読み込みます。
 
 以下のようにManagerから取得したクライアントを、MarkdownViewReconcilerに渡します。
 
-[import:"new-manager"](../../codes/30_client/main.go)
+[import:"init-reconciler"](../../codes/30_client/main.go)
 
 ただし、Managerの`Start()`を呼び出す前にクライアントは利用できないので注意しましょう。
 
