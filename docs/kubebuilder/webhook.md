@@ -45,7 +45,7 @@ $ make manifests
 `markdownview_webhook.go`がWebhook実装の雛形になります。
 このファイルにWebhookの実装を追加していくことになります。
 
-### config/certmanager
+## config/certmanager
 
 Admission Webhook機能を利用するためには証明書が必要となります。
 [cert-manager][]を利用して証明書を発行するためのカスタムリソースが生成されています。
