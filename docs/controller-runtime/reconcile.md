@@ -72,8 +72,8 @@ MarkdownViewコントローラーは、ConfigMap, Deployment, Serviceリソー�
 ただしこのとき、コントローラーが作成したリソースの`ownerReferences`にMarkdownViewリソースを指定しなければなりません。
 `ownerReferences`の設定方法は[リソースの削除](./deletion.md))を参照してください。
 
-なお、`Owns`に指定したリソースの変更によってReconcileが呼び出された場合でも、
-RequestにはこれらのリソースのownerであるMarkdownViewリソースの名前が入っています。
+なお、`Owns`に指定したリソースの変更によってReconcileが呼び出された場合には、`Owns`に指定したリソースの名前がRequestに入るわけではありません。
+それらのリソースのownerであるMarkdownViewリソースの名前が入ります。
 
 ## Reconcileの実装
 
