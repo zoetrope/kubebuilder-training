@@ -1,5 +1,5 @@
 /*
-Copyright 2022.
+Copyright 2023.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
 // log is for logging in this package.
@@ -51,25 +52,25 @@ func (r *MarkdownView) Default() {
 var _ webhook.Validator = &MarkdownView{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (r *MarkdownView) ValidateCreate() error {
+func (r *MarkdownView) ValidateCreate() (admission.Warnings, error) {
 	markdownviewlog.Info("validate create", "name", r.Name)
 
 	// TODO(user): fill in your validation logic upon object creation.
-	return nil
+	return nil, nil
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (r *MarkdownView) ValidateUpdate(old runtime.Object) error {
+func (r *MarkdownView) ValidateUpdate(old runtime.Object) (admission.Warnings, error) {
 	markdownviewlog.Info("validate update", "name", r.Name)
 
 	// TODO(user): fill in your validation logic upon object update.
-	return nil
+	return nil, nil
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
-func (r *MarkdownView) ValidateDelete() error {
+func (r *MarkdownView) ValidateDelete() (admission.Warnings, error) {
 	markdownviewlog.Info("validate delete", "name", r.Name)
 
 	// TODO(user): fill in your validation logic upon object deletion.
-	return nil
+	return nil, nil
 }

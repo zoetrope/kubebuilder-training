@@ -1,5 +1,5 @@
 /*
-Copyright 2022.
+Copyright 2023.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package main
 
 import (
 	"flag"
+	"github.com/zoetrope/markdown-view/internal/controller"
 	"os"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -32,7 +33,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	viewv1 "github.com/zoetrope/markdown-view/api/v1"
-	"github.com/zoetrope/markdown-view/controllers"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -90,7 +90,7 @@ func main() {
 	}
 
 	//! [init-reconciler]
-	if err = (&controllers.MarkdownViewReconciler{
+	if err = (&controller.MarkdownViewReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {

@@ -32,6 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	viewv1 "github.com/zoetrope/markdown-view/api/v1"
+	"github.com/zoetrope/markdown-view/internal/controller"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -89,7 +90,7 @@ func main() {
 	}
 
 	//! [init-reconciler]
-	if err = (&controllers.MarkdownViewReconciler{
+	if err = (&controller.MarkdownViewReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
