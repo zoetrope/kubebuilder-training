@@ -7,7 +7,7 @@ controller-genでは、Goのソースコード中に埋め込まれたマーカ�
 
 まずはKubebuilderによって生成されたマーカーを見てみましょう。
 
-[import:"rbac"](../../codes/00_scaffold/controllers/markdownview_controller.go)
+[import:"rbac"](../../codes/00_scaffold/internal/controller/markdownview_controller.go)
 
 - `groups`: 権限を与えたいリソースのAPIグループを指定します。
 - `resources`: 権限を与えたいリソースの種類を指定します。

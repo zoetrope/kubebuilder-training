@@ -29,5 +29,3 @@
   - Subnamespaceの管理やリソースの伝播をおこなうためのコントローラー
 - [Pod Security Admission](https://github.com/cybozu-go/pod-security-admission)
   - Podのセキュリティ関連のポリシーを適用するAdmission WebHook実装
-- [Cattage](https://github.com/cybozu-go/cattage)
-  - Argo CDのマルチテナント機能を強化するためのカスタムコントローラー

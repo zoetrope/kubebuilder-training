@@ -23,16 +23,16 @@ $ make manifests
 ```
 ├── api
 │    └── v1
-│        ├── markdownView_webhook.go
+│        ├── markdownview_webhook.go
 │        └── webhook_suite_test.go
 └── config
      ├── certmanager
-     │   ├── certificate.yaml
-     │   ├── kustomization.yaml
-     │   └── kustomizeconfig.yaml
+     │    ├── certificate.yaml
+     │    ├── kustomization.yaml
+     │    └── kustomizeconfig.yaml
      ├── default
-     │   ├── manager_webhook_patch.yaml
-     │   └── webhookcainjection_patch.yaml
+     │    ├── manager_webhook_patch.yaml
+     │    └── webhookcainjection_patch.yaml
      └── webhook
          ├── kustomization.yaml
          ├── kustomizeconfig.yaml
@@ -55,11 +55,11 @@ Admission Webhook機能を利用するためには証明書が必要となりま
 `config/webhook`下は、Webhook機能を利用するために必要なマニフェストファイルです。
 manifests.yamlファイルは`make manifests`ファイルで自動生成されるため、基本的に手動で編集する必要はありません。
 
-## main.go
+## cmd/main.go
 
-`main.go`には、以下のようなWebhookの初期化をおこなうためのコードが追加されています。
+`cmd/main.go`には、以下のようなWebhookの初期化をおこなうためのコードが追加されています。
 
-[import:"init-webhook",unindent="true"](../../codes/00_scaffold/main.go)
+[import:"init-webhook",unindent="true"](../../codes/00_scaffold/cmd/main.go)
 
 ## kustomization.yamlの編集
 
@@ -67,8 +67,8 @@ Kubebuilderコマンドで生成した直後の状態では、`make manifests`�
 
 `config/default/kustomization.yaml`ファイルを編集する必要があります。
 
-生成直後のkustomization.yamlは、`bases` の `../webhook` と `../certmanager`, `patchesStrategicMerge` の `manager_webhook_patch.yaml` と `webhookcainjection_patch.yaml`, `vars` がコメントアウトされていますが、これらのコメントを外します。
+生成直後のkustomization.yamlは、`resources` の `../webhook` と `../certmanager`, `patchesStrategicMerge` の `manager_webhook_patch.yaml` と `webhookcainjection_patch.yaml`, `replacements` がコメントアウトされていますが、これらのコメントを外します。
 
-[import:"bases,enable-webhook,patches,enable-webhook-patch,vars"](../../codes/00_scaffold/config/default/kustomization.yaml)
+[import:"resources,enable-webhook,patches,enable-webhook-patch,replacements"](../../codes/00_scaffold/config/default/kustomization.yaml)
 
 [cert-manager]: https://github.com/jetstack/cert-manager

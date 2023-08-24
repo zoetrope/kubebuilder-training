@@ -21,33 +21,33 @@ GitHubにリポジトリを作る場合は`github.com/<user_name>/<product_name>
 ├── Makefile
 ├── PROJECT
 ├── README.md
+├── cmd
+│    └── main.go
 ├── config
 │    ├── default
 │    │    ├── kustomization.yaml
 │    │    ├── manager_auth_proxy_patch.yaml
 │    │    └── manager_config_patch.yaml
 │    ├── manager
-│    │    ├── controller_manager_config.yaml
 │    │    ├── kustomization.yaml
 │    │    └── manager.yaml
 │    ├── prometheus
 │    │    ├── kustomization.yaml
 │    │    └── monitor.yaml
 │    └── rbac
-│         ├── auth_proxy_client_clusterrole.yaml
-│         ├── auth_proxy_role.yaml
-│         ├── auth_proxy_role_binding.yaml
-│         ├── auth_proxy_service.yaml
-│         ├── kustomization.yaml
-│         ├── leader_election_role.yaml
-│         ├── leader_election_role_binding.yaml
-│         ├── role_binding.yaml
-│         └── service_account.yaml
+│        ├── auth_proxy_client_clusterrole.yaml
+│        ├── auth_proxy_role.yaml
+│        ├── auth_proxy_role_binding.yaml
+│        ├── auth_proxy_service.yaml
+│        ├── kustomization.yaml
+│        ├── leader_election_role.yaml
+│        ├── leader_election_role_binding.yaml
+│        ├── role_binding.yaml
+│        └── service_account.yaml
 ├── go.mod
 ├── go.sum
-├── hack
-│    └── boilerplate.go.txt
-└── main.go
+└── hack
+    └── boilerplate.go.txt
 ```
 
 Kubebuilderによって生成されたgo.modおよびMakefileには、少し古いバージョンのcontroller-runtimeとcontroller-genが使われている場合があります。
@@ -57,15 +57,15 @@ Kubebuilderによって生成されたgo.modおよびMakefileには、少し古�
 - go.mod
 
 ```diff
--       sigs.k8s.io/controller-runtime v0.12.1
-+       sigs.k8s.io/controller-runtime v0.12.3
+-       sigs.k8s.io/controller-runtime v0.15.0
++       sigs.k8s.io/controller-runtime v0.16.0
 ```
 
 - Makefile
 
 ```diff
--CONTROLLER_TOOLS_VERSION ?= v0.9.0
-+CONTROLLER_TOOLS_VERSION ?= v0.9.2
+-CONTROLLER_TOOLS_VERSION ?= v0.12.0
++CONTROLLER_TOOLS_VERSION ?= v0.13.0
 ```
 
 
@@ -78,7 +78,7 @@ Kubebuilderによって生成されたgo.modおよびMakefileには、少し古�
 `make help`でターゲットの一覧を確認してみましょう。
 
 ```console
-make help
+❯ make help
 
 Usage:
   make <target>
@@ -98,6 +98,7 @@ Build
   run              Run a controller from your host.
   docker-build     Build docker image with the manager.
   docker-push      Push docker image with the manager.
+  docker-buildx    Build and push docker image for the manager for cross-platform support
 
 Deployment
   install          Install CRDs into the K8s cluster specified in ~/.kube/config.
@@ -106,8 +107,8 @@ Deployment
   undeploy         Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
 
 Build Dependencies
-  kustomize        Download kustomize locally if necessary.
-  controller-gen   Download controller-gen locally if necessary.
+  kustomize        Download kustomize locally if necessary. If wrong version is installed, it will be removed before downloading.
+  controller-gen   Download controller-gen locally if necessary. If wrong version is installed, it will be overwritten.
   envtest          Download envtest-setup locally if necessary.
 ```
 
@@ -122,7 +123,7 @@ Build Dependencies
 
 デフォルトではApache 2 Licenseの文面が記述されているので、必要に応じて書き換えてください。
 
-## main.go
+## cmd/main.go
 
 これから作成するカスタムコントローラーのエントリーポイントとなるソースコードです。
 
@@ -135,10 +136,27 @@ configディレクトリ配下には、カスタムコントローラーをKuber
 
 実装する機能によっては必要のないマニフェストも含まれているので、適切に取捨選択してください。
 
+### default
+
+マニフェストをまとめて利用するための設定が記述されています。
+
+`manager_auth_proxy_patch.yaml`は、[kube-auth-proxy][]を利用するために必要なパッチです。
+kube-auth-proxyを利用しない場合は削除しても問題ありません。
+
+`manager_config_patch.yaml`は、カスタムコントローラーのオプションを引数ではなくConfigMapで指定するためのパッチファイルです。
+
+利用するマニフェストに応じて、`kustomization.yaml`を編集してください。
+
 ### manager
 
 カスタムコントローラーのDeploymentリソースのマニフェストです。
 カスタムコントローラーのコマンドラインオプションの変更をおこなった場合など、必要に応じて書き換えてください。
+
+
+### prometheus
+
+Prometheus Operator用のカスタムリソースのマニフェストです。
+Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的にカスタムコントローラーのメトリクスを収集してくれるようになります。
 
 ### rbac
 
@@ -153,21 +171,5 @@ kube-auth-proxyを利用するとメトリクスエンドポイントへのア�
 この2つのファイルは基本的に自動生成されるものなので、開発者が編集する必要はありません。
 
 必要のないファイルを削除した場合は、`kustomization.yaml`も編集してください。
-
-### prometheus
-
-Prometheus Operator用のカスタムリソースのマニフェストです。
-Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的にカスタムコントローラーのメトリクスを収集してくれるようになります。
-
-### default
-
-上記のマニフェストをまとめて利用するための設定が記述されています。
-
-`manager_auth_proxy_patch.yaml`は、[kube-auth-proxy][]を利用するために必要なパッチです。
-kube-auth-proxyを利用しない場合は削除しても問題ありません。
-
-`manager_config_patch.yaml`は、カスタムコントローラーのオプションを引数ではなくConfigMapで指定するためのパッチファイルです。
-
-利用するマニフェストに応じて、`kustomization.yaml`を編集してください。
 
 [kube-auth-proxy]: https://github.com/brancz/kube-rbac-proxy
