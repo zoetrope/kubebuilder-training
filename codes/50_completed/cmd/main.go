@@ -1,5 +1,5 @@
 /*
-Copyright 2022.
+Copyright 2023.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import (
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
+	"github.com/zoetrope/markdown-view/internal/controller"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -32,11 +33,11 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	viewv1 "github.com/zoetrope/markdown-view/api/v1"
-	"github.com/zoetrope/markdown-view/controllers"
-	//+kubebuilder:scaffold:imports
+	// +kubebuilder:scaffold:imports
 )
 
 //! [init]
+
 var (
 	scheme   = runtime.NewScheme()
 	setupLog = ctrl.Log.WithName("setup")
@@ -46,7 +47,7 @@ func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
 	utilruntime.Must(viewv1.AddToScheme(scheme))
-	//+kubebuilder:scaffold:scheme
+	// +kubebuilder:scaffold:scheme
 }
 
 //! [init]
@@ -95,7 +96,7 @@ func main() {
 	}
 
 	//! [init-reconciler]
-	if err = (&controllers.MarkdownViewReconciler{
+	if err = (&controller.MarkdownViewReconciler{
 		Client:   mgr.GetClient(),
 		Scheme:   mgr.GetScheme(),
 		Recorder: mgr.GetEventRecorderFor("markdownview-controller"),
@@ -110,7 +111,7 @@ func main() {
 		os.Exit(1)
 	}
 	//! [init-webhook]
-	//+kubebuilder:scaffold:builder
+	// +kubebuilder:scaffold:builder
 
 	//! [health]
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {

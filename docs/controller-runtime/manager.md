@@ -16,7 +16,7 @@
 リーダー選出の利用方法は、`NewManager`のオプションの`LeaderElection`にtrueを指定し、`LeaderElectionID`にリーダー選出用のIDを指定するだけです。
 リーダー選出は、同じ`LeaderElectionID`を指定したプロセスの中から1つだけリーダーを選ぶという挙動になります。
 
-[import:"new-manager",unindent:"true"](../../codes/50_completed/main.go)
+[import:"new-manager",unindent:"true"](../../codes/50_completed/cmd/main.go)
 
 それでは、[config/manager/manager.yaml](../../codes/50_completed/config/manager/manager.yaml)の`replicas`フィールドを2に変更して、MarkdownViewコントローラーをデプロイしてみましょう。
 
@@ -86,16 +86,16 @@ NeedLeaderElectionメソッドで `false` を返すようにします。
 Managerはイベントを記録するための機能を提供しており、`GetEventRecorderFor`で[EventRecorder](https://pkg.go.dev/k8s.io/client-go/tools/record?tab=doc#EventRecorder)を取得できます。
 以下のように、Reconcilerを初期化する際にEventRecorderを渡します。
 
-[import:"init-reconciler",unindent:"true"](../../codes/50_completed/main.go)
+[import:"init-reconciler",unindent:"true"](../../codes/50_completed/cmd/main.go)
 
 Reconcilerではこれをフィールドとして持っておきます。
 
-[import:"reconciler",unindent:"true"](../../codes/50_completed/controllers/markdownview_controller.go)
+[import:"reconciler",unindent:"true"](../../codes/50_completed/internal/controller/markdownview_controller.go)
 
 Eventを記録するための関数として、`Event`, `Eventf`, `AnnotatedEventf`などが用意されています。
 ここでは、ステータス更新時に以下のようなイベントを記録することにしましょう。なお、イベントタイプには`EventTypeNormal`, `EventTypeWarning`のみ指定できます。
 
-[import:"call-recorder-event",unindent:"true"](../../codes/50_completed/controllers/markdownview_controller.go)
+[import:"call-recorder-event",unindent:"true"](../../codes/50_completed/internal/controller/markdownview_controller.go)
 
 このEventリソースは第1引数で指定したリソースに結びいており、そのリソースと同じnamespaceにEventリソースが作成されます。
 カスタムコントローラーがEventリソースを作成できるように、以下のようなRBACのマーカーを追加し、`make manifests`でマニフェストを更新しておきます。
@@ -119,12 +119,12 @@ Managerには、ヘルスチェック用のAPIのエンドポイントを作成�
 
 ヘルスチェック機能を利用するには、Managerの作成時に`HealthProbeBindAddress`でエンドポイントのアドレスを指定します。
 
-[import:"new-manager",unindent:"true"](../../codes/50_completed/main.go)
+[import:"new-manager",unindent:"true"](../../codes/50_completed/cmd/main.go)
 
 そして、`AddHealthzCheck`と`AddReadyzCheck`で、ハンドラの登録をおこないます。
 デフォルトでは`healthz.Ping`という何もしない関数を利用していますが、独自関数の登録も可能です。
 
-[import:"health",unindent:"true"](../../codes/50_completed/main.go)
+[import:"health",unindent:"true"](../../codes/50_completed/cmd/main.go)
 
 カスタムコントローラーのマニフェストでは、このヘルスチェックAPIを`livenessProbe`と`readinessProbe`として利用するように指定されています。
 

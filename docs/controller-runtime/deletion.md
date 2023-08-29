@@ -20,7 +20,7 @@ controller-runtimeが提供している[controllerutil.SetControllerReference](h
 
 先ほど作成した、`reconcileConfigMap`関数で`controllerutil.SetControllerReference`を利用してみましょう。
 
-[import:"reconcile-configmap",unindent:"true"](../../codes/50_completed/controllers/markdownview_controller.go)
+[import:"reconcile-configmap",unindent:"true"](../../codes/50_completed/internal/controller/markdownview_controller.go)
 
 この関数を利用すると、ConfigMapリソースに以下のような`.metadata.ownerReferences`が付与され、このリソースに親リソースの情報が設定されます。
 
@@ -55,12 +55,12 @@ data:
 `controllerutil.SetControllerReference`は、Server-Side Applyで利用するApplyConfiguration型には対応していません。
 そこで、以下のような補助関数を用意しましょう。
 
-[import:"controller-reference",unindent:"true"](../../codes/50_completed/controllers/markdownview_controller.go)
+[import:"controller-reference",unindent:"true"](../../codes/50_completed/internal/controller/markdownview_controller.go)
 
 Server-Side Applyでガベージコレクションを利用する際は、この補助関数を利用してApplyConfiguration型を作成するときに
 ownerReferenceを設定します。
 
-[import:"service-apply-configuration",unindent:"true"](../../codes/50_completed/controllers/markdownview_controller.go)
+[import:"service-apply-configuration",unindent:"true"](../../codes/50_completed/internal/controller/markdownview_controller.go)
 
 ## Finalizer
 

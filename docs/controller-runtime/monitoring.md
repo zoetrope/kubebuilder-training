@@ -14,7 +14,7 @@ CPUやメモリの使用量や、Reconcileにかかった時間やKubernetesク�
 どのようなメトリクスが公開されているのか見てみましょう。
 `NewManager`のオプションの`MetricsBindAddress`で指定されたアドレスにアクセスすると、公開されているメトリクスを確認できます。
 
-[import:"new-manager",unindent:"true"](../../codes/50_completed/main.go)
+[import:"new-manager",unindent:"true"](../../codes/50_completed/cmd/main.go)
 
 まずはメトリクス用のポートをPort Forwardします。
 
@@ -64,23 +64,23 @@ controller-runtimeが提供するメトリクスだけでなく、カスタム�
 ここではMarkdownViewリソースのステータスをメトリクスとして公開してみましょう。
 MarkdownViewには3種類のステータスがあるので、Gauge Vectorも3つ用意します。
 
-[import, title="metrics.go"](../../codes/50_completed/controllers/metrics.go)
+[import, title="metrics.go"](../../codes/50_completed/internal/controller/metrics.go)
 
 メトリクスを更新するための関数を用意します。
 
-[import:"set-metrics",unindent="true"](../../codes/50_completed/controllers/markdownview_controller.go)
+[import:"set-metrics",unindent="true"](../../codes/50_completed/internal/controller/markdownview_controller.go)
 
 Statusを更新する際にこの関数を呼び出します。
 
-[import:"call-set-metrics",unindent="true"](../../codes/50_completed/controllers/markdownview_controller.go)
+[import:"call-set-metrics",unindent="true"](../../codes/50_completed/internal/controller/markdownview_controller.go)
 
 また、メトリクスを削除するための関数も用意します。
 
-[import:"remove-metrics",unindent="true"](../../codes/50_completed/controllers/markdownview_controller.go)
+[import:"remove-metrics",unindent="true"](../../codes/50_completed/internal/controller/markdownview_controller.go)
 
 以下のように、リソースが削除された際にメトリクスを削除するようにしましょう。
 
-[import:"call-remove-metrics",unindent="true"](../../codes/50_completed/controllers/markdownview_controller.go)
+[import:"call-remove-metrics",unindent="true"](../../codes/50_completed/internal/controller/markdownview_controller.go)
 
 先ほどと同様にメトリクスを確認してみましょう。
 下記の項目が出力されていれば成功です。
@@ -120,7 +120,7 @@ kube-rbac-proxyを利用するためには下記の`manager_auth_proxy_patch.yam
 まずはマニフェストの準備をします。
 `config/default/kustomization.yaml`の下記のコメントを解除してください。
 
-[import:"bases,enable-prometheus"](../../codes/50_completed/config/default/kustomization.yaml)
+[import:"resources,enable-prometheus"](../../codes/50_completed/config/default/kustomization.yaml)
 
 `make manifests`を実行してマニフェストを生成し、Kubernetesクラスターに適用しておきます。
 
