@@ -1,5 +1,5 @@
 /*
-Copyright 2022.
+Copyright 2023.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -20,10 +20,16 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
+// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+
 //! [spec]
 
 // MarkdownViewSpec defines the desired state of MarkdownView
 type MarkdownViewSpec struct {
+	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
+	// Important: Run "make" to regenerate code after modifying this file
+
 	// Markdowns contain the markdown files you want to display.
 	// The key indicates the file name and must not overlap with the keys.
 	// The value is the content in markdown format.
@@ -46,7 +52,7 @@ type MarkdownViewSpec struct {
 //! [status]
 
 // MarkdownViewStatus defines the observed state of MarkdownView
-//+kubebuilder:validation:Enum=NotReady;Available;Healthy
+// +kubebuilder:validation:Enum=NotReady;Available;Healthy
 type MarkdownViewStatus string
 
 const (

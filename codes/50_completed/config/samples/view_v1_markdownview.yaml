@@ -1,6 +1,12 @@
 apiVersion: view.zoetrope.github.io/v1
 kind: MarkdownView
 metadata:
+  labels:
+    app.kubernetes.io/name: markdownview
+    app.kubernetes.io/instance: markdownview-sample
+    app.kubernetes.io/part-of: markdown-view
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: markdown-view
   name: markdownview-sample
 spec:
   markdowns:

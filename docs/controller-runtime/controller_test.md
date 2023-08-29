@@ -18,9 +18,9 @@ controller-runtimeは、[Envtest Binaries Manager](https://github.com/kubernetes
 
 ## テスト環境のセットアップ
 
-controller-genによって自動生成された`controllers/suite_test.go`を見てみましょう。
+controller-genによって自動生成された`internal/controller/suite_test.go`を見てみましょう。
 
-[import, title="controllers/suite_test.go"](../../codes/40_reconcile/controllers/suite_test.go)
+[import, title="internal/controller/suite_test.go"](../../codes/40_reconcile/internal/controller/suite_test.go)
 
 まず`envtest.Environment`でテスト用の環境設定をおこないます。
 ここでは、`CRDDirectoryPaths`で適用するCRDのマニフェストのパスを指定しています。
@@ -34,7 +34,7 @@ controller-genによって自動生成された`controllers/suite_test.go`を見
 
 それでは実際のテストを書いていきましょう。
 
-[import](../../codes/40_reconcile/controllers/markdownview_controller_test.go)
+[import](../../codes/40_reconcile/internal/controller/markdownview_controller_test.go)
 
 まずは各テストの実行前と実行後に呼び出される`BeforeEach`と`AfterEach`を実装します。
 

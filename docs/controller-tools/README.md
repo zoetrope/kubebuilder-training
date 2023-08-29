@@ -15,6 +15,10 @@ controller-toolsには下記のツールが含まれていますが、本資料�
 `controller-gen`のヘルプを確認すると、下記の5種類のジェネレータの存在が確認できます。
 
 ```
+❯ controller-gen -h
+
+(中略)
+
 generators
 
 +webhook                                                                                                  package  generates (partial) {Mutating,Validating}WebhookConfiguration objects.

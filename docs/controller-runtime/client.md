@@ -14,7 +14,7 @@ SchemeはGoのstructとGroupVersionKindを相互に変換したり、異なる�
 
 kubebuilderが生成したコードでは、以下のように初期化処理をおこなっています。
 
-[import:"init"](../../codes/30_client/main.go)
+[import:"init"](../../codes/30_client/cmd/main.go)
 
 最初に`runtime.NewScheme()`で新しい`scheme`を作成します。
 `clientgoscheme.AddToScheme`では、PodやServiceなどKubernetesの標準リソースの型をschemeに追加しています。
@@ -24,7 +24,7 @@ kubebuilderが生成したコードでは、以下のように初期化処理を
 
 つぎに[GetConfigOrDie](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/client/config?tab=doc#GetConfigOrDie)でクライアントの設定を取得しています。
 
-[import:"new-manager"](../../codes/30_client/main.go)
+[import:"new-manager"](../../codes/30_client/cmd/main.go)
 
 GetConfigOrDie関数は、下記のいずれかの設定を読み込みます。
 
@@ -38,7 +38,7 @@ GetConfigOrDie関数は、下記のいずれかの設定を読み込みます。
 
 以下のようにManagerから取得したクライアントを、MarkdownViewReconcilerに渡します。
 
-[import:"init-reconciler"](../../codes/30_client/main.go)
+[import:"init-reconciler"](../../codes/30_client/cmd/main.go)
 
 ただし、Managerの`Start()`を呼び出す前にクライアントは利用できないので注意しましょう。
 
@@ -46,7 +46,7 @@ GetConfigOrDie関数は、下記のいずれかの設定を読み込みます。
 
 Managerから渡されたクライアントは、以下のようにMarkdownViewReconcilerの埋め込みフィールドとなります。
 
-[import:"reconciler"](../../codes/30_client/controllers/markdownview_controller.go)
+[import:"reconciler"](../../codes/30_client/internal/controller/markdownview_controller.go)
 
 そのため、Reconcile関数内ではクライアントのメソッドを`r.Get(...)`や`r.Create(...)`のように呼び出すことができます。
 
@@ -59,7 +59,7 @@ Managerから渡されたクライアントは、以下のようにMarkdownViewR
 
 本ページのサンプルでは、以下のimportを利用します。
 
-[import:"import"](../../codes/30_client/controllers/markdownview_controller.go)
+[import:"import"](../../codes/30_client/internal/controller/markdownview_controller.go)
 
 ## Get/List
 
@@ -71,7 +71,7 @@ Managerから渡されたクライアントは、以下のようにMarkdownViewR
 そして第3引数に指定した変数で結果を受け取ることができます。
 なお、どの種類のリソースを取得するのかは、第3引数に渡した変数の型で自動的に判別されます。
 
-[import:"get"](../../codes/30_client/controllers/markdownview_controller.go)
+[import:"get"](../../codes/30_client/internal/controller/markdownview_controller.go)
 
 ### クライアントのキャッシュ機構
 
@@ -98,12 +98,12 @@ Listでは条件を指定して複数のリソースを一度に取得できま�
 下記の例では、LabelSelectorやNamespaceを指定してリソースの取得をおこなっています。
 なお、Namespaceを指定しなかった場合は、全Namespaceのリソースを取得します。
 
-[import:"list"](../../codes/30_client/controllers/markdownview_controller.go)
+[import:"list"](../../codes/30_client/internal/controller/markdownview_controller.go)
 
 `Limit`と`Continue`を利用することで、ページネーションをおこなうことも可能です。
 下記の例では1回のAPI呼び出しで3件ずつリソースを取得して表示しています。
 
-[import:"pagination"](../../codes/30_client/controllers/markdownview_controller.go)
+[import:"pagination"](../../codes/30_client/internal/controller/markdownview_controller.go)
 
 `.ListMeta.Continue`にトークンが入っているを利用して、続きのリソースを取得できます。
 トークンが空になるとすべてのリソースを取得したということになります。
@@ -113,7 +113,7 @@ Listでは条件を指定して複数のリソースを一度に取得できま�
 リソースの作成は`Create()`、更新には`Update()`を利用します。
 例えば、Deploymentリソースは以下のように作成できます。
 
-[import:"create",unindent:"true"](../../codes/30_client/controllers/markdownview_controller.go)
+[import:"create",unindent:"true"](../../codes/30_client/internal/controller/markdownview_controller.go)
 
 なお、リソースがすでに存在する状態で`Create()`を呼んだり、リソースが存在しない状態で`Update()`を呼び出したりするとエラーになります。
 
@@ -122,7 +122,7 @@ Listでは条件を指定して複数のリソースを一度に取得できま�
 `Get()`でリソースを取得して、リソースが存在しなければ`Create()`を呼び、存在すれば`Update()`を呼び出すという処理は頻出パターンです。
 そこで、controller-runtimeには`CreateOrUpdate()`という便利な関数が用意されています。
 
-[import:"create-or-update",unindent:"true"](../../codes/30_client/controllers/markdownview_controller.go)
+[import:"create-or-update",unindent:"true"](../../codes/30_client/internal/controller/markdownview_controller.go)
 
 この関数の第3引数に渡すオブジェクトには、NameとNamespaceのみを指定します(ただしクラスターリソースの場合はNamespace不要)。
 
@@ -152,7 +152,7 @@ Patchには`client.MergeFrom`や`client.StrategicMergeFrom`を利用する方法
 
 `client.MergeFrom`を利用してDeploymentのレプリカ数のみを更新する例を以下に示します。
 
-[import:"patch-merge"](../../codes/30_client/controllers/markdownview_controller.go)
+[import:"patch-merge"](../../codes/30_client/internal/controller/markdownview_controller.go)
 
 一方のServer-Side ApplyはKubernetes v1.14で導入されたリソースの更新方法です。
 リソースの各フィールドを更新したコンポーネントを`.metadata.managedFields`で管理することで、
@@ -163,13 +163,13 @@ Server-Side Applyでは、以下のようにUnstructured型のパッチを用意
 なお、[公式ドキュメントに記述](https://kubernetes.io/docs/reference/using-api/server-side-apply/#using-server-side-apply-in-a-controller)されているように、
 カスタムコントローラでServer-Side Applyをおこなう際には、常にForceオプションを有効にすることが推奨されています。
 
-[import:"patch-apply"](../../codes/30_client/controllers/markdownview_controller.go)
+[import:"patch-apply"](../../codes/30_client/internal/controller/markdownview_controller.go)
 
 上記のようにServer-Side ApplyはUnstructured型を利用するため、型安全なコードが記述できませんでした。
 
 Kubernetes v1.21からApplyConfigurationが導入され、以下のように型安全なServer-Side Applyのコードが書けるようになりました。
 
-[import:"patch-apply-config"](../../codes/30_client/controllers/markdownview_controller.go)
+[import:"patch-apply-config"](../../codes/30_client/internal/controller/markdownview_controller.go)
 
 ## Status.Update/Patch
 
@@ -180,7 +180,7 @@ Status更新用のクライアントを利用することになります。
 以下のようにstatusフィールドを変更し、`Status().Update()`を呼び出します。
 (このコードはあくまでもサンプルです。Deploymentリソースのステータスを勝手に書き換えるべきではありません。)
 
-[import:"update-status"](../../codes/30_client/controllers/markdownview_controller.go)
+[import:"update-status"](../../codes/30_client/internal/controller/markdownview_controller.go)
 
 ## Delete/DeleteAllOf
 
@@ -189,7 +189,7 @@ Status更新用のクライアントを利用することになります。
 `Delete`と`DeleteAllOf`には`Preconditions`という特殊なオプションがあります。
 以下のコードは`Preconditions`オプションを利用した例です。
 
-[import:"cond"](../../codes/30_client/controllers/markdownview_controller.go)
+[import:"cond"](../../codes/30_client/internal/controller/markdownview_controller.go)
 
 リソースを削除する際、リソース取得してから削除のリクエストを投げるまでの間に、同じ名前の別のリソースが作り直される場合があります。
 そのようなケースでは、NameとNamespaceのみを指定してDeleteを呼び出した場合、誤って新しく作成されたリソースを削除される可能性があります。
@@ -197,6 +197,6 @@ Status更新用のクライアントを利用することになります。
 
 `DeleteAllOf`は、以下のように指定した種類のリソースをまとめて削除できます。
 
-[import:"delete-all-of"](../../codes/30_client/controllers/markdownview_controller.go)
+[import:"delete-all-of"](../../codes/30_client/internal/controller/markdownview_controller.go)
 
 なお、Serviceリソースなど`DeleteAllOf`が利用できないリソースもあるので注意しましょう。

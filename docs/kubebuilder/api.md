@@ -31,21 +31,21 @@ $ make manifests
 ├── config
 │    ├── crd
 │    │    ├── bases
-│    │    │   └── view.zoetrope.github.io_markdownviews.yaml
+│    │    │    └── view.zoetrope.github.io_markdownviews.yaml
 │    │    ├── kustomization.yaml
 │    │    ├── kustomizeconfig.yaml
 │    │    └── patches
 │    │        ├── cainjection_in_markdownviews.yaml
 │    │        └── webhook_in_markdownviews.yaml
 │    ├── rbac
-│    │    ├── role.yaml
-│    │    ├── markdownview_editor_role.yaml
-│    │    └── markdownview_viewer_role.yaml
+│    │    └── role.yaml
 │    └── samples
+│        ├── kustomization.yaml
 │        └── view_v1_markdownview.yaml
-└── controllers
-     ├── markdownview_controller.go
-     └── suite_test.go
+└── internal
+    └── controller
+        ├── markdownview_controller.go
+        └── suite_test.go
 ```
 
 それぞれのファイルの内容をみていきましょう。
@@ -58,18 +58,18 @@ $ make manifests
 `groupversion_info.go`は初期生成後に編集する必要はありません。
 `zz_generated.deepcopy.go`は`markdownview_types.go`の内容から自動生成されるファイルなので編集する必要はありません。
 
-## controllers
+## internal/controllers
 
 `markdownview_controller.go`は、カスタムコントローラーのメインロジックになります。
 今後、カスタムコントローラーの処理は基本的にこのファイルに書いていくことになります。
 
 `suite_test.go`はテストコードです。詳細は[コントローラのテスト](../controller-runtime/controller_test.md)で解説します。
 
-## main.go
+## cmd/main.go
 
-`main.go`には、下記のようなコントローラーの初期化処理が追加されています。
+`cmd/main.go`には、下記のようなコントローラーの初期化処理が追加されています。
 
-[import:"init-reconciler",unindent="true"](../../codes/00_scaffold/main.go)
+[import:"init-reconciler",unindent="true"](../../codes/00_scaffold/cmd/main.go)
 
 ## config
 
@@ -85,9 +85,6 @@ crdディレクトリにはCRD(Custom Resource Definition)のマニフェスト�
 ### rbac
 
 `role.yaml`には、MarkdownViewリソースを扱うための権限が追加されています。
-
-`markdownview_editor_role.yaml`と`markdownview_viewer_role.yaml`は、MarkdownViewリソースの編集・読み取りの権限です。
-必要に応じて利用しましょう。
 
 ### samples
 

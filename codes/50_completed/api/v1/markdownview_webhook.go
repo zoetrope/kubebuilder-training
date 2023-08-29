@@ -1,5 +1,5 @@
 /*
-Copyright 2022.
+Copyright 2023.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
+	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 )
 
 // log is for logging in this package.
@@ -72,20 +73,20 @@ var _ webhook.Validator = &MarkdownView{}
 //! [validate]
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (r *MarkdownView) ValidateCreate() error {
+func (r *MarkdownView) ValidateCreate() (admission.Warnings, error) {
 	markdownviewlog.Info("validate create", "name", r.Name)
 
 	return r.validate()
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (r *MarkdownView) ValidateUpdate(old runtime.Object) error {
+func (r *MarkdownView) ValidateUpdate(old runtime.Object) (admission.Warnings, error) {
 	markdownviewlog.Info("validate update", "name", r.Name)
 
 	return r.validate()
 }
 
-func (r *MarkdownView) validate() error {
+func (r *MarkdownView) validate() (admission.Warnings, error) {
 	var errs field.ErrorList
 
 	if r.Spec.Replicas < 1 || r.Spec.Replicas > 5 {
@@ -105,17 +106,17 @@ func (r *MarkdownView) validate() error {
 	if len(errs) > 0 {
 		err := apierrors.NewInvalid(schema.GroupKind{Group: GroupVersion.Group, Kind: "MarkdownView"}, r.Name, errs)
 		markdownviewlog.Error(err, "validation error", "name", r.Name)
-		return err
+		return nil, err
 	}
 
-	return nil
+	return nil, nil
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
-func (r *MarkdownView) ValidateDelete() error {
+func (r *MarkdownView) ValidateDelete() (admission.Warnings, error) {
 	markdownviewlog.Info("validate delete", "name", r.Name)
 
-	return nil
+	return nil, nil
 }
 
 //! [validate]

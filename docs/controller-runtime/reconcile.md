@@ -50,7 +50,7 @@ Reconcile処理は下記のタイミングで呼び出されます。
 Reconcile処理は、コントローラーの扱うリソースが作成、更新、削除されたときに呼び出されると説明しました。
 「コントローラーの扱うリソース」を指定するために、[NewControllerManagedBy](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/builder#ControllerManagedBy)関数を利用します。
 
-[import:"managedby",unindent:"true"](../../codes/40_reconcile/controllers/markdownview_controller.go)
+[import:"managedby",unindent:"true"](../../codes/40_reconcile/internal/controller/markdownview_controller.go)
 
 #### For
 
@@ -83,7 +83,7 @@ MarkdownViewコントローラーは、ConfigMap, Deployment, Serviceリソー�
 
 Reconcile処理のおおまかな流れを確認しましょう。
 
-[import:"reconcile",unindent:"true"](../../codes/40_reconcile/controllers/markdownview_controller.go)
+[import:"reconcile",unindent:"true"](../../codes/40_reconcile/internal/controller/markdownview_controller.go)
 
 Reconcileの引数として渡ってきたRequestを利用して、対象となるMarkdownViewリソースの取得をおこないます。
 
@@ -102,7 +102,7 @@ Reconcileの引数として渡ってきたRequestを利用して、対象とな�
 
 `reconcileConfigMap`では、MarkdownViewリソースに記述されたMarkdownの内容をもとに、ConfigMapリソースを作成します。
 
-[import:"reconcile-configmap"](../../codes/40_reconcile/controllers/markdownview_controller.go)
+[import:"reconcile-configmap"](../../codes/40_reconcile/internal/controller/markdownview_controller.go)
 
 ここでは、[クライアントの使い方](./client.md)で紹介した`CreateOrUpdate`関数を利用しています。
 
@@ -115,15 +115,15 @@ DeploymentやServiceリソースはフィールド数が多いこともあり、
 
 そこで今回は、[クライアントの使い方](./client.md)で紹介したApplyConfigurationを利用したServer-Side Apply方式でリソースを作成します。
 
-[import:"reconcile-deployment"](../../codes/40_reconcile/controllers/markdownview_controller.go)
+[import:"reconcile-deployment"](../../codes/40_reconcile/internal/controller/markdownview_controller.go)
 
-[import:"reconcile-service"](../../codes/40_reconcile/controllers/markdownview_controller.go)
+[import:"reconcile-service"](../../codes/40_reconcile/internal/controller/markdownview_controller.go)
 
 ### ステータスの更新
 
 最後に、MarkdownViewリソースの状況をユーザーに知らせるためのステータスを更新します。
 
-[import:"update-status"](../../codes/40_reconcile/controllers/markdownview_controller.go)
+[import:"update-status"](../../codes/40_reconcile/internal/controller/markdownview_controller.go)
 
 ここでは、`reconcileDeployment`で作成したDeploymentリソースをチェックし、その状態に応じてMarkdownViewリソースの
 ステータスを決定しています。

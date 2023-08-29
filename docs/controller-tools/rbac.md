@@ -7,7 +7,7 @@ controller-genでは、Goのソースコード中に埋め込まれたマーカ�
 
 まずはKubebuilderによって生成されたマーカーを見てみましょう。
 
-[import:"rbac"](../../codes/00_scaffold/controllers/markdownview_controller.go)
+[import:"rbac"](../../codes/00_scaffold/internal/controller/markdownview_controller.go)
 
 - `groups`: 権限を与えたいリソースのAPIグループを指定します。
 - `resources`: 権限を与えたいリソースの種類を指定します。
@@ -18,7 +18,7 @@ MarkdownViewリソースと、そのサブリソースである`status`と`final
 
 これらに加えてMarkdownViewコントローラーが作成するConfigMap, Deployment, Service, Eventリソースを操作する権限のマーカーを追加しましょう。
 
-[import:"rbac"](../../codes/20_manifests/controllers/markdownview_controller.go)
+[import:"rbac"](../../codes/20_manifests/internal/controller/markdownview_controller.go)
 
 なお、controller-runtimeの提供するClientは、Getでリソースを取得した場合も裏でListやWatchを呼び出しています。
 そのためgetしかしない場合でも、get, list, watchを許可しておきましょう。
