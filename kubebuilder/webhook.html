@@ -6,7 +6,7 @@
         <title>Webhookの雛形作成 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 5.0.0">
         
         
         
@@ -16,7 +16,7 @@
     
             
                 
-                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                <link rel="stylesheet" href="../gitbook/@honkit/honkit-plugin-highlight/website.css">
                 
             
                 
@@ -469,22 +469,22 @@
 </ul>
 <p>ここでは<code>--programmatic-validation</code>と<code>--defaulting</code>を指定して、MarkdownViewリソース用のWebhookを生成してみましょう。</p>
 <p>注意: kindにはPodやDeploymentなどの既存のリソースを指定できません。</p>
-<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> kubebuilder create webhook --group view --version v1 --kind MarkdownView --programmatic-validation --defaulting</span>
-<span class="hljs-meta">$</span><span class="bash"> make manifests</span>
+<pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubebuilder create webhook --group view --version v1 --kind MarkdownView --programmatic-validation --defaulting</span>
+<span class="hljs-meta prompt_">$ </span><span class="language-bash">make manifests</span>
 </code></pre>
 <p>以下のファイルが新たに追加されました。</p>
 <pre><code>├── api
 │    └── v1
-│        ├── markdownView_webhook.go
+│        ├── markdownview_webhook.go
 │        └── webhook_suite_test.go
 └── config
      ├── certmanager
-     │   ├── certificate.yaml
-     │   ├── kustomization.yaml
-     │   └── kustomizeconfig.yaml
+     │    ├── certificate.yaml
+     │    ├── kustomization.yaml
+     │    └── kustomizeconfig.yaml
      ├── default
-     │   ├── manager_webhook_patch.yaml
-     │   └── webhookcainjection_patch.yaml
+     │    ├── manager_webhook_patch.yaml
+     │    └── webhookcainjection_patch.yaml
      └── webhook
          ├── kustomization.yaml
          ├── kustomizeconfig.yaml
@@ -499,10 +499,10 @@
 <h2 id="configwebhook">config/webhook</h2>
 <p><code>config/webhook</code>下は、Webhook機能を利用するために必要なマニフェストファイルです。
 manifests.yamlファイルは<code>make manifests</code>ファイルで自動生成されるため、基本的に手動で編集する必要はありません。</p>
-<h2 id="maingo">main.go</h2>
-<p><code>main.go</code>には、以下のようなWebhookの初期化をおこなうためのコードが追加されています。</p>
+<h2 id="cmdmaingo">cmd/main.go</h2>
+<p><code>cmd/main.go</code>には、以下のようなWebhookの初期化をおこなうためのコードが追加されています。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/00_scaffold/main.go" target="_blank">main.go</a></p>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/00_scaffold/cmd/main.go" target="_blank">main.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-keyword">if</span> err = (&amp;viewv1.MarkdownView{}).SetupWebhookWithManager(mgr); err != <span class="hljs-literal">nil</span> {
     setupLog.Error(err, <span class="hljs-string">&quot;unable to create webhook&quot;</span>, <span class="hljs-string">&quot;webhook&quot;</span>, <span class="hljs-string">&quot;MarkdownView&quot;</span>)
@@ -512,11 +512,11 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
 <h2 id="kustomizationyamlの編集">kustomization.yamlの編集</h2>
 <p>Kubebuilderコマンドで生成した直後の状態では、<code>make manifests</code>コマンドでマニフェストを生成しても、Webhook機能が利用できるようにはなっていません。</p>
 <p><code>config/default/kustomization.yaml</code>ファイルを編集する必要があります。</p>
-<p>生成直後のkustomization.yamlは、<code>bases</code> の <code>../webhook</code> と <code>../certmanager</code>, <code>patchesStrategicMerge</code> の <code>manager_webhook_patch.yaml</code> と <code>webhookcainjection_patch.yaml</code>, <code>vars</code> がコメントアウトされていますが、これらのコメントを外します。</p>
+<p>生成直後のkustomization.yamlは、<code>resources</code> の <code>../webhook</code> と <code>../certmanager</code>, <code>patchesStrategicMerge</code> の <code>manager_webhook_patch.yaml</code> と <code>webhookcainjection_patch.yaml</code>, <code>replacements</code> がコメントアウトされていますが、これらのコメントを外します。</p>
 <blockquote>
 <p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/00_scaffold/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
 </blockquote>
-<pre><code class="lang-yaml"><span class="hljs-attr">bases:</span>
+<pre><code class="lang-yaml"><span class="hljs-attr">resources:</span>
 <span class="hljs-comment"># [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in</span>
 <span class="hljs-comment"># crd/kustomization.yaml</span>
 <span class="hljs-bullet">-</span> <span class="hljs-string">../webhook</span>
@@ -531,35 +531,105 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
 <span class="hljs-comment"># Uncomment &apos;CERTMANAGER&apos; sections in crd/kustomization.yaml to enable the CA injection in the admission webhooks.</span>
 <span class="hljs-comment"># &apos;CERTMANAGER&apos; needs to be enabled to use ca injection</span>
 <span class="hljs-bullet">-</span> <span class="hljs-string">webhookcainjection_patch.yaml</span>
-<span class="hljs-comment"># the following config is for teaching kustomize how to do var substitution</span>
-<span class="hljs-attr">vars:</span>
 <span class="hljs-comment"># [CERTMANAGER] To enable cert-manager, uncomment all sections with &apos;CERTMANAGER&apos; prefix.</span>
-<span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">CERTIFICATE_NAMESPACE</span> <span class="hljs-comment"># namespace of the certificate CR</span>
-  <span class="hljs-attr">objref:</span>
-    <span class="hljs-attr">kind:</span> <span class="hljs-string">Certificate</span>
-    <span class="hljs-attr">group:</span> <span class="hljs-string">cert-manager.io</span>
-    <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
-    <span class="hljs-attr">name:</span> <span class="hljs-string">serving-cert</span> <span class="hljs-comment"># this name should match the one in certificate.yaml</span>
-  <span class="hljs-attr">fieldref:</span>
-    <span class="hljs-attr">fieldpath:</span> <span class="hljs-string">metadata.namespace</span>
-<span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">CERTIFICATE_NAME</span>
-  <span class="hljs-attr">objref:</span>
-    <span class="hljs-attr">kind:</span> <span class="hljs-string">Certificate</span>
-    <span class="hljs-attr">group:</span> <span class="hljs-string">cert-manager.io</span>
-    <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
-    <span class="hljs-attr">name:</span> <span class="hljs-string">serving-cert</span> <span class="hljs-comment"># this name should match the one in certificate.yaml</span>
-<span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">SERVICE_NAMESPACE</span> <span class="hljs-comment"># namespace of the service</span>
-  <span class="hljs-attr">objref:</span>
-    <span class="hljs-attr">kind:</span> <span class="hljs-string">Service</span>
-    <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
-    <span class="hljs-attr">name:</span> <span class="hljs-string">webhook-service</span>
-  <span class="hljs-attr">fieldref:</span>
-    <span class="hljs-attr">fieldpath:</span> <span class="hljs-string">metadata.namespace</span>
-<span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">SERVICE_NAME</span>
-  <span class="hljs-attr">objref:</span>
-    <span class="hljs-attr">kind:</span> <span class="hljs-string">Service</span>
-    <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
-    <span class="hljs-attr">name:</span> <span class="hljs-string">webhook-service</span>
+<span class="hljs-comment"># Uncomment the following replacements to add the cert-manager CA injection annotations</span>
+<span class="hljs-attr">replacements:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">source:</span> <span class="hljs-comment"># Add cert-manager annotation to ValidatingWebhookConfiguration, MutatingWebhookConfiguration and CRDs</span>
+      <span class="hljs-attr">kind:</span> <span class="hljs-string">Certificate</span>
+      <span class="hljs-attr">group:</span> <span class="hljs-string">cert-manager.io</span>
+      <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
+      <span class="hljs-attr">name:</span> <span class="hljs-string">serving-cert</span> <span class="hljs-comment"># this name should match the one in certificate.yaml</span>
+      <span class="hljs-attr">fieldPath:</span> <span class="hljs-string">.metadata.namespace</span> <span class="hljs-comment"># namespace of the certificate CR</span>
+    <span class="hljs-attr">targets:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">select:</span>
+          <span class="hljs-attr">kind:</span> <span class="hljs-string">ValidatingWebhookConfiguration</span>
+        <span class="hljs-attr">fieldPaths:</span>
+          <span class="hljs-bullet">-</span> <span class="hljs-string">.metadata.annotations.[cert-manager.io/inject-ca-from]</span>
+        <span class="hljs-attr">options:</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;/&apos;</span>
+          <span class="hljs-attr">index:</span> <span class="hljs-number">0</span>
+          <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">select:</span>
+          <span class="hljs-attr">kind:</span> <span class="hljs-string">MutatingWebhookConfiguration</span>
+        <span class="hljs-attr">fieldPaths:</span>
+          <span class="hljs-bullet">-</span> <span class="hljs-string">.metadata.annotations.[cert-manager.io/inject-ca-from]</span>
+        <span class="hljs-attr">options:</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;/&apos;</span>
+          <span class="hljs-attr">index:</span> <span class="hljs-number">0</span>
+          <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">select:</span>
+          <span class="hljs-attr">kind:</span> <span class="hljs-string">CustomResourceDefinition</span>
+        <span class="hljs-attr">fieldPaths:</span>
+          <span class="hljs-bullet">-</span> <span class="hljs-string">.metadata.annotations.[cert-manager.io/inject-ca-from]</span>
+        <span class="hljs-attr">options:</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;/&apos;</span>
+          <span class="hljs-attr">index:</span> <span class="hljs-number">0</span>
+          <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">source:</span>
+      <span class="hljs-attr">kind:</span> <span class="hljs-string">Certificate</span>
+      <span class="hljs-attr">group:</span> <span class="hljs-string">cert-manager.io</span>
+      <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
+      <span class="hljs-attr">name:</span> <span class="hljs-string">serving-cert</span> <span class="hljs-comment"># this name should match the one in certificate.yaml</span>
+      <span class="hljs-attr">fieldPath:</span> <span class="hljs-string">.metadata.name</span>
+    <span class="hljs-attr">targets:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">select:</span>
+          <span class="hljs-attr">kind:</span> <span class="hljs-string">ValidatingWebhookConfiguration</span>
+        <span class="hljs-attr">fieldPaths:</span>
+          <span class="hljs-bullet">-</span> <span class="hljs-string">.metadata.annotations.[cert-manager.io/inject-ca-from]</span>
+        <span class="hljs-attr">options:</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;/&apos;</span>
+          <span class="hljs-attr">index:</span> <span class="hljs-number">1</span>
+          <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">select:</span>
+          <span class="hljs-attr">kind:</span> <span class="hljs-string">MutatingWebhookConfiguration</span>
+        <span class="hljs-attr">fieldPaths:</span>
+          <span class="hljs-bullet">-</span> <span class="hljs-string">.metadata.annotations.[cert-manager.io/inject-ca-from]</span>
+        <span class="hljs-attr">options:</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;/&apos;</span>
+          <span class="hljs-attr">index:</span> <span class="hljs-number">1</span>
+          <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">select:</span>
+          <span class="hljs-attr">kind:</span> <span class="hljs-string">CustomResourceDefinition</span>
+        <span class="hljs-attr">fieldPaths:</span>
+          <span class="hljs-bullet">-</span> <span class="hljs-string">.metadata.annotations.[cert-manager.io/inject-ca-from]</span>
+        <span class="hljs-attr">options:</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;/&apos;</span>
+          <span class="hljs-attr">index:</span> <span class="hljs-number">1</span>
+          <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">source:</span> <span class="hljs-comment"># Add cert-manager annotation to the webhook Service</span>
+      <span class="hljs-attr">kind:</span> <span class="hljs-string">Service</span>
+      <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
+      <span class="hljs-attr">name:</span> <span class="hljs-string">webhook-service</span>
+      <span class="hljs-attr">fieldPath:</span> <span class="hljs-string">.metadata.name</span> <span class="hljs-comment"># namespace of the service</span>
+    <span class="hljs-attr">targets:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">select:</span>
+          <span class="hljs-attr">kind:</span> <span class="hljs-string">Certificate</span>
+          <span class="hljs-attr">group:</span> <span class="hljs-string">cert-manager.io</span>
+          <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
+        <span class="hljs-attr">fieldPaths:</span>
+          <span class="hljs-bullet">-</span> <span class="hljs-string">.spec.dnsNames.0</span>
+          <span class="hljs-bullet">-</span> <span class="hljs-string">.spec.dnsNames.1</span>
+        <span class="hljs-attr">options:</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;.&apos;</span>
+          <span class="hljs-attr">index:</span> <span class="hljs-number">0</span>
+          <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">source:</span>
+      <span class="hljs-attr">kind:</span> <span class="hljs-string">Service</span>
+      <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
+      <span class="hljs-attr">name:</span> <span class="hljs-string">webhook-service</span>
+      <span class="hljs-attr">fieldPath:</span> <span class="hljs-string">.metadata.namespace</span> <span class="hljs-comment"># namespace of the service</span>
+    <span class="hljs-attr">targets:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">select:</span>
+          <span class="hljs-attr">kind:</span> <span class="hljs-string">Certificate</span>
+          <span class="hljs-attr">group:</span> <span class="hljs-string">cert-manager.io</span>
+          <span class="hljs-attr">version:</span> <span class="hljs-string">v1</span>
+        <span class="hljs-attr">fieldPaths:</span>
+          <span class="hljs-bullet">-</span> <span class="hljs-string">.spec.dnsNames.0</span>
+          <span class="hljs-bullet">-</span> <span class="hljs-string">.spec.dnsNames.1</span>
+        <span class="hljs-attr">options:</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;.&apos;</span>
+          <span class="hljs-attr">index:</span> <span class="hljs-number">1</span>
+          <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
 </code></pre>
 
                                 
@@ -604,7 +674,7 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"next":{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"previous":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/webhook.md","mtime":"2023-01-29T13:43:33.081Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2023-01-29T13:44:11.724Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"next":{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"previous":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/webhook.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -6,7 +6,7 @@
         <title>Manager · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 5.0.0">
         
         
         
@@ -16,7 +16,7 @@
     
             
                 
-                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                <link rel="stylesheet" href="../gitbook/@honkit/honkit-plugin-highlight/website.css">
                 
             
                 
@@ -470,7 +470,7 @@
 <p>リーダー選出の利用方法は、<code>NewManager</code>のオプションの<code>LeaderElection</code>にtrueを指定し、<code>LeaderElectionID</code>にリーダー選出用のIDを指定するだけです。
 リーダー選出は、同じ<code>LeaderElectionID</code>を指定したプロセスの中から1つだけリーダーを選ぶという挙動になります。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/main.go" target="_blank">main.go</a></p>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/cmd/main.go" target="_blank">main.go</a></p>
 </blockquote>
 <pre><code class="lang-golang">mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
     Scheme:                 scheme,
@@ -516,7 +516,7 @@ Managerではそのような処理を実現するための仕組みを提供し�
 <span class="hljs-keyword">type</span> Runner <span class="hljs-keyword">struct</span> {
 }
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r Runner)</span> <span class="hljs-title">Start</span><span class="hljs-params">(ctx context.Context)</span> <span class="hljs-title">error</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r Runner)</span></span> Start(ctx context.Context) <span class="hljs-type">error</span> {
     ticker := time.NewTicker(<span class="hljs-number">10</span> * time.Second)
     <span class="hljs-keyword">defer</span> ticker.Stop()
     <span class="hljs-keyword">for</span> {
@@ -529,7 +529,7 @@ Managerではそのような処理を実現するための仕組みを提供し�
     }
 }
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r Runner)</span> <span class="hljs-title">NeedLeaderElection</span><span class="hljs-params">()</span> <span class="hljs-title">bool</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r Runner)</span></span> NeedLeaderElection() <span class="hljs-type">bool</span> {
     <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
 }
 </code></pre>
@@ -546,9 +546,9 @@ NeedLeaderElectionメソッドで <code>false</code> を返すようにします
 <p>Managerはイベントを記録するための機能を提供しており、<code>GetEventRecorderFor</code>で<a href="https://pkg.go.dev/k8s.io/client-go/tools/record?tab=doc#EventRecorder" target="_blank">EventRecorder</a>を取得できます。
 以下のように、Reconcilerを初期化する際にEventRecorderを渡します。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/main.go" target="_blank">main.go</a></p>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/cmd/main.go" target="_blank">main.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">if</span> err = (&amp;controllers.MarkdownViewReconciler{
+<pre><code class="lang-golang"><span class="hljs-keyword">if</span> err = (&amp;controller.MarkdownViewReconciler{
     Client:   mgr.GetClient(),
     Scheme:   mgr.GetScheme(),
     Recorder: mgr.GetEventRecorderFor(<span class="hljs-string">&quot;markdownview-controller&quot;</span>),
@@ -559,9 +559,10 @@ NeedLeaderElectionメソッドで <code>false</code> を返すようにします
 </code></pre>
 <p>Reconcilerではこれをフィールドとして持っておきます。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">type</span> MarkdownViewReconciler <span class="hljs-keyword">struct</span> {
+<pre><code class="lang-golang"><span class="hljs-comment">// MarkdownViewReconciler reconciles a MarkdownView object</span>
+<span class="hljs-keyword">type</span> MarkdownViewReconciler <span class="hljs-keyword">struct</span> {
     client.Client
     Scheme   *runtime.Scheme
     Recorder record.EventRecorder
@@ -570,7 +571,7 @@ NeedLeaderElectionメソッドで <code>false</code> を返すようにします
 <p>Eventを記録するための関数として、<code>Event</code>, <code>Eventf</code>, <code>AnnotatedEventf</code>などが用意されています。
 ここでは、ステータス更新時に以下のようなイベントを記録することにしましょう。なお、イベントタイプには<code>EventTypeNormal</code>, <code>EventTypeWarning</code>のみ指定できます。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
 <pre><code class="lang-golang">r.Recorder.Event(&amp;mdView, corev1.EventTypeNormal, <span class="hljs-string">&quot;Updated&quot;</span>, fmt.Sprintf(<span class="hljs-string">&quot;MarkdownView(%s:%s) updated: %s&quot;</span>, mdView.Namespace, mdView.Name, mdView.Status))
 </code></pre>
@@ -587,7 +588,7 @@ LAST SEEN   TYPE     REASON    OBJECT                             MESSAGE
 <p>Managerには、ヘルスチェック用のAPIのエンドポイントを作成する機能が用意されています。</p>
 <p>ヘルスチェック機能を利用するには、Managerの作成時に<code>HealthProbeBindAddress</code>でエンドポイントのアドレスを指定します。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/main.go" target="_blank">main.go</a></p>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/cmd/main.go" target="_blank">main.go</a></p>
 </blockquote>
 <pre><code class="lang-golang">mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
     Scheme:                 scheme,
@@ -612,7 +613,7 @@ LAST SEEN   TYPE     REASON    OBJECT                             MESSAGE
 <p>そして、<code>AddHealthzCheck</code>と<code>AddReadyzCheck</code>で、ハンドラの登録をおこないます。
 デフォルトでは<code>healthz.Ping</code>という何もしない関数を利用していますが、独自関数の登録も可能です。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/main.go" target="_blank">main.go</a></p>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/cmd/main.go" target="_blank">main.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-keyword">if</span> err := mgr.AddHealthzCheck(<span class="hljs-string">&quot;healthz&quot;</span>, healthz.Ping); err != <span class="hljs-literal">nil</span> {
     setupLog.Error(err, <span class="hljs-string">&quot;unable to set up health check&quot;</span>)
@@ -649,7 +650,7 @@ controller-runtimeではインメモリにキャッシュしているリソー�
 下記の例ではConfigMapリソースに対して、<code>ownerReferences</code>に指定されているMarkdownViewリソースの名前でインデックスを作成しています。</p>
 <pre><code class="lang-go"><span class="hljs-keyword">const</span> ownerControllerField = <span class="hljs-string">&quot;.metadata.ownerReference.controller&quot;</span>
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">indexByOwnerMarkdownView</span><span class="hljs-params">(obj client.Object)</span> []<span class="hljs-title">string</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">indexByOwnerMarkdownView</span><span class="hljs-params">(obj client.Object)</span></span> []<span class="hljs-type">string</span> {
     cm := obj.(*corev1.ConfigMap)
     owner := metav1.GetControllerOf(cm)
     <span class="hljs-keyword">if</span> owner == <span class="hljs-literal">nil</span> {
@@ -658,10 +659,10 @@ controller-runtimeではインメモリにキャッシュしているリソー�
     <span class="hljs-keyword">if</span> owner.APIVersion != viewv1.GroupVersion.String() || owner.Kind != <span class="hljs-string">&quot;MarkdownView&quot;</span> {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
     }
-    <span class="hljs-keyword">return</span> []<span class="hljs-keyword">string</span>{owner.Name}
+    <span class="hljs-keyword">return</span> []<span class="hljs-type">string</span>{owner.Name}
 }
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">SetupWithManager</span><span class="hljs-params">(mgr ctrl.Manager)</span> <span class="hljs-title">error</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span></span> SetupWithManager(mgr ctrl.Manager) <span class="hljs-type">error</span> {
     err := mgr.GetFieldIndexer().IndexField(ctx, &amp;corev1.ConfigMap{}, ownerControllerField, indexByOwnerMarkdownView)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
         <span class="hljs-keyword">return</span> err
@@ -678,7 +679,7 @@ controller-runtimeではインメモリにキャッシュしているリソー�
 <p>上記のようなインデックスを作成しておくと、<code>List()</code>を呼び出す際に特定のフィールドが指定した値と一致するリソースだけを取得できます。
 例えば以下の例であれば、ownerReferenceに指定したMarkdownViewリソースがセットされているConfigMapだけを取得できます。</p>
 <pre><code class="lang-go"><span class="hljs-keyword">var</span> cms corev1.ConfigMapList
-err := r.List(ctx, &amp;cms, client.MatchingFields(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{ownerControllerField: mdView.Name}))
+err := r.List(ctx, &amp;cms, client.MatchingFields(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{ownerControllerField: mdView.Name}))
 <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
     <span class="hljs-keyword">return</span> err
 }
@@ -726,7 +727,7 @@ err := r.List(ctx, &amp;cms, client.MatchingFields(<span class="hljs-keyword">ma
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.7","depth":2,"next":{"title":"モニタリング","level":"1.4.8","depth":2,"path":"controller-runtime/monitoring.md","ref":"controller-runtime/monitoring.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.6","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2022-07-18T10:02:03.375Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2023-01-29T13:44:11.724Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.7","depth":2,"next":{"title":"モニタリング","level":"1.4.8","depth":2,"path":"controller-runtime/monitoring.md","ref":"controller-runtime/monitoring.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.6","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

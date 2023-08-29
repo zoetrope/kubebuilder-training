@@ -6,7 +6,7 @@
         <title>リソースの削除 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 5.0.0">
         
         
         
@@ -16,7 +16,7 @@
     
             
                 
-                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                <link rel="stylesheet" href="../gitbook/@honkit/honkit-plugin-highlight/website.css">
                 
             
                 
@@ -472,18 +472,18 @@
 関数を利用することで、指定したリソースにownerReferenceを設定することができます。</p>
 <p>先ほど作成した、<code>reconcileConfigMap</code>関数で<code>controllerutil.SetControllerReference</code>を利用してみましょう。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">reconcileConfigMap</span><span class="hljs-params">(ctx context.Context, mdView viewv1.MarkdownView)</span> <span class="hljs-title">error</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span></span> reconcileConfigMap(ctx context.Context, mdView viewv1.MarkdownView) <span class="hljs-type">error</span> {
     logger := log.FromContext(ctx)
 
     cm := &amp;corev1.ConfigMap{}
     cm.SetNamespace(mdView.Namespace)
     cm.SetName(<span class="hljs-string">&quot;markdowns-&quot;</span> + mdView.Name)
 
-    op, err := ctrl.CreateOrUpdate(ctx, r.Client, cm, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+    op, err := ctrl.CreateOrUpdate(ctx, r.Client, cm, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> <span class="hljs-type">error</span> {
         <span class="hljs-keyword">if</span> cm.Data == <span class="hljs-literal">nil</span> {
-            cm.Data = <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>)
+            cm.Data = <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>)
         }
         <span class="hljs-keyword">for</span> name, content := <span class="hljs-keyword">range</span> mdView.Spec.Markdowns {
             cm.Data[name] = content
@@ -528,9 +528,9 @@
 <p><code>controllerutil.SetControllerReference</code>は、Server-Side Applyで利用するApplyConfiguration型には対応していません。
 そこで、以下のような補助関数を用意しましょう。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">controllerReference</span><span class="hljs-params">(mdView viewv1.MarkdownView, scheme *runtime.Scheme)</span> <span class="hljs-params">(*metav1apply.OwnerReferenceApplyConfiguration, error)</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">controllerReference</span><span class="hljs-params">(mdView viewv1.MarkdownView, scheme *runtime.Scheme)</span></span> (*metav1apply.OwnerReferenceApplyConfiguration, <span class="hljs-type">error</span>) {
     gvk, err := apiutil.GVKForObject(&amp;mdView, scheme)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err
@@ -548,7 +548,7 @@
 <p>Server-Side Applyでガベージコレクションを利用する際は、この補助関数を利用してApplyConfiguration型を作成するときに
 ownerReferenceを設定します。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
 <pre><code class="lang-golang">svcName := <span class="hljs-string">&quot;viewer-&quot;</span> + mdView.Name
 
@@ -558,14 +558,14 @@ owner, err := controllerReference(mdView, r.Scheme)
 }
 
 svc := corev1apply.Service(svcName, mdView.Namespace).
-    WithLabels(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{
+    WithLabels(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{
         <span class="hljs-string">&quot;app.kubernetes.io/name&quot;</span>:       <span class="hljs-string">&quot;mdbook&quot;</span>,
         <span class="hljs-string">&quot;app.kubernetes.io/instance&quot;</span>:   mdView.Name,
         <span class="hljs-string">&quot;app.kubernetes.io/created-by&quot;</span>: <span class="hljs-string">&quot;markdown-view-controller&quot;</span>,
     }).
     WithOwnerReferences(owner).
     WithSpec(corev1apply.ServiceSpec().
-        WithSelector(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{
+        WithSelector(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{
             <span class="hljs-string">&quot;app.kubernetes.io/name&quot;</span>:       <span class="hljs-string">&quot;mdbook&quot;</span>,
             <span class="hljs-string">&quot;app.kubernetes.io/instance&quot;</span>:   mdView.Name,
             <span class="hljs-string">&quot;app.kubernetes.io/created-by&quot;</span>: <span class="hljs-string">&quot;markdown-view-controller&quot;</span>,
@@ -685,7 +685,7 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"リソースの削除","level":"1.4.6","depth":2,"next":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"previous":{"title":"Webhookのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2023-01-17T09:58:11.754Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2023-01-29T13:44:11.724Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"リソースの削除","level":"1.4.6","depth":2,"next":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"previous":{"title":"Webhookのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -6,7 +6,7 @@
         <title>Webhookの実装 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 5.0.0">
         
         
         
@@ -16,7 +16,7 @@
     
             
                 
-                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                <link rel="stylesheet" href="../gitbook/@honkit/honkit-plugin-highlight/website.css">
                 
             
                 
@@ -478,12 +478,13 @@ Defaultメソッドでは、MarkdownViewリソースの値を書き換えるこ�
     ctrl <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime&quot;</span>
     logf <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log&quot;</span>
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/webhook&quot;</span>
+    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/webhook/admission&quot;</span>
 )
 
 <span class="hljs-comment">// log is for logging in this package.</span>
 <span class="hljs-keyword">var</span> markdownviewlog = logf.Log.WithName(<span class="hljs-string">&quot;markdownview-resource&quot;</span>)
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">SetupWebhookWithManager</span><span class="hljs-params">(mgr ctrl.Manager)</span> <span class="hljs-title">error</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span></span> SetupWebhookWithManager(mgr ctrl.Manager) <span class="hljs-type">error</span> {
     <span class="hljs-keyword">return</span> ctrl.NewWebhookManagedBy(mgr).
         For(r).
         Complete()
@@ -494,7 +495,7 @@ Defaultメソッドでは、MarkdownViewリソースの値を書き換えるこ�
 <span class="hljs-keyword">var</span> _ webhook.Defaulter = &amp;MarkdownView{}
 
 <span class="hljs-comment">// Default implements webhook.Defaulter so a webhook will be registered for the type</span>
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">Default</span><span class="hljs-params">()</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span></span> Default() {
     markdownviewlog.Info(<span class="hljs-string">&quot;default&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
 
     <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(r.Spec.ViewerImage) == <span class="hljs-number">0</span> {
@@ -520,12 +521,13 @@ ValidateCreate, ValidateUpdate, ValidateDeleteは、それぞれリソースの�
     ctrl <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime&quot;</span>
     logf <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log&quot;</span>
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/webhook&quot;</span>
+    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/webhook/admission&quot;</span>
 )
 
 <span class="hljs-comment">// log is for logging in this package.</span>
 <span class="hljs-keyword">var</span> markdownviewlog = logf.Log.WithName(<span class="hljs-string">&quot;markdownview-resource&quot;</span>)
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">SetupWebhookWithManager</span><span class="hljs-params">(mgr ctrl.Manager)</span> <span class="hljs-title">error</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span></span> SetupWebhookWithManager(mgr ctrl.Manager) <span class="hljs-type">error</span> {
     <span class="hljs-keyword">return</span> ctrl.NewWebhookManagedBy(mgr).
         For(r).
         Complete()
@@ -537,20 +539,20 @@ ValidateCreate, ValidateUpdate, ValidateDeleteは、それぞれリソースの�
 <span class="hljs-keyword">var</span> _ webhook.Validator = &amp;MarkdownView{}
 
 <span class="hljs-comment">// ValidateCreate implements webhook.Validator so a webhook will be registered for the type</span>
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">ValidateCreate</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span></span> ValidateCreate() (admission.Warnings, <span class="hljs-type">error</span>) {
     markdownviewlog.Info(<span class="hljs-string">&quot;validate create&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
 
     <span class="hljs-keyword">return</span> r.validate()
 }
 
 <span class="hljs-comment">// ValidateUpdate implements webhook.Validator so a webhook will be registered for the type</span>
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">ValidateUpdate</span><span class="hljs-params">(old runtime.Object)</span> <span class="hljs-title">error</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span></span> ValidateUpdate(old runtime.Object) (admission.Warnings, <span class="hljs-type">error</span>) {
     markdownviewlog.Info(<span class="hljs-string">&quot;validate update&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
 
     <span class="hljs-keyword">return</span> r.validate()
 }
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">validate</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span></span> validate() (admission.Warnings, <span class="hljs-type">error</span>) {
     <span class="hljs-keyword">var</span> errs field.ErrorList
 
     <span class="hljs-keyword">if</span> r.Spec.Replicas &lt; <span class="hljs-number">1</span> || r.Spec.Replicas &gt; <span class="hljs-number">5</span> {
@@ -570,17 +572,17 @@ ValidateCreate, ValidateUpdate, ValidateDeleteは、それぞれリソースの�
     <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(errs) &gt; <span class="hljs-number">0</span> {
         err := apierrors.NewInvalid(schema.GroupKind{Group: GroupVersion.Group, Kind: <span class="hljs-string">&quot;MarkdownView&quot;</span>}, r.Name, errs)
         markdownviewlog.Error(err, <span class="hljs-string">&quot;validation error&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
-        <span class="hljs-keyword">return</span> err
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err
     }
 
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, <span class="hljs-literal">nil</span>
 }
 
 <span class="hljs-comment">// ValidateDelete implements webhook.Validator so a webhook will be registered for the type</span>
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span> <span class="hljs-title">ValidateDelete</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownView)</span></span> ValidateDelete() (admission.Warnings, <span class="hljs-type">error</span>) {
     markdownviewlog.Info(<span class="hljs-string">&quot;validate delete&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, r.Name)
 
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, <span class="hljs-literal">nil</span>
 }
 </code></pre>
 <p>今回はValidateCreateとValidateUpdateで同じバリデーションをおこなうことにしましょう。
@@ -660,7 +662,7 @@ markdownviews.view.zoetrope.github.io &quot;markdownview-sample&quot; was not va
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookの実装","level":"1.4.4","depth":2,"next":{"title":"Webhookのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"previous":{"title":"コントローラーのテスト","level":"1.4.3","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/webhook.md","mtime":"2022-07-18T10:02:03.375Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2023-01-29T13:44:11.724Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookの実装","level":"1.4.4","depth":2,"next":{"title":"Webhookのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"previous":{"title":"コントローラーのテスト","level":"1.4.3","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/webhook.md","mtime":"2023-07-24T07:42:30.025Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

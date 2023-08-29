@@ -6,7 +6,7 @@
         <title>APIの雛形作成 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 5.0.0">
         
         
         
@@ -16,7 +16,7 @@
     
             
                 
-                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                <link rel="stylesheet" href="../gitbook/@honkit/honkit-plugin-highlight/website.css">
                 
             
                 
@@ -462,12 +462,12 @@
 <p><code>kubebuilder create api</code>コマンドを利用すると、カスタムリソースとカスタムコントローラーの実装の雛形を生成できます。</p>
 <p>以下のコマンドを実行して、MarkdownViewを表現するためのカスタムリソースと、MarkdownViewを扱うカスタムコントローラーを生成してみましょう。</p>
 <p>カスタムリソースとコントローラーのソースコードを生成するかどうか聞かれるので、今回はどちらも<code>y</code>と回答します。</p>
-<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> kubebuilder create api --group view --version v1 --kind MarkdownView</span>
+<pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubebuilder create api --group view --version v1 --kind MarkdownView</span>
 Create Resource [y/n]
 y
 Create Controller [y/n]
 y
-<span class="hljs-meta">$</span><span class="bash"> make manifests</span>
+<span class="hljs-meta prompt_">$ </span><span class="language-bash">make manifests</span>
 </code></pre>
 <p><code>--group</code>,<code>--version</code>, <code>--kind</code>オプションは、生成するカスタムリソースのGVKを指定します。</p>
 <ul>
@@ -484,37 +484,37 @@ y
 ├── config
 │    ├── crd
 │    │    ├── bases
-│    │    │   └── view.zoetrope.github.io_markdownviews.yaml
+│    │    │    └── view.zoetrope.github.io_markdownviews.yaml
 │    │    ├── kustomization.yaml
 │    │    ├── kustomizeconfig.yaml
 │    │    └── patches
 │    │        ├── cainjection_in_markdownviews.yaml
 │    │        └── webhook_in_markdownviews.yaml
 │    ├── rbac
-│    │    ├── role.yaml
-│    │    ├── markdownview_editor_role.yaml
-│    │    └── markdownview_viewer_role.yaml
+│    │    └── role.yaml
 │    └── samples
+│        ├── kustomization.yaml
 │        └── view_v1_markdownview.yaml
-└── controllers
-     ├── markdownview_controller.go
-     └── suite_test.go
+└── internal
+    └── controller
+        ├── markdownview_controller.go
+        └── suite_test.go
 </code></pre><p>それぞれのファイルの内容をみていきましょう。</p>
 <h2 id="apiv1">api/v1</h2>
 <p><code>markdownview_types.go</code>は、MarkdownViewリソースをGo言語のstructで表現したものです。
 今後、MarkdownViewリソースの定義を変更する場合にはこのファイルを編集していくことになります。</p>
 <p><code>groupversion_info.go</code>は初期生成後に編集する必要はありません。
 <code>zz_generated.deepcopy.go</code>は<code>markdownview_types.go</code>の内容から自動生成されるファイルなので編集する必要はありません。</p>
-<h2 id="controllers">controllers</h2>
+<h2 id="internalcontrollers">internal/controllers</h2>
 <p><code>markdownview_controller.go</code>は、カスタムコントローラーのメインロジックになります。
 今後、カスタムコントローラーの処理は基本的にこのファイルに書いていくことになります。</p>
 <p><code>suite_test.go</code>はテストコードです。詳細は<a href="../controller-runtime/controller_test.html">コントローラのテスト</a>で解説します。</p>
-<h2 id="maingo">main.go</h2>
-<p><code>main.go</code>には、下記のようなコントローラーの初期化処理が追加されています。</p>
+<h2 id="cmdmaingo">cmd/main.go</h2>
+<p><code>cmd/main.go</code>には、下記のようなコントローラーの初期化処理が追加されています。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/00_scaffold/main.go" target="_blank">main.go</a></p>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/00_scaffold/cmd/main.go" target="_blank">main.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">if</span> err = (&amp;controllers.MarkdownViewReconciler{
+<pre><code class="lang-golang"><span class="hljs-keyword">if</span> err = (&amp;controller.MarkdownViewReconciler{
     Client: mgr.GetClient(),
     Scheme: mgr.GetScheme(),
 }).SetupWithManager(mgr); err != <span class="hljs-literal">nil</span> {
@@ -530,8 +530,6 @@ y
 ただし、Conversion Webhookを利用したい場合は、<code>cainjection_in_markdownViews.yaml</code>と<code>webhook_in_markdownViews.yaml</code>のパッチを利用するように<code>kustomization.yaml</code>を書き換えてください。</p>
 <h3 id="rbac">rbac</h3>
 <p><code>role.yaml</code>には、MarkdownViewリソースを扱うための権限が追加されています。</p>
-<p><code>markdownview_editor_role.yaml</code>と<code>markdownview_viewer_role.yaml</code>は、MarkdownViewリソースの編集・読み取りの権限です。
-必要に応じて利用しましょう。</p>
 <h3 id="samples">samples</h3>
 <p>カスタムリソースのサンプルマニフェストです。
 テストで利用したり、ユーザー向けに提供できるように記述しておきましょう。</p>
@@ -578,7 +576,7 @@ y
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"next":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},"previous":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/api.md","mtime":"2022-07-18T10:02:03.375Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2023-01-29T13:44:11.724Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"next":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},"previous":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/api.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

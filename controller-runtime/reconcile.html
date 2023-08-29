@@ -6,7 +6,7 @@
         <title>Reconcileの実装 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 5.0.0">
         
         
         
@@ -16,7 +16,7 @@
     
             
                 
-                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                <link rel="stylesheet" href="../gitbook/@honkit/honkit-plugin-highlight/website.css">
                 
             
                 
@@ -465,7 +465,7 @@
 <h3 id="reconcilerインタフェース">Reconcilerインタフェース</h3>
 <p>controller-runtimeでは、Reconcile処理は<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Reconciler" target="_blank">reconcile.Reconciler</a>インタフェースを実装することになります。</p>
 <pre><code class="lang-go"><span class="hljs-keyword">type</span> Reconciler <span class="hljs-keyword">interface</span> {
-    Reconcile(context.Context, Request) (Result, error)
+    Reconcile(context.Context, Request) (Result, <span class="hljs-type">error</span>)
 }
 </code></pre>
 <p>引数の<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/reconcile?tab=doc#Request" target="_blank">reconcile.Request</a>には、
@@ -494,9 +494,10 @@ RequeueAfterを指定した場合は、指定した時間が経過したあと�
 <p>Reconcile処理は、コントローラーの扱うリソースが作成、更新、削除されたときに呼び出されると説明しました。
 「コントローラーの扱うリソース」を指定するために、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/builder#ControllerManagedBy" target="_blank">NewControllerManagedBy</a>関数を利用します。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">SetupWithManager</span><span class="hljs-params">(mgr ctrl.Manager)</span> <span class="hljs-title">error</span></span> {
+<pre><code class="lang-golang"><span class="hljs-comment">// SetupWithManager sets up the controller with the Manager.</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span></span> SetupWithManager(mgr ctrl.Manager) <span class="hljs-type">error</span> {
     <span class="hljs-keyword">return</span> ctrl.NewControllerManagedBy(mgr).
         For(&amp;viewv1.MarkdownView{}).
         Owns(&amp;corev1.ConfigMap{}).
@@ -524,9 +525,18 @@ RequeueAfterを指定した場合は、指定した時間が経過したあと�
 <h3 id="reconcile処理の流れ">Reconcile処理の流れ</h3>
 <p>Reconcile処理のおおまかな流れを確認しましょう。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">Reconcile</span><span class="hljs-params">(ctx context.Context, req ctrl.Request)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
+<pre><code class="lang-golang"><span class="hljs-comment">// Reconcile is part of the main kubernetes reconciliation loop which aims to</span>
+<span class="hljs-comment">// move the current state of the cluster closer to the desired state.</span>
+<span class="hljs-comment">// TODO(user): Modify the Reconcile function to compare the state specified by</span>
+<span class="hljs-comment">// the MarkdownView object against the actual cluster state, and then</span>
+<span class="hljs-comment">// perform operations to make the cluster state reflect the state specified by</span>
+<span class="hljs-comment">// the user.</span>
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// For more details, check Reconcile and its Result here:</span>
+<span class="hljs-comment">// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.3/pkg/reconcile</span>
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span></span> Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, <span class="hljs-type">error</span>) {
     logger := log.FromContext(ctx)
 
     <span class="hljs-keyword">var</span> mdView viewv1.MarkdownView
@@ -570,18 +580,18 @@ RequeueAfterを指定した場合は、指定した時間が経過したあと�
 <h3 id="reconcileconfigmap">reconcileConfigMap</h3>
 <p><code>reconcileConfigMap</code>では、MarkdownViewリソースに記述されたMarkdownの内容をもとに、ConfigMapリソースを作成します。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">reconcileConfigMap</span><span class="hljs-params">(ctx context.Context, mdView viewv1.MarkdownView)</span> <span class="hljs-title">error</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span></span> reconcileConfigMap(ctx context.Context, mdView viewv1.MarkdownView) <span class="hljs-type">error</span> {
     logger := log.FromContext(ctx)
 
     cm := &amp;corev1.ConfigMap{}
     cm.SetNamespace(mdView.Namespace)
     cm.SetName(<span class="hljs-string">&quot;markdowns-&quot;</span> + mdView.Name)
 
-    op, err := ctrl.CreateOrUpdate(ctx, r.Client, cm, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+    op, err := ctrl.CreateOrUpdate(ctx, r.Client, cm, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> <span class="hljs-type">error</span> {
         <span class="hljs-keyword">if</span> cm.Data == <span class="hljs-literal">nil</span> {
-            cm.Data = <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>)
+            cm.Data = <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>)
         }
         <span class="hljs-keyword">for</span> name, content := <span class="hljs-keyword">range</span> mdView.Spec.Markdowns {
             cm.Data[name] = content
@@ -606,9 +616,9 @@ RequeueAfterを指定した場合は、指定した時間が経過したあと�
 DeploymentやServiceリソースはフィールド数が多いこともあり、適切に差分を検出してリソースを更新することが面倒だったりします。</p>
 <p>そこで今回は、<a href="client.html">クライアントの使い方</a>で紹介したApplyConfigurationを利用したServer-Side Apply方式でリソースを作成します。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">reconcileDeployment</span><span class="hljs-params">(ctx context.Context, mdView viewv1.MarkdownView)</span> <span class="hljs-title">error</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span></span> reconcileDeployment(ctx context.Context, mdView viewv1.MarkdownView) <span class="hljs-type">error</span> {
     logger := log.FromContext(ctx)
 
     depName := <span class="hljs-string">&quot;viewer-&quot;</span> + mdView.Name
@@ -618,20 +628,20 @@ DeploymentやServiceリソースはフィールド数が多いこともあり、
     }
 
     dep := appsv1apply.Deployment(depName, mdView.Namespace).
-        WithLabels(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{
+        WithLabels(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{
             <span class="hljs-string">&quot;app.kubernetes.io/name&quot;</span>:       <span class="hljs-string">&quot;mdbook&quot;</span>,
             <span class="hljs-string">&quot;app.kubernetes.io/instance&quot;</span>:   mdView.Name,
             <span class="hljs-string">&quot;app.kubernetes.io/created-by&quot;</span>: <span class="hljs-string">&quot;markdown-view-controller&quot;</span>,
         }).
         WithSpec(appsv1apply.DeploymentSpec().
             WithReplicas(mdView.Spec.Replicas).
-            WithSelector(metav1apply.LabelSelector().WithMatchLabels(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{
+            WithSelector(metav1apply.LabelSelector().WithMatchLabels(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{
                 <span class="hljs-string">&quot;app.kubernetes.io/name&quot;</span>:       <span class="hljs-string">&quot;mdbook&quot;</span>,
                 <span class="hljs-string">&quot;app.kubernetes.io/instance&quot;</span>:   mdView.Name,
                 <span class="hljs-string">&quot;app.kubernetes.io/created-by&quot;</span>: <span class="hljs-string">&quot;markdown-view-controller&quot;</span>,
             })).
             WithTemplate(corev1apply.PodTemplateSpec().
-                WithLabels(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{
+                WithLabels(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{
                     <span class="hljs-string">&quot;app.kubernetes.io/name&quot;</span>:       <span class="hljs-string">&quot;mdbook&quot;</span>,
                     <span class="hljs-string">&quot;app.kubernetes.io/instance&quot;</span>:   mdView.Name,
                     <span class="hljs-string">&quot;app.kubernetes.io/created-by&quot;</span>: <span class="hljs-string">&quot;markdown-view-controller&quot;</span>,
@@ -714,20 +724,20 @@ DeploymentやServiceリソースはフィールド数が多いこともあり、
 }
 </code></pre>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">reconcileService</span><span class="hljs-params">(ctx context.Context, mdView viewv1.MarkdownView)</span> <span class="hljs-title">error</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span></span> reconcileService(ctx context.Context, mdView viewv1.MarkdownView) <span class="hljs-type">error</span> {
     logger := log.FromContext(ctx)
     svcName := <span class="hljs-string">&quot;viewer-&quot;</span> + mdView.Name
 
     svc := corev1apply.Service(svcName, mdView.Namespace).
-        WithLabels(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{
+        WithLabels(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{
             <span class="hljs-string">&quot;app.kubernetes.io/name&quot;</span>:       <span class="hljs-string">&quot;mdbook&quot;</span>,
             <span class="hljs-string">&quot;app.kubernetes.io/instance&quot;</span>:   mdView.Name,
             <span class="hljs-string">&quot;app.kubernetes.io/created-by&quot;</span>: <span class="hljs-string">&quot;markdown-view-controller&quot;</span>,
         }).
         WithSpec(corev1apply.ServiceSpec().
-            WithSelector(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{
+            WithSelector(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{
                 <span class="hljs-string">&quot;app.kubernetes.io/name&quot;</span>:       <span class="hljs-string">&quot;mdbook&quot;</span>,
                 <span class="hljs-string">&quot;app.kubernetes.io/instance&quot;</span>:   mdView.Name,
                 <span class="hljs-string">&quot;app.kubernetes.io/created-by&quot;</span>: <span class="hljs-string">&quot;markdown-view-controller&quot;</span>,
@@ -779,9 +789,9 @@ DeploymentやServiceリソースはフィールド数が多いこともあり、
 <h3 id="ステータスの更新">ステータスの更新</h3>
 <p>最後に、MarkdownViewリソースの状況をユーザーに知らせるためのステータスを更新します。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">updateStatus</span><span class="hljs-params">(ctx context.Context, mdView viewv1.MarkdownView)</span> <span class="hljs-params">(ctrl.Result, error)</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span></span> updateStatus(ctx context.Context, mdView viewv1.MarkdownView) (ctrl.Result, <span class="hljs-type">error</span>) {
     <span class="hljs-keyword">var</span> dep appsv1.Deployment
     err := r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: <span class="hljs-string">&quot;viewer-&quot;</span> + mdView.Name}, &amp;dep)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
@@ -879,7 +889,7 @@ markdownview-sample   1          Healthy
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"next":{"title":"コントローラーのテスト","level":"1.4.3","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"previous":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/reconcile.md","mtime":"2023-01-29T13:43:33.081Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2023-01-29T13:44:11.724Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"next":{"title":"コントローラーのテスト","level":"1.4.3","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"previous":{"title":"クライアントの使い方","level":"1.4.1","depth":2,"path":"controller-runtime/client.md","ref":"controller-runtime/client.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/reconcile.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

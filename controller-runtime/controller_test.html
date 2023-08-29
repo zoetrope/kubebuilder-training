@@ -6,7 +6,7 @@
         <title>コントローラーのテスト · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 5.0.0">
         
         
         
@@ -16,7 +16,7 @@
     
             
                 
-                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                <link rel="stylesheet" href="../gitbook/@honkit/honkit-plugin-highlight/website.css">
                 
             
                 
@@ -471,12 +471,12 @@
 <p>なおcontroller-genが生成するテストコードでは、<a href="https://github.com/onsi/ginkgo" target="_blank">Ginkgo</a>というテストフレームワークを利用しています。
 このフレームワークの利用方法については<a href="https://onsi.github.io/ginkgo/" target="_blank">Ginkgoのドキュメント</a>を御覧ください。</p>
 <h2 id="テスト環境のセットアップ">テスト環境のセットアップ</h2>
-<p>controller-genによって自動生成された<code>controllers/suite_test.go</code>を見てみましょう。</p>
+<p>controller-genによって自動生成された<code>internal/controller/suite_test.go</code>を見てみましょう。</p>
 <blockquote>
-<p><a id="controllers/suite_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/controllers/suite_test.go" target="_blank">controllers/suite_test.go</a></p>
+<p><a id="internal/controller/suite_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/internal/controller/suite_test.go" target="_blank">internal/controller/suite_test.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">/*
-Copyright 2022.
+Copyright 2023.
 
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -491,16 +491,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */</span>
 
-<span class="hljs-keyword">package</span> controllers
+<span class="hljs-keyword">package</span> controller
 
 <span class="hljs-keyword">import</span> (
     <span class="hljs-string">&quot;context&quot;</span>
     <span class="hljs-string">&quot;path/filepath&quot;</span>
     <span class="hljs-string">&quot;testing&quot;</span>
 
-    . <span class="hljs-string">&quot;github.com/onsi/ginkgo&quot;</span>
+    . <span class="hljs-string">&quot;github.com/onsi/ginkgo/v2&quot;</span>
     . <span class="hljs-string">&quot;github.com/onsi/gomega&quot;</span>
-    viewv1 <span class="hljs-string">&quot;github.com/zoetrope/markdown-view/api/v1&quot;</span>
     corev1 <span class="hljs-string">&quot;k8s.io/api/core/v1&quot;</span>
     <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/runtime&quot;</span>
     clientgoscheme <span class="hljs-string">&quot;k8s.io/client-go/kubernetes/scheme&quot;</span>
@@ -509,6 +508,8 @@ limitations under the License.
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/envtest&quot;</span>
     logf <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log&quot;</span>
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log/zap&quot;</span>
+
+    viewv1 <span class="hljs-string">&quot;github.com/zoetrope/markdown-view/api/v1&quot;</span>
     <span class="hljs-comment">//+kubebuilder:scaffold:imports</span>
 )
 
@@ -520,7 +521,7 @@ limitations under the License.
 <span class="hljs-keyword">var</span> testEnv *envtest.Environment
 <span class="hljs-keyword">var</span> scheme = runtime.NewScheme()
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">TestAPIs</span><span class="hljs-params">(t *testing.T)</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">TestControllers</span><span class="hljs-params">(t *testing.T)</span></span> {
     RegisterFailHandler(Fail)
 
     RunSpecs(t, <span class="hljs-string">&quot;Controller Suite&quot;</span>)
@@ -531,11 +532,11 @@ limitations under the License.
 
     By(<span class="hljs-string">&quot;bootstrapping test environment&quot;</span>)
     testEnv = &amp;envtest.Environment{
-        CRDDirectoryPaths:     []<span class="hljs-keyword">string</span>{filepath.Join(<span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>, <span class="hljs-string">&quot;crd&quot;</span>, <span class="hljs-string">&quot;bases&quot;</span>)},
+        CRDDirectoryPaths:     []<span class="hljs-type">string</span>{filepath.Join(<span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>, <span class="hljs-string">&quot;crd&quot;</span>, <span class="hljs-string">&quot;bases&quot;</span>)},
         ErrorIfCRDPathMissing: <span class="hljs-literal">true</span>,
     }
 
-    <span class="hljs-keyword">var</span> err error
+    <span class="hljs-keyword">var</span> err <span class="hljs-type">error</span>
     <span class="hljs-comment">// cfg is defined in this file globally.</span>
     cfg, err = testEnv.Start()
     Expect(err).NotTo(HaveOccurred())
@@ -556,7 +557,7 @@ limitations under the License.
     ns.Name = <span class="hljs-string">&quot;test&quot;</span>
     err = k8sClient.Create(context.Background(), ns)
     Expect(err).NotTo(HaveOccurred())
-}, <span class="hljs-number">60</span>)
+})
 
 <span class="hljs-keyword">var</span> _ = AfterSuite(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
     By(<span class="hljs-string">&quot;tearing down the test environment&quot;</span>)
@@ -572,16 +573,16 @@ limitations under the License.
 <h2 id="コントローラーのテスト">コントローラーのテスト</h2>
 <p>それでは実際のテストを書いていきましょう。</p>
 <blockquote>
-<p><a id="markdownview_controller_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/controllers/markdownview_controller_test.go" target="_blank">markdownview_controller_test.go</a></p>
+<p><a id="markdownview_controller_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/internal/controller/markdownview_controller_test.go" target="_blank">markdownview_controller_test.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">package</span> controllers
+<pre><code class="lang-golang"><span class="hljs-keyword">package</span> controller
 
 <span class="hljs-keyword">import</span> (
     <span class="hljs-string">&quot;context&quot;</span>
     <span class="hljs-string">&quot;errors&quot;</span>
     <span class="hljs-string">&quot;time&quot;</span>
 
-    . <span class="hljs-string">&quot;github.com/onsi/ginkgo&quot;</span>
+    . <span class="hljs-string">&quot;github.com/onsi/ginkgo/v2&quot;</span>
     . <span class="hljs-string">&quot;github.com/onsi/gomega&quot;</span>
     viewv1 <span class="hljs-string">&quot;github.com/zoetrope/markdown-view/api/v1&quot;</span>
     appsv1 <span class="hljs-string">&quot;k8s.io/api/apps/v1&quot;</span>
@@ -648,7 +649,7 @@ limitations under the License.
         Expect(err).NotTo(HaveOccurred())
 
         cm := corev1.ConfigMap{}
-        Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+        Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> <span class="hljs-type">error</span> {
             <span class="hljs-keyword">return</span> k8sClient.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;test&quot;</span>, Name: <span class="hljs-string">&quot;markdowns-sample&quot;</span>}, &amp;cm)
         }).Should(Succeed())
         Expect(cm.Data).Should(HaveKey(<span class="hljs-string">&quot;SUMMARY.md&quot;</span>))
@@ -661,7 +662,7 @@ limitations under the License.
         Expect(err).NotTo(HaveOccurred())
 
         dep := appsv1.Deployment{}
-        Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+        Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> <span class="hljs-type">error</span> {
             <span class="hljs-keyword">return</span> k8sClient.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;test&quot;</span>, Name: <span class="hljs-string">&quot;viewer-sample&quot;</span>}, &amp;dep)
         }).Should(Succeed())
         Expect(dep.Spec.Replicas).Should(Equal(pointer.Int32Ptr(<span class="hljs-number">3</span>)))
@@ -674,10 +675,10 @@ limitations under the License.
         Expect(err).NotTo(HaveOccurred())
 
         svc := corev1.Service{}
-        Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+        Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> <span class="hljs-type">error</span> {
             <span class="hljs-keyword">return</span> k8sClient.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;test&quot;</span>, Name: <span class="hljs-string">&quot;viewer-sample&quot;</span>}, &amp;svc)
         }).Should(Succeed())
-        Expect(svc.Spec.Ports[<span class="hljs-number">0</span>].Port).Should(Equal(<span class="hljs-keyword">int32</span>(<span class="hljs-number">80</span>)))
+        Expect(svc.Spec.Ports[<span class="hljs-number">0</span>].Port).Should(Equal(<span class="hljs-type">int32</span>(<span class="hljs-number">80</span>)))
         Expect(svc.Spec.Ports[<span class="hljs-number">0</span>].TargetPort).Should(Equal(intstr.FromInt(<span class="hljs-number">3000</span>)))
     })
 
@@ -687,7 +688,7 @@ limitations under the License.
         Expect(err).NotTo(HaveOccurred())
 
         updated := viewv1.MarkdownView{}
-        Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+        Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> <span class="hljs-type">error</span> {
             err := k8sClient.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;test&quot;</span>, Name: <span class="hljs-string">&quot;sample&quot;</span>}, &amp;updated)
             <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
                 <span class="hljs-keyword">return</span> err
@@ -700,14 +701,14 @@ limitations under the License.
     })
 })
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">newMarkdownView</span><span class="hljs-params">()</span> *<span class="hljs-title">viewv1</span>.<span class="hljs-title">MarkdownView</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">newMarkdownView</span><span class="hljs-params">()</span></span> *viewv1.MarkdownView {
     <span class="hljs-keyword">return</span> &amp;viewv1.MarkdownView{
         ObjectMeta: metav1.ObjectMeta{
             Name:      <span class="hljs-string">&quot;sample&quot;</span>,
             Namespace: <span class="hljs-string">&quot;test&quot;</span>,
         },
         Spec: viewv1.MarkdownViewSpec{
-            Markdowns: <span class="hljs-keyword">map</span>[<span class="hljs-keyword">string</span>]<span class="hljs-keyword">string</span>{
+            Markdowns: <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{
                 <span class="hljs-string">&quot;SUMMARY.md&quot;</span>: <span class="hljs-string">`summary`</span>,
                 <span class="hljs-string">&quot;page1.md&quot;</span>:   <span class="hljs-string">`page1`</span>,
             },
@@ -780,7 +781,7 @@ ok      github.com/zoetrope/markdown-view/controllers   8.319s  coverage: 85.3% 
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"コントローラーのテスト","level":"1.4.3","depth":2,"next":{"title":"Webhookの実装","level":"1.4.4","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2022-07-18T10:02:03.375Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2023-01-29T13:44:11.724Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"コントローラーのテスト","level":"1.4.3","depth":2,"next":{"title":"Webhookの実装","level":"1.4.4","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

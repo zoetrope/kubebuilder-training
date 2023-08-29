@@ -6,7 +6,7 @@
         <title>Webhookのテスト · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 5.0.0">
         
         
         
@@ -16,7 +16,7 @@
     
             
                 
-                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                <link rel="stylesheet" href="../gitbook/@honkit/honkit-plugin-highlight/website.css">
                 
             
                 
@@ -466,7 +466,7 @@ Kubebuilderによってテストを実行するためのコードが以下のよ
 <p><a id="api/v1/webhook_suite_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/api/v1/webhook_suite_test.go" target="_blank">api/v1/webhook_suite_test.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">/*
-Copyright 2022.
+Copyright 2023.
 
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
 you may not use this file except in compliance with the License.
@@ -492,17 +492,16 @@ limitations under the License.
     <span class="hljs-string">&quot;testing&quot;</span>
     <span class="hljs-string">&quot;time&quot;</span>
 
-    . <span class="hljs-string">&quot;github.com/onsi/ginkgo&quot;</span>
+    . <span class="hljs-string">&quot;github.com/onsi/ginkgo/v2&quot;</span>
     . <span class="hljs-string">&quot;github.com/onsi/gomega&quot;</span>
 
-    admissionv1beta1 <span class="hljs-string">&quot;k8s.io/api/admission/v1beta1&quot;</span>
+    admissionv1 <span class="hljs-string">&quot;k8s.io/api/admission/v1&quot;</span>
     <span class="hljs-comment">//+kubebuilder:scaffold:imports</span>
     <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/runtime&quot;</span>
     <span class="hljs-string">&quot;k8s.io/client-go/rest&quot;</span>
     ctrl <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime&quot;</span>
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;</span>
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/envtest&quot;</span>
-    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/envtest/printer&quot;</span>
     logf <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log&quot;</span>
     <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log/zap&quot;</span>
 )
@@ -519,9 +518,7 @@ limitations under the License.
 <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">TestAPIs</span><span class="hljs-params">(t *testing.T)</span></span> {
     RegisterFailHandler(Fail)
 
-    RunSpecsWithDefaultAndCustomReporters(t,
-        <span class="hljs-string">&quot;Webhook Suite&quot;</span>,
-        []Reporter{printer.NewlineReporter{}})
+    RunSpecs(t, <span class="hljs-string">&quot;Webhook Suite&quot;</span>)
 }
 
 <span class="hljs-keyword">var</span> _ = BeforeSuite(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
@@ -531,14 +528,14 @@ limitations under the License.
 
     By(<span class="hljs-string">&quot;bootstrapping test environment&quot;</span>)
     testEnv = &amp;envtest.Environment{
-        CRDDirectoryPaths:     []<span class="hljs-keyword">string</span>{filepath.Join(<span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>, <span class="hljs-string">&quot;crd&quot;</span>, <span class="hljs-string">&quot;bases&quot;</span>)},
+        CRDDirectoryPaths:     []<span class="hljs-type">string</span>{filepath.Join(<span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>, <span class="hljs-string">&quot;crd&quot;</span>, <span class="hljs-string">&quot;bases&quot;</span>)},
         ErrorIfCRDPathMissing: <span class="hljs-literal">false</span>,
         WebhookInstallOptions: envtest.WebhookInstallOptions{
-            Paths: []<span class="hljs-keyword">string</span>{filepath.Join(<span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>, <span class="hljs-string">&quot;webhook&quot;</span>)},
+            Paths: []<span class="hljs-type">string</span>{filepath.Join(<span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>, <span class="hljs-string">&quot;webhook&quot;</span>)},
         },
     }
 
-    <span class="hljs-keyword">var</span> err error
+    <span class="hljs-keyword">var</span> err <span class="hljs-type">error</span>
     <span class="hljs-comment">// cfg is defined in this file globally.</span>
     cfg, err = testEnv.Start()
     Expect(err).NotTo(HaveOccurred())
@@ -548,7 +545,7 @@ limitations under the License.
     err = AddToScheme(scheme)
     Expect(err).NotTo(HaveOccurred())
 
-    err = admissionv1beta1.AddToScheme(scheme)
+    err = admissionv1.AddToScheme(scheme)
     Expect(err).NotTo(HaveOccurred())
 
     <span class="hljs-comment">//+kubebuilder:scaffold:scheme</span>
@@ -583,7 +580,7 @@ limitations under the License.
     <span class="hljs-comment">// wait for the webhook server to get ready</span>
     dialer := &amp;net.Dialer{Timeout: time.Second}
     addrPort := fmt.Sprintf(<span class="hljs-string">&quot;%s:%d&quot;</span>, webhookInstallOptions.LocalServingHost, webhookInstallOptions.LocalServingPort)
-    Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span> <span class="hljs-title">error</span></span> {
+    Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> <span class="hljs-type">error</span> {
         conn, err := tls.DialWithDialer(dialer, <span class="hljs-string">&quot;tcp&quot;</span>, addrPort, &amp;tls.Config{InsecureSkipVerify: <span class="hljs-literal">true</span>})
         <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
             <span class="hljs-keyword">return</span> err
@@ -592,7 +589,7 @@ limitations under the License.
         <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
     }).Should(Succeed())
 
-}, <span class="hljs-number">60</span>)
+})
 
 <span class="hljs-keyword">var</span> _ = AfterSuite(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
     cancel()
@@ -617,14 +614,14 @@ limitations under the License.
     <span class="hljs-string">&quot;os&quot;</span>
     <span class="hljs-string">&quot;path/filepath&quot;</span>
 
-    . <span class="hljs-string">&quot;github.com/onsi/ginkgo&quot;</span>
+    . <span class="hljs-string">&quot;github.com/onsi/ginkgo/v2&quot;</span>
     . <span class="hljs-string">&quot;github.com/onsi/gomega&quot;</span>
     apierrors <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/api/errors&quot;</span>
     <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/types&quot;</span>
     <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/util/yaml&quot;</span>
 )
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">mutateTest</span><span class="hljs-params">(before <span class="hljs-keyword">string</span>, after <span class="hljs-keyword">string</span>)</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">mutateTest</span><span class="hljs-params">(before <span class="hljs-type">string</span>, after <span class="hljs-type">string</span>)</span></span> {
     ctx := context.Background()
 
     y, err := os.ReadFile(before)
@@ -651,7 +648,7 @@ limitations under the License.
     Expect(ret.Spec).Should(Equal(afterView.Spec))
 }
 
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">validateTest</span><span class="hljs-params">(file <span class="hljs-keyword">string</span>, valid <span class="hljs-keyword">bool</span>)</span></span> {
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">validateTest</span><span class="hljs-params">(file <span class="hljs-type">string</span>, valid <span class="hljs-type">bool</span>)</span></span> {
     ctx := context.Background()
     y, err := os.ReadFile(file)
     Expect(err).NotTo(HaveOccurred())
@@ -739,7 +736,7 @@ Invalidなマニフェストファイル(empty-markdowns.yaml, invalid-replicas.
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookのテスト","level":"1.4.5","depth":2,"next":{"title":"リソースの削除","level":"1.4.6","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"previous":{"title":"Webhookの実装","level":"1.4.4","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/webhook_test.md","mtime":"2022-07-18T10:02:03.375Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2023-01-29T13:44:11.724Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookのテスト","level":"1.4.5","depth":2,"next":{"title":"リソースの削除","level":"1.4.6","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"previous":{"title":"Webhookの実装","level":"1.4.4","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/webhook_test.md","mtime":"2023-07-24T07:42:30.025Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

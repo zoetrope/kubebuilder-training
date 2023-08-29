@@ -6,7 +6,7 @@
         <title>Kubebuilder · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 5.0.0">
         
         
         
@@ -16,7 +16,7 @@
     
             
                 
-                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                <link rel="stylesheet" href="../gitbook/@honkit/honkit-plugin-highlight/website.css">
                 
             
                 
@@ -462,9 +462,40 @@
 <p><code>kubebuilder</code>コマンドは、カスタムコントローラーのプロジェクトの雛形を自動生成するためのツールです。
 ソースコードだけでなく、MakefileやDockerfile、各種マニフェストなど数多くのファイルを生成します。</p>
 <p><code>kubebuilder</code>コマンドのヘルプを表示してみましょう。</p>
-<pre><code class="lang-console"><span class="hljs-meta">$</span><span class="bash"> kubebuilder -h</span>
+<pre><code class="lang-console">❯ kubebuilder -h
+CLI tool for building Kubernetes extensions and tools.
 
-(中略)
+Usage:
+  kubebuilder [flags]
+  kubebuilder [command]
+
+Examples:
+The first step is to initialize your project:
+    kubebuilder init [--plugins=&lt;PLUGIN KEYS&gt; [--project-version=&lt;PROJECT VERSION&gt;]]
+
+&lt;PLUGIN KEYS&gt; is a comma-separated list of plugin keys from the following table
+and &lt;PROJECT VERSION&gt; a supported project version for these plugins.
+
+                             Plugin keys | Supported project versions
+-----------------------------------------+----------------------------
+               base.go.kubebuilder.io/v3 |                          3
+               base.go.kubebuilder.io/v4 |                          3
+        declarative.go.kubebuilder.io/v1 |                       2, 3
+ deploy-image.go.kubebuilder.io/v1-alpha |                          3
+                    go.kubebuilder.io/v2 |                       2, 3
+                    go.kubebuilder.io/v3 |                          3
+                    go.kubebuilder.io/v4 |                          3
+         grafana.kubebuilder.io/v1-alpha |                          3
+      kustomize.common.kubebuilder.io/v1 |                          3
+      kustomize.common.kubebuilder.io/v2 |                          3
+
+For more specific help for the init command of a certain plugins and project version
+configuration please run:
+    kubebuilder init --help --plugins=&lt;PLUGIN KEYS&gt; [--project-version=&lt;PROJECT VERSION&gt;]
+
+Default plugin keys: &quot;go.kubebuilder.io/v4&quot;
+Default project version: &quot;3&quot;
+
 
 Available Commands:
   alpha       Alpha-stage subcommands
@@ -527,7 +558,7 @@ Use &quot;kubebuilder [command] --help&quot; for more information about a comman
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Kubebuilder","level":"1.2","depth":1,"next":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},"previous":{"title":"参考情報","level":"1.1.4","depth":2,"path":"introduction/references.md","ref":"introduction/references.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/README.md","mtime":"2022-07-16T04:52:16.410Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2023-01-29T13:44:11.724Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Kubebuilder","level":"1.2","depth":1,"next":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},"previous":{"title":"参考情報","level":"1.1.4","depth":2,"path":"introduction/references.md","ref":"introduction/references.md","articles":[]},"articles":[{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]}],"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/README.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -6,7 +6,7 @@
         <title>モニタリング · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 3.6.20">
+        <meta name="generator" content="HonKit 5.0.0">
         
         
         
@@ -16,7 +16,7 @@
     
             
                 
-                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                <link rel="stylesheet" href="../gitbook/@honkit/honkit-plugin-highlight/website.css">
                 
             
                 
@@ -467,7 +467,7 @@ CPUやメモリの使用量や、Reconcileにかかった時間やKubernetesク�
 <p>どのようなメトリクスが公開されているのか見てみましょう。
 <code>NewManager</code>のオプションの<code>MetricsBindAddress</code>で指定されたアドレスにアクセスすると、公開されているメトリクスを確認できます。</p>
 <blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/main.go" target="_blank">main.go</a></p>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/cmd/main.go" target="_blank">main.go</a></p>
 </blockquote>
 <pre><code class="lang-golang">mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
     Scheme:                 scheme,
@@ -526,9 +526,9 @@ controller_runtime_webhook_requests_total{code=&quot;500&quot;,webhook=&quot;/va
 <p>ここではMarkdownViewリソースのステータスをメトリクスとして公開してみましょう。
 MarkdownViewには3種類のステータスがあるので、Gauge Vectorも3つ用意します。</p>
 <blockquote>
-<p><a id="metrics.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/metrics.go" target="_blank">metrics.go</a></p>
+<p><a id="metrics.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/metrics.go" target="_blank">metrics.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">package</span> controllers
+<pre><code class="lang-golang"><span class="hljs-keyword">package</span> controller
 
 <span class="hljs-keyword">import</span> (
     <span class="hljs-string">&quot;github.com/prometheus/client_golang/prometheus&quot;</span>
@@ -544,19 +544,19 @@ MarkdownViewには3種類のステータスがあるので、Gauge Vectorも3つ
         Namespace: metricsNamespace,
         Name:      <span class="hljs-string">&quot;notready&quot;</span>,
         Help:      <span class="hljs-string">&quot;The cluster status about not ready condition&quot;</span>,
-    }, []<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-string">&quot;namespace&quot;</span>})
+    }, []<span class="hljs-type">string</span>{<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-string">&quot;namespace&quot;</span>})
 
     AvailableVec = prometheus.NewGaugeVec(prometheus.GaugeOpts{
         Namespace: metricsNamespace,
         Name:      <span class="hljs-string">&quot;available&quot;</span>,
         Help:      <span class="hljs-string">&quot;The cluster status about available condition&quot;</span>,
-    }, []<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-string">&quot;namespace&quot;</span>})
+    }, []<span class="hljs-type">string</span>{<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-string">&quot;namespace&quot;</span>})
 
     HealthyVec = prometheus.NewGaugeVec(prometheus.GaugeOpts{
         Namespace: metricsNamespace,
         Name:      <span class="hljs-string">&quot;healthy&quot;</span>,
         Help:      <span class="hljs-string">&quot;The cluster status about healthy condition&quot;</span>,
-    }, []<span class="hljs-keyword">string</span>{<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-string">&quot;namespace&quot;</span>})
+    }, []<span class="hljs-type">string</span>{<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-string">&quot;namespace&quot;</span>})
 )
 
 <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">init</span><span class="hljs-params">()</span></span> {
@@ -565,9 +565,9 @@ MarkdownViewには3種類のステータスがあるので、Gauge Vectorも3つ
 </code></pre>
 <p>メトリクスを更新するための関数を用意します。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">setMetrics</span><span class="hljs-params">(mdView viewv1.MarkdownView)</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span></span> setMetrics(mdView viewv1.MarkdownView) {
     <span class="hljs-keyword">switch</span> mdView.Status {
     <span class="hljs-keyword">case</span> viewv1.MarkdownViewNotReady:
         NotReadyVec.WithLabelValues(mdView.Name, mdView.Namespace).Set(<span class="hljs-number">1</span>)
@@ -586,15 +586,15 @@ MarkdownViewには3種類のステータスがあるので、Gauge Vectorも3つ
 </code></pre>
 <p>Statusを更新する際にこの関数を呼び出します。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
 <pre><code class="lang-golang">r.setMetrics(mdView)
 </code></pre>
 <p>また、メトリクスを削除するための関数も用意します。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span> <span class="hljs-title">removeMetrics</span><span class="hljs-params">(mdView viewv1.MarkdownView)</span></span> {
+<pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span></span> removeMetrics(mdView viewv1.MarkdownView) {
     NotReadyVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
     AvailableVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
     HealthyVec.DeleteLabelValues(mdView.Name, mdView.Namespace)
@@ -602,7 +602,7 @@ MarkdownViewには3種類のステータスがあるので、Gauge Vectorも3つ
 </code></pre>
 <p>以下のように、リソースが削除された際にメトリクスを削除するようにしましょう。</p>
 <blockquote>
-<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/controllers/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-keyword">var</span> mdView viewv1.MarkdownView
 err := r.Get(ctx, req.NamespacedName, &amp;mdView)
@@ -668,7 +668,7 @@ PrometheusにのみメトリクスのAPIをアクセス可能にすることで�
 <blockquote>
 <p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
 </blockquote>
-<pre><code class="lang-yaml"><span class="hljs-attr">bases:</span>
+<pre><code class="lang-yaml"><span class="hljs-attr">resources:</span>
 <span class="hljs-comment"># [PROMETHEUS] To enable prometheus monitor, uncomment all sections with &apos;PROMETHEUS&apos;.</span>
 <span class="hljs-bullet">-</span> <span class="hljs-string">../prometheus</span>
 </code></pre>
@@ -751,7 +751,7 @@ kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"モニタリング","level":"1.4.8","depth":2,"previous":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetro/go/src/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/monitoring.md","mtime":"2022-07-18T10:02:03.375Z","type":"markdown"},"gitbook":{"version":"3.6.20","time":"2023-01-29T13:44:11.724Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"モニタリング","level":"1.4.8","depth":2,"previous":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/monitoring.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
