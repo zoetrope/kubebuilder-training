@@ -1,5 +1,5 @@
 /*
-Copyright 2022.
+Copyright 2023.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controllers
+package controller
 
 //! [import]
 import (
@@ -43,8 +43,9 @@ import (
 
 //! [import]
 
-// MarkdownViewReconciler reconciles a MarkdownView object
 //! [reconciler]
+
+// MarkdownViewReconciler reconciles a MarkdownView object
 type MarkdownViewReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
@@ -53,14 +54,16 @@ type MarkdownViewReconciler struct {
 //! [reconciler]
 
 //! [rbac]
-//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/finalizers,verbs=update
-//+kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete;deletecollection
-//+kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch
+// +kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/finalizers,verbs=update
+// +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete;deletecollection
+// +kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch
 //! [rbac]
+
+//! [reconcile]
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -71,7 +74,6 @@ type MarkdownViewReconciler struct {
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.1/pkg/reconcile
-//! [reconcile]
 func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	res, err := r.Reconcile_create(ctx, req)
 	if err != nil && !apierrors.IsAlreadyExists(err) {
@@ -132,8 +134,9 @@ RETRY:
 
 //! [reconcile]
 
-// SetupWithManager sets up the controller with the Manager.
 //! [managedby]
+
+// SetupWithManager sets up the controller with the Manager.
 func (r *MarkdownViewReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&viewv1.MarkdownView{}).
@@ -143,6 +146,7 @@ func (r *MarkdownViewReconciler) SetupWithManager(mgr ctrl.Manager) error {
 //! [managedby]
 
 //! [create]
+
 func (r *MarkdownViewReconciler) Reconcile_create(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	dep := appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
@@ -179,6 +183,7 @@ func (r *MarkdownViewReconciler) Reconcile_create(ctx context.Context, req ctrl.
 //! [create]
 
 //! [create-or-update]
+
 func (r *MarkdownViewReconciler) Reconcile_createOrUpdate(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	svc := &corev1.Service{}
 	svc.SetNamespace("default")
@@ -209,6 +214,7 @@ func (r *MarkdownViewReconciler) Reconcile_createOrUpdate(ctx context.Context, r
 //! [create-or-update]
 
 //! [get]
+
 func (r *MarkdownViewReconciler) Reconcile_get(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	var deployment appsv1.Deployment
 	err := r.Get(ctx, client.ObjectKey{Namespace: "default", Name: "sample"}, &deployment)
@@ -222,6 +228,7 @@ func (r *MarkdownViewReconciler) Reconcile_get(ctx context.Context, req ctrl.Req
 //! [get]
 
 //! [list]
+
 func (r *MarkdownViewReconciler) Reconcile_list(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	var services corev1.ServiceList
 	err := r.List(ctx, &services, &client.ListOptions{
@@ -240,6 +247,7 @@ func (r *MarkdownViewReconciler) Reconcile_list(ctx context.Context, req ctrl.Re
 //! [list]
 
 //! [pagination]
+
 func (r *MarkdownViewReconciler) Reconcile_pagination(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	token := ""
 	for i := 0; ; i++ {
@@ -268,6 +276,7 @@ func (r *MarkdownViewReconciler) Reconcile_pagination(ctx context.Context, req c
 //! [pagination]
 
 //! [cond]
+
 func (r *MarkdownViewReconciler) Reconcile_deleteWithPreConditions(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	var deploy appsv1.Deployment
 	err := r.Get(ctx, client.ObjectKey{Namespace: "default", Name: "sample"}, &deploy)
@@ -289,6 +298,7 @@ func (r *MarkdownViewReconciler) Reconcile_deleteWithPreConditions(ctx context.C
 //! [cond]
 
 //! [delete-all-of]
+
 func (r *MarkdownViewReconciler) Reconcile_deleteAllOfDeployment(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	err := r.DeleteAllOf(ctx, &appsv1.Deployment{}, client.InNamespace("default"))
 	return ctrl.Result{}, err
@@ -297,6 +307,7 @@ func (r *MarkdownViewReconciler) Reconcile_deleteAllOfDeployment(ctx context.Con
 //! [delete-all-of]
 
 //! [update-status]
+
 func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	var dep appsv1.Deployment
 	err := r.Get(ctx, client.ObjectKey{Namespace: "default", Name: "sample"}, &dep)
@@ -312,6 +323,7 @@ func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, req ctrl.Requ
 //! [update-status]
 
 //! [patch-merge]
+
 func (r *MarkdownViewReconciler) Reconcile_patchMerge(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	var dep appsv1.Deployment
 	err := r.Get(ctx, client.ObjectKey{Namespace: "default", Name: "sample"}, &dep)
@@ -331,6 +343,7 @@ func (r *MarkdownViewReconciler) Reconcile_patchMerge(ctx context.Context, req c
 //! [patch-merge]
 
 //! [patch-apply]
+
 func (r *MarkdownViewReconciler) Reconcile_patchApply(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	patch := &unstructured.Unstructured{}
 	patch.SetGroupVersionKind(schema.GroupVersionKind{
@@ -375,6 +388,7 @@ func (r *MarkdownViewReconciler) Reconcile_patchApply(ctx context.Context, req c
 //! [patch-apply]
 
 //! [patch-apply-config]
+
 func (r *MarkdownViewReconciler) Reconcile_patchApplyConfig(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	dep := applyappsv1.Deployment("sample3", "default").
 		WithSpec(applyappsv1.DeploymentSpec().
