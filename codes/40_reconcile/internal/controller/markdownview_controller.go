@@ -1,5 +1,5 @@
 /*
-Copyright 2022.
+Copyright 2023.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controllers
+package controller
 
 //! [import]
 import (
@@ -41,8 +41,9 @@ import (
 
 //! [import]
 
-// MarkdownViewReconciler reconciles a MarkdownView object
 //! [reconciler]
+
+// MarkdownViewReconciler reconciles a MarkdownView object
 type MarkdownViewReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
@@ -60,6 +61,8 @@ type MarkdownViewReconciler struct {
 //+kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch
 //! [rbac]
 
+//! [reconcile]
+
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
 // TODO(user): Modify the Reconcile function to compare the state specified by
@@ -69,7 +72,6 @@ type MarkdownViewReconciler struct {
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.3/pkg/reconcile
-//! [reconcile]
 func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
 
@@ -106,6 +108,7 @@ func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request
 //! [reconcile]
 
 //! [reconcile-configmap]
+
 func (r *MarkdownViewReconciler) reconcileConfigMap(ctx context.Context, mdView viewv1.MarkdownView) error {
 	logger := log.FromContext(ctx)
 
@@ -136,6 +139,7 @@ func (r *MarkdownViewReconciler) reconcileConfigMap(ctx context.Context, mdView 
 //! [reconcile-configmap]
 
 //! [reconcile-deployment]
+
 func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView viewv1.MarkdownView) error {
 	logger := log.FromContext(ctx)
 
@@ -244,6 +248,7 @@ func (r *MarkdownViewReconciler) reconcileDeployment(ctx context.Context, mdView
 //! [reconcile-deployment]
 
 //! [reconcile-service]
+
 func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView viewv1.MarkdownView) error {
 	logger := log.FromContext(ctx)
 	svcName := "viewer-" + mdView.Name
@@ -307,6 +312,7 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 //! [reconcile-service]
 
 //! [update-status]
+
 func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewv1.MarkdownView) (ctrl.Result, error) {
 	var dep appsv1.Deployment
 	err := r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: "viewer-" + mdView.Name}, &dep)
@@ -339,8 +345,9 @@ func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewv1
 
 //! [update-status]
 
-// SetupWithManager sets up the controller with the Manager.
 //! [managedby]
+
+// SetupWithManager sets up the controller with the Manager.
 func (r *MarkdownViewReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&viewv1.MarkdownView{}).
