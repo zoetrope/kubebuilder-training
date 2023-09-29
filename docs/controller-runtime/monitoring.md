@@ -109,7 +109,7 @@ kube-rbac-proxyを利用するためには下記の`manager_auth_proxy_patch.yam
 
 [import:"patches,enable-auth-proxy"](../../codes/50_completed/config/default/kustomization.yaml)
 
-さらに、`auto_proxy_`から始まる4つのマニフェストも有効にします。
+さらに、`auth_proxy_`から始まる4つのマニフェストも有効にします。
 
 [import](../../codes/50_completed/config/rbac/kustomization.yaml)
 
