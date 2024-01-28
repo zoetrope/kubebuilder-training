@@ -51,7 +51,7 @@ GitHubにリポジトリを作る場合は`github.com/<user_name>/<product_name>
 ```
 
 Kubebuilderによって生成されたgo.modおよびMakefileには、少し古いバージョンのcontroller-runtimeとcontroller-genが使われている場合があります。
-必要に応じて、最新のバージョンを利用するように以下のように書き換えておきましょう。
+必要に応じて、最新のバージョンを利用するように書き換えておきましょう。
 
 それでは生成されたファイルをそれぞれ見ていきましょう。
 

@@ -31,7 +31,7 @@ spec:
 Kubernetes内ではさまざまなリソースを管理するコントローラーが動いています。
 Deploymentを管理するコントローラーは、kube-apiserver上にDeploymentリソースが登録されると対応するReplicaSetリソースを新たに作成します。
 次にReplicaSetを管理するコントローラーは、ReplicaSetリソースが登録されると`spec.replicas`に指定された3つのPodを新たに作成します。
-さらににkube-schedulerというプログラムは、kube-apiserver上にPodリソースが登録されると、Podを配置するノードを決定しPodの情報を更新します。
+さらにkube-schedulerというプログラムは、kube-apiserver上にPodリソースが登録されると、Podを配置するノードを決定しPodの情報を更新します。
 各ノードで動作しているkubeletというプログラムは、自分のノード名が記述されたPodリソースを見つけるとコンテナを立ち上げます。
 
 ![Declarative API](./img/declarative.png)

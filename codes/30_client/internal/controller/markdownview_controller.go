@@ -206,7 +206,7 @@ func (r *MarkdownViewReconciler) Reconcile_createOrUpdate(ctx context.Context, r
 		return ctrl.Result{}, err
 	}
 	if op != controllerutil.OperationResultNone {
-		fmt.Printf("Deployment %s\n", op)
+		fmt.Printf("Service %s\n", op)
 	}
 	return ctrl.Result{}, nil
 }
