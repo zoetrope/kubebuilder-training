@@ -5,7 +5,7 @@ CRDのマニフェストは複雑で、手書きで作成するにはかなり�
 
 そこでKubebuilderではcontroller-genというツールを提供しており、Goで記述したstructからCRDを生成できます。
 
-まずは`kubebuilder create api`コマンドで生成されたmarkdownview_types.goを見てみましょう。
+まずは`kubebuilder create api`コマンドで生成された`api/v1/markdownview_types.go`を見てみましょう。
 
 [import](../../codes/00_scaffold/api/v1/markdownview_types.go)
 
