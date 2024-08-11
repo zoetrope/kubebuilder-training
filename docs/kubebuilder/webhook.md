@@ -15,6 +15,11 @@ Kubernetesには、Admission Webhookと呼ばれる拡張機能があります�
 
 ```console
 $ kubebuilder create webhook --group view --version v1 --kind MarkdownView --programmatic-validation --defaulting
+```
+
+APIを作成したときと同様に、以下のコマンドを実行してマニフェストファイルを生成しておきます。
+
+```console
 $ make manifests
 ```
 
@@ -24,12 +29,17 @@ $ make manifests
 ├── api
 │    └── v1
 │        ├── markdownview_webhook.go
+│        ├── markdownview_webhook_test.go
 │        └── webhook_suite_test.go
 └── config
      ├── certmanager
      │    ├── certificate.yaml
      │    ├── kustomization.yaml
      │    └── kustomizeconfig.yaml
+     ├── crd
+     │    └── patches
+     │        ├── cainjection_in_markdownviews.yaml
+     │        └── webhook_in_markdownviews.yaml
      ├── default
      │    ├── manager_webhook_patch.yaml
      │    └── webhookcainjection_patch.yaml
@@ -45,15 +55,27 @@ $ make manifests
 `markdownview_webhook.go`がWebhook実装の雛形になります。
 このファイルにWebhookの実装を追加していくことになります。
 
-## config/certmanager
+## config
+
+### certmanager
 
 Admission Webhook機能を利用するためには証明書が必要となります。
 [cert-manager][]を利用して証明書を発行するためのカスタムリソースが生成されています。
 
-## config/webhook
+### crd/patches
 
-`config/webhook`下は、Webhook機能を利用するために必要なマニフェストファイルです。
-manifests.yamlファイルは`make manifests`ファイルで自動生成されるため、基本的に手動で編集する必要はありません。
+このディレクトリにはConversion Webhook用のパッチファイルが格納されています。CRDのバージョンアップをおこなう際に利用します。
+
+`cainjection_in_markdownviews.yaml`は、cert-managerのCA Injection機能を有効にするためのパッチファイルです。
+また、`webhook_in_markdownviews.yaml`は、Conversion Webhookを有効にするためのパッチファイルです。
+
+### webhook
+
+`config/webhook`下は、Admission Webhook機能を利用するために必要なマニフェストファイルです。
+
+`webhookcainjectoin_patch.yaml`は、cert-managerのCA Injection機能を有効にするためのパッチファイルです。
+また、`manager_webhook_patch.yaml`は、Admission Webhook用の証明書をカスタムコントローラーから参照できるようにするためのパッチファイルです。
+`manifests.yaml`ファイルは`make manifests`コマンドで自動生成されるため、手動で編集する必要はありません。
 
 ## cmd/main.go
 
@@ -63,12 +85,11 @@ manifests.yamlファイルは`make manifests`ファイルで自動生成され�
 
 ## kustomization.yamlの編集
 
-Kubebuilderコマンドで生成した直後の状態では、`make manifests`コマンドでマニフェストを生成しても、Webhook機能が利用できるようにはなっていません。
-
+Kubebuilderコマンドで生成した直後の状態では、Webhook機能が利用できるようにはなっていません。
 `config/default/kustomization.yaml`ファイルを編集する必要があります。
 
-生成直後のkustomization.yamlは、`resources` の `../webhook` と `../certmanager`, `patchesStrategicMerge` の `manager_webhook_patch.yaml` と `webhookcainjection_patch.yaml`, `replacements` がコメントアウトされていますが、これらのコメントを外します。
+`config/default/kustomization.yaml`ファイルを開き、以下のように`resources`の`../webhook`と`../certmanager`, `patchesStrategicMerge`の`manager_webhook_patch.yaml`と`webhookcainjection_patch.yaml`, `replacements`のコメントを外して有効化します。
 
-[import:"resources,enable-webhook,patches,enable-webhook-patch,replacements"](../../codes/00_scaffold/config/default/kustomization.yaml)
+[import](../../codes/00_scaffold/config/default/kustomization.yaml)
 
-[cert-manager]: https://github.com/jetstack/cert-manager
+[cert-manager]: https://github.com/cert-manager/cert-manager

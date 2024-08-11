@@ -8,8 +8,8 @@ $ cd markdown-view
 $ kubebuilder init --domain zoetrope.github.io --repo github.com/zoetrope/markdown-view
 ```
 
-`--domain`で指定した名前はCRDのグループ名に使われます。
-あなたの所属する組織が保持するドメインなどを利用して、ユニークでvalidな名前を指定してください。
+`--domain`で指定した名前は、これから作成するカスタムリソースのグループ名に使われます。
+他の人の作ったカスタムリソースと衝突しないように、あなたが保持するドメインなどを利用してユニークな名前を指定してください。
 
 `--repo`にはgo modulesのmodule名を指定します。
 GitHubにリポジトリを作る場合は`github.com/<user_name>/<product_name>`を指定します。
@@ -17,17 +17,14 @@ GitHubにリポジトリを作る場合は`github.com/<user_name>/<product_name>
 コマンドの実行に成功すると、下記のようなファイルが生成されます。
 
 ```
-├── Dockerfile
-├── Makefile
-├── PROJECT
-├── README.md
+.
 ├── cmd
 │    └── main.go
 ├── config
 │    ├── default
 │    │    ├── kustomization.yaml
-│    │    ├── manager_auth_proxy_patch.yaml
-│    │    └── manager_config_patch.yaml
+│    │    ├── manager_metrics_patch.yaml
+│    │    └── metrics_service.yaml
 │    ├── manager
 │    │    ├── kustomization.yaml
 │    │    └── manager.yaml
@@ -35,23 +32,30 @@ GitHubにリポジトリを作る場合は`github.com/<user_name>/<product_name>
 │    │    ├── kustomization.yaml
 │    │    └── monitor.yaml
 │    └── rbac
-│        ├── auth_proxy_client_clusterrole.yaml
-│        ├── auth_proxy_role.yaml
-│        ├── auth_proxy_role_binding.yaml
-│        ├── auth_proxy_service.yaml
 │        ├── kustomization.yaml
-│        ├── leader_election_role.yaml
 │        ├── leader_election_role_binding.yaml
+│        ├── leader_election_role.yaml
+│        ├── metrics_auth_role_binding.yaml
+│        ├── metrics_auth_role.yaml
+│        ├── metrics_reader_role.yaml
 │        ├── role_binding.yaml
+│        ├── role.yaml
 │        └── service_account.yaml
+├── Dockerfile
 ├── go.mod
 ├── go.sum
-└── hack
-    └── boilerplate.go.txt
+├── hack
+│    └── boilerplate.go.txt
+├── Makefile
+├── PROJECT
+├── README.md
+└── test
+    ├── e2e
+    │    ├── e2e_suite_test.go
+    │    └── e2e_test.go
+    └── utils
+        └── utils.go
 ```
-
-Kubebuilderによって生成されたgo.modおよびMakefileには、少し古いバージョンのcontroller-runtimeとcontroller-genが使われている場合があります。
-必要に応じて、最新のバージョンを利用するように書き換えておきましょう。
 
 それでは生成されたファイルをそれぞれ見ていきましょう。
 
@@ -62,7 +66,7 @@ Kubebuilderによって生成されたgo.modおよびMakefileには、少し古�
 `make help`でターゲットの一覧を確認してみましょう。
 
 ```console
-❯ make help
+$ make help
 
 Usage:
   make <target>
@@ -76,6 +80,8 @@ Development
   fmt              Run go fmt against code.
   vet              Run go vet against code.
   test             Run tests.
+  lint             Run golangci-lint linter
+  lint-fix         Run golangci-lint linter and perform fixes
 
 Build
   build            Build manager binary.
@@ -83,6 +89,7 @@ Build
   docker-build     Build docker image with the manager.
   docker-push      Push docker image with the manager.
   docker-buildx    Build and push docker image for the manager for cross-platform support
+  build-installer  Generate a consolidated YAML with CRDs and deployment.
 
 Deployment
   install          Install CRDs into the K8s cluster specified in ~/.kube/config.
@@ -90,10 +97,11 @@ Deployment
   deploy           Deploy controller to the K8s cluster specified in ~/.kube/config.
   undeploy         Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
 
-Build Dependencies
-  kustomize        Download kustomize locally if necessary. If wrong version is installed, it will be removed before downloading.
-  controller-gen   Download controller-gen locally if necessary. If wrong version is installed, it will be overwritten.
-  envtest          Download envtest-setup locally if necessary.
+Dependencies
+  kustomize        Download kustomize locally if necessary.
+  controller-gen   Download controller-gen locally if necessary.
+  envtest          Download setup-envtest locally if necessary.
+  golangci-lint    Download golangci-lint locally if necessary.
 ```
 
 ## PROJECT
@@ -124,10 +132,9 @@ configディレクトリ配下には、カスタムコントローラーをKuber
 
 マニフェストをまとめて利用するための設定が記述されています。
 
-`manager_auth_proxy_patch.yaml`は、[kube-auth-proxy][]を利用するために必要なパッチです。
-kube-auth-proxyを利用しない場合は削除しても問題ありません。
+`manager_metrics_patch.yaml`は、カスタムコントローラーのメトリクスを有効にするためのパッチです。
 
-`manager_config_patch.yaml`は、カスタムコントローラーのオプションを引数ではなくConfigMapで指定するためのパッチファイルです。
+`metrics_service.yaml`は、カスタムコントローラーのメトリクスにアクセスするためのサービス定義です。
 
 利用するマニフェストに応じて、`kustomization.yaml`を編集してください。
 
@@ -136,24 +143,23 @@ kube-auth-proxyを利用しない場合は削除しても問題ありません�
 カスタムコントローラーのDeploymentリソースのマニフェストです。
 カスタムコントローラーのコマンドラインオプションの変更をおこなった場合など、必要に応じて書き換えてください。
 
-
 ### prometheus
 
-Prometheus Operator用のカスタムリソースのマニフェストです。
+カスタムリソースのメトリクスを収集するための設定を記述したマニフェストです。
 Prometheus Operatorを利用している場合、このマニフェストを適用するとPrometheusが自動的にカスタムコントローラーのメトリクスを収集してくれるようになります。
 
 ### rbac
 
 各種権限を設定するためのマニフェストです。
 
-`auth_proxy_`から始まる4つのファイルは、[kube-auth-proxy][]用のマニフェストです。
-kube-auth-proxyを利用するとメトリクスエンドポイントへのアクセスをRBACで制限できます。
-
 `leader_election_role.yaml`と`leader_election_role_binding.yaml`は、リーダーエレクション機能を利用するために必要な権限です。
 
+`metrics_auth_`から始まるファイルは、メトリクスエンドポイントへのアクセスを制限するためのマニフェストです。
+
 `role.yaml`と`role_binding.yaml`は、コントローラーが各種リソースにアクセスするための権限を設定するマニフェストです。
-この2つのファイルは基本的に自動生成されるものなので、開発者が編集する必要はありません。
+この2つのファイルは自動生成されるものなので、手動で編集しないように注意してください。
+`service_account`は、カスタムコントローラーのサービスアカウントを定義するマニフェストで、`role.yaml`で定義した権限が割り当てられます。
 
-必要のないファイルを削除した場合は、`kustomization.yaml`も編集してください。
+## test
 
-[kube-auth-proxy]: https://github.com/brancz/kube-rbac-proxy
+E2Eテストをおこなうためのファイルが格納されています。
