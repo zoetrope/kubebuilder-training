@@ -19,10 +19,11 @@
 * [controller-runtime](controller-runtime/README.md)
   * [クライアントの使い方](controller-runtime/client.md)
   <!-- * [Server Side Apply](controller-runtime/ssa.md) -->
+  * [テスト](controller-runtime/test.md)
   * [Reconcileの実装](controller-runtime/reconcile.md)
-  * [コントローラーのテスト](controller-runtime/controller_test.md)
+  * [コントローラーのテスト(Envtest)](controller-runtime/controller_test.md)
   * [Webhookの実装](controller-runtime/webhook.md)
-  * [Webhookのテスト](controller-runtime/webhook_test.md)
+  * [Webhookのテスト(Envtest)](controller-runtime/webhook_test.md)
   * [リソースの削除](controller-runtime/deletion.md)
   * [Manager](controller-runtime/manager.md)
   * [モニタリング](controller-runtime/monitoring.md)

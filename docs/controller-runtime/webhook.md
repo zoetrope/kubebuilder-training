@@ -1,9 +1,9 @@
 # Webhookの実装
 
 Kubernetesでは、リソースの作成・更新・削除をおこなう直前にWebhookで任意の処理を実行するとことができます。
-MutatingWebhookではリソースの値を書き換えることができ、ValidatingWebhookでは値の検証をおこなうことができます。
+Mutating Webhookではリソースの値を書き換えることができ、Validating Webhookでは値の検証をおこなうことができます。
 
-controller-runtimeでは、MutatingWebhookを実装するためのDefaulterとValidatingWebhookを実装するためのValidatorが用意されています。
+controller-runtimeでは、Mutating Webhookを実装するためのDefaulterとValidating Webhookを実装するためのValidatorが用意されています。
 
 ## Defaulterの実装
 

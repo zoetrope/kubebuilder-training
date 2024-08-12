@@ -1,5 +1,5 @@
 /*
-Copyright 2023.
+Copyright 2024.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@ limitations under the License.
 package controller
 
 import (
-	"context"
+	"fmt"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/runtime"
+	apiruntime "k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -33,7 +33,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	viewv1 "github.com/zoetrope/markdown-view/api/v1"
-	//+kubebuilder:scaffold:imports
+	// +kubebuilder:scaffold:imports
 )
 
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
@@ -42,7 +42,7 @@ import (
 var cfg *rest.Config
 var k8sClient client.Client
 var testEnv *envtest.Environment
-var scheme = runtime.NewScheme()
+var scheme = apiruntime.NewScheme()
 
 func TestControllers(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -57,6 +57,14 @@ var _ = BeforeSuite(func() {
 	testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "config", "crd", "bases")},
 		ErrorIfCRDPathMissing: true,
+
+		// The BinaryAssetsDirectory is only required if you want to run the tests directly
+		// without call the makefile target test. If not informed it will look for the
+		// default path defined in controller-runtime which is /usr/local/kubebuilder/.
+		// Note that you must have the required binaries setup under the bin directory to perform
+		// the tests directly. When we run make test it will be setup and used automatically.
+		BinaryAssetsDirectory: filepath.Join("..", "..", "bin", "k8s",
+			fmt.Sprintf("1.30.0-%s-%s", runtime.GOOS, runtime.GOARCH)),
 	}
 
 	var err error
@@ -70,16 +78,12 @@ var _ = BeforeSuite(func() {
 	err = clientgoscheme.AddToScheme(scheme)
 	Expect(err).NotTo(HaveOccurred())
 
-	//+kubebuilder:scaffold:scheme
+	// +kubebuilder:scaffold:scheme
 
 	k8sClient, err = client.New(cfg, client.Options{Scheme: scheme})
 	Expect(err).NotTo(HaveOccurred())
 	Expect(k8sClient).NotTo(BeNil())
 
-	ns := &corev1.Namespace{}
-	ns.Name = "test"
-	err = k8sClient.Create(context.Background(), ns)
-	Expect(err).NotTo(HaveOccurred())
 })
 
 var _ = AfterSuite(func() {

@@ -1,5 +1,5 @@
 /*
-Copyright 2023.
+Copyright 2024.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import (
 // log is for logging in this package.
 var markdownviewlog = logf.Log.WithName("markdownview-resource")
 
+// SetupWebhookWithManager will setup the manager to manage the webhooks
 func (r *MarkdownView) SetupWebhookWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewWebhookManagedBy(mgr).
 		For(r).
@@ -43,7 +44,7 @@ func (r *MarkdownView) SetupWebhookWithManager(mgr ctrl.Manager) error {
 // TODO(user): EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 
 //! [webhook-defaulter]
-//+kubebuilder:webhook:path=/mutate-view-zoetrope-github-io-v1-markdownview,mutating=true,failurePolicy=fail,sideEffects=None,groups=view.zoetrope.github.io,resources=markdownviews,verbs=create;update,versions=v1,name=mmarkdownview.kb.io,admissionReviewVersions=v1
+// +kubebuilder:webhook:path=/mutate-view-zoetrope-github-io-v1-markdownview,mutating=true,failurePolicy=fail,sideEffects=None,groups=view.zoetrope.github.io,resources=markdownviews,verbs=create;update,versions=v1,name=mmarkdownview.kb.io,admissionReviewVersions=v1
 
 var _ webhook.Defaulter = &MarkdownView{}
 
@@ -64,7 +65,9 @@ func (r *MarkdownView) Default() {
 
 //! [webhook-validator]
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
-//+kubebuilder:webhook:path=/validate-view-zoetrope-github-io-v1-markdownview,mutating=false,failurePolicy=fail,sideEffects=None,groups=view.zoetrope.github.io,resources=markdownviews,verbs=create;update,versions=v1,name=vmarkdownview.kb.io,admissionReviewVersions=v1
+// NOTE: The 'path' attribute must follow a specific pattern and should not be modified directly here.
+// Modifying the path for an invalid path can cause API server errors; failing to locate the webhook.
+// +kubebuilder:webhook:path=/validate-view-zoetrope-github-io-v1-markdownview,mutating=false,failurePolicy=fail,sideEffects=None,groups=view.zoetrope.github.io,resources=markdownviews,verbs=create;update,versions=v1,name=vmarkdownview.kb.io,admissionReviewVersions=v1
 
 var _ webhook.Validator = &MarkdownView{}
 
