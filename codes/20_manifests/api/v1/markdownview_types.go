@@ -1,5 +1,5 @@
 /*
-Copyright 2023.
+Copyright 2024.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -64,23 +64,24 @@ const (
 //! [status]
 
 //! [markdown-view]
-//+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
-//+kubebuilder:printcolumn:name="REPLICAS",type="integer",JSONPath=".spec.replicas"
-//+kubebuilder:printcolumn:name="STATUS",type="string",JSONPath=".status"
+// +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="REPLICAS",type="integer",JSONPath=".spec.replicas"
+// +kubebuilder:printcolumn:name="STATUS",type="string",JSONPath=".status"
 
 // MarkdownView is the Schema for the markdownviews API
 type MarkdownView struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   MarkdownViewSpec   `json:"spec,omitempty"`
+	Spec MarkdownViewSpec `json:"spec,omitempty"`
+	// +kubebuilder:default=NotReady
 	Status MarkdownViewStatus `json:"status,omitempty"`
 }
 
 //! [markdown-view]
 
-//+kubebuilder:object:root=true
+// +kubebuilder:object:root=true
 
 // MarkdownViewList contains a list of MarkdownView
 type MarkdownViewList struct {

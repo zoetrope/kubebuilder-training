@@ -7,5 +7,5 @@ apiVersion: ctlptl.dev/v1alpha1
 kind: Cluster
 name: kind-mdview-dev
 product: kind
-kubernetesVersion: v1.27.3
+kubernetesVersion: v1.30.0
 registry: mdview-registry
