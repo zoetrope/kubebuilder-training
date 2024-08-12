@@ -11,12 +11,24 @@
 Kubebuilderが生成したコードでは、自動的に基本的なメトリクスが公開されるようになっています。
 CPUやメモリの使用量や、Reconcileにかかった時間やKubernetesクライアントのレイテンシーなど、controller-runtime関連のメトリクスが公開されています。
 
-どのようなメトリクスが公開されているのか見てみましょう。
-`NewManager`のオプションの`MetricsBindAddress`で指定されたアドレスにアクセスすると、公開されているメトリクスを確認できます。
+まずは、どのようなメトリクスが公開されているのか見てみましょう。
 
-[import:"new-manager",unindent:"true"](../../codes/50_completed/cmd/main.go)
+なお、Kubebuilderが自動生成した状態では、RBACにより権限を与えられたアカウントのみがメトリクスを取得できるようになっています。
+そこで、一時的に`config/manager/manager.yaml`のオプションに`--metrics-bind-address=:8080`と`--metrics-secure=false`を指定して、誰でもメトリクスを取得できるようにします。
 
-まずはメトリクス用のポートをPort Forwardします。
+```diff
+- command:
+    - /manager
+  args:
+    - --leader-elect
+    - --health-probe-bind-address=:8081
++    - --metrics-bind-address=:8080
++    - --metrics-secure=false
+  image: controller:latest
+  name: manager
+```
+
+上記の変更を適用し、メトリクス用のポートをPort Forwardします。
 
 ```
 kubectl -n markdown-view-system port-forward deploy/markdown-view-controller-manager 8080:8080
@@ -99,28 +111,28 @@ markdownview_healthy{name="markdownview-sample",namespace="markdownview-sample"}
 markdownview_notready{name="markdownview-sample",namespace="markdownview-sample"} 0
 ```
 
-## kube-rbac-proxy
-
-Kubebuilderで生成したプロジェクトには、[kube-rbac-proxy](https://github.com/brancz/kube-rbac-proxy)を利用できるようにマニフェストが記述されています。
-kube-rbac-proxyを利用すると、メトリクスのエンドポイントにアクセスするための権限をRBACで設定できるようになります。
-PrometheusにのみメトリクスのAPIをアクセス可能にすることで、任意のユーザーにメトリクスを取得されることを防ぐことができます。
-
-kube-rbac-proxyを利用するためには下記の`manager_auth_proxy_patch.yaml`のコメントアウトを解除します。
-
-[import:"patches,enable-auth-proxy"](../../codes/50_completed/config/default/kustomization.yaml)
-
-さらに、`auth_proxy_`から始まる4つのマニフェストも有効にします。
-
-[import](../../codes/50_completed/config/rbac/kustomization.yaml)
-
 ## Grafanaでの可視化
 
 それでは実際にPrometheusとGrafanaを使って、コントローラーのメトリクスを可視化してみましょう。
 
 まずはマニフェストの準備をします。
-`config/default/kustomization.yaml`の下記のコメントを解除してください。
+`config/default/kustomization.yaml`の`- ../prometheus`のコメントを解除してください。
 
-[import:"resources,enable-prometheus"](../../codes/50_completed/config/default/kustomization.yaml)
+```yaml
+resources:
+- ../crd
+- ../rbac
+- ../manager
+# [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in
+# crd/kustomization.yaml
+- ../webhook
+# [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER'. 'WEBHOOK' components are required.
+- ../certmanager
+# [PROMETHEUS] To enable prometheus monitor, uncomment all sections with 'PROMETHEUS'.
+- ../prometheus
+# [METRICS] Expose the controller manager metrics service.
+- metrics_service.yaml
+```
 
 `make manifests`を実行してマニフェストを生成し、Kubernetesクラスターに適用しておきます。
 

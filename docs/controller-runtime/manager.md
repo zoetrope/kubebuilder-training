@@ -35,48 +35,22 @@ Managerではそのような処理を実現するための仕組みを提供し�
 - [https://github.com/topolvm/topolvm/tree/main/runners](https://github.com/topolvm/topolvm/tree/main/runners)
 
 Runnable機能を利用するためには、[Runnable](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#Runnable)インタフェースを実装した以下のようなコードを用意します。
-ここでは10秒周期で何らかの処理をおこなうRunnerを実装しています。
+ここでは30秒周期で、MarkdownViewControllerにReconcileを実行するように通知するRunnerを実装しています。
 
-```go
-package runners
-
-import (
-    "context"
-    "fmt"
-    "time"
-)
-
-type Runner struct {
-}
-
-func (r Runner) Start(ctx context.Context) error {
-    ticker := time.NewTicker(10 * time.Second)
-    defer ticker.Stop()
-    for {
-        select {
-        case <-ctx.Done():
-            return ctx.Err()
-        case <-ticker.C:
-            fmt.Println("run something")
-        }
-    }
-}
-
-func (r Runner) NeedLeaderElection() bool {
-    return true
-}
-```
+[import](../../codes/50_completed/internal/controller/runner.go)
 
 StartメソッドはManagerのStartを呼び出した際に、goroutineとして呼び出されます。
 引数の`context`によりManagerからの終了通知を受け取ることができます。
 
-```go
-err = mgr.Add(&runners.Runner{})
-```
+[import:"add-runner",unindent:"true"](../../codes/50_completed/cmd/main.go)
 
 なお、このRunnerの処理は通常リーダーとして動作しているManagerでしか動きません。
 リーダーでなくても常時動かしたい処理である場合、[LeaderElectionRunnable](https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#LeaderElectionRunnable)インタフェースを実装し、
 NeedLeaderElectionメソッドで `false` を返すようにします。
+
+また、MarkdownViewControllerでは、Runnerからの通知を受けてReconcileを実行するように、`WatchesRawSource`を利用します。
+
+[import:"managedby"](../../codes/50_completed/internal/controller/markdownview_controller.go)
 
 ## EventRecorder
 
@@ -101,7 +75,7 @@ Eventを記録するための関数として、`Event`, `Eventf`, `AnnotatedEven
 カスタムコントローラーがEventリソースを作成できるように、以下のようなRBACのマーカーを追加し、`make manifests`でマニフェストを更新しておきます。
 
 ```go
-//+kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch
+// +kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch
 ```
 
 コントローラーを実行し、作成したEventリソースを確認してみましょう。なお、Eventリソースはデフォルト設定では1時間経つと消えてしまいます。
@@ -141,29 +115,9 @@ controller-runtimeではインメモリにキャッシュしているリソー�
 インデックスを利用するためには事前にManagerの`GetFieldIndexer()`を利用して、どのフィールドの値に基づいてインデックスを張るのかを指定します。
 下記の例ではConfigMapリソースに対して、`ownerReferences`に指定されているMarkdownViewリソースの名前でインデックスを作成しています。
 
-```go
-const ownerControllerField = ".metadata.ownerReference.controller"
+[import:"index",unindent:"true"](../../codes/50_completed/internal/controller/markdownview_controller.go)
 
-func indexByOwnerMarkdownView(obj client.Object) []string {
-    cm := obj.(*corev1.ConfigMap)
-    owner := metav1.GetControllerOf(cm)
-    if owner == nil {
-        return nil
-    }
-    if owner.APIVersion != viewv1.GroupVersion.String() || owner.Kind != "MarkdownView" {
-        return nil
-    }
-    return []string{owner.Name}
-}
-
-func (r *MarkdownViewReconciler) SetupWithManager(mgr ctrl.Manager) error {
-    err := mgr.GetFieldIndexer().IndexField(ctx, &corev1.ConfigMap{}, ownerControllerField, indexByOwnerMarkdownView)
-    if err != nil {
-        return err
-    }
-    return nil
-}
-```
+[import:"index-field",unindent:"true"](../../codes/50_completed/internal/controller/markdownview_controller.go)
 
 `IndexField`の第3引数のフィールド名には、どのフィールドを利用してインデックスを張っているのかを示す文字列を指定します。
 ここでは、`.metadata.ownerReference.controller`という文字列を指定しています。
