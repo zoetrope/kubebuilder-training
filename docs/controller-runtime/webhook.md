@@ -1,9 +1,16 @@
 # Webhookの実装
 
 Kubernetesでは、リソースの作成・更新・削除をおこなう直前にWebhookで任意の処理を実行するとことができます。
-MutatingWebhookではリソースの値を書き換えることができ、ValidatingWebhookでは値の検証をおこなうことができます。
+Mutating Webhookではリソースの値を書き換えることができ、Validating Webhookでは値の検証をおこなうことができます。
 
-controller-runtimeでは、MutatingWebhookを実装するためのDefaulterとValidatingWebhookを実装するためのValidatorが用意されています。
+controller-runtimeでは、Mutating Webhookを実装するためのadmission.Defaulter/CustomDefaulterとValidating Webhookを実装するためのadmission.Validator/CustomValidatorが用意されています。
+ただし、admission.Defaulter/Validatorはcontroller-runtime v0.20.0で廃止予定のため、admission.CustomDefaulter/CustomValidatorの利用が推奨されています。
+
+しかし、Kubebuilder v4.1.1時点ではCustomDefaulter/CustomValidatorが[まだサポートされていません](https://github.com/kubernetes-sigs/kubebuilder/issues/3721)。そこで本書ではadmission.Defaulter/Validatorを利用して解説をおこないます。
+
+admission.CustomDefaulter/CustomValidatorを利用したい場合は、以下の記事に実装方法を記載しましたので参考にしてください。
+
+- [Kubernetes Admission Webhook Deep Dive](https://zenn.dev/zoetro/articles/admission-webhook-deep-dive)
 
 ## Defaulterの実装
 

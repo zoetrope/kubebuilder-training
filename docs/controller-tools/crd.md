@@ -110,6 +110,8 @@ Kubebuilderが生成した初期状態では、`+kubebuilder:object:root=true`�
 
 `+kubebuilder:subresource`と`+kubebuilder:printcolumn`マーカーについて、以降で解説します。
 
+また、`Status`フィールドに`+kubebuilder:default=NotReady`マーカーを付与することで、初期値を`NotReady`に設定しています。
+
 ### subresource
 
 `+kubebuilder:subresource:status`というマーカーを追加すると、`status`フィールドがサブリソースとして扱われるようになります。
@@ -138,7 +140,7 @@ kubectlでMarkdownViewリソースを取得すると、下記のようにREPLICA
 ```
 $ kubectl get markdownview
 NAME                  REPLICAS   STATUS
-MarkdownView-sample   1          healthy
+MarkdownView-sample   1          NotReady
 ```
 
 ## CRDマニフェストの生成

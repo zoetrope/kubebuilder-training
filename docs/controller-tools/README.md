@@ -15,17 +15,17 @@ controller-toolsには下記のツールが含まれていますが、本資料�
 `controller-gen`のヘルプを確認すると、下記の5種類のジェネレータの存在が確認できます。
 
 ```
-❯ controller-gen -h
+$ controller-gen -h
 
 (中略)
 
 generators
 
-+webhook                                                                                                  package  generates (partial) {Mutating,Validating}WebhookConfiguration objects.
-+schemapatch:manifests=<string>[,maxDescLen=<int>]                                                        package  patches existing CRDs with new schemata.
-+rbac:roleName=<string>                                                                                   package  generates ClusterRole objects.
-+object[:headerFile=<string>][,year=<string>]                                                             package  generates code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
-+crd[:crdVersions=<[]string>][,maxDescLen=<int>][,preserveUnknownFields=<bool>][,trivialVersions=<bool>]  package  generates CustomResourceDefinition objects.
++webhook[:headerFile=<string>][,year=<string>]                                          package  generates (partial) {Mutating,Validating}WebhookConfiguration objects.
++schemapatch[:generateEmbeddedObjectMeta=<bool>],manifests=<string>[,maxDescLen=<int>]  package  patches existing CRDs with new schemata.
++rbac[:headerFile=<string>],roleName=<string>[,year=<string>]                           package  generates ClusterRole objects.
++object[:headerFile=<string>][,year=<string>]                                           package  generates code containing DeepCopy, DeepCopyInto, and
++crd[:allowDangerousTypes=<bool>][,crdVersions=<[]string>][,deprecatedV1beta1CompatibilityPreserveUnknownFields=<bool>][,generateEmbeddedObjectMeta=<bool>][,headerFile=<string>][,ignoreUnexportedFields=<bool>][,maxDescLen=<int>][,year=<string>]  package  generates CustomResourceDefinition objects.
 ```
 
 `kubebuilder`が生成したMakefileには、`make manifests`と`make generate`というターゲットが用意されており、`make manifests`では`webhook`, `rbac`, `crd`の生成、`make generate`では`object`の生成がおこなわれます。

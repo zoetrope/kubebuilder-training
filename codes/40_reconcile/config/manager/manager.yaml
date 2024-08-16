@@ -3,11 +3,7 @@ kind: Namespace
 metadata:
   labels:
     control-plane: controller-manager
-    app.kubernetes.io/name: namespace
-    app.kubernetes.io/instance: system
-    app.kubernetes.io/component: manager
-    app.kubernetes.io/created-by: markdown-view
-    app.kubernetes.io/part-of: markdown-view
+    app.kubernetes.io/name: markdown-view
     app.kubernetes.io/managed-by: kustomize
   name: system
 ---
@@ -18,11 +14,7 @@ metadata:
   namespace: system
   labels:
     control-plane: controller-manager
-    app.kubernetes.io/name: deployment
-    app.kubernetes.io/instance: controller-manager
-    app.kubernetes.io/component: manager
-    app.kubernetes.io/created-by: markdown-view
-    app.kubernetes.io/part-of: markdown-view
+    app.kubernetes.io/name: markdown-view
     app.kubernetes.io/managed-by: kustomize
 spec:
   selector:
@@ -65,21 +57,20 @@ spec:
         # versions < 1.19 or on vendors versions which do NOT support this field by default (i.e. Openshift < 4.11 ).
         # seccompProfile:
         #   type: RuntimeDefault
-      #! [containers]
       containers:
       - command:
         - /manager
         args:
-        - --leader-elect
+          - --leader-elect
+          - --health-probe-bind-address=:8081
         image: controller:latest
         imagePullPolicy: IfNotPresent
         name: manager
-      #! [containers]
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-              - "ALL"
+            - "ALL"
         livenessProbe:
           httpGet:
             path: /healthz

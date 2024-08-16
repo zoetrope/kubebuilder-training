@@ -8,5 +8,5 @@ roleRef:
   name: markdown-view-metrics-reader
 subjects:
   - kind: ServiceAccount
-    name: prometheus-prometheus-oper-prometheus
+    name: prometheus-kube-prometheus-operator
     namespace: prometheus

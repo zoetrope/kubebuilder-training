@@ -1,3 +1,19 @@
+/*
+Copyright 2024.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package v1
 
 import (
@@ -14,34 +30,34 @@ import (
 	"k8s.io/apimachinery/pkg/util/yaml"
 )
 
-func mutateTest(before string, after string) {
+func testMutating(input string, output string) {
 	ctx := context.Background()
 
-	y, err := os.ReadFile(before)
+	y, err := os.ReadFile(input)
 	Expect(err).NotTo(HaveOccurred())
 	d := yaml.NewYAMLOrJSONDecoder(bytes.NewReader(y), 4096)
-	beforeView := &MarkdownView{}
-	err = d.Decode(beforeView)
+	inputView := &MarkdownView{}
+	err = d.Decode(inputView)
 	Expect(err).NotTo(HaveOccurred())
 
-	err = k8sClient.Create(ctx, beforeView)
+	err = k8sClient.Create(ctx, inputView)
 	Expect(err).NotTo(HaveOccurred())
 
 	ret := &MarkdownView{}
-	err = k8sClient.Get(ctx, types.NamespacedName{Name: beforeView.GetName(), Namespace: beforeView.GetNamespace()}, ret)
+	err = k8sClient.Get(ctx, types.NamespacedName{Name: inputView.GetName(), Namespace: inputView.GetNamespace()}, ret)
 	Expect(err).NotTo(HaveOccurred())
 
-	y, err = os.ReadFile(after)
+	y, err = os.ReadFile(output)
 	Expect(err).NotTo(HaveOccurred())
 	d = yaml.NewYAMLOrJSONDecoder(bytes.NewReader(y), 4096)
-	afterView := &MarkdownView{}
-	err = d.Decode(afterView)
+	outputView := &MarkdownView{}
+	err = d.Decode(outputView)
 	Expect(err).NotTo(HaveOccurred())
 
-	Expect(ret.Spec).Should(Equal(afterView.Spec))
+	Expect(ret.Spec).Should(Equal(outputView.Spec))
 }
 
-func validateTest(file string, valid bool) {
+func testValidating(file string, valid bool) {
 	ctx := context.Background()
 	y, err := os.ReadFile(file)
 	Expect(err).NotTo(HaveOccurred())
@@ -64,19 +80,23 @@ func validateTest(file string, valid bool) {
 }
 
 var _ = Describe("MarkdownView Webhook", func() {
-	Context("mutating", func() {
-		It("should mutate a MarkdownView", func() {
-			mutateTest(filepath.Join("testdata", "mutating", "before.yaml"), filepath.Join("testdata", "mutating", "after.yaml"))
+
+	Context("When creating MarkdownView under Defaulting Webhook", func() {
+		It("Should fill in the default value if a required field is empty", func() {
+			testMutating(filepath.Join("testdata", "mutating", "input.yaml"), filepath.Join("testdata", "mutating", "output.yaml"))
 		})
 	})
-	Context("validating", func() {
-		It("should create a valid MarkdownView", func() {
-			validateTest(filepath.Join("testdata", "validating", "valid.yaml"), true)
+
+	Context("When creating MarkdownView under Validating Webhook", func() {
+		It("Should deny if a required field is empty or invalid", func() {
+			testValidating(filepath.Join("testdata", "validating", "empty-markdowns.yaml"), false)
+			testValidating(filepath.Join("testdata", "validating", "invalid-replicas.yaml"), false)
+			testValidating(filepath.Join("testdata", "validating", "without-summary.yaml"), false)
 		})
-		It("should not create invalid MarkdownViews", func() {
-			validateTest(filepath.Join("testdata", "validating", "empty-markdowns.yaml"), false)
-			validateTest(filepath.Join("testdata", "validating", "invalid-replicas.yaml"), false)
-			validateTest(filepath.Join("testdata", "validating", "without-summary.yaml"), false)
+
+		It("Should admit if all required fields are valid", func() {
+			testValidating(filepath.Join("testdata", "validating", "valid.yaml"), true)
 		})
 	})
+
 })

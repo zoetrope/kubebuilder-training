@@ -3,11 +3,11 @@
 AdmissionWebhookを利用するためには、`MutatingWebhookConfiguration`や`ValidatingWebhookConfiguration`などのマニフェストを用意する必要があります。
 controller-genは`// +kubebuilder:webhook`マーカーの記述に基づいてマニフェストを生成できます。
 
-まずはデフォルト値を設定するWebhookのマーカーを見てみましょう。
+まずはMutating Webhookのマーカーを見てみましょう。
 
 [import:"webhook-defaulter"](../../codes/20_manifests/api/v1/markdownview_webhook.go)
 
-同様にバリデーションWebhookのマーカーを確認します。
+同様にValidating Webhookのマーカーを確認します。
 
 [import:"webhook-validator"](../../codes/20_manifests/api/v1/markdownview_webhook.go)
 

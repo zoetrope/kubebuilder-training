@@ -8,11 +8,10 @@
 
 ```console
 $ kubebuilder create api --group view --version v1 --kind MarkdownView
-Create Resource [y/n]
+INFO Create Resource [y/n]
 y
-Create Controller [y/n]
+INFO Create Controller [y/n]
 y
-$ make manifests
 ```
 
 `--group`,`--version`, `--kind`オプションは、生成するカスタムリソースのGVKを指定します。
@@ -20,9 +19,16 @@ $ make manifests
 - `--group`: リソースが属するグループ名を指定します。
 - `--version`: 適切なバージョンを指定します。今後仕様が変わる可能性がありそうなら`v1alpha1`や`v1beta1`を指定し、安定版のリソースを作成するのであれば`v1`を指定します。
 
-コマンドの実行に成功すると、下記のようなファイルが新たに生成されます。
+また、以下のコマンドを実行することでCRDやRBACなどのマニフェストを自動生成することができます。
+
+```console
+$ make manifests
+```
+
+コマンドの実行に成功すると、新たに下記のファイルが生成されます。
 
 ```
+.
 ├── api
 │    └── v1
 │        ├── groupversion_info.go
@@ -33,19 +39,18 @@ $ make manifests
 │    │    ├── bases
 │    │    │    └── view.zoetrope.github.io_markdownviews.yaml
 │    │    ├── kustomization.yaml
-│    │    ├── kustomizeconfig.yaml
-│    │    └── patches
-│    │        ├── cainjection_in_markdownviews.yaml
-│    │        └── webhook_in_markdownviews.yaml
+│    │    └── kustomizeconfig.yaml
 │    ├── rbac
-│    │    └── role.yaml
+│    │    ├── markdownview_editor_role.yaml
+│    │    └── markdownview_viewer_role.yaml
 │    └── samples
 │        ├── kustomization.yaml
 │        └── view_v1_markdownview.yaml
 └── internal
-    └── controller
-        ├── markdownview_controller.go
-        └── suite_test.go
+     └── controller
+         ├── markdownview_controller.go
+         ├── markdownview_controller_test.go
+         └── suite_test.go
 ```
 
 それぞれのファイルの内容をみていきましょう。
@@ -57,13 +62,6 @@ $ make manifests
 
 `groupversion_info.go`は初期生成後に編集する必要はありません。
 `zz_generated.deepcopy.go`は`markdownview_types.go`の内容から自動生成されるファイルなので編集する必要はありません。
-
-## internal/controllers
-
-`markdownview_controller.go`は、カスタムコントローラーのメインロジックになります。
-今後、カスタムコントローラーの処理は基本的にこのファイルに書いていくことになります。
-
-`suite_test.go`はテストコードです。詳細は[コントローラのテスト](../controller-runtime/controller_test.md)で解説します。
 
 ## cmd/main.go
 
@@ -78,15 +76,23 @@ configディレクトリ下には、いくつかのファイルが追加され�
 ### crd
 
 crdディレクトリにはCRD(Custom Resource Definition)のマニフェストが追加されています。
-
 これらのマニフェストは`api/v1/markdownView_types.go`から自動生成されるものなので、基本的に手動で編集する必要はありません。
-ただし、Conversion Webhookを利用したい場合は、`cainjection_in_markdownViews.yaml`と`webhook_in_markdownViews.yaml`のパッチを利用するように`kustomization.yaml`を書き換えてください。
 
 ### rbac
 
 `role.yaml`には、MarkdownViewリソースを扱うための権限が追加されています。
 
+また、MarkdownViewリソースを扱うためのRoleを定義したマニフェストとして、`markdownview_editor_role.yaml`と`markdownview_viewer_role.yaml`が追加されています。
+
 ### samples
 
 カスタムリソースのサンプルマニフェストです。
 テストで利用したり、ユーザー向けに提供できるように記述しておきましょう。
+
+## internal/controller
+
+`markdownview_controller.go`は、カスタムコントローラーのメインロジックになります。
+今後、カスタムコントローラーの処理は基本的にこのファイルに書いていくことになります。
+
+`suite_test.go`はテストコードです。詳細は[コントローラのテスト](../controller-runtime/controller_test.md)で解説します。
+

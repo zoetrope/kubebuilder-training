@@ -15,7 +15,7 @@ $ kind create cluster
 ## cert-managerのインストール
 
 Webhook用の証明書を発行するためにcert-managerが必要となります。
-下記のコマンドを実行してcert-managerのデプロイをおこないます。([参考](https://cert-manager.io/docs/installation/kubernetes/))
+下記のコマンドを実行してcert-managerのデプロイをおこないます。([参考](https://cert-manager.io/docs/installation/kubectl/))
 
 ```console
 $ kubectl apply --validate=false -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
@@ -31,9 +31,9 @@ cert-manager-cainjector-64c949654c-64wjk   1/1     Running   0          26s
 cert-manager-webhook-6bdffc7c9d-hkr8h      1/1     Running   0          26s
 ```
 
-## コントローラーのコンテナイメージの用意
+## カスタムコントローラーのコンテナイメージの用意
 
-コンテナイメージをビルドします。
+以下のコマンドを実行して、カスタムコントローラーのコンテナイメージをビルドします。
 
 ```console
 $ make docker-build
@@ -52,69 +52,75 @@ $ kind load docker-image controller:latest
 
 そこで、`config/manager/manager.yaml`に`imagePullPolicy: IfNotPresent`を追加しておきます。
 
-[import:"containers"](../../codes/10_tilt/config/manager/manager.yaml)
+```diff
+           - --leader-elect
+           - --health-probe-bind-address=:8081
+         image: controller:latest
++        imagePullPolicy: IfNotPresent
+         name: manager
+         securityContext:
+           allowPrivilegeEscalation: false
+```
 
-## コントローラーの動作確認
+## カスタムコントローラーの動作確認
 
-次にCRDをKubernetesクラスターに適用します。
+次に以下のコマンドを実行して、作成したCRDをKubernetesクラスターに適用します。
 
 ```console
 $ make install
 ```
 
-続いて各種マニフェストを適用します。
+続いて以下のコマンドを実行して、カスタムコントローラーをデプロイするためのマニフェストを適用します。
 
 ```console
 $ make deploy
 ```
 
-コントローラーのPodがRunningになったことを確認してください。
+カスタムコントローラーのPodがRunningになったことを確認してください。
 
 ```console
 $ kubectl get pod -n markdown-view-system
 NAME                                                READY   STATUS    RESTARTS   AGE
-markdown-view-controller-manager-5bc678bbf9-vb9r5   2/2     Running   0          30s
+markdown-view-controller-manager-5bc678bbf9-vb9r5   1/1     Running   0          30s
 ```
 
-次にコントローラーのログを表示させておきます。
+次にカスタムコントローラーのログを表示させておきます。
 
 ```console
-$ kubectl logs -n markdown-view-system markdown-view-controller-manager-5bc678bbf9-vb9r5 -c manager -f
+$ kubectl logs -n markdown-view-system deployments/markdown-view-controller-manager -c manager -f
 ```
 
-サンプルのカスタムリソースを適用します。
+最後にサンプルのカスタムリソースを適用します。
 
 ```console
 $ kubectl apply -f config/samples/view_v1_markdownview.yaml
 ```
 
-以下のようにWebhookやReconcileのメッセージがコントローラーのログに表示されていれば成功です。
+以下のようにWebhookやReconcileのメッセージがカスタムコントローラーのログに表示されていれば成功です。
 
 ```console
-2021-07-10T09:29:49.311Z        INFO    controller-runtime.metrics      metrics server is starting to listen     {"addr": "127.0.0.1:8080"}
-2021-07-10T09:29:49.311Z        INFO    controller-runtime.builder      Registering a mutating webhook   {"GVK": "view.zoetrope.github.io/v1, Kind=MarkdownView", "path": "/mutate-view-zoetrope-github-io-v1-markdownview"}
-2021-07-10T09:29:49.311Z        INFO    controller-runtime.webhook      registering webhook      {"path": "/mutate-view-zoetrope-github-io-v1-markdownview"}
-2021-07-10T09:29:49.311Z        INFO    controller-runtime.builder      Registering a validating webhook {"GVK": "view.zoetrope.github.io/v1, Kind=MarkdownView", "path": "/validate-view-zoetrope-github-io-v1-markdownview"}
-2021-07-10T09:29:49.311Z        INFO    controller-runtime.webhook      registering webhook      {"path": "/validate-view-zoetrope-github-io-v1-markdownview"}
-2021-07-10T09:29:49.311Z        INFO    setup   starting manager
-I0710 09:29:49.312373       1 leaderelection.go:243] attempting to acquire leader lease markdown-view-system/c124e721.zoetrope.github.io...
-2021-07-10T09:29:49.312Z        INFO    controller-runtime.manager      starting metrics server  {"path": "/metrics"}
-2021-07-10T09:29:49.312Z        INFO    controller-runtime.webhook.webhooks     starting webhook server
-2021-07-10T09:29:49.312Z        INFO    controller-runtime.certwatcher  Updated current TLS certificate
-2021-07-10T09:29:49.312Z        INFO    controller-runtime.webhook      serving webhook server   {"host": "", "port": 9443}
-2021-07-10T09:29:49.312Z        INFO    controller-runtime.certwatcher  Starting certificate watcher
-I0710 09:29:49.409787       1 leaderelection.go:253] successfully acquired lease markdown-view-system/c124e721.zoetrope.github.io
-2021-07-10T09:29:49.409Z        DEBUG   controller-runtime.manager.events       Normal  {"object": {"kind":"ConfigMap","namespace":"markdown-view-system","name":"c124e721.zoetrope.github.io","uid":"b48865ea-3d05-47bd-be4f-4d03a14b7a36","apiVersion":"v1","resourceVersion":"1982"}, "reason": "LeaderElection", "message": "markdown-view-controller-manager-5bc678bbf9-vb9r5_d64b0043-4a95-432e-9c76-3001247a87ac became leader"}
-2021-07-10T09:29:49.409Z        DEBUG   controller-runtime.manager.events       Normal  {"object": {"kind":"Lease","namespace":"markdown-view-system","name":"c124e721.zoetrope.github.io","uid":"3ef3dcde-abbb-440b-9052-1c85ed01d67d","apiVersion":"coordination.k8s.io/v1","resourceVersion":"1983"}, "reason": "LeaderElection", "message": "markdown-view-controller-manager-5bc678bbf9-vb9r5_d64b0043-4a95-432e-9c76-3001247a87ac became leader"}
-2021-07-10T09:29:49.410Z        INFO    controller-runtime.manager.controller.markdownview       Starting EventSource    {"reconciler group": "view.zoetrope.github.io", "reconciler kind": "MarkdownView", "source": "kind source: /, Kind="}
-2021-07-10T09:29:49.410Z        INFO    controller-runtime.manager.controller.markdownview       Starting Controller     {"reconciler group": "view.zoetrope.github.io", "reconciler kind": "MarkdownView"}
-2021-07-10T09:29:49.511Z        INFO    controller-runtime.manager.controller.markdownview       Starting workers        {"reconciler group": "view.zoetrope.github.io", "reconciler kind": "MarkdownView", "worker count": 1}
-2021-07-10T09:33:53.622Z        DEBUG   controller-runtime.webhook.webhooks     received request {"webhook": "/mutate-view-zoetrope-github-io-v1-markdownview", "UID": "20fe30b5-6d45-4592-ae4b-ee5048e054d1", "kind": "view.zoetrope.github.io/v1, Kind=MarkdownView", "resource": {"group":"view.zoetrope.github.io","version":"v1","resource":"markdownviews"}}
-2021-07-10T09:33:53.623Z        INFO    markdownview-resource   default {"name": "markdownview-sample"}
-2021-07-10T09:33:53.623Z        DEBUG   controller-runtime.webhook.webhooks     wrote response   {"webhook": "/mutate-view-zoetrope-github-io-v1-markdownview", "code": 200, "reason": "", "UID": "20fe30b5-6d45-4592-ae4b-ee5048e054d1", "allowed": true}
-2021-07-10T09:33:53.626Z        DEBUG   controller-runtime.webhook.webhooks     received request {"webhook": "/validate-view-zoetrope-github-io-v1-markdownview", "UID": "904fc35e-4415-4a90-af96-52cbe1cef1b7", "kind": "view.zoetrope.github.io/v1, Kind=MarkdownView", "resource": {"group":"view.zoetrope.github.io","version":"v1","resource":"markdownviews"}}
-2021-07-10T09:33:53.626Z        INFO    markdownview-resource   validate create {"name": "markdownview-sample"}
-2021-07-10T09:33:53.626Z        DEBUG   controller-runtime.webhook.webhooks     wrote response   {"webhook": "/validate-view-zoetrope-github-io-v1-markdownview", "code": 200, "reason": "", "UID": "904fc35e-4415-4a90-af96-52cbe1cef1b7", "allowed": true}
+2024-08-11T07:32:54Z    INFO    controller-runtime.builder      Registering a mutating webhook  {"GVK": "view.zoetrope.github.io/v1, Kind=MarkdownView", "path": "/mutate-view-zoetrope-github-io-v1-markdownview"}
+2024-08-11T07:32:54Z    INFO    controller-runtime.webhook      Registering webhook     {"path": "/mutate-view-zoetrope-github-io-v1-markdownview"}
+2024-08-11T07:32:54Z    INFO    controller-runtime.builder      Registering a validating webhook        {"GVK": "view.zoetrope.github.io/v1, Kind=MarkdownView", "path": "/validate-view-zoetrope-github-io-v1-markdownview"}
+2024-08-11T07:32:54Z    INFO    controller-runtime.webhook      Registering webhook     {"path": "/validate-view-zoetrope-github-io-v1-markdownview"}
+2024-08-11T07:32:54Z    INFO    setup   starting manager
+2024-08-11T07:32:54Z    INFO    controller-runtime.metrics      Starting metrics server
+2024-08-11T07:32:54Z    INFO    setup   disabling http/2
+2024-08-11T07:32:54Z    INFO    starting server {"name": "health probe", "addr": "[::]:8081"}
+2024-08-11T07:32:54Z    INFO    controller-runtime.webhook      Starting webhook server
+2024-08-11T07:32:54Z    INFO    setup   disabling http/2
+2024-08-11T07:32:54Z    INFO    controller-runtime.certwatcher  Updated current TLS certificate
+I0811 07:32:54.398221       1 leaderelection.go:250] attempting to acquire leader lease markdown-view-system/3ca5b296.zoetrope.github.io...
+2024-08-11T07:32:54Z    INFO    controller-runtime.webhook      Serving webhook server  {"host": "", "port": 9443}
+2024-08-11T07:32:54Z    INFO    controller-runtime.certwatcher  Starting certificate watcher
+I0811 07:32:54.408485       1 leaderelection.go:260] successfully acquired lease markdown-view-system/3ca5b296.zoetrope.github.io
+2024-08-11T07:32:54Z    DEBUG   events  markdown-view-controller-manager-7b7bf8bc56-pm7tp_693ac946-5132-4674-8770-81b2dcdb8f19 became leader       {"type": "Normal", "object": {"kind":"Lease","namespace":"markdown-view-system","name":"3ca5b296.zoetrope.github.io","uid":"e0d1dda2-7e64-40b1-9c67-f8b056465798","apiVersion":"coordination.k8s.io/v1","resourceVersion":"1411"}, "reason": "LeaderElection"}
+2024-08-11T07:32:54Z    INFO    Starting EventSource    {"controller": "markdownview", "controllerGroup": "view.zoetrope.github.io", "controllerKind": "MarkdownView", "source": "kind source: *v1.MarkdownView"}
+2024-08-11T07:32:54Z    INFO    Starting Controller     {"controller": "markdownview", "controllerGroup": "view.zoetrope.github.io", "controllerKind": "MarkdownView"}
+2024-08-11T07:32:54Z    INFO    Starting workers        {"controller": "markdownview", "controllerGroup": "view.zoetrope.github.io", "controllerKind": "MarkdownView", "worker count": 1}
+2024-08-11T07:32:54Z    INFO    controller-runtime.metrics      Serving metrics server  {"bindAddress": ":8443", "secure": true}
+2024-08-11T07:33:58Z    INFO    markdownview-resource   default {"name": "markdownview-sample"}
+2024-08-11T07:33:58Z    INFO    markdownview-resource   validate create {"name": "markdownview-sample"}
 ```
 
 ## 開発時の流れ

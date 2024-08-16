@@ -1,5 +1,5 @@
 /*
-Copyright 2023.
+Copyright 2024.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -21,10 +21,12 @@ import (
 	"context"
 	"fmt"
 
+	viewv1 "github.com/zoetrope/markdown-view/api/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -37,9 +39,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
+	"sigs.k8s.io/controller-runtime/pkg/event"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/log"
-
-	viewv1 "github.com/zoetrope/markdown-view/api/v1"
+	"sigs.k8s.io/controller-runtime/pkg/source"
 )
 
 //! [import]
@@ -56,13 +59,13 @@ type MarkdownViewReconciler struct {
 //! [reconciler]
 
 //! [rbac]
-//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/finalizers,verbs=update
-//+kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch
+// +kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=view.zoetrope.github.io,resources=markdownviews/finalizers,verbs=update
+// +kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch
 //! [rbac]
 
 //! [reconcile]
@@ -75,10 +78,11 @@ type MarkdownViewReconciler struct {
 // the user.
 //
 // For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.3/pkg/reconcile
+// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.18.4/pkg/reconcile
 func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
 
+	logger.Info("start reconcile MarkdownView")
 	//! [call-remove-metrics]
 	var mdView viewv1.MarkdownView
 	err := r.Get(ctx, req.NamespacedName, &mdView)
@@ -424,16 +428,40 @@ func controllerReference(mdView viewv1.MarkdownView, scheme *runtime.Scheme) (*m
 
 //! [controller-reference]
 
-//! [managedby]
+//! [index]
+
+const ownerControllerField = ".metadata.ownerReference.controller"
+
+func indexByOwnerMarkdownView(obj client.Object) []string {
+	cm := obj.(*corev1.ConfigMap)
+	owner := metav1.GetControllerOf(cm)
+	if owner == nil {
+		return nil
+	}
+	if owner.APIVersion != viewv1.GroupVersion.String() || owner.Kind != "MarkdownView" {
+		return nil
+	}
+	return []string{owner.Name}
+}
+
+//! [index]
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *MarkdownViewReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *MarkdownViewReconciler) SetupWithManager(ctx context.Context, mgr ctrl.Manager, ch chan event.TypedGenericEvent[*viewv1.MarkdownView]) error {
+	//! [index-field]
+	err := mgr.GetFieldIndexer().IndexField(ctx, &corev1.ConfigMap{}, ownerControllerField, indexByOwnerMarkdownView)
+	if err != nil {
+		return err
+	}
+	//! [index-field]
+
+	//! [managedby]
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&viewv1.MarkdownView{}).
 		Owns(&corev1.ConfigMap{}).
 		Owns(&appsv1.Deployment{}).
 		Owns(&corev1.Service{}).
+		WatchesRawSource(source.Channel(ch, &handler.TypedEnqueueRequestForObject[*viewv1.MarkdownView]{})).
 		Complete(r)
+	//! [managedby]
 }
-
-//! [managedby]

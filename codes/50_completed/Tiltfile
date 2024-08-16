@@ -35,7 +35,7 @@ local_resource(
 docker_build_with_restart(
     'controller:latest', '.',
     dockerfile_contents=DOCKERFILE,
-    entrypoint=['/manager'],
+    entrypoint=['/manager', '--metrics-bind-address=:8443'],
     only=['./bin/manager'],
     live_update=[
         sync('./bin/manager', '/manager'),
