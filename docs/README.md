@@ -46,4 +46,4 @@ Kubebuilderは、下記のツールとライブラリから構成されていま
 * 2022/06/20: Kubebuilder v3.4.1対応
 * 2022/07/18: Kubebuilder v3.5.0対応、サンプルコードの見直し
 * 2023/08/29: Kubebuilder v3.11.1対応
-* 2024/08/11: Kubebuilder v4.1.1対応
+* 2024/08/16: Kubebuilder v4.1.1対応
