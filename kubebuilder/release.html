@@ -3,7 +3,7 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <title>controller-tools · つくって学ぶKubebuilder</title>
+        <title>カスタムコントローラーのリリース · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="HonKit 5.1.4">
@@ -58,10 +58,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="crd.html" />
+    <link rel="next" href="../controller-tools/" />
     
     
-    <link rel="prev" href="../kubebuilder/release.html" />
+    <link rel="prev" href="kind.html" />
     
 
     </head>
@@ -161,9 +161,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2" data-path="../kubebuilder/">
+        <li class="chapter " data-level="1.2" data-path="./">
             
-                <a href="../kubebuilder/">
+                <a href="./">
             
                     
                     Kubebuilder
@@ -175,9 +175,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.2.1" data-path="../kubebuilder/new-project.html">
+        <li class="chapter " data-level="1.2.1" data-path="new-project.html">
             
-                <a href="../kubebuilder/new-project.html">
+                <a href="new-project.html">
             
                     
                     プロジェクトの雛形作成
@@ -188,9 +188,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.2" data-path="../kubebuilder/api.html">
+        <li class="chapter " data-level="1.2.2" data-path="api.html">
             
-                <a href="../kubebuilder/api.html">
+                <a href="api.html">
             
                     
                     APIの雛形作成
@@ -201,9 +201,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.3" data-path="../kubebuilder/webhook.html">
+        <li class="chapter " data-level="1.2.3" data-path="webhook.html">
             
-                <a href="../kubebuilder/webhook.html">
+                <a href="webhook.html">
             
                     
                     Webhookの雛形作成
@@ -214,9 +214,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.4" data-path="../kubebuilder/kind.html">
+        <li class="chapter " data-level="1.2.4" data-path="kind.html">
             
-                <a href="../kubebuilder/kind.html">
+                <a href="kind.html">
             
                     
                     カスタムコントローラーの動作確認
@@ -227,9 +227,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/release.html">
+        <li class="chapter active" data-level="1.2.5" data-path="release.html">
             
-                <a href="../kubebuilder/release.html">
+                <a href="release.html">
             
                     
                     カスタムコントローラーのリリース
@@ -245,9 +245,9 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.3" data-path="./">
+        <li class="chapter " data-level="1.3" data-path="../controller-tools/">
             
-                <a href="./">
+                <a href="../controller-tools/">
             
                     
                     controller-tools
@@ -259,9 +259,9 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.3.1" data-path="crd.html">
+        <li class="chapter " data-level="1.3.1" data-path="../controller-tools/crd.html">
             
-                <a href="crd.html">
+                <a href="../controller-tools/crd.html">
             
                     
                     CRDマニフェストの生成
@@ -272,9 +272,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.2" data-path="rbac.html">
+        <li class="chapter " data-level="1.3.2" data-path="../controller-tools/rbac.html">
             
-                <a href="rbac.html">
+                <a href="../controller-tools/rbac.html">
             
                     
                     RBACマニフェストの生成
@@ -285,9 +285,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.3.3" data-path="webhook.html">
+        <li class="chapter " data-level="1.3.3" data-path="../controller-tools/webhook.html">
             
-                <a href="webhook.html">
+                <a href="../controller-tools/webhook.html">
             
                     
                     Webhookマニフェストの生成
@@ -469,7 +469,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >controller-tools</a>
+        <a href=".." >カスタムコントローラーのリリース</a>
     </h1>
 </div>
 
@@ -484,34 +484,14 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="controller-tools">controller-tools</h1>
-<p>Kubebuilderでは、カスタムコントローラーの開発を補助するためのツール群として<a href="https://github.com/kubernetes-sigs/controller-tools" target="_blank">controller-tools</a>を提供しています。</p>
-<p>controller-toolsには下記のツールが含まれていますが、本資料ではcontroller-genのみを取り扱います。</p>
+                                <h1 id="カスタムコントローラーのリリース">カスタムコントローラーのリリース</h1>
+<p>カスタムコントローラーを開発したら、それをリリースする必要があります。</p>
+<p>Kubebuilderが生成したプロジェクトでは、<code>make docker-push</code>でコンテナイメージをpushしたり、<code>make build-installer</code>でカスタムコントローラーをインストールするためのマニフェストを生成することができます。
+しかし、リリースするための手順が十分に提供されているわけではありません。</p>
+<p>GoReleaserによるコンテナイメージのリリース方法や、Chart ReleaserによるHelm Chartのリリース方法を以下の記事にまとめましたので、参考にしてみてください。</p>
 <ul>
-<li>controller-gen</li>
-<li>type-scaffold</li>
-<li>helpgen</li>
+<li><a href="https://zenn.dev/zoetro/articles/kubernetes-controller-maintenance" target="_blank">Kubernetes カスタムコントローラー楽々メンテナンス</a></li>
 </ul>
-<h2 id="controller-gen">controller-gen</h2>
-<p><code>controller-gen</code>は、GoのソースコードをもとにしてマニフェストやGoのソースコードの生成をおこなうツールです。</p>
-<p><code>controller-gen</code>のヘルプを確認すると、下記の5種類のジェネレータの存在が確認できます。</p>
-<pre><code>$ controller-gen -h
-
-(中略)
-
-generators
-
-+webhook[:headerFile=&lt;string&gt;][,year=&lt;string&gt;]                                          package  generates (partial) {Mutating,Validating}WebhookConfiguration objects.
-+schemapatch[:generateEmbeddedObjectMeta=&lt;bool&gt;],manifests=&lt;string&gt;[,maxDescLen=&lt;int&gt;]  package  patches existing CRDs with new schemata.
-+rbac[:headerFile=&lt;string&gt;],roleName=&lt;string&gt;[,year=&lt;string&gt;]                           package  generates ClusterRole objects.
-+object[:headerFile=&lt;string&gt;][,year=&lt;string&gt;]                                           package  generates code containing DeepCopy, DeepCopyInto, and
-+crd[:allowDangerousTypes=&lt;bool&gt;][,crdVersions=&lt;[]string&gt;][,deprecatedV1beta1CompatibilityPreserveUnknownFields=&lt;bool&gt;][,generateEmbeddedObjectMeta=&lt;bool&gt;][,headerFile=&lt;string&gt;][,ignoreUnexportedFields=&lt;bool&gt;][,maxDescLen=&lt;int&gt;][,year=&lt;string&gt;]  package  generates CustomResourceDefinition objects.
-</code></pre><p><code>kubebuilder</code>が生成したMakefileには、<code>make manifests</code>と<code>make generate</code>というターゲットが用意されており、<code>make manifests</code>では<code>webhook</code>, <code>rbac</code>, <code>crd</code>の生成、<code>make generate</code>では<code>object</code>の生成がおこなわれます。</p>
-<p><code>controller-gen</code>がマニフェストの生成をおこなう際には、Goのstructの構成と、ソースコード中に埋め込まれた<code>// +kubebuilder:</code>から始まるコメント(マーカーと呼ばれる)を目印にします。</p>
-<p>利用可能なマーカーは下記のコマンドで確認できます。(<code>-ww</code>や<code>-www</code>を指定するとより詳細な説明が確認できます)</p>
-<pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">controller-gen crd -w</span>
-<span class="hljs-meta prompt_">$ </span><span class="language-bash">controller-gen webhook -w</span>
-</code></pre>
 
                                 
                                 </section>
@@ -539,12 +519,12 @@ generators
 
             
                 
-                <a href="../kubebuilder/release.html" class="navigation navigation-prev " aria-label="Previous page: カスタムコントローラーのリリース">
+                <a href="kind.html" class="navigation navigation-prev " aria-label="Previous page: カスタムコントローラーの動作確認">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="crd.html" class="navigation navigation-next " aria-label="Next page: CRDマニフェストの生成">
+                <a href="../controller-tools/" class="navigation navigation-next " aria-label="Next page: controller-tools">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -555,7 +535,7 @@ generators
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"controller-tools","level":"1.3","depth":1,"next":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},"previous":{"title":"カスタムコントローラーのリリース","level":"1.2.5","depth":2,"path":"kubebuilder/release.md","ref":"kubebuilder/release.md","articles":[]},"articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}],"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/README.md","mtime":"2024-08-16T09:19:47.377Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-16T09:20:13.853Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"カスタムコントローラーのリリース","level":"1.2.5","depth":2,"next":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"previous":{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/release.md","mtime":"2024-08-16T09:19:47.377Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-16T09:20:13.853Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -6,7 +6,7 @@
         <title>Manager · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 5.0.0">
+        <meta name="generator" content="HonKit 5.1.4">
         
         
         
@@ -227,6 +227,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/release.html">
+            
+                <a href="../kubebuilder/release.html">
+            
+                    
+                    カスタムコントローラーのリリース
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -317,7 +330,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="test.html">
+            
+                <a href="test.html">
+            
+                    
+                    テスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="reconcile.html">
             
                 <a href="reconcile.html">
             
@@ -330,12 +356,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
                     
-                    コントローラーのテスト
+                    コントローラーのテスト(Envtest)
             
                 </a>
             
@@ -343,7 +369,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -356,12 +382,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
                     
-                    Webhookのテスト
+                    Webhookのテスト(Envtest)
             
                 </a>
             
@@ -369,7 +395,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="deletion.html">
+        <li class="chapter " data-level="1.4.7" data-path="deletion.html">
             
                 <a href="deletion.html">
             
@@ -382,7 +408,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.7" data-path="manager.html">
+        <li class="chapter active" data-level="1.4.8" data-path="manager.html">
             
                 <a href="manager.html">
             
@@ -395,7 +421,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="monitoring.html">
+        <li class="chapter " data-level="1.4.9" data-path="monitoring.html">
             
                 <a href="monitoring.html">
             
@@ -474,15 +500,15 @@
 </blockquote>
 <pre><code class="lang-golang">mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
     Scheme:                 scheme,
-    MetricsBindAddress:     metricsAddr,
-    Port:                   <span class="hljs-number">9443</span>,
+    Metrics:                metricsServerOptions,
+    WebhookServer:          webhookServer,
     HealthProbeBindAddress: probeAddr,
     LeaderElection:         enableLeaderElection,
-    LeaderElectionID:       <span class="hljs-string">&quot;3ca5b296.zoetrope.github.io&quot;</span>,
+    LeaderElectionID:       <span class="hljs-string">"3ca5b296.zoetrope.github.io"</span>,
     <span class="hljs-comment">// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily</span>
     <span class="hljs-comment">// when the Manager ends. This requires the binary to immediately end when the</span>
     <span class="hljs-comment">// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly</span>
-    <span class="hljs-comment">// speeds up voluntary leader transitions as the new leader don&apos;t have to wait</span>
+    <span class="hljs-comment">// speeds up voluntary leader transitions as the new leader don't have to wait</span>
     <span class="hljs-comment">// LeaseDuration time first.</span>
     <span class="hljs-comment">//</span>
     <span class="hljs-comment">// In the default scaffold provided, the program ends immediately after</span>
@@ -504,27 +530,62 @@ Managerではそのような処理を実現するための仕組みを提供し�
 <li><a href="https://github.com/topolvm/topolvm/tree/main/runners" target="_blank">https://github.com/topolvm/topolvm/tree/main/runners</a></li>
 </ul>
 <p>Runnable機能を利用するためには、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#Runnable" target="_blank">Runnable</a>インタフェースを実装した以下のようなコードを用意します。
-ここでは10秒周期で何らかの処理をおこなうRunnerを実装しています。</p>
-<pre><code class="lang-go"><span class="hljs-keyword">package</span> runners
+ここでは30秒周期で、MarkdownViewControllerにReconcileを実行するように通知するRunnerを実装しています。</p>
+<blockquote>
+<p><a id="runner.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/runner.go" target="_blank">runner.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-keyword">package</span> controller
 
 <span class="hljs-keyword">import</span> (
-    <span class="hljs-string">&quot;context&quot;</span>
-    <span class="hljs-string">&quot;fmt&quot;</span>
-    <span class="hljs-string">&quot;time&quot;</span>
+    <span class="hljs-string">"context"</span>
+    <span class="hljs-string">"time"</span>
+
+    <span class="hljs-string">"github.com/go-logr/logr"</span>
+    viewv1 <span class="hljs-string">"github.com/zoetrope/markdown-view/api/v1"</span>
+    <span class="hljs-string">"sigs.k8s.io/controller-runtime/pkg/client"</span>
+    <span class="hljs-string">"sigs.k8s.io/controller-runtime/pkg/event"</span>
 )
 
 <span class="hljs-keyword">type</span> Runner <span class="hljs-keyword">struct</span> {
+    client   client.Client
+    logger   logr.Logger
+    interval time.Duration
+    channel  <span class="hljs-keyword">chan</span>&lt;- event.TypedGenericEvent[*viewv1.MarkdownView]
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewRunner</span><span class="hljs-params">(client client.Client, logger logr.Logger, interval time.Duration, channel <span class="hljs-keyword">chan</span>&lt;- event.TypedGenericEvent[*viewv1.MarkdownView])</span></span> *Runner {
+    <span class="hljs-keyword">return</span> &amp;Runner{
+        client:   client,
+        logger:   logger,
+        interval: interval,
+        channel:  channel,
+    }
 }
 
 <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r Runner)</span></span> Start(ctx context.Context) <span class="hljs-type">error</span> {
-    ticker := time.NewTicker(<span class="hljs-number">10</span> * time.Second)
+    ticker := time.NewTicker(r.interval)
     <span class="hljs-keyword">defer</span> ticker.Stop()
     <span class="hljs-keyword">for</span> {
         <span class="hljs-keyword">select</span> {
         <span class="hljs-keyword">case</span> &lt;-ctx.Done():
             <span class="hljs-keyword">return</span> ctx.Err()
         <span class="hljs-keyword">case</span> &lt;-ticker.C:
-            fmt.Println(<span class="hljs-string">&quot;run something&quot;</span>)
+            r.notify(ctx)
+        }
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r Runner)</span></span> notify(ctx context.Context) {
+    <span class="hljs-keyword">var</span> mdviewList viewv1.MarkdownViewList
+    err := r.client.List(ctx, &amp;mdviewList)
+    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        r.logger.Error(err, <span class="hljs-string">"failed to list MarkdownView"</span>)
+        <span class="hljs-keyword">return</span>
+    }
+
+    <span class="hljs-keyword">for</span> _, sts := <span class="hljs-keyword">range</span> mdviewList.Items {
+        r.channel &lt;- event.TypedGenericEvent[*viewv1.MarkdownView]{
+            Object: sts.DeepCopy(),
         }
     }
 }
@@ -535,11 +596,32 @@ Managerではそのような処理を実現するための仕組みを提供し�
 </code></pre>
 <p>StartメソッドはManagerのStartを呼び出した際に、goroutineとして呼び出されます。
 引数の<code>context</code>によりManagerからの終了通知を受け取ることができます。</p>
-<pre><code class="lang-go">err = mgr.Add(&amp;runners.Runner{})
+<blockquote>
+<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/cmd/main.go" target="_blank">main.go</a></p>
+</blockquote>
+<pre><code class="lang-golang">ch := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> event.TypedGenericEvent[*viewv1.MarkdownView])
+runner := controller.NewRunner(mgr.GetClient(), mgr.GetLogger().WithName(<span class="hljs-string">"Runner"</span>), <span class="hljs-number">30</span>*time.Second, ch)
+err = mgr.Add(runner)
+<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    setupLog.Error(err, <span class="hljs-string">"unable to add runner"</span>)
+    os.Exit(<span class="hljs-number">1</span>)
+}
 </code></pre>
 <p>なお、このRunnerの処理は通常リーダーとして動作しているManagerでしか動きません。
 リーダーでなくても常時動かしたい処理である場合、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/manager?tab=doc#LeaderElectionRunnable" target="_blank">LeaderElectionRunnable</a>インタフェースを実装し、
 NeedLeaderElectionメソッドで <code>false</code> を返すようにします。</p>
+<p>また、MarkdownViewControllerでは、Runnerからの通知を受けてReconcileを実行するように、<code>WatchesRawSource</code>を利用します。</p>
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang">    <span class="hljs-keyword">return</span> ctrl.NewControllerManagedBy(mgr).
+        For(&amp;viewv1.MarkdownView{}).
+        Owns(&amp;corev1.ConfigMap{}).
+        Owns(&amp;appsv1.Deployment{}).
+        Owns(&amp;corev1.Service{}).
+        WatchesRawSource(source.Channel(ch, &amp;handler.TypedEnqueueRequestForObject[*viewv1.MarkdownView]{})).
+        Complete(r)
+</code></pre>
 <h2 id="eventrecorder">EventRecorder</h2>
 <p>カスタムリソースのStatusには、現在の状態が保存されています。
 一方、これまでどのような処理が実施されてきたのかを記録したい場合、Kubernetesが提供する<a href="https://pkg.go.dev/k8s.io/api/core/v1?tab=doc#Event" target="_blank">Event</a>リソースを利用できます。</p>
@@ -548,12 +630,13 @@ NeedLeaderElectionメソッドで <code>false</code> を返すようにします
 <blockquote>
 <p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/cmd/main.go" target="_blank">main.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">if</span> err = (&amp;controller.MarkdownViewReconciler{
+<pre><code class="lang-golang">ctx := ctrl.SetupSignalHandler()
+<span class="hljs-keyword">if</span> err = (&amp;controller.MarkdownViewReconciler{
     Client:   mgr.GetClient(),
     Scheme:   mgr.GetScheme(),
-    Recorder: mgr.GetEventRecorderFor(<span class="hljs-string">&quot;markdownview-controller&quot;</span>),
-}).SetupWithManager(mgr); err != <span class="hljs-literal">nil</span> {
-    setupLog.Error(err, <span class="hljs-string">&quot;unable to create controller&quot;</span>, <span class="hljs-string">&quot;controller&quot;</span>, <span class="hljs-string">&quot;MarkdownView&quot;</span>)
+    Recorder: mgr.GetEventRecorderFor(<span class="hljs-string">"markdownview-controller"</span>),
+}).SetupWithManager(ctx, mgr, ch); err != <span class="hljs-literal">nil</span> {
+    setupLog.Error(err, <span class="hljs-string">"unable to create controller"</span>, <span class="hljs-string">"controller"</span>, <span class="hljs-string">"MarkdownView"</span>)
     os.Exit(<span class="hljs-number">1</span>)
 }
 </code></pre>
@@ -573,11 +656,11 @@ NeedLeaderElectionメソッドで <code>false</code> を返すようにします
 <blockquote>
 <p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang">r.Recorder.Event(&amp;mdView, corev1.EventTypeNormal, <span class="hljs-string">&quot;Updated&quot;</span>, fmt.Sprintf(<span class="hljs-string">&quot;MarkdownView(%s:%s) updated: %s&quot;</span>, mdView.Namespace, mdView.Name, mdView.Status))
+<pre><code class="lang-golang">r.Recorder.Event(&amp;mdView, corev1.EventTypeNormal, <span class="hljs-string">"Updated"</span>, fmt.Sprintf(<span class="hljs-string">"MarkdownView(%s:%s) updated: %s"</span>, mdView.Namespace, mdView.Name, mdView.Status))
 </code></pre>
 <p>このEventリソースは第1引数で指定したリソースに結びいており、そのリソースと同じnamespaceにEventリソースが作成されます。
 カスタムコントローラーがEventリソースを作成できるように、以下のようなRBACのマーカーを追加し、<code>make manifests</code>でマニフェストを更新しておきます。</p>
-<pre><code class="lang-go"><span class="hljs-comment">//+kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch</span>
+<pre><code class="lang-go"><span class="hljs-comment">// +kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch</span>
 </code></pre>
 <p>コントローラーを実行し、作成したEventリソースを確認してみましょう。なお、Eventリソースはデフォルト設定では1時間経つと消えてしまいます。</p>
 <pre><code>$ kubectl get events -n default
@@ -592,15 +675,15 @@ LAST SEEN   TYPE     REASON    OBJECT                             MESSAGE
 </blockquote>
 <pre><code class="lang-golang">mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
     Scheme:                 scheme,
-    MetricsBindAddress:     metricsAddr,
-    Port:                   <span class="hljs-number">9443</span>,
+    Metrics:                metricsServerOptions,
+    WebhookServer:          webhookServer,
     HealthProbeBindAddress: probeAddr,
     LeaderElection:         enableLeaderElection,
-    LeaderElectionID:       <span class="hljs-string">&quot;3ca5b296.zoetrope.github.io&quot;</span>,
+    LeaderElectionID:       <span class="hljs-string">"3ca5b296.zoetrope.github.io"</span>,
     <span class="hljs-comment">// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily</span>
     <span class="hljs-comment">// when the Manager ends. This requires the binary to immediately end when the</span>
     <span class="hljs-comment">// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly</span>
-    <span class="hljs-comment">// speeds up voluntary leader transitions as the new leader don&apos;t have to wait</span>
+    <span class="hljs-comment">// speeds up voluntary leader transitions as the new leader don't have to wait</span>
     <span class="hljs-comment">// LeaseDuration time first.</span>
     <span class="hljs-comment">//</span>
     <span class="hljs-comment">// In the default scaffold provided, the program ends immediately after</span>
@@ -615,12 +698,12 @@ LAST SEEN   TYPE     REASON    OBJECT                             MESSAGE
 <blockquote>
 <p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/cmd/main.go" target="_blank">main.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">if</span> err := mgr.AddHealthzCheck(<span class="hljs-string">&quot;healthz&quot;</span>, healthz.Ping); err != <span class="hljs-literal">nil</span> {
-    setupLog.Error(err, <span class="hljs-string">&quot;unable to set up health check&quot;</span>)
+<pre><code class="lang-golang"><span class="hljs-keyword">if</span> err := mgr.AddHealthzCheck(<span class="hljs-string">"healthz"</span>, healthz.Ping); err != <span class="hljs-literal">nil</span> {
+    setupLog.Error(err, <span class="hljs-string">"unable to set up health check"</span>)
     os.Exit(<span class="hljs-number">1</span>)
 }
-<span class="hljs-keyword">if</span> err := mgr.AddReadyzCheck(<span class="hljs-string">&quot;readyz&quot;</span>, healthz.Ping); err != <span class="hljs-literal">nil</span> {
-    setupLog.Error(err, <span class="hljs-string">&quot;unable to set up ready check&quot;</span>)
+<span class="hljs-keyword">if</span> err := mgr.AddReadyzCheck(<span class="hljs-string">"readyz"</span>, healthz.Ping); err != <span class="hljs-literal">nil</span> {
+    setupLog.Error(err, <span class="hljs-string">"unable to set up ready check"</span>)
     os.Exit(<span class="hljs-number">1</span>)
 }
 </code></pre>
@@ -645,10 +728,13 @@ LAST SEEN   TYPE     REASON    OBJECT                             MESSAGE
 <p><a href="client.html">クライアントの使い方</a>で紹介したように、複数のリソースを取得する際にラベルやnamespaceで絞り込むことが可能です。
 しかし、特定のフィールドの値に応じてフィルタリングしたいこともあるでしょう。
 controller-runtimeではインメモリにキャッシュしているリソースに対してインデックスを張る仕組みが用意されています。</p>
-<p><img src="img/index.png" alt="index"></p>
+<p><img src="img/index.png" alt="index"></img></p>
 <p>インデックスを利用するためには事前にManagerの<code>GetFieldIndexer()</code>を利用して、どのフィールドの値に基づいてインデックスを張るのかを指定します。
 下記の例ではConfigMapリソースに対して、<code>ownerReferences</code>に指定されているMarkdownViewリソースの名前でインデックスを作成しています。</p>
-<pre><code class="lang-go"><span class="hljs-keyword">const</span> ownerControllerField = <span class="hljs-string">&quot;.metadata.ownerReference.controller&quot;</span>
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang"><span class="hljs-keyword">const</span> ownerControllerField = <span class="hljs-string">".metadata.ownerReference.controller"</span>
 
 <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">indexByOwnerMarkdownView</span><span class="hljs-params">(obj client.Object)</span></span> []<span class="hljs-type">string</span> {
     cm := obj.(*corev1.ConfigMap)
@@ -656,18 +742,18 @@ controller-runtimeではインメモリにキャッシュしているリソー�
     <span class="hljs-keyword">if</span> owner == <span class="hljs-literal">nil</span> {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
     }
-    <span class="hljs-keyword">if</span> owner.APIVersion != viewv1.GroupVersion.String() || owner.Kind != <span class="hljs-string">&quot;MarkdownView&quot;</span> {
+    <span class="hljs-keyword">if</span> owner.APIVersion != viewv1.GroupVersion.String() || owner.Kind != <span class="hljs-string">"MarkdownView"</span> {
         <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
     }
     <span class="hljs-keyword">return</span> []<span class="hljs-type">string</span>{owner.Name}
 }
-
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span></span> SetupWithManager(mgr ctrl.Manager) <span class="hljs-type">error</span> {
-    err := mgr.GetFieldIndexer().IndexField(ctx, &amp;corev1.ConfigMap{}, ownerControllerField, indexByOwnerMarkdownView)
-    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> err
-    }
-    <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+</code></pre>
+<blockquote>
+<p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
+</blockquote>
+<pre><code class="lang-golang">err := mgr.GetFieldIndexer().IndexField(ctx, &amp;corev1.ConfigMap{}, ownerControllerField, indexByOwnerMarkdownView)
+<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    <span class="hljs-keyword">return</span> err
 }
 </code></pre>
 <p><code>IndexField</code>の第3引数のフィールド名には、どのフィールドを利用してインデックスを張っているのかを示す文字列を指定します。
@@ -727,7 +813,7 @@ err := r.List(ctx, &amp;cms, client.MatchingFields(<span class="hljs-keyword">ma
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.7","depth":2,"next":{"title":"モニタリング","level":"1.4.8","depth":2,"path":"controller-runtime/monitoring.md","ref":"controller-runtime/monitoring.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.6","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.8","depth":2,"next":{"title":"モニタリング","level":"1.4.9","depth":2,"path":"controller-runtime/monitoring.md","ref":"controller-runtime/monitoring.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.7","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2024-08-16T09:19:47.377Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-16T09:20:13.853Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

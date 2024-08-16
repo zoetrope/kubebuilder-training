@@ -6,7 +6,7 @@
         <title>CRDマニフェストの生成 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 5.0.0">
+        <meta name="generator" content="HonKit 5.1.4">
         
         
         
@@ -227,6 +227,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/release.html">
+            
+                <a href="../kubebuilder/release.html">
+            
+                    
+                    カスタムコントローラーのリリース
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -317,7 +330,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/test.html">
+            
+                <a href="../controller-runtime/test.html">
+            
+                    
+                    テスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/reconcile.html">
             
                 <a href="../controller-runtime/reconcile.html">
             
@@ -330,12 +356,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
                     
-                    コントローラーのテスト
+                    コントローラーのテスト(Envtest)
             
                 </a>
             
@@ -343,7 +369,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -356,12 +382,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
                     
-                    Webhookのテスト
+                    Webhookのテスト(Envtest)
             
                 </a>
             
@@ -369,7 +395,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/deletion.html">
+        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/deletion.html">
             
                 <a href="../controller-runtime/deletion.html">
             
@@ -382,7 +408,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/manager.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/manager.html">
             
                 <a href="../controller-runtime/manager.html">
             
@@ -395,7 +421,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/monitoring.html">
+        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/monitoring.html">
             
                 <a href="../controller-runtime/monitoring.html">
             
@@ -462,21 +488,21 @@
 <p>コントローラーでカスタムリソースを扱うためには、そのリソースのCRD(Custom Resource Definition)を定義する必要があります。
 CRDのマニフェストは複雑で、手書きで作成するにはかなりの手間がかかります。</p>
 <p>そこでKubebuilderではcontroller-genというツールを提供しており、Goで記述したstructからCRDを生成できます。</p>
-<p>まずは<code>kubebuilder create api</code>コマンドで生成されたmarkdownview_types.goを見てみましょう。</p>
+<p>まずは<code>kubebuilder create api</code>コマンドで生成された<code>api/v1/markdownview_types.go</code>を見てみましょう。</p>
 <blockquote>
 <p><a id="markdownview_types.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/00_scaffold/api/v1/markdownview_types.go" target="_blank">markdownview_types.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">/*
-Copyright 2023.
+Copyright 2024.
 
-Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
@@ -485,7 +511,7 @@ limitations under the License.
 <span class="hljs-keyword">package</span> v1
 
 <span class="hljs-keyword">import</span> (
-    metav1 <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;</span>
+    metav1 <span class="hljs-string">"k8s.io/apimachinery/pkg/apis/meta/v1"</span>
 )
 
 <span class="hljs-comment">// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!</span>
@@ -494,37 +520,37 @@ limitations under the License.
 <span class="hljs-comment">// MarkdownViewSpec defines the desired state of MarkdownView</span>
 <span class="hljs-keyword">type</span> MarkdownViewSpec <span class="hljs-keyword">struct</span> {
     <span class="hljs-comment">// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster</span>
-    <span class="hljs-comment">// Important: Run &quot;make&quot; to regenerate code after modifying this file</span>
+    <span class="hljs-comment">// Important: Run "make" to regenerate code after modifying this file</span>
 
     <span class="hljs-comment">// Foo is an example field of MarkdownView. Edit markdownview_types.go to remove/update</span>
-    Foo <span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;foo,omitempty&quot;`</span>
+    Foo <span class="hljs-type">string</span> <span class="hljs-string">`json:"foo,omitempty"`</span>
 }
 
 <span class="hljs-comment">// MarkdownViewStatus defines the observed state of MarkdownView</span>
 <span class="hljs-keyword">type</span> MarkdownViewStatus <span class="hljs-keyword">struct</span> {
     <span class="hljs-comment">// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster</span>
-    <span class="hljs-comment">// Important: Run &quot;make&quot; to regenerate code after modifying this file</span>
+    <span class="hljs-comment">// Important: Run "make" to regenerate code after modifying this file</span>
 }
 
-<span class="hljs-comment">//+kubebuilder:object:root=true</span>
-<span class="hljs-comment">//+kubebuilder:subresource:status</span>
+<span class="hljs-comment">// +kubebuilder:object:root=true</span>
+<span class="hljs-comment">// +kubebuilder:subresource:status</span>
 
 <span class="hljs-comment">// MarkdownView is the Schema for the markdownviews API</span>
 <span class="hljs-keyword">type</span> MarkdownView <span class="hljs-keyword">struct</span> {
-    metav1.TypeMeta   <span class="hljs-string">`json:&quot;,inline&quot;`</span>
-    metav1.ObjectMeta <span class="hljs-string">`json:&quot;metadata,omitempty&quot;`</span>
+    metav1.TypeMeta   <span class="hljs-string">`json:",inline"`</span>
+    metav1.ObjectMeta <span class="hljs-string">`json:"metadata,omitempty"`</span>
 
-    Spec   MarkdownViewSpec   <span class="hljs-string">`json:&quot;spec,omitempty&quot;`</span>
-    Status MarkdownViewStatus <span class="hljs-string">`json:&quot;status,omitempty&quot;`</span>
+    Spec   MarkdownViewSpec   <span class="hljs-string">`json:"spec,omitempty"`</span>
+    Status MarkdownViewStatus <span class="hljs-string">`json:"status,omitempty"`</span>
 }
 
-<span class="hljs-comment">//+kubebuilder:object:root=true</span>
+<span class="hljs-comment">// +kubebuilder:object:root=true</span>
 
 <span class="hljs-comment">// MarkdownViewList contains a list of MarkdownView</span>
 <span class="hljs-keyword">type</span> MarkdownViewList <span class="hljs-keyword">struct</span> {
-    metav1.TypeMeta <span class="hljs-string">`json:&quot;,inline&quot;`</span>
-    metav1.ListMeta <span class="hljs-string">`json:&quot;metadata,omitempty&quot;`</span>
-    Items           []MarkdownView <span class="hljs-string">`json:&quot;items&quot;`</span>
+    metav1.TypeMeta <span class="hljs-string">`json:",inline"`</span>
+    metav1.ListMeta <span class="hljs-string">`json:"metadata,omitempty"`</span>
+    Items           []MarkdownView <span class="hljs-string">`json:"items"`</span>
 }
 
 <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">init</span><span class="hljs-params">()</span></span> {
@@ -547,11 +573,8 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 <span class="hljs-attr">kind:</span> <span class="hljs-string">MarkdownView</span>
 <span class="hljs-attr">metadata:</span>
   <span class="hljs-attr">labels:</span>
-    <span class="hljs-attr">app.kubernetes.io/name:</span> <span class="hljs-string">markdownview</span>
-    <span class="hljs-attr">app.kubernetes.io/instance:</span> <span class="hljs-string">markdownview-sample</span>
-    <span class="hljs-attr">app.kubernetes.io/part-of:</span> <span class="hljs-string">markdown-view</span>
+    <span class="hljs-attr">app.kubernetes.io/name:</span> <span class="hljs-string">markdown-view</span>
     <span class="hljs-attr">app.kubernetes.io/managed-by:</span> <span class="hljs-string">kustomize</span>
-    <span class="hljs-attr">app.kubernetes.io/created-by:</span> <span class="hljs-string">markdown-view</span>
   <span class="hljs-attr">name:</span> <span class="hljs-string">markdownview-sample</span>
 <span class="hljs-attr">spec:</span>
   <span class="hljs-attr">markdowns:</span>
@@ -564,7 +587,7 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 </span>
       <span class="hljs-string">一ページ目のコンテンツです。</span>
   <span class="hljs-attr">replicas:</span> <span class="hljs-number">1</span>
-  <span class="hljs-attr">viewerImage:</span> <span class="hljs-string">&quot;peaceiris/mdbook:latest&quot;</span>
+  <span class="hljs-attr">viewerImage:</span> <span class="hljs-string">"peaceiris/mdbook:latest"</span>
 </code></pre>
 <p>上記のマニフェストを扱うための構造体を用意しましょう。</p>
 <blockquote>
@@ -573,23 +596,23 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 <pre><code class="lang-golang"><span class="hljs-comment">// MarkdownViewSpec defines the desired state of MarkdownView</span>
 <span class="hljs-keyword">type</span> MarkdownViewSpec <span class="hljs-keyword">struct</span> {
     <span class="hljs-comment">// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster</span>
-    <span class="hljs-comment">// Important: Run &quot;make&quot; to regenerate code after modifying this file</span>
+    <span class="hljs-comment">// Important: Run "make" to regenerate code after modifying this file</span>
 
     <span class="hljs-comment">// Markdowns contain the markdown files you want to display.</span>
     <span class="hljs-comment">// The key indicates the file name and must not overlap with the keys.</span>
     <span class="hljs-comment">// The value is the content in markdown format.</span>
     <span class="hljs-comment">//+kubebuilder:validation:Required</span>
     <span class="hljs-comment">//+kubebuilder:validation:MinProperties=1</span>
-    Markdowns <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;markdowns,omitempty&quot;`</span>
+    Markdowns <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span> <span class="hljs-string">`json:"markdowns,omitempty"`</span>
 
     <span class="hljs-comment">// Replicas is the number of viewers.</span>
     <span class="hljs-comment">// +kubebuilder:default=1</span>
     <span class="hljs-comment">// +optional</span>
-    Replicas <span class="hljs-type">int32</span> <span class="hljs-string">`json:&quot;replicas,omitempty&quot;`</span>
+    Replicas <span class="hljs-type">int32</span> <span class="hljs-string">`json:"replicas,omitempty"`</span>
 
     <span class="hljs-comment">// ViewerImage is the image name of the viewer.</span>
     <span class="hljs-comment">// +optional</span>
-    ViewerImage <span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;viewerImage,omitempty&quot;`</span>
+    ViewerImage <span class="hljs-type">string</span> <span class="hljs-string">`json:"viewerImage,omitempty"`</span>
 }
 </code></pre>
 <p>まず下記の3つのフィールドを定義します。</p>
@@ -610,7 +633,7 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 <pre><code>// +kubebuilder:validation:Optional
 </code></pre><p><code>+optional</code>マーカーを付与しなくても、フィールドの後ろのJSONタグに<code>omitempty</code>を付与した場合は、自動的にOptionalなフィールドとなります。</p>
 <pre><code class="lang-go"><span class="hljs-keyword">type</span> SampleSpec <span class="hljs-keyword">struct</span> {
-    Value <span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;value,omitempty&quot;`</span>
+    Value <span class="hljs-type">string</span> <span class="hljs-string">`json:"value,omitempty"`</span>
 }
 </code></pre>
 <p>Optionalなフィールドは、以下のようにフィールドの型をポインタにできます。
@@ -618,9 +641,9 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 ポインタ型にした場合はnullが入り、実体にした場合はその型の初期値(intの場合は0)が入ります。</p>
 <pre><code class="lang-go"><span class="hljs-keyword">type</span> SampleSpec <span class="hljs-keyword">struct</span> {
     <span class="hljs-comment">// +optional</span>
-    Value1 <span class="hljs-type">int</span>  <span class="hljs-string">`json:&quot;value1&quot;`</span>
+    Value1 <span class="hljs-type">int</span>  <span class="hljs-string">`json:"value1"`</span>
     <span class="hljs-comment">// +optional</span>
-    Value2 *<span class="hljs-type">int</span> <span class="hljs-string">`json:&quot;value2&quot;`</span>
+    Value2 *<span class="hljs-type">int</span> <span class="hljs-string">`json:"value2"`</span>
 }
 </code></pre>
 <h3 id="validation">Validation</h3>
@@ -643,9 +666,9 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 <span class="hljs-keyword">type</span> MarkdownViewStatus <span class="hljs-type">string</span>
 
 <span class="hljs-keyword">const</span> (
-    MarkdownViewNotReady  = MarkdownViewStatus(<span class="hljs-string">&quot;NotReady&quot;</span>)
-    MarkdownViewAvailable = MarkdownViewStatus(<span class="hljs-string">&quot;Available&quot;</span>)
-    MarkdownViewHealthy   = MarkdownViewStatus(<span class="hljs-string">&quot;Healthy&quot;</span>)
+    MarkdownViewNotReady  = MarkdownViewStatus(<span class="hljs-string">"NotReady"</span>)
+    MarkdownViewAvailable = MarkdownViewStatus(<span class="hljs-string">"Available"</span>)
+    MarkdownViewHealthy   = MarkdownViewStatus(<span class="hljs-string">"Healthy"</span>)
 )
 </code></pre>
 <p>今回のカスタムコントローラーでは、<code>MarkdownViewStatus</code>を文字列型とし、<code>NotReady</code>,<code>Available</code>,<code>Healty</code>の3つの状態をあらわすようにしました。</p>
@@ -655,24 +678,26 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 <blockquote>
 <p><a id="markdownview_types.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/20_manifests/api/v1/markdownview_types.go" target="_blank">markdownview_types.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-comment">//+kubebuilder:object:root=true</span>
-<span class="hljs-comment">//+kubebuilder:subresource:status</span>
-<span class="hljs-comment">//+kubebuilder:printcolumn:name=&quot;REPLICAS&quot;,type=&quot;integer&quot;,JSONPath=&quot;.spec.replicas&quot;</span>
-<span class="hljs-comment">//+kubebuilder:printcolumn:name=&quot;STATUS&quot;,type=&quot;string&quot;,JSONPath=&quot;.status&quot;</span>
+<pre><code class="lang-golang"><span class="hljs-comment">// +kubebuilder:object:root=true</span>
+<span class="hljs-comment">// +kubebuilder:subresource:status</span>
+<span class="hljs-comment">// +kubebuilder:printcolumn:name="REPLICAS",type="integer",JSONPath=".spec.replicas"</span>
+<span class="hljs-comment">// +kubebuilder:printcolumn:name="STATUS",type="string",JSONPath=".status"</span>
 
 <span class="hljs-comment">// MarkdownView is the Schema for the markdownviews API</span>
 <span class="hljs-keyword">type</span> MarkdownView <span class="hljs-keyword">struct</span> {
-    metav1.TypeMeta   <span class="hljs-string">`json:&quot;,inline&quot;`</span>
-    metav1.ObjectMeta <span class="hljs-string">`json:&quot;metadata,omitempty&quot;`</span>
+    metav1.TypeMeta   <span class="hljs-string">`json:",inline"`</span>
+    metav1.ObjectMeta <span class="hljs-string">`json:"metadata,omitempty"`</span>
 
-    Spec   MarkdownViewSpec   <span class="hljs-string">`json:&quot;spec,omitempty&quot;`</span>
-    Status MarkdownViewStatus <span class="hljs-string">`json:&quot;status,omitempty&quot;`</span>
+    Spec MarkdownViewSpec <span class="hljs-string">`json:"spec,omitempty"`</span>
+    <span class="hljs-comment">// +kubebuilder:default=NotReady</span>
+    Status MarkdownViewStatus <span class="hljs-string">`json:"status,omitempty"`</span>
 }
 </code></pre>
 <p>Kubebuilderが生成した初期状態では、<code>+kubebuilder:object:root=true</code>と<code>+kubebuilder:subresource</code>の2つのマーカーが指定されています。
 ここではさらに<code>+kubebuilder:printcolumn</code>を追加することとします。</p>
 <p><code>+kubebuilder:object:root=true</code>は、<code>MarkdownView</code>構造体がカスタムリソースのrootオブジェクトであることを表すマーカーです。</p>
 <p><code>+kubebuilder:subresource</code>と<code>+kubebuilder:printcolumn</code>マーカーについて、以降で解説します。</p>
+<p>また、<code>Status</code>フィールドに<code>+kubebuilder:default=NotReady</code>マーカーを付与することで、初期値を<code>NotReady</code>に設定しています。</p>
 <h3 id="subresource">subresource</h3>
 <p><code>+kubebuilder:subresource:status</code>というマーカーを追加すると、<code>status</code>フィールドがサブリソースとして扱われるようになります。</p>
 <p>Kubernetesでは、すべてのリソースはそれぞれ独立したAPIエンドポイントを持っており、APIサーバー経由でリソースの取得・作成・変更・削除をおこなうことができます。</p>
@@ -685,11 +710,11 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 <h3 id="printcolumn">printcolumn</h3>
 <p><code>+kubebuilder:printcolumn</code>マーカーを付与すると、kubectlでカスタムリソースを取得したときに表示する項目を指定できます。</p>
 <p>表示対象のフィールドはJSONPathで指定可能です。
-例えば、<code>JSONPath=&quot;.spec.replicas&quot;</code>と記述すると、kubectl getしたときに<code>.spec.replicas</code>の値が表示されます。</p>
+例えば、<code>JSONPath=".spec.replicas"</code>と記述すると、kubectl getしたときに<code>.spec.replicas</code>の値が表示されます。</p>
 <p>kubectlでMarkdownViewリソースを取得すると、下記のようにREPLICASやSTATUSの値が表示されていることが確認できます。</p>
 <pre><code>$ kubectl get markdownview
 NAME                  REPLICAS   STATUS
-MarkdownView-sample   1          healthy
+MarkdownView-sample   1          NotReady
 </code></pre><h2 id="crdマニフェストの生成">CRDマニフェストの生成</h2>
 <p>最後にGoで記述したstructからCRDを生成してみましょう。</p>
 <p>以下のコマンドを実行してください。</p>
@@ -704,7 +729,7 @@ MarkdownView-sample   1          healthy
 <span class="hljs-attr">kind:</span> <span class="hljs-string">CustomResourceDefinition</span>
 <span class="hljs-attr">metadata:</span>
   <span class="hljs-attr">annotations:</span>
-    <span class="hljs-attr">controller-gen.kubebuilder.io/version:</span> <span class="hljs-string">v0.12.0</span>
+    <span class="hljs-attr">controller-gen.kubebuilder.io/version:</span> <span class="hljs-string">v0.15.0</span>
   <span class="hljs-attr">name:</span> <span class="hljs-string">markdownviews.view.zoetrope.github.io</span>
 <span class="hljs-attr">spec:</span>
   <span class="hljs-attr">group:</span> <span class="hljs-string">view.zoetrope.github.io</span>
@@ -728,15 +753,20 @@ MarkdownView-sample   1          healthy
         <span class="hljs-attr">description:</span> <span class="hljs-string">MarkdownView</span> <span class="hljs-string">is</span> <span class="hljs-string">the</span> <span class="hljs-string">Schema</span> <span class="hljs-string">for</span> <span class="hljs-string">the</span> <span class="hljs-string">markdownviews</span> <span class="hljs-string">API</span>
         <span class="hljs-attr">properties:</span>
           <span class="hljs-attr">apiVersion:</span>
-            <span class="hljs-attr">description:</span> <span class="hljs-string">&apos;APIVersion defines the versioned schema of this representation
-              of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources&apos;</span>
-            <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
+            <span class="hljs-attr">description:</span> <span class="hljs-string">|-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+</span>            <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
           <span class="hljs-attr">kind:</span>
-            <span class="hljs-attr">description:</span> <span class="hljs-string">&apos;Kind is a string value representing the REST resource this
-              object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds&apos;</span>
-            <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
+            <span class="hljs-attr">description:</span> <span class="hljs-string">|-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+</span>            <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
           <span class="hljs-attr">metadata:</span>
             <span class="hljs-attr">type:</span> <span class="hljs-string">object</span>
           <span class="hljs-attr">spec:</span>
@@ -745,10 +775,11 @@ MarkdownView-sample   1          healthy
               <span class="hljs-attr">markdowns:</span>
                 <span class="hljs-attr">additionalProperties:</span>
                   <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
-                <span class="hljs-attr">description:</span> <span class="hljs-string">Markdowns</span> <span class="hljs-string">contain</span> <span class="hljs-string">the</span> <span class="hljs-string">markdown</span> <span class="hljs-string">files</span> <span class="hljs-string">you</span> <span class="hljs-string">want</span> <span class="hljs-string">to</span> <span class="hljs-string">display.</span>
-                  <span class="hljs-string">The</span> <span class="hljs-string">key</span> <span class="hljs-string">indicates</span> <span class="hljs-string">the</span> <span class="hljs-string">file</span> <span class="hljs-string">name</span> <span class="hljs-string">and</span> <span class="hljs-string">must</span> <span class="hljs-string">not</span> <span class="hljs-string">overlap</span> <span class="hljs-string">with</span> <span class="hljs-string">the</span> <span class="hljs-string">keys.</span>
-                  <span class="hljs-string">The</span> <span class="hljs-string">value</span> <span class="hljs-string">is</span> <span class="hljs-string">the</span> <span class="hljs-string">content</span> <span class="hljs-string">in</span> <span class="hljs-string">markdown</span> <span class="hljs-string">format.</span>
-                <span class="hljs-attr">minProperties:</span> <span class="hljs-number">1</span>
+                <span class="hljs-attr">description:</span> <span class="hljs-string">|-
+                  Markdowns contain the markdown files you want to display.
+                  The key indicates the file name and must not overlap with the keys.
+                  The value is the content in markdown format.
+</span>                <span class="hljs-attr">minProperties:</span> <span class="hljs-number">1</span>
                 <span class="hljs-attr">type:</span> <span class="hljs-string">object</span>
               <span class="hljs-attr">replicas:</span>
                 <span class="hljs-attr">default:</span> <span class="hljs-number">1</span>
@@ -760,6 +791,7 @@ MarkdownView-sample   1          healthy
                 <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
             <span class="hljs-attr">type:</span> <span class="hljs-string">object</span>
           <span class="hljs-attr">status:</span>
+            <span class="hljs-attr">default:</span> <span class="hljs-string">NotReady</span>
             <span class="hljs-attr">description:</span> <span class="hljs-string">MarkdownViewStatus</span> <span class="hljs-string">defines</span> <span class="hljs-string">the</span> <span class="hljs-string">observed</span> <span class="hljs-string">state</span> <span class="hljs-string">of</span> <span class="hljs-string">MarkdownView</span>
             <span class="hljs-attr">enum:</span>
             <span class="hljs-bullet">-</span> <span class="hljs-string">NotReady</span>
@@ -815,7 +847,7 @@ MarkdownView-sample   1          healthy
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"next":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},"previous":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/crd.md","mtime":"2023-07-24T07:42:30.025Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"next":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},"previous":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/crd.md","mtime":"2024-08-16T09:19:47.377Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-16T09:20:13.853Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

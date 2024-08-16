@@ -6,7 +6,7 @@
         <title>モニタリング · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 5.0.0">
+        <meta name="generator" content="HonKit 5.1.4">
         
         
         
@@ -225,6 +225,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/release.html">
+            
+                <a href="../kubebuilder/release.html">
+            
+                    
+                    カスタムコントローラーのリリース
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -315,7 +328,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="test.html">
+            
+                <a href="test.html">
+            
+                    
+                    テスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="reconcile.html">
             
                 <a href="reconcile.html">
             
@@ -328,12 +354,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
                     
-                    コントローラーのテスト
+                    コントローラーのテスト(Envtest)
             
                 </a>
             
@@ -341,7 +367,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -354,12 +380,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
                     
-                    Webhookのテスト
+                    Webhookのテスト(Envtest)
             
                 </a>
             
@@ -367,7 +393,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="deletion.html">
+        <li class="chapter " data-level="1.4.7" data-path="deletion.html">
             
                 <a href="deletion.html">
             
@@ -380,7 +406,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="manager.html">
+        <li class="chapter " data-level="1.4.8" data-path="manager.html">
             
                 <a href="manager.html">
             
@@ -393,7 +419,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.8" data-path="monitoring.html">
+        <li class="chapter active" data-level="1.4.9" data-path="monitoring.html">
             
                 <a href="monitoring.html">
             
@@ -464,60 +490,48 @@
 <h2 id="基本メトリクス">基本メトリクス</h2>
 <p>Kubebuilderが生成したコードでは、自動的に基本的なメトリクスが公開されるようになっています。
 CPUやメモリの使用量や、Reconcileにかかった時間やKubernetesクライアントのレイテンシーなど、controller-runtime関連のメトリクスが公開されています。</p>
-<p>どのようなメトリクスが公開されているのか見てみましょう。
-<code>NewManager</code>のオプションの<code>MetricsBindAddress</code>で指定されたアドレスにアクセスすると、公開されているメトリクスを確認できます。</p>
-<blockquote>
-<p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/cmd/main.go" target="_blank">main.go</a></p>
-</blockquote>
-<pre><code class="lang-golang">mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-    Scheme:                 scheme,
-    MetricsBindAddress:     metricsAddr,
-    Port:                   <span class="hljs-number">9443</span>,
-    HealthProbeBindAddress: probeAddr,
-    LeaderElection:         enableLeaderElection,
-    LeaderElectionID:       <span class="hljs-string">&quot;3ca5b296.zoetrope.github.io&quot;</span>,
-    <span class="hljs-comment">// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily</span>
-    <span class="hljs-comment">// when the Manager ends. This requires the binary to immediately end when the</span>
-    <span class="hljs-comment">// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly</span>
-    <span class="hljs-comment">// speeds up voluntary leader transitions as the new leader don&apos;t have to wait</span>
-    <span class="hljs-comment">// LeaseDuration time first.</span>
-    <span class="hljs-comment">//</span>
-    <span class="hljs-comment">// In the default scaffold provided, the program ends immediately after</span>
-    <span class="hljs-comment">// the manager stops, so would be fine to enable this option. However,</span>
-    <span class="hljs-comment">// if you are doing or is intended to do any operation such as perform cleanups</span>
-    <span class="hljs-comment">// after the manager stops then its usage might be unsafe.</span>
-    <span class="hljs-comment">// LeaderElectionReleaseOnCancel: true,</span>
-})
+<p>まずは、どのようなメトリクスが公開されているのか見てみましょう。</p>
+<p>なお、Kubebuilderが自動生成した状態では、RBACにより権限を与えられたアカウントのみがメトリクスを取得できるようになっています。
+そこで、一時的に<code>config/manager/manager.yaml</code>のオプションに<code>--metrics-bind-address=:8080</code>と<code>--metrics-secure=false</code>を指定して、誰でもメトリクスを取得できるようにします。</p>
+<pre><code class="lang-diff"><span class="hljs-deletion">- command:</span>
+    - /manager
+  args:
+    - --leader-elect
+    - --health-probe-bind-address=:8081
+<span class="hljs-addition">+    - --metrics-bind-address=:8080</span>
+<span class="hljs-addition">+    - --metrics-secure=false</span>
+  image: controller:latest
+  name: manager
 </code></pre>
-<p>まずはメトリクス用のポートをPort Forwardします。</p>
+<p>上記の変更を適用し、メトリクス用のポートをPort Forwardします。</p>
 <pre><code>kubectl -n markdown-view-system port-forward deploy/markdown-view-controller-manager 8080:8080
 </code></pre><p>curlを実行すると、下記のようなメトリクスが出力されます。</p>
 <pre><code>$ curl localhost:8080/metrics
 # HELP controller_runtime_active_workers Number of currently used workers per controller
 # TYPE controller_runtime_active_workers gauge
-controller_runtime_active_workers{controller=&quot;markdownview&quot;} 0
+controller_runtime_active_workers{controller="markdownview"} 0
 # HELP controller_runtime_max_concurrent_reconciles Maximum number of concurrent reconciles per controller
 # TYPE controller_runtime_max_concurrent_reconciles gauge
-controller_runtime_max_concurrent_reconciles{controller=&quot;markdownview&quot;} 1
+controller_runtime_max_concurrent_reconciles{controller="markdownview"} 1
 # HELP controller_runtime_reconcile_errors_total Total number of reconciliation errors per controller
 # TYPE controller_runtime_reconcile_errors_total counter
-controller_runtime_reconcile_errors_total{controller=&quot;markdownview&quot;} 0
+controller_runtime_reconcile_errors_total{controller="markdownview"} 0
 # HELP controller_runtime_reconcile_total Total number of reconciliations per controller
 # TYPE controller_runtime_reconcile_total counter
-controller_runtime_reconcile_total{controller=&quot;markdownview&quot;,result=&quot;error&quot;} 0
-controller_runtime_reconcile_total{controller=&quot;markdownview&quot;,result=&quot;requeue&quot;} 0
-controller_runtime_reconcile_total{controller=&quot;markdownview&quot;,result=&quot;requeue_after&quot;} 0
-controller_runtime_reconcile_total{controller=&quot;markdownview&quot;,result=&quot;success&quot;} 0
+controller_runtime_reconcile_total{controller="markdownview",result="error"} 0
+controller_runtime_reconcile_total{controller="markdownview",result="requeue"} 0
+controller_runtime_reconcile_total{controller="markdownview",result="requeue_after"} 0
+controller_runtime_reconcile_total{controller="markdownview",result="success"} 0
 # HELP controller_runtime_webhook_requests_in_flight Current number of admission requests being served.
 # TYPE controller_runtime_webhook_requests_in_flight gauge
-controller_runtime_webhook_requests_in_flight{webhook=&quot;/mutate-view-zoetrope-github-io-v1-markdownview&quot;} 0
-controller_runtime_webhook_requests_in_flight{webhook=&quot;/validate-view-zoetrope-github-io-v1-markdownview&quot;} 0
+controller_runtime_webhook_requests_in_flight{webhook="/mutate-view-zoetrope-github-io-v1-markdownview"} 0
+controller_runtime_webhook_requests_in_flight{webhook="/validate-view-zoetrope-github-io-v1-markdownview"} 0
 # HELP controller_runtime_webhook_requests_total Total number of admission requests by HTTP status code.
 # TYPE controller_runtime_webhook_requests_total counter
-controller_runtime_webhook_requests_total{code=&quot;200&quot;,webhook=&quot;/mutate-view-zoetrope-github-io-v1-markdownview&quot;} 0
-controller_runtime_webhook_requests_total{code=&quot;200&quot;,webhook=&quot;/validate-view-zoetrope-github-io-v1-markdownview&quot;} 0
-controller_runtime_webhook_requests_total{code=&quot;500&quot;,webhook=&quot;/mutate-view-zoetrope-github-io-v1-markdownview&quot;} 0
-controller_runtime_webhook_requests_total{code=&quot;500&quot;,webhook=&quot;/validate-view-zoetrope-github-io-v1-markdownview&quot;} 0
+controller_runtime_webhook_requests_total{code="200",webhook="/mutate-view-zoetrope-github-io-v1-markdownview"} 0
+controller_runtime_webhook_requests_total{code="200",webhook="/validate-view-zoetrope-github-io-v1-markdownview"} 0
+controller_runtime_webhook_requests_total{code="500",webhook="/mutate-view-zoetrope-github-io-v1-markdownview"} 0
+controller_runtime_webhook_requests_total{code="500",webhook="/validate-view-zoetrope-github-io-v1-markdownview"} 0
 
 ・・・ 以下省略
 </code></pre><h2 id="カスタムメトリクス">カスタムメトリクス</h2>
@@ -531,32 +545,32 @@ MarkdownViewには3種類のステータスがあるので、Gauge Vectorも3つ
 <pre><code class="lang-golang"><span class="hljs-keyword">package</span> controller
 
 <span class="hljs-keyword">import</span> (
-    <span class="hljs-string">&quot;github.com/prometheus/client_golang/prometheus&quot;</span>
-    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/metrics&quot;</span>
+    <span class="hljs-string">"github.com/prometheus/client_golang/prometheus"</span>
+    <span class="hljs-string">"sigs.k8s.io/controller-runtime/pkg/metrics"</span>
 )
 
 <span class="hljs-keyword">const</span> (
-    metricsNamespace = <span class="hljs-string">&quot;markdownview&quot;</span>
+    metricsNamespace = <span class="hljs-string">"markdownview"</span>
 )
 
 <span class="hljs-keyword">var</span> (
     NotReadyVec = prometheus.NewGaugeVec(prometheus.GaugeOpts{
         Namespace: metricsNamespace,
-        Name:      <span class="hljs-string">&quot;notready&quot;</span>,
-        Help:      <span class="hljs-string">&quot;The cluster status about not ready condition&quot;</span>,
-    }, []<span class="hljs-type">string</span>{<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-string">&quot;namespace&quot;</span>})
+        Name:      <span class="hljs-string">"notready"</span>,
+        Help:      <span class="hljs-string">"The cluster status about not ready condition"</span>,
+    }, []<span class="hljs-type">string</span>{<span class="hljs-string">"name"</span>, <span class="hljs-string">"namespace"</span>})
 
     AvailableVec = prometheus.NewGaugeVec(prometheus.GaugeOpts{
         Namespace: metricsNamespace,
-        Name:      <span class="hljs-string">&quot;available&quot;</span>,
-        Help:      <span class="hljs-string">&quot;The cluster status about available condition&quot;</span>,
-    }, []<span class="hljs-type">string</span>{<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-string">&quot;namespace&quot;</span>})
+        Name:      <span class="hljs-string">"available"</span>,
+        Help:      <span class="hljs-string">"The cluster status about available condition"</span>,
+    }, []<span class="hljs-type">string</span>{<span class="hljs-string">"name"</span>, <span class="hljs-string">"namespace"</span>})
 
     HealthyVec = prometheus.NewGaugeVec(prometheus.GaugeOpts{
         Namespace: metricsNamespace,
-        Name:      <span class="hljs-string">&quot;healthy&quot;</span>,
-        Help:      <span class="hljs-string">&quot;The cluster status about healthy condition&quot;</span>,
-    }, []<span class="hljs-type">string</span>{<span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-string">&quot;namespace&quot;</span>})
+        Name:      <span class="hljs-string">"healthy"</span>,
+        Help:      <span class="hljs-string">"The cluster status about healthy condition"</span>,
+    }, []<span class="hljs-type">string</span>{<span class="hljs-string">"name"</span>, <span class="hljs-string">"namespace"</span>})
 )
 
 <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">init</span><span class="hljs-params">()</span></span> {
@@ -617,60 +631,30 @@ err := r.Get(ctx, req.NamespacedName, &amp;mdView)
 
 # HELP markdownview_available The cluster status about available condition
 # TYPE markdownview_available gauge
-markdownview_available{name=&quot;markdownview-sample&quot;,namespace=&quot;markdownview-sample&quot;} 0
+markdownview_available{name="markdownview-sample",namespace="markdownview-sample"} 0
 # HELP markdownview_healthy The cluster status about healthy condition
 # TYPE markdownview_healthy gauge
-markdownview_healthy{name=&quot;markdownview-sample&quot;,namespace=&quot;markdownview-sample&quot;} 1
+markdownview_healthy{name="markdownview-sample",namespace="markdownview-sample"} 1
 # HELP markdownview_notready The cluster status about not ready condition
 # TYPE markdownview_notready gauge
-markdownview_notready{name=&quot;markdownview-sample&quot;,namespace=&quot;markdownview-sample&quot;} 0
-</code></pre><h2 id="kube-rbac-proxy">kube-rbac-proxy</h2>
-<p>Kubebuilderで生成したプロジェクトには、<a href="https://github.com/brancz/kube-rbac-proxy" target="_blank">kube-rbac-proxy</a>を利用できるようにマニフェストが記述されています。
-kube-rbac-proxyを利用すると、メトリクスのエンドポイントにアクセスするための権限をRBACで設定できるようになります。
-PrometheusにのみメトリクスのAPIをアクセス可能にすることで、任意のユーザーにメトリクスを取得されることを防ぐことができます。</p>
-<p>kube-rbac-proxyを利用するためには下記の<code>manager_auth_proxy_patch.yaml</code>のコメントアウトを解除します。</p>
-<blockquote>
-<p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
-</blockquote>
-<pre><code class="lang-yaml"><span class="hljs-attr">patchesStrategicMerge:</span>
-<span class="hljs-comment"># Protect the /metrics endpoint by putting it behind auth.</span>
-<span class="hljs-comment"># If you want your controller-manager to expose the /metrics</span>
-<span class="hljs-comment"># endpoint w/o any authn/z, please comment the following line.</span>
-<span class="hljs-comment">#- manager_auth_proxy_patch.yaml</span>
-</code></pre>
-<p>さらに、<code>auto_proxy_</code>から始まる4つのマニフェストも有効にします。</p>
-<blockquote>
-<p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/config/rbac/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
-</blockquote>
-<pre><code class="lang-yaml"><span class="hljs-attr">resources:</span>
-<span class="hljs-comment"># All RBAC will be applied under this service account in</span>
-<span class="hljs-comment"># the deployment namespace. You may comment out this resource</span>
-<span class="hljs-comment"># if your manager will use a service account that exists at</span>
-<span class="hljs-comment"># runtime. Be sure to update RoleBinding and ClusterRoleBinding</span>
-<span class="hljs-comment"># subjects if changing service account names.</span>
-<span class="hljs-bullet">-</span> <span class="hljs-string">service_account.yaml</span>
-<span class="hljs-bullet">-</span> <span class="hljs-string">role.yaml</span>
-<span class="hljs-bullet">-</span> <span class="hljs-string">role_binding.yaml</span>
-<span class="hljs-bullet">-</span> <span class="hljs-string">leader_election_role.yaml</span>
-<span class="hljs-bullet">-</span> <span class="hljs-string">leader_election_role_binding.yaml</span>
-<span class="hljs-comment"># Comment the following 4 lines if you want to disable</span>
-<span class="hljs-comment"># the auth proxy (https://github.com/brancz/kube-rbac-proxy)</span>
-<span class="hljs-comment"># which protects your /metrics endpoint.</span>
-<span class="hljs-bullet">-</span> <span class="hljs-string">auth_proxy_service.yaml</span>
-<span class="hljs-bullet">-</span> <span class="hljs-string">auth_proxy_role.yaml</span>
-<span class="hljs-bullet">-</span> <span class="hljs-string">auth_proxy_role_binding.yaml</span>
-<span class="hljs-bullet">-</span> <span class="hljs-string">auth_proxy_client_clusterrole.yaml</span>
-</code></pre>
-<h2 id="grafanaでの可視化">Grafanaでの可視化</h2>
+markdownview_notready{name="markdownview-sample",namespace="markdownview-sample"} 0
+</code></pre><h2 id="grafanaでの可視化">Grafanaでの可視化</h2>
 <p>それでは実際にPrometheusとGrafanaを使って、コントローラーのメトリクスを可視化してみましょう。</p>
 <p>まずはマニフェストの準備をします。
-<code>config/default/kustomization.yaml</code>の下記のコメントを解除してください。</p>
-<blockquote>
-<p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
-</blockquote>
+<code>config/default/kustomization.yaml</code>の<code>- ../prometheus</code>のコメントを解除してください。</p>
 <pre><code class="lang-yaml"><span class="hljs-attr">resources:</span>
-<span class="hljs-comment"># [PROMETHEUS] To enable prometheus monitor, uncomment all sections with &apos;PROMETHEUS&apos;.</span>
+<span class="hljs-bullet">-</span> <span class="hljs-string">../crd</span>
+<span class="hljs-bullet">-</span> <span class="hljs-string">../rbac</span>
+<span class="hljs-bullet">-</span> <span class="hljs-string">../manager</span>
+<span class="hljs-comment"># [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in</span>
+<span class="hljs-comment"># crd/kustomization.yaml</span>
+<span class="hljs-bullet">-</span> <span class="hljs-string">../webhook</span>
+<span class="hljs-comment"># [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER'. 'WEBHOOK' components are required.</span>
+<span class="hljs-bullet">-</span> <span class="hljs-string">../certmanager</span>
+<span class="hljs-comment"># [PROMETHEUS] To enable prometheus monitor, uncomment all sections with 'PROMETHEUS'.</span>
 <span class="hljs-bullet">-</span> <span class="hljs-string">../prometheus</span>
+<span class="hljs-comment"># [METRICS] Expose the controller manager metrics service.</span>
+<span class="hljs-bullet">-</span> <span class="hljs-string">metrics_service.yaml</span>
 </code></pre>
 <p><code>make manifests</code>を実行してマニフェストを生成し、Kubernetesクラスターに適用しておきます。</p>
 <p>Prometheus Operatorをセットアップするために、下記の手順に従ってHelmをインストールします。</p>
@@ -698,7 +682,7 @@ kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
   <span class="hljs-attr">name:</span> <span class="hljs-string">markdown-view-metrics-reader</span>
 <span class="hljs-attr">subjects:</span>
   <span class="hljs-bullet">-</span> <span class="hljs-attr">kind:</span> <span class="hljs-string">ServiceAccount</span>
-    <span class="hljs-attr">name:</span> <span class="hljs-string">prometheus-prometheus-oper-prometheus</span>
+    <span class="hljs-attr">name:</span> <span class="hljs-string">prometheus-kube-prometheus-operator</span>
     <span class="hljs-attr">namespace:</span> <span class="hljs-string">prometheus</span>
 </code></pre>
 <pre><code>kubectl apply -f ./config/rbac/prometheus_role_binding.yaml
@@ -711,7 +695,7 @@ kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
 </ul>
 <p>Explore画面を開いて以下のようなPromQLを入力してみましょう。これによりReconcileにかかっている処理時間をモニタリングできます。</p>
 <pre><code>histogram_quantile(0.99, sum(rate(controller_runtime_reconcile_time_seconds_bucket[5m])) by (le))
-</code></pre><p><img src="img/grafana.png" alt="grafana"></p>
+</code></pre><p><img src="img/grafana.png" alt="grafana"></img></p>
 
                                 
                                 </section>
@@ -751,7 +735,7 @@ kubectl wait pod --all -n prometheus --for condition=Ready --timeout 180s
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"モニタリング","level":"1.4.8","depth":2,"previous":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/monitoring.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"モニタリング","level":"1.4.9","depth":2,"previous":{"title":"Manager","level":"1.4.8","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/monitoring.md","mtime":"2024-08-16T09:19:47.377Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-16T09:20:13.853Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -6,7 +6,7 @@
         <title>APIの雛形作成 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 5.0.0">
+        <meta name="generator" content="HonKit 5.1.4">
         
         
         
@@ -227,6 +227,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.2.5" data-path="release.html">
+            
+                <a href="release.html">
+            
+                    
+                    カスタムコントローラーのリリース
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -317,7 +330,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/test.html">
+            
+                <a href="../controller-runtime/test.html">
+            
+                    
+                    テスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/reconcile.html">
             
                 <a href="../controller-runtime/reconcile.html">
             
@@ -330,12 +356,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
                     
-                    コントローラーのテスト
+                    コントローラーのテスト(Envtest)
             
                 </a>
             
@@ -343,7 +369,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -356,12 +382,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
                     
-                    Webhookのテスト
+                    Webhookのテスト(Envtest)
             
                 </a>
             
@@ -369,7 +395,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/deletion.html">
+        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/deletion.html">
             
                 <a href="../controller-runtime/deletion.html">
             
@@ -382,7 +408,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/manager.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/manager.html">
             
                 <a href="../controller-runtime/manager.html">
             
@@ -395,7 +421,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/monitoring.html">
+        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/monitoring.html">
             
                 <a href="../controller-runtime/monitoring.html">
             
@@ -463,11 +489,10 @@
 <p>以下のコマンドを実行して、MarkdownViewを表現するためのカスタムリソースと、MarkdownViewを扱うカスタムコントローラーを生成してみましょう。</p>
 <p>カスタムリソースとコントローラーのソースコードを生成するかどうか聞かれるので、今回はどちらも<code>y</code>と回答します。</p>
 <pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubebuilder create api --group view --version v1 --kind MarkdownView</span>
-Create Resource [y/n]
+INFO Create Resource [y/n]
 y
-Create Controller [y/n]
+INFO Create Controller [y/n]
 y
-<span class="hljs-meta prompt_">$ </span><span class="language-bash">make manifests</span>
 </code></pre>
 <p><code>--group</code>,<code>--version</code>, <code>--kind</code>オプションは、生成するカスタムリソースのGVKを指定します。</p>
 <ul>
@@ -475,8 +500,12 @@ y
 <li><code>--group</code>: リソースが属するグループ名を指定します。</li>
 <li><code>--version</code>: 適切なバージョンを指定します。今後仕様が変わる可能性がありそうなら<code>v1alpha1</code>や<code>v1beta1</code>を指定し、安定版のリソースを作成するのであれば<code>v1</code>を指定します。</li>
 </ul>
-<p>コマンドの実行に成功すると、下記のようなファイルが新たに生成されます。</p>
-<pre><code>├── api
+<p>また、以下のコマンドを実行することでCRDやRBACなどのマニフェストを自動生成することができます。</p>
+<pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">make manifests</span>
+</code></pre>
+<p>コマンドの実行に成功すると、新たに下記のファイルが生成されます。</p>
+<pre><code>.
+├── api
 │    └── v1
 │        ├── groupversion_info.go
 │        ├── markdownview_types.go
@@ -486,29 +515,24 @@ y
 │    │    ├── bases
 │    │    │    └── view.zoetrope.github.io_markdownviews.yaml
 │    │    ├── kustomization.yaml
-│    │    ├── kustomizeconfig.yaml
-│    │    └── patches
-│    │        ├── cainjection_in_markdownviews.yaml
-│    │        └── webhook_in_markdownviews.yaml
+│    │    └── kustomizeconfig.yaml
 │    ├── rbac
-│    │    └── role.yaml
+│    │    ├── markdownview_editor_role.yaml
+│    │    └── markdownview_viewer_role.yaml
 │    └── samples
 │        ├── kustomization.yaml
 │        └── view_v1_markdownview.yaml
 └── internal
-    └── controller
-        ├── markdownview_controller.go
-        └── suite_test.go
+     └── controller
+         ├── markdownview_controller.go
+         ├── markdownview_controller_test.go
+         └── suite_test.go
 </code></pre><p>それぞれのファイルの内容をみていきましょう。</p>
 <h2 id="apiv1">api/v1</h2>
 <p><code>markdownview_types.go</code>は、MarkdownViewリソースをGo言語のstructで表現したものです。
 今後、MarkdownViewリソースの定義を変更する場合にはこのファイルを編集していくことになります。</p>
 <p><code>groupversion_info.go</code>は初期生成後に編集する必要はありません。
 <code>zz_generated.deepcopy.go</code>は<code>markdownview_types.go</code>の内容から自動生成されるファイルなので編集する必要はありません。</p>
-<h2 id="internalcontrollers">internal/controllers</h2>
-<p><code>markdownview_controller.go</code>は、カスタムコントローラーのメインロジックになります。
-今後、カスタムコントローラーの処理は基本的にこのファイルに書いていくことになります。</p>
-<p><code>suite_test.go</code>はテストコードです。詳細は<a href="../controller-runtime/controller_test.html">コントローラのテスト</a>で解説します。</p>
 <h2 id="cmdmaingo">cmd/main.go</h2>
 <p><code>cmd/main.go</code>には、下記のようなコントローラーの初期化処理が追加されています。</p>
 <blockquote>
@@ -518,21 +542,25 @@ y
     Client: mgr.GetClient(),
     Scheme: mgr.GetScheme(),
 }).SetupWithManager(mgr); err != <span class="hljs-literal">nil</span> {
-    setupLog.Error(err, <span class="hljs-string">&quot;unable to create controller&quot;</span>, <span class="hljs-string">&quot;controller&quot;</span>, <span class="hljs-string">&quot;MarkdownView&quot;</span>)
+    setupLog.Error(err, <span class="hljs-string">"unable to create controller"</span>, <span class="hljs-string">"controller"</span>, <span class="hljs-string">"MarkdownView"</span>)
     os.Exit(<span class="hljs-number">1</span>)
 }
 </code></pre>
 <h2 id="config">config</h2>
 <p>configディレクトリ下には、いくつかのファイルが追加されています。</p>
 <h3 id="crd">crd</h3>
-<p>crdディレクトリにはCRD(Custom Resource Definition)のマニフェストが追加されています。</p>
-<p>これらのマニフェストは<code>api/v1/markdownView_types.go</code>から自動生成されるものなので、基本的に手動で編集する必要はありません。
-ただし、Conversion Webhookを利用したい場合は、<code>cainjection_in_markdownViews.yaml</code>と<code>webhook_in_markdownViews.yaml</code>のパッチを利用するように<code>kustomization.yaml</code>を書き換えてください。</p>
+<p>crdディレクトリにはCRD(Custom Resource Definition)のマニフェストが追加されています。
+これらのマニフェストは<code>api/v1/markdownView_types.go</code>から自動生成されるものなので、基本的に手動で編集する必要はありません。</p>
 <h3 id="rbac">rbac</h3>
 <p><code>role.yaml</code>には、MarkdownViewリソースを扱うための権限が追加されています。</p>
+<p>また、MarkdownViewリソースを扱うためのRoleを定義したマニフェストとして、<code>markdownview_editor_role.yaml</code>と<code>markdownview_viewer_role.yaml</code>が追加されています。</p>
 <h3 id="samples">samples</h3>
 <p>カスタムリソースのサンプルマニフェストです。
 テストで利用したり、ユーザー向けに提供できるように記述しておきましょう。</p>
+<h2 id="internalcontroller">internal/controller</h2>
+<p><code>markdownview_controller.go</code>は、カスタムコントローラーのメインロジックになります。
+今後、カスタムコントローラーの処理は基本的にこのファイルに書いていくことになります。</p>
+<p><code>suite_test.go</code>はテストコードです。詳細は<a href="../controller-runtime/controller_test.html">コントローラのテスト</a>で解説します。</p>
 
                                 
                                 </section>
@@ -576,7 +604,7 @@ y
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"next":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},"previous":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/api.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"next":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},"previous":{"title":"プロジェクトの雛形作成","level":"1.2.1","depth":2,"path":"kubebuilder/new-project.md","ref":"kubebuilder/new-project.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/api.md","mtime":"2024-08-16T09:19:47.377Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-16T09:20:13.853Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

@@ -6,7 +6,7 @@
         <title>カスタムコントローラーの動作確認 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 5.0.0">
+        <meta name="generator" content="HonKit 5.1.4">
         
         
         
@@ -58,7 +58,7 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="../controller-tools/" />
+    <link rel="next" href="release.html" />
     
     
     <link rel="prev" href="webhook.html" />
@@ -227,6 +227,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.2.5" data-path="release.html">
+            
+                <a href="release.html">
+            
+                    
+                    カスタムコントローラーのリリース
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -317,7 +330,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/test.html">
+            
+                <a href="../controller-runtime/test.html">
+            
+                    
+                    テスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/reconcile.html">
             
                 <a href="../controller-runtime/reconcile.html">
             
@@ -330,12 +356,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
                     
-                    コントローラーのテスト
+                    コントローラーのテスト(Envtest)
             
                 </a>
             
@@ -343,7 +369,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -356,12 +382,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
                     
-                    Webhookのテスト
+                    Webhookのテスト(Envtest)
             
                 </a>
             
@@ -369,7 +395,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/deletion.html">
+        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/deletion.html">
             
                 <a href="../controller-runtime/deletion.html">
             
@@ -382,7 +408,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/manager.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/manager.html">
             
                 <a href="../controller-runtime/manager.html">
             
@@ -395,7 +421,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/monitoring.html">
+        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/monitoring.html">
             
                 <a href="../controller-runtime/monitoring.html">
             
@@ -467,8 +493,8 @@
 </code></pre>
 <h2 id="cert-managerのインストール">cert-managerのインストール</h2>
 <p>Webhook用の証明書を発行するためにcert-managerが必要となります。
-下記のコマンドを実行してcert-managerのデプロイをおこないます。(<a href="https://cert-manager.io/docs/installation/kubernetes/" target="_blank">参考</a>)</p>
-<pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply --validate=<span class="hljs-literal">false</span> -f https://github.com/jetstack/cert-manager/releases/latest/download/cert-manager.yaml</span>
+下記のコマンドを実行してcert-managerのデプロイをおこないます。(<a href="https://cert-manager.io/docs/installation/kubectl/" target="_blank">参考</a>)</p>
+<pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply --validate=<span class="hljs-literal">false</span> -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml</span>
 </code></pre>
 <p>cert-managerのPodが起動したことを確認しましょう。</p>
 <pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get pod -n cert-manager</span>
@@ -477,8 +503,8 @@ cert-manager-7dd5854bb4-whlcn              1/1     Running   0          26s
 cert-manager-cainjector-64c949654c-64wjk   1/1     Running   0          26s
 cert-manager-webhook-6bdffc7c9d-hkr8h      1/1     Running   0          26s
 </code></pre>
-<h2 id="コントローラーのコンテナイメージの用意">コントローラーのコンテナイメージの用意</h2>
-<p>コンテナイメージをビルドします。</p>
+<h2 id="カスタムコントローラーのコンテナイメージの用意">カスタムコントローラーのコンテナイメージの用意</h2>
+<p>以下のコマンドを実行して、カスタムコントローラーのコンテナイメージをビルドします。</p>
 <pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">make docker-build</span>
 </code></pre>
 <p>このコンテナイメージを利用するためには、ビルドしたコンテナイメージをDockerHubなどのコンテナレジストリに登録するか、kind環境にロードする必要があります。</p>
@@ -488,61 +514,55 @@ cert-manager-webhook-6bdffc7c9d-hkr8h      1/1     Running   0          26s
 <p>なおコンテナイメージのタグ名に<code>latest</code>を指定した場合、ImagePullPolicyが<code>Always</code>になり、ロードしたコンテナイメージが利用されない場合があります。
 (<a href="https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster" target="_blank">参考</a>)</p>
 <p>そこで、<code>config/manager/manager.yaml</code>に<code>imagePullPolicy: IfNotPresent</code>を追加しておきます。</p>
-<blockquote>
-<p><a id="manager.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/10_tilt/config/manager/manager.yaml" target="_blank">manager.yaml</a></p>
-</blockquote>
-<pre><code class="lang-yaml">      <span class="hljs-attr">containers:</span>
-      <span class="hljs-bullet">-</span> <span class="hljs-attr">command:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">/manager</span>
-        <span class="hljs-attr">args:</span>
-        <span class="hljs-bullet">-</span> <span class="hljs-string">--leader-elect</span>
-        <span class="hljs-attr">image:</span> <span class="hljs-string">controller:latest</span>
-        <span class="hljs-attr">imagePullPolicy:</span> <span class="hljs-string">IfNotPresent</span>
-        <span class="hljs-attr">name:</span> <span class="hljs-string">manager</span>
+<pre><code class="lang-diff">           - --leader-elect
+           - --health-probe-bind-address=:8081
+         image: controller:latest
+<span class="hljs-addition">+        imagePullPolicy: IfNotPresent</span>
+         name: manager
+         securityContext:
+           allowPrivilegeEscalation: false
 </code></pre>
-<h2 id="コントローラーの動作確認">コントローラーの動作確認</h2>
-<p>次にCRDをKubernetesクラスターに適用します。</p>
+<h2 id="カスタムコントローラーの動作確認">カスタムコントローラーの動作確認</h2>
+<p>次に以下のコマンドを実行して、作成したCRDをKubernetesクラスターに適用します。</p>
 <pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">make install</span>
 </code></pre>
-<p>続いて各種マニフェストを適用します。</p>
+<p>続いて以下のコマンドを実行して、カスタムコントローラーをデプロイするためのマニフェストを適用します。</p>
 <pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">make deploy</span>
 </code></pre>
-<p>コントローラーのPodがRunningになったことを確認してください。</p>
+<p>カスタムコントローラーのPodがRunningになったことを確認してください。</p>
 <pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl get pod -n markdown-view-system</span>
 NAME                                                READY   STATUS    RESTARTS   AGE
-markdown-view-controller-manager-5bc678bbf9-vb9r5   2/2     Running   0          30s
+markdown-view-controller-manager-5bc678bbf9-vb9r5   1/1     Running   0          30s
 </code></pre>
-<p>次にコントローラーのログを表示させておきます。</p>
-<pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl logs -n markdown-view-system markdown-view-controller-manager-5bc678bbf9-vb9r5 -c manager -f</span>
+<p>次にカスタムコントローラーのログを表示させておきます。</p>
+<pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl logs -n markdown-view-system deployments/markdown-view-controller-manager -c manager -f</span>
 </code></pre>
-<p>サンプルのカスタムリソースを適用します。</p>
+<p>最後にサンプルのカスタムリソースを適用します。</p>
 <pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubectl apply -f config/samples/view_v1_markdownview.yaml</span>
 </code></pre>
-<p>以下のようにWebhookやReconcileのメッセージがコントローラーのログに表示されていれば成功です。</p>
-<pre><code class="lang-console">2021-07-10T09:29:49.311Z        INFO    controller-runtime.metrics      metrics server is starting to listen     {&quot;addr&quot;: &quot;127.0.0.1:8080&quot;}
-2021-07-10T09:29:49.311Z        INFO    controller-runtime.builder      Registering a mutating webhook   {&quot;GVK&quot;: &quot;view.zoetrope.github.io/v1, Kind=MarkdownView&quot;, &quot;path&quot;: &quot;/mutate-view-zoetrope-github-io-v1-markdownview&quot;}
-2021-07-10T09:29:49.311Z        INFO    controller-runtime.webhook      registering webhook      {&quot;path&quot;: &quot;/mutate-view-zoetrope-github-io-v1-markdownview&quot;}
-2021-07-10T09:29:49.311Z        INFO    controller-runtime.builder      Registering a validating webhook {&quot;GVK&quot;: &quot;view.zoetrope.github.io/v1, Kind=MarkdownView&quot;, &quot;path&quot;: &quot;/validate-view-zoetrope-github-io-v1-markdownview&quot;}
-2021-07-10T09:29:49.311Z        INFO    controller-runtime.webhook      registering webhook      {&quot;path&quot;: &quot;/validate-view-zoetrope-github-io-v1-markdownview&quot;}
-2021-07-10T09:29:49.311Z        INFO    setup   starting manager
-I0710 09:29:49.312373       1 leaderelection.go:243] attempting to acquire leader lease markdown-view-system/c124e721.zoetrope.github.io...
-2021-07-10T09:29:49.312Z        INFO    controller-runtime.manager      starting metrics server  {&quot;path&quot;: &quot;/metrics&quot;}
-2021-07-10T09:29:49.312Z        INFO    controller-runtime.webhook.webhooks     starting webhook server
-2021-07-10T09:29:49.312Z        INFO    controller-runtime.certwatcher  Updated current TLS certificate
-2021-07-10T09:29:49.312Z        INFO    controller-runtime.webhook      serving webhook server   {&quot;host&quot;: &quot;&quot;, &quot;port&quot;: 9443}
-2021-07-10T09:29:49.312Z        INFO    controller-runtime.certwatcher  Starting certificate watcher
-I0710 09:29:49.409787       1 leaderelection.go:253] successfully acquired lease markdown-view-system/c124e721.zoetrope.github.io
-2021-07-10T09:29:49.409Z        DEBUG   controller-runtime.manager.events       Normal  {&quot;object&quot;: {&quot;kind&quot;:&quot;ConfigMap&quot;,&quot;namespace&quot;:&quot;markdown-view-system&quot;,&quot;name&quot;:&quot;c124e721.zoetrope.github.io&quot;,&quot;uid&quot;:&quot;b48865ea-3d05-47bd-be4f-4d03a14b7a36&quot;,&quot;apiVersion&quot;:&quot;v1&quot;,&quot;resourceVersion&quot;:&quot;1982&quot;}, &quot;reason&quot;: &quot;LeaderElection&quot;, &quot;message&quot;: &quot;markdown-view-controller-manager-5bc678bbf9-vb9r5_d64b0043-4a95-432e-9c76-3001247a87ac became leader&quot;}
-2021-07-10T09:29:49.409Z        DEBUG   controller-runtime.manager.events       Normal  {&quot;object&quot;: {&quot;kind&quot;:&quot;Lease&quot;,&quot;namespace&quot;:&quot;markdown-view-system&quot;,&quot;name&quot;:&quot;c124e721.zoetrope.github.io&quot;,&quot;uid&quot;:&quot;3ef3dcde-abbb-440b-9052-1c85ed01d67d&quot;,&quot;apiVersion&quot;:&quot;coordination.k8s.io/v1&quot;,&quot;resourceVersion&quot;:&quot;1983&quot;}, &quot;reason&quot;: &quot;LeaderElection&quot;, &quot;message&quot;: &quot;markdown-view-controller-manager-5bc678bbf9-vb9r5_d64b0043-4a95-432e-9c76-3001247a87ac became leader&quot;}
-2021-07-10T09:29:49.410Z        INFO    controller-runtime.manager.controller.markdownview       Starting EventSource    {&quot;reconciler group&quot;: &quot;view.zoetrope.github.io&quot;, &quot;reconciler kind&quot;: &quot;MarkdownView&quot;, &quot;source&quot;: &quot;kind source: /, Kind=&quot;}
-2021-07-10T09:29:49.410Z        INFO    controller-runtime.manager.controller.markdownview       Starting Controller     {&quot;reconciler group&quot;: &quot;view.zoetrope.github.io&quot;, &quot;reconciler kind&quot;: &quot;MarkdownView&quot;}
-2021-07-10T09:29:49.511Z        INFO    controller-runtime.manager.controller.markdownview       Starting workers        {&quot;reconciler group&quot;: &quot;view.zoetrope.github.io&quot;, &quot;reconciler kind&quot;: &quot;MarkdownView&quot;, &quot;worker count&quot;: 1}
-2021-07-10T09:33:53.622Z        DEBUG   controller-runtime.webhook.webhooks     received request {&quot;webhook&quot;: &quot;/mutate-view-zoetrope-github-io-v1-markdownview&quot;, &quot;UID&quot;: &quot;20fe30b5-6d45-4592-ae4b-ee5048e054d1&quot;, &quot;kind&quot;: &quot;view.zoetrope.github.io/v1, Kind=MarkdownView&quot;, &quot;resource&quot;: {&quot;group&quot;:&quot;view.zoetrope.github.io&quot;,&quot;version&quot;:&quot;v1&quot;,&quot;resource&quot;:&quot;markdownviews&quot;}}
-2021-07-10T09:33:53.623Z        INFO    markdownview-resource   default {&quot;name&quot;: &quot;markdownview-sample&quot;}
-2021-07-10T09:33:53.623Z        DEBUG   controller-runtime.webhook.webhooks     wrote response   {&quot;webhook&quot;: &quot;/mutate-view-zoetrope-github-io-v1-markdownview&quot;, &quot;code&quot;: 200, &quot;reason&quot;: &quot;&quot;, &quot;UID&quot;: &quot;20fe30b5-6d45-4592-ae4b-ee5048e054d1&quot;, &quot;allowed&quot;: true}
-2021-07-10T09:33:53.626Z        DEBUG   controller-runtime.webhook.webhooks     received request {&quot;webhook&quot;: &quot;/validate-view-zoetrope-github-io-v1-markdownview&quot;, &quot;UID&quot;: &quot;904fc35e-4415-4a90-af96-52cbe1cef1b7&quot;, &quot;kind&quot;: &quot;view.zoetrope.github.io/v1, Kind=MarkdownView&quot;, &quot;resource&quot;: {&quot;group&quot;:&quot;view.zoetrope.github.io&quot;,&quot;version&quot;:&quot;v1&quot;,&quot;resource&quot;:&quot;markdownviews&quot;}}
-2021-07-10T09:33:53.626Z        INFO    markdownview-resource   validate create {&quot;name&quot;: &quot;markdownview-sample&quot;}
-2021-07-10T09:33:53.626Z        DEBUG   controller-runtime.webhook.webhooks     wrote response   {&quot;webhook&quot;: &quot;/validate-view-zoetrope-github-io-v1-markdownview&quot;, &quot;code&quot;: 200, &quot;reason&quot;: &quot;&quot;, &quot;UID&quot;: &quot;904fc35e-4415-4a90-af96-52cbe1cef1b7&quot;, &quot;allowed&quot;: true}
+<p>以下のようにWebhookやReconcileのメッセージがカスタムコントローラーのログに表示されていれば成功です。</p>
+<pre><code class="lang-console">2024-08-11T07:32:54Z    INFO    controller-runtime.builder      Registering a mutating webhook  {"GVK": "view.zoetrope.github.io/v1, Kind=MarkdownView", "path": "/mutate-view-zoetrope-github-io-v1-markdownview"}
+2024-08-11T07:32:54Z    INFO    controller-runtime.webhook      Registering webhook     {"path": "/mutate-view-zoetrope-github-io-v1-markdownview"}
+2024-08-11T07:32:54Z    INFO    controller-runtime.builder      Registering a validating webhook        {"GVK": "view.zoetrope.github.io/v1, Kind=MarkdownView", "path": "/validate-view-zoetrope-github-io-v1-markdownview"}
+2024-08-11T07:32:54Z    INFO    controller-runtime.webhook      Registering webhook     {"path": "/validate-view-zoetrope-github-io-v1-markdownview"}
+2024-08-11T07:32:54Z    INFO    setup   starting manager
+2024-08-11T07:32:54Z    INFO    controller-runtime.metrics      Starting metrics server
+2024-08-11T07:32:54Z    INFO    setup   disabling http/2
+2024-08-11T07:32:54Z    INFO    starting server {"name": "health probe", "addr": "[::]:8081"}
+2024-08-11T07:32:54Z    INFO    controller-runtime.webhook      Starting webhook server
+2024-08-11T07:32:54Z    INFO    setup   disabling http/2
+2024-08-11T07:32:54Z    INFO    controller-runtime.certwatcher  Updated current TLS certificate
+I0811 07:32:54.398221       1 leaderelection.go:250] attempting to acquire leader lease markdown-view-system/3ca5b296.zoetrope.github.io...
+2024-08-11T07:32:54Z    INFO    controller-runtime.webhook      Serving webhook server  {"host": "", "port": 9443}
+2024-08-11T07:32:54Z    INFO    controller-runtime.certwatcher  Starting certificate watcher
+I0811 07:32:54.408485       1 leaderelection.go:260] successfully acquired lease markdown-view-system/3ca5b296.zoetrope.github.io
+2024-08-11T07:32:54Z    DEBUG   events  markdown-view-controller-manager-7b7bf8bc56-pm7tp_693ac946-5132-4674-8770-81b2dcdb8f19 became leader       {"type": "Normal", "object": {"kind":"Lease","namespace":"markdown-view-system","name":"3ca5b296.zoetrope.github.io","uid":"e0d1dda2-7e64-40b1-9c67-f8b056465798","apiVersion":"coordination.k8s.io/v1","resourceVersion":"1411"}, "reason": "LeaderElection"}
+2024-08-11T07:32:54Z    INFO    Starting EventSource    {"controller": "markdownview", "controllerGroup": "view.zoetrope.github.io", "controllerKind": "MarkdownView", "source": "kind source: *v1.MarkdownView"}
+2024-08-11T07:32:54Z    INFO    Starting Controller     {"controller": "markdownview", "controllerGroup": "view.zoetrope.github.io", "controllerKind": "MarkdownView"}
+2024-08-11T07:32:54Z    INFO    Starting workers        {"controller": "markdownview", "controllerGroup": "view.zoetrope.github.io", "controllerKind": "MarkdownView", "worker count": 1}
+2024-08-11T07:32:54Z    INFO    controller-runtime.metrics      Serving metrics server  {"bindAddress": ":8443", "secure": true}
+2024-08-11T07:33:58Z    INFO    markdownview-resource   default {"name": "markdownview-sample"}
+2024-08-11T07:33:58Z    INFO    markdownview-resource   validate create {"name": "markdownview-sample"}
 </code></pre>
 <h2 id="開発時の流れ">開発時の流れ</h2>
 <p>開発時には、カスタムコントローラーの実装を書き換えて何度も動作確認をおこなうことになります。
@@ -625,7 +645,7 @@ $ kind load docker-image controller:latest
                 </a>
                 
                 
-                <a href="../controller-tools/" class="navigation navigation-next " aria-label="Next page: controller-tools">
+                <a href="release.html" class="navigation navigation-next " aria-label="Next page: カスタムコントローラーのリリース">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -636,7 +656,7 @@ $ kind load docker-image controller:latest
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"next":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"previous":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/kind.md","mtime":"2023-07-24T07:42:30.025Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"next":{"title":"カスタムコントローラーのリリース","level":"1.2.5","depth":2,"path":"kubebuilder/release.md","ref":"kubebuilder/release.md","articles":[]},"previous":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"path":"kubebuilder/webhook.md","ref":"kubebuilder/webhook.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/kind.md","mtime":"2024-08-16T09:19:47.377Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-16T09:20:13.853Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

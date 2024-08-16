@@ -6,7 +6,7 @@
         <title>Webhookの雛形作成 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 5.0.0">
+        <meta name="generator" content="HonKit 5.1.4">
         
         
         
@@ -227,6 +227,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.2.5" data-path="release.html">
+            
+                <a href="release.html">
+            
+                    
+                    カスタムコントローラーのリリース
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -317,7 +330,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="../controller-runtime/test.html">
+            
+                <a href="../controller-runtime/test.html">
+            
+                    
+                    テスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/reconcile.html">
             
                 <a href="../controller-runtime/reconcile.html">
             
@@ -330,12 +356,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="../controller-runtime/controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/controller_test.html">
             
                 <a href="../controller-runtime/controller_test.html">
             
                     
-                    コントローラーのテスト
+                    コントローラーのテスト(Envtest)
             
                 </a>
             
@@ -343,7 +369,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="../controller-runtime/webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook.html">
             
                 <a href="../controller-runtime/webhook.html">
             
@@ -356,12 +382,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="../controller-runtime/webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/webhook_test.html">
             
                 <a href="../controller-runtime/webhook_test.html">
             
                     
-                    Webhookのテスト
+                    Webhookのテスト(Envtest)
             
                 </a>
             
@@ -369,7 +395,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="../controller-runtime/deletion.html">
+        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/deletion.html">
             
                 <a href="../controller-runtime/deletion.html">
             
@@ -382,7 +408,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="../controller-runtime/manager.html">
+        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/manager.html">
             
                 <a href="../controller-runtime/manager.html">
             
@@ -395,7 +421,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="../controller-runtime/monitoring.html">
+        <li class="chapter " data-level="1.4.9" data-path="../controller-runtime/monitoring.html">
             
                 <a href="../controller-runtime/monitoring.html">
             
@@ -470,18 +496,25 @@
 <p>ここでは<code>--programmatic-validation</code>と<code>--defaulting</code>を指定して、MarkdownViewリソース用のWebhookを生成してみましょう。</p>
 <p>注意: kindにはPodやDeploymentなどの既存のリソースを指定できません。</p>
 <pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">kubebuilder create webhook --group view --version v1 --kind MarkdownView --programmatic-validation --defaulting</span>
-<span class="hljs-meta prompt_">$ </span><span class="language-bash">make manifests</span>
+</code></pre>
+<p>APIを作成したときと同様に、以下のコマンドを実行してマニフェストファイルを生成しておきます。</p>
+<pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">make manifests</span>
 </code></pre>
 <p>以下のファイルが新たに追加されました。</p>
 <pre><code>├── api
 │    └── v1
 │        ├── markdownview_webhook.go
+│        ├── markdownview_webhook_test.go
 │        └── webhook_suite_test.go
 └── config
      ├── certmanager
      │    ├── certificate.yaml
      │    ├── kustomization.yaml
      │    └── kustomizeconfig.yaml
+     ├── crd
+     │    └── patches
+     │        ├── cainjection_in_markdownviews.yaml
+     │        └── webhook_in_markdownviews.yaml
      ├── default
      │    ├── manager_webhook_patch.yaml
      │    └── webhookcainjection_patch.yaml
@@ -493,45 +526,86 @@
 </code></pre><h2 id="apiv1">api/v1</h2>
 <p><code>markdownview_webhook.go</code>がWebhook実装の雛形になります。
 このファイルにWebhookの実装を追加していくことになります。</p>
-<h2 id="configcertmanager">config/certmanager</h2>
+<h2 id="config">config</h2>
+<h3 id="certmanager">certmanager</h3>
 <p>Admission Webhook機能を利用するためには証明書が必要となります。
-<a href="https://github.com/jetstack/cert-manager" target="_blank">cert-manager</a>を利用して証明書を発行するためのカスタムリソースが生成されています。</p>
-<h2 id="configwebhook">config/webhook</h2>
-<p><code>config/webhook</code>下は、Webhook機能を利用するために必要なマニフェストファイルです。
-manifests.yamlファイルは<code>make manifests</code>ファイルで自動生成されるため、基本的に手動で編集する必要はありません。</p>
+<a href="https://github.com/cert-manager/cert-manager" target="_blank">cert-manager</a>を利用して証明書を発行するためのカスタムリソースが生成されています。</p>
+<h3 id="crdpatches">crd/patches</h3>
+<p>このディレクトリにはConversion Webhook用のパッチファイルが格納されています。CRDのバージョンアップをおこなう際に利用します。</p>
+<p><code>cainjection_in_markdownviews.yaml</code>は、cert-managerのCA Injection機能を有効にするためのパッチファイルです。
+また、<code>webhook_in_markdownviews.yaml</code>は、Conversion Webhookを有効にするためのパッチファイルです。</p>
+<h3 id="webhook">webhook</h3>
+<p><code>config/webhook</code>下は、Admission Webhook機能を利用するために必要なマニフェストファイルです。</p>
+<p><code>webhookcainjectoin_patch.yaml</code>は、cert-managerのCA Injection機能を有効にするためのパッチファイルです。
+また、<code>manager_webhook_patch.yaml</code>は、Admission Webhook用の証明書をカスタムコントローラーから参照できるようにするためのパッチファイルです。
+<code>manifests.yaml</code>ファイルは<code>make manifests</code>コマンドで自動生成されるため、手動で編集する必要はありません。</p>
 <h2 id="cmdmaingo">cmd/main.go</h2>
 <p><code>cmd/main.go</code>には、以下のようなWebhookの初期化をおこなうためのコードが追加されています。</p>
 <blockquote>
 <p><a id="main.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/00_scaffold/cmd/main.go" target="_blank">main.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">if</span> err = (&amp;viewv1.MarkdownView{}).SetupWebhookWithManager(mgr); err != <span class="hljs-literal">nil</span> {
-    setupLog.Error(err, <span class="hljs-string">&quot;unable to create webhook&quot;</span>, <span class="hljs-string">&quot;webhook&quot;</span>, <span class="hljs-string">&quot;MarkdownView&quot;</span>)
-    os.Exit(<span class="hljs-number">1</span>)
+<pre><code class="lang-golang"><span class="hljs-keyword">if</span> os.Getenv(<span class="hljs-string">"ENABLE_WEBHOOKS"</span>) != <span class="hljs-string">"false"</span> {
+    <span class="hljs-keyword">if</span> err = (&amp;viewv1.MarkdownView{}).SetupWebhookWithManager(mgr); err != <span class="hljs-literal">nil</span> {
+        setupLog.Error(err, <span class="hljs-string">"unable to create webhook"</span>, <span class="hljs-string">"webhook"</span>, <span class="hljs-string">"MarkdownView"</span>)
+        os.Exit(<span class="hljs-number">1</span>)
+    }
 }
 </code></pre>
 <h2 id="kustomizationyamlの編集">kustomization.yamlの編集</h2>
-<p>Kubebuilderコマンドで生成した直後の状態では、<code>make manifests</code>コマンドでマニフェストを生成しても、Webhook機能が利用できるようにはなっていません。</p>
-<p><code>config/default/kustomization.yaml</code>ファイルを編集する必要があります。</p>
-<p>生成直後のkustomization.yamlは、<code>resources</code> の <code>../webhook</code> と <code>../certmanager</code>, <code>patchesStrategicMerge</code> の <code>manager_webhook_patch.yaml</code> と <code>webhookcainjection_patch.yaml</code>, <code>replacements</code> がコメントアウトされていますが、これらのコメントを外します。</p>
+<p>Kubebuilderコマンドで生成した直後の状態では、Webhook機能が利用できるようにはなっていません。
+<code>config/default/kustomization.yaml</code>ファイルを編集する必要があります。</p>
+<p><code>config/default/kustomization.yaml</code>ファイルを開き、以下のように<code>resources</code>の<code>../webhook</code>と<code>../certmanager</code>, <code>patchesStrategicMerge</code>の<code>manager_webhook_patch.yaml</code>と<code>webhookcainjection_patch.yaml</code>, <code>replacements</code>のコメントを外して有効化します。</p>
 <blockquote>
 <p><a id="kustomization.yaml" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/00_scaffold/config/default/kustomization.yaml" target="_blank">kustomization.yaml</a></p>
 </blockquote>
-<pre><code class="lang-yaml"><span class="hljs-attr">resources:</span>
+<pre><code class="lang-yaml"><span class="hljs-comment"># Adds namespace to all resources.</span>
+<span class="hljs-attr">namespace:</span> <span class="hljs-string">markdown-view-system</span>
+
+<span class="hljs-comment"># Value of this field is prepended to the</span>
+<span class="hljs-comment"># names of all resources, e.g. a deployment named</span>
+<span class="hljs-comment"># "wordpress" becomes "alices-wordpress".</span>
+<span class="hljs-comment"># Note that it should also match with the prefix (text before '-') of the namespace</span>
+<span class="hljs-comment"># field above.</span>
+<span class="hljs-attr">namePrefix:</span> <span class="hljs-string">markdown-view-</span>
+
+<span class="hljs-comment"># Labels to add to all resources and selectors.</span>
+<span class="hljs-comment">#labels:</span>
+<span class="hljs-comment">#- includeSelectors: true</span>
+<span class="hljs-comment">#  pairs:</span>
+<span class="hljs-comment">#    someName: someValue</span>
+
+<span class="hljs-attr">resources:</span>
+<span class="hljs-bullet">-</span> <span class="hljs-string">../crd</span>
+<span class="hljs-bullet">-</span> <span class="hljs-string">../rbac</span>
+<span class="hljs-bullet">-</span> <span class="hljs-string">../manager</span>
 <span class="hljs-comment"># [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in</span>
 <span class="hljs-comment"># crd/kustomization.yaml</span>
 <span class="hljs-bullet">-</span> <span class="hljs-string">../webhook</span>
-<span class="hljs-comment"># [CERTMANAGER] To enable cert-manager, uncomment all sections with &apos;CERTMANAGER&apos;. &apos;WEBHOOK&apos; components are required.</span>
+<span class="hljs-comment"># [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER'. 'WEBHOOK' components are required.</span>
 <span class="hljs-bullet">-</span> <span class="hljs-string">../certmanager</span>
-<span class="hljs-attr">patchesStrategicMerge:</span>
+<span class="hljs-comment"># [PROMETHEUS] To enable prometheus monitor, uncomment all sections with 'PROMETHEUS'.</span>
+<span class="hljs-comment">#- ../prometheus</span>
+<span class="hljs-comment"># [METRICS] Expose the controller manager metrics service.</span>
+<span class="hljs-bullet">-</span> <span class="hljs-string">metrics_service.yaml</span>
+
+<span class="hljs-comment"># Uncomment the patches line if you enable Metrics, and/or are using webhooks and cert-manager</span>
+<span class="hljs-attr">patches:</span>
+<span class="hljs-comment"># [METRICS] The following patch will enable the metrics endpoint using HTTPS and the port :8443.</span>
+<span class="hljs-comment"># More info: https://book.kubebuilder.io/reference/metrics</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">path:</span> <span class="hljs-string">manager_metrics_patch.yaml</span>
+  <span class="hljs-attr">target:</span>
+    <span class="hljs-attr">kind:</span> <span class="hljs-string">Deployment</span>
+
 <span class="hljs-comment"># [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in</span>
 <span class="hljs-comment"># crd/kustomization.yaml</span>
-<span class="hljs-bullet">-</span> <span class="hljs-string">manager_webhook_patch.yaml</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">path:</span> <span class="hljs-string">manager_webhook_patch.yaml</span>
 
-<span class="hljs-comment"># [CERTMANAGER] To enable cert-manager, uncomment all sections with &apos;CERTMANAGER&apos;.</span>
-<span class="hljs-comment"># Uncomment &apos;CERTMANAGER&apos; sections in crd/kustomization.yaml to enable the CA injection in the admission webhooks.</span>
-<span class="hljs-comment"># &apos;CERTMANAGER&apos; needs to be enabled to use ca injection</span>
-<span class="hljs-bullet">-</span> <span class="hljs-string">webhookcainjection_patch.yaml</span>
-<span class="hljs-comment"># [CERTMANAGER] To enable cert-manager, uncomment all sections with &apos;CERTMANAGER&apos; prefix.</span>
+<span class="hljs-comment"># [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER'.</span>
+<span class="hljs-comment"># Uncomment 'CERTMANAGER' sections in crd/kustomization.yaml to enable the CA injection in the admission webhooks.</span>
+<span class="hljs-comment"># 'CERTMANAGER' needs to be enabled to use ca injection</span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">path:</span> <span class="hljs-string">webhookcainjection_patch.yaml</span>
+
+<span class="hljs-comment"># [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER' prefix.</span>
 <span class="hljs-comment"># Uncomment the following replacements to add the cert-manager CA injection annotations</span>
 <span class="hljs-attr">replacements:</span>
   <span class="hljs-bullet">-</span> <span class="hljs-attr">source:</span> <span class="hljs-comment"># Add cert-manager annotation to ValidatingWebhookConfiguration, MutatingWebhookConfiguration and CRDs</span>
@@ -546,7 +620,7 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
         <span class="hljs-attr">fieldPaths:</span>
           <span class="hljs-bullet">-</span> <span class="hljs-string">.metadata.annotations.[cert-manager.io/inject-ca-from]</span>
         <span class="hljs-attr">options:</span>
-          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;/&apos;</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">'/'</span>
           <span class="hljs-attr">index:</span> <span class="hljs-number">0</span>
           <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
       <span class="hljs-bullet">-</span> <span class="hljs-attr">select:</span>
@@ -554,7 +628,7 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
         <span class="hljs-attr">fieldPaths:</span>
           <span class="hljs-bullet">-</span> <span class="hljs-string">.metadata.annotations.[cert-manager.io/inject-ca-from]</span>
         <span class="hljs-attr">options:</span>
-          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;/&apos;</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">'/'</span>
           <span class="hljs-attr">index:</span> <span class="hljs-number">0</span>
           <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
       <span class="hljs-bullet">-</span> <span class="hljs-attr">select:</span>
@@ -562,7 +636,7 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
         <span class="hljs-attr">fieldPaths:</span>
           <span class="hljs-bullet">-</span> <span class="hljs-string">.metadata.annotations.[cert-manager.io/inject-ca-from]</span>
         <span class="hljs-attr">options:</span>
-          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;/&apos;</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">'/'</span>
           <span class="hljs-attr">index:</span> <span class="hljs-number">0</span>
           <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
   <span class="hljs-bullet">-</span> <span class="hljs-attr">source:</span>
@@ -577,7 +651,7 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
         <span class="hljs-attr">fieldPaths:</span>
           <span class="hljs-bullet">-</span> <span class="hljs-string">.metadata.annotations.[cert-manager.io/inject-ca-from]</span>
         <span class="hljs-attr">options:</span>
-          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;/&apos;</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">'/'</span>
           <span class="hljs-attr">index:</span> <span class="hljs-number">1</span>
           <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
       <span class="hljs-bullet">-</span> <span class="hljs-attr">select:</span>
@@ -585,7 +659,7 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
         <span class="hljs-attr">fieldPaths:</span>
           <span class="hljs-bullet">-</span> <span class="hljs-string">.metadata.annotations.[cert-manager.io/inject-ca-from]</span>
         <span class="hljs-attr">options:</span>
-          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;/&apos;</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">'/'</span>
           <span class="hljs-attr">index:</span> <span class="hljs-number">1</span>
           <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
       <span class="hljs-bullet">-</span> <span class="hljs-attr">select:</span>
@@ -593,7 +667,7 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
         <span class="hljs-attr">fieldPaths:</span>
           <span class="hljs-bullet">-</span> <span class="hljs-string">.metadata.annotations.[cert-manager.io/inject-ca-from]</span>
         <span class="hljs-attr">options:</span>
-          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;/&apos;</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">'/'</span>
           <span class="hljs-attr">index:</span> <span class="hljs-number">1</span>
           <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
   <span class="hljs-bullet">-</span> <span class="hljs-attr">source:</span> <span class="hljs-comment"># Add cert-manager annotation to the webhook Service</span>
@@ -610,7 +684,7 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
           <span class="hljs-bullet">-</span> <span class="hljs-string">.spec.dnsNames.0</span>
           <span class="hljs-bullet">-</span> <span class="hljs-string">.spec.dnsNames.1</span>
         <span class="hljs-attr">options:</span>
-          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;.&apos;</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">'.'</span>
           <span class="hljs-attr">index:</span> <span class="hljs-number">0</span>
           <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
   <span class="hljs-bullet">-</span> <span class="hljs-attr">source:</span>
@@ -627,7 +701,7 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
           <span class="hljs-bullet">-</span> <span class="hljs-string">.spec.dnsNames.0</span>
           <span class="hljs-bullet">-</span> <span class="hljs-string">.spec.dnsNames.1</span>
         <span class="hljs-attr">options:</span>
-          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">&apos;.&apos;</span>
+          <span class="hljs-attr">delimiter:</span> <span class="hljs-string">'.'</span>
           <span class="hljs-attr">index:</span> <span class="hljs-number">1</span>
           <span class="hljs-attr">create:</span> <span class="hljs-literal">true</span>
 </code></pre>
@@ -674,7 +748,7 @@ manifests.yamlファイルは<code>make manifests</code>ファイルで自動生
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"next":{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"previous":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/webhook.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Webhookの雛形作成","level":"1.2.3","depth":2,"next":{"title":"カスタムコントローラーの動作確認","level":"1.2.4","depth":2,"path":"kubebuilder/kind.md","ref":"kubebuilder/kind.md","articles":[]},"previous":{"title":"APIの雛形作成","level":"1.2.2","depth":2,"path":"kubebuilder/api.md","ref":"kubebuilder/api.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"kubebuilder/webhook.md","mtime":"2024-08-16T09:19:47.377Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-16T09:20:13.853Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

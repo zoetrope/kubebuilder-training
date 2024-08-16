@@ -6,7 +6,7 @@
         <title>リソースの削除 · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 5.0.0">
+        <meta name="generator" content="HonKit 5.1.4">
         
         
         
@@ -227,6 +227,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/release.html">
+            
+                <a href="../kubebuilder/release.html">
+            
+                    
+                    カスタムコントローラーのリリース
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -317,7 +330,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="test.html">
+            
+                <a href="test.html">
+            
+                    
+                    テスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="reconcile.html">
             
                 <a href="reconcile.html">
             
@@ -330,12 +356,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.3" data-path="controller_test.html">
+        <li class="chapter " data-level="1.4.4" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
                     
-                    コントローラーのテスト
+                    コントローラーのテスト(Envtest)
             
                 </a>
             
@@ -343,7 +369,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -356,12 +382,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
                     
-                    Webhookのテスト
+                    Webhookのテスト(Envtest)
             
                 </a>
             
@@ -369,7 +395,7 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.6" data-path="deletion.html">
+        <li class="chapter active" data-level="1.4.7" data-path="deletion.html">
             
                 <a href="deletion.html">
             
@@ -382,7 +408,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="manager.html">
+        <li class="chapter " data-level="1.4.8" data-path="manager.html">
             
                 <a href="manager.html">
             
@@ -395,7 +421,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="monitoring.html">
+        <li class="chapter " data-level="1.4.9" data-path="monitoring.html">
             
                 <a href="monitoring.html">
             
@@ -479,7 +505,7 @@
 
     cm := &amp;corev1.ConfigMap{}
     cm.SetNamespace(mdView.Namespace)
-    cm.SetName(<span class="hljs-string">&quot;markdowns-&quot;</span> + mdView.Name)
+    cm.SetName(<span class="hljs-string">"markdowns-"</span> + mdView.Name)
 
     op, err := ctrl.CreateOrUpdate(ctx, r.Client, cm, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> <span class="hljs-type">error</span> {
         <span class="hljs-keyword">if</span> cm.Data == <span class="hljs-literal">nil</span> {
@@ -492,11 +518,11 @@
     })
 
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        logger.Error(err, <span class="hljs-string">&quot;unable to create or update ConfigMap&quot;</span>)
+        logger.Error(err, <span class="hljs-string">"unable to create or update ConfigMap"</span>)
         <span class="hljs-keyword">return</span> err
     }
     <span class="hljs-keyword">if</span> op != controllerutil.OperationResultNone {
-        logger.Info(<span class="hljs-string">&quot;reconcile ConfigMap successfully&quot;</span>, <span class="hljs-string">&quot;op&quot;</span>, op)
+        logger.Info(<span class="hljs-string">"reconcile ConfigMap successfully"</span>, <span class="hljs-string">"op"</span>, op)
     }
     <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
 }
@@ -505,7 +531,7 @@
 <pre><code class="lang-yaml"><span class="hljs-attr">apiVersion:</span> <span class="hljs-string">v1</span>
 <span class="hljs-attr">kind:</span> <span class="hljs-string">ConfigMap</span>
 <span class="hljs-attr">metadata:</span>
-  <span class="hljs-attr">creationTimestamp:</span> <span class="hljs-string">&quot;2021-07-25T09:35:43Z&quot;</span>
+  <span class="hljs-attr">creationTimestamp:</span> <span class="hljs-string">"2021-07-25T09:35:43Z"</span>
   <span class="hljs-attr">name:</span> <span class="hljs-string">markdowns-markdownview-sample</span>
   <span class="hljs-attr">namespace:</span> <span class="hljs-string">default</span>
   <span class="hljs-attr">ownerReferences:</span>
@@ -515,7 +541,7 @@
     <span class="hljs-attr">kind:</span> <span class="hljs-string">MarkdownView</span>
     <span class="hljs-attr">name:</span> <span class="hljs-string">markdownview-sample</span>
     <span class="hljs-attr">uid:</span> <span class="hljs-string">8e8701a6-fa67-4ab8-8e0c-29c21ae6e1ec</span>
-  <span class="hljs-attr">resourceVersion:</span> <span class="hljs-string">&quot;17582&quot;</span>
+  <span class="hljs-attr">resourceVersion:</span> <span class="hljs-string">"17582"</span>
   <span class="hljs-attr">uid:</span> <span class="hljs-string">8803226f-7d8f-4632-b3eb-e47dc36eabf3</span>
 <span class="hljs-attr">data:</span>
   <span class="hljs-string">・・省略・・</span>
@@ -550,7 +576,7 @@ ownerReferenceを設定します。</p>
 <blockquote>
 <p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang">svcName := <span class="hljs-string">&quot;viewer-&quot;</span> + mdView.Name
+<pre><code class="lang-golang">svcName := <span class="hljs-string">"viewer-"</span> + mdView.Name
 
 owner, err := controllerReference(mdView, r.Scheme)
 <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
@@ -559,16 +585,16 @@ owner, err := controllerReference(mdView, r.Scheme)
 
 svc := corev1apply.Service(svcName, mdView.Namespace).
     WithLabels(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{
-        <span class="hljs-string">&quot;app.kubernetes.io/name&quot;</span>:       <span class="hljs-string">&quot;mdbook&quot;</span>,
-        <span class="hljs-string">&quot;app.kubernetes.io/instance&quot;</span>:   mdView.Name,
-        <span class="hljs-string">&quot;app.kubernetes.io/created-by&quot;</span>: <span class="hljs-string">&quot;markdown-view-controller&quot;</span>,
+        <span class="hljs-string">"app.kubernetes.io/name"</span>:       <span class="hljs-string">"mdbook"</span>,
+        <span class="hljs-string">"app.kubernetes.io/instance"</span>:   mdView.Name,
+        <span class="hljs-string">"app.kubernetes.io/created-by"</span>: <span class="hljs-string">"markdown-view-controller"</span>,
     }).
     WithOwnerReferences(owner).
     WithSpec(corev1apply.ServiceSpec().
         WithSelector(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{
-            <span class="hljs-string">&quot;app.kubernetes.io/name&quot;</span>:       <span class="hljs-string">&quot;mdbook&quot;</span>,
-            <span class="hljs-string">&quot;app.kubernetes.io/instance&quot;</span>:   mdView.Name,
-            <span class="hljs-string">&quot;app.kubernetes.io/created-by&quot;</span>: <span class="hljs-string">&quot;markdown-view-controller&quot;</span>,
+            <span class="hljs-string">"app.kubernetes.io/name"</span>:       <span class="hljs-string">"mdbook"</span>,
+            <span class="hljs-string">"app.kubernetes.io/instance"</span>:   mdView.Name,
+            <span class="hljs-string">"app.kubernetes.io/created-by"</span>: <span class="hljs-string">"markdown-view-controller"</span>,
         }).
         WithType(corev1.ServiceTypeClusterIP).
         WithPorts(corev1apply.ServicePort().
@@ -603,7 +629,7 @@ Kubernetes上のLogicalVolumeカスタムリソースが削除されたら、そ
 <span class="hljs-attr">metadata:</span>
   <span class="hljs-attr">finalizers:</span>
     <span class="hljs-bullet">-</span> <span class="hljs-string">markdownview.view.zoetrope.github.io/finalizer</span>
-  <span class="hljs-attr">deletionTimestamp:</span> <span class="hljs-string">&quot;2021-07-24T15:23:54Z&quot;</span>
+  <span class="hljs-attr">deletionTimestamp:</span> <span class="hljs-string">"2021-07-24T15:23:54Z"</span>
 <span class="hljs-comment"># 以下省略</span>
 </code></pre>
 <p>カスタムコントローラーは<code>deletionTimestamp</code>が付与されていることを発見すると、そのリソースに関連するリソースを削除し、その後に<code>finalizers</code>フィールドを削除します。
@@ -614,7 +640,7 @@ Kubernetes上のLogicalVolumeカスタムリソースが削除されたら、そ
 <p>それではFinalizerを実装してみましょう。
 controller-runtimeでは、Finalizerを扱うためのユーティリティ関数として<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#ContainsFinalizer" target="_blank">controllerutil.ContainsFinalizer</a>、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#AddFinalizer" target="_blank">controllerutil.AddFinalizer</a>、<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/controller/controllerutil?tab=doc#RemoveFinalizer" target="_blank">controllerutil.RemoveFinalizer</a>などを提供しているのでこれを利用しましょう。</p>
 <p>以下のように、Finalizersフィールドを利用して、独自のリソース削除処理を実装できます。</p>
-<pre><code class="lang-go">finalizerName := <span class="hljs-string">&quot;markdwonview.view.zoetrope.github.io/finalizer&quot;</span>
+<pre><code class="lang-go">finalizerName := <span class="hljs-string">"markdwonview.view.zoetrope.github.io/finalizer"</span>
 <span class="hljs-keyword">if</span> !mdView.ObjectMeta.DeletionTimestamp.IsZero() {
     <span class="hljs-comment">// deletionTimestampがゼロではないということはリソースの削除が開始されたということ</span>
 
@@ -669,7 +695,7 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
 
             
                 
-                <a href="webhook_test.html" class="navigation navigation-prev " aria-label="Previous page: Webhookのテスト">
+                <a href="webhook_test.html" class="navigation navigation-prev " aria-label="Previous page: Webhookのテスト(Envtest)">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
@@ -685,7 +711,7 @@ controller-runtimeでは、Finalizerを扱うためのユーティリティ関�
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"リソースの削除","level":"1.4.6","depth":2,"next":{"title":"Manager","level":"1.4.7","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"previous":{"title":"Webhookのテスト","level":"1.4.5","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"リソースの削除","level":"1.4.7","depth":2,"next":{"title":"Manager","level":"1.4.8","depth":2,"path":"controller-runtime/manager.md","ref":"controller-runtime/manager.md","articles":[]},"previous":{"title":"Webhookのテスト(Envtest)","level":"1.4.6","depth":2,"path":"controller-runtime/webhook_test.md","ref":"controller-runtime/webhook_test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/deletion.md","mtime":"2024-08-11T02:14:59.337Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-16T09:20:13.853Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

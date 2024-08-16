@@ -3,10 +3,10 @@
 <html lang="" >
     <head>
         <meta charset="UTF-8">
-        <title>コントローラーのテスト · つくって学ぶKubebuilder</title>
+        <title>コントローラーのテスト(Envtest) · つくって学ぶKubebuilder</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
-        <meta name="generator" content="HonKit 5.0.0">
+        <meta name="generator" content="HonKit 5.1.4">
         
         
         
@@ -227,6 +227,19 @@
             
         </li>
     
+        <li class="chapter " data-level="1.2.5" data-path="../kubebuilder/release.html">
+            
+                <a href="../kubebuilder/release.html">
+            
+                    
+                    カスタムコントローラーのリリース
+            
+                </a>
+            
+
+            
+        </li>
+    
 
             </ul>
             
@@ -317,7 +330,20 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.2" data-path="reconcile.html">
+        <li class="chapter " data-level="1.4.2" data-path="test.html">
+            
+                <a href="test.html">
+            
+                    
+                    テスト
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="reconcile.html">
             
                 <a href="reconcile.html">
             
@@ -330,12 +356,12 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.4.3" data-path="controller_test.html">
+        <li class="chapter active" data-level="1.4.4" data-path="controller_test.html">
             
                 <a href="controller_test.html">
             
                     
-                    コントローラーのテスト
+                    コントローラーのテスト(Envtest)
             
                 </a>
             
@@ -343,7 +369,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.4" data-path="webhook.html">
+        <li class="chapter " data-level="1.4.5" data-path="webhook.html">
             
                 <a href="webhook.html">
             
@@ -356,12 +382,12 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.5" data-path="webhook_test.html">
+        <li class="chapter " data-level="1.4.6" data-path="webhook_test.html">
             
                 <a href="webhook_test.html">
             
                     
-                    Webhookのテスト
+                    Webhookのテスト(Envtest)
             
                 </a>
             
@@ -369,7 +395,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.6" data-path="deletion.html">
+        <li class="chapter " data-level="1.4.7" data-path="deletion.html">
             
                 <a href="deletion.html">
             
@@ -382,7 +408,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.7" data-path="manager.html">
+        <li class="chapter " data-level="1.4.8" data-path="manager.html">
             
                 <a href="manager.html">
             
@@ -395,7 +421,7 @@
             
         </li>
     
-        <li class="chapter " data-level="1.4.8" data-path="monitoring.html">
+        <li class="chapter " data-level="1.4.9" data-path="monitoring.html">
             
                 <a href="monitoring.html">
             
@@ -443,7 +469,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >コントローラーのテスト</a>
+        <a href=".." >コントローラーのテスト(Envtest)</a>
     </h1>
 </div>
 
@@ -458,34 +484,24 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="コントローラーのテスト">コントローラーのテスト</h1>
-<p>controller-runtimeは<a href="https://pkg.go.dev/sigs.k8s.io/controller-runtime/pkg/envtest?tab=doc" target="_blank">envtest</a>というパッケージを提供しており、
-コントローラーやWebhookの簡易的なテストを実施できます。</p>
-<p>envtestはetcdとkube-apiserverを立ち上げてテスト用の環境を構築します。
-また環境変数<code>USE_EXISTING_CLUSTER</code>を指定すれば、既存のKubernetesクラスターを利用したテストをおこなうことも可能です。</p>
-<p>Envtestでは、etcdとkube-apiserverのみを立ち上げており、controller-managerやschedulerは動いていません。
-そのため、DeploymentやCronJobリソースを作成しても、Podは作成されないので注意してください。</p>
-<p>controller-runtimeは、<a href="https://github.com/kubernetes-sigs/controller-runtime/tree/master/tools/setup-envtest" target="_blank">Envtest Binaries Manager</a>
-というツールを提供しています。
-このツールを利用することで、Envtestで利用するetcdやkube-apiserverの任意のバージョンのバイナリをセットアップできます。</p>
-<p>なおcontroller-genが生成するテストコードでは、<a href="https://github.com/onsi/ginkgo" target="_blank">Ginkgo</a>というテストフレームワークを利用しています。
-このフレームワークの利用方法については<a href="https://onsi.github.io/ginkgo/" target="_blank">Ginkgoのドキュメント</a>を御覧ください。</p>
+                                <h1 id="コントローラーのテストenvtest">コントローラーのテスト(Envtest)</h1>
+<p>ここではEnvtestを利用したカスタムコントローラーのテストの書き方を学びます。</p>
 <h2 id="テスト環境のセットアップ">テスト環境のセットアップ</h2>
-<p>controller-genによって自動生成された<code>internal/controller/suite_test.go</code>を見てみましょう。</p>
+<p>まず、自動生成された<code>internal/controller/suite_test.go</code>を見てみましょう。</p>
 <blockquote>
 <p><a id="internal/controller/suite_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/internal/controller/suite_test.go" target="_blank">internal/controller/suite_test.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">/*
-Copyright 2023.
+Copyright 2024.
 
-Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
@@ -494,23 +510,23 @@ limitations under the License.
 <span class="hljs-keyword">package</span> controller
 
 <span class="hljs-keyword">import</span> (
-    <span class="hljs-string">&quot;context&quot;</span>
-    <span class="hljs-string">&quot;path/filepath&quot;</span>
-    <span class="hljs-string">&quot;testing&quot;</span>
+    <span class="hljs-string">"fmt"</span>
+    <span class="hljs-string">"path/filepath"</span>
+    <span class="hljs-string">"runtime"</span>
+    <span class="hljs-string">"testing"</span>
 
-    . <span class="hljs-string">&quot;github.com/onsi/ginkgo/v2&quot;</span>
-    . <span class="hljs-string">&quot;github.com/onsi/gomega&quot;</span>
-    corev1 <span class="hljs-string">&quot;k8s.io/api/core/v1&quot;</span>
-    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/runtime&quot;</span>
-    clientgoscheme <span class="hljs-string">&quot;k8s.io/client-go/kubernetes/scheme&quot;</span>
-    <span class="hljs-string">&quot;k8s.io/client-go/rest&quot;</span>
-    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;</span>
-    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/envtest&quot;</span>
-    logf <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log&quot;</span>
-    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/log/zap&quot;</span>
+    . <span class="hljs-string">"github.com/onsi/ginkgo/v2"</span>
+    . <span class="hljs-string">"github.com/onsi/gomega"</span>
+    apiruntime <span class="hljs-string">"k8s.io/apimachinery/pkg/runtime"</span>
+    clientgoscheme <span class="hljs-string">"k8s.io/client-go/kubernetes/scheme"</span>
+    <span class="hljs-string">"k8s.io/client-go/rest"</span>
+    <span class="hljs-string">"sigs.k8s.io/controller-runtime/pkg/client"</span>
+    <span class="hljs-string">"sigs.k8s.io/controller-runtime/pkg/envtest"</span>
+    logf <span class="hljs-string">"sigs.k8s.io/controller-runtime/pkg/log"</span>
+    <span class="hljs-string">"sigs.k8s.io/controller-runtime/pkg/log/zap"</span>
 
-    viewv1 <span class="hljs-string">&quot;github.com/zoetrope/markdown-view/api/v1&quot;</span>
-    <span class="hljs-comment">//+kubebuilder:scaffold:imports</span>
+    viewv1 <span class="hljs-string">"github.com/zoetrope/markdown-view/api/v1"</span>
+    <span class="hljs-comment">// +kubebuilder:scaffold:imports</span>
 )
 
 <span class="hljs-comment">// These tests use Ginkgo (BDD-style Go testing framework). Refer to</span>
@@ -519,21 +535,29 @@ limitations under the License.
 <span class="hljs-keyword">var</span> cfg *rest.Config
 <span class="hljs-keyword">var</span> k8sClient client.Client
 <span class="hljs-keyword">var</span> testEnv *envtest.Environment
-<span class="hljs-keyword">var</span> scheme = runtime.NewScheme()
+<span class="hljs-keyword">var</span> scheme = apiruntime.NewScheme()
 
 <span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">TestControllers</span><span class="hljs-params">(t *testing.T)</span></span> {
     RegisterFailHandler(Fail)
 
-    RunSpecs(t, <span class="hljs-string">&quot;Controller Suite&quot;</span>)
+    RunSpecs(t, <span class="hljs-string">"Controller Suite"</span>)
 }
 
 <span class="hljs-keyword">var</span> _ = BeforeSuite(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
     logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(<span class="hljs-literal">true</span>)))
 
-    By(<span class="hljs-string">&quot;bootstrapping test environment&quot;</span>)
+    By(<span class="hljs-string">"bootstrapping test environment"</span>)
     testEnv = &amp;envtest.Environment{
-        CRDDirectoryPaths:     []<span class="hljs-type">string</span>{filepath.Join(<span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;..&quot;</span>, <span class="hljs-string">&quot;config&quot;</span>, <span class="hljs-string">&quot;crd&quot;</span>, <span class="hljs-string">&quot;bases&quot;</span>)},
+        CRDDirectoryPaths:     []<span class="hljs-type">string</span>{filepath.Join(<span class="hljs-string">".."</span>, <span class="hljs-string">".."</span>, <span class="hljs-string">"config"</span>, <span class="hljs-string">"crd"</span>, <span class="hljs-string">"bases"</span>)},
         ErrorIfCRDPathMissing: <span class="hljs-literal">true</span>,
+
+        <span class="hljs-comment">// The BinaryAssetsDirectory is only required if you want to run the tests directly</span>
+        <span class="hljs-comment">// without call the makefile target test. If not informed it will look for the</span>
+        <span class="hljs-comment">// default path defined in controller-runtime which is /usr/local/kubebuilder/.</span>
+        <span class="hljs-comment">// Note that you must have the required binaries setup under the bin directory to perform</span>
+        <span class="hljs-comment">// the tests directly. When we run make test it will be setup and used automatically.</span>
+        BinaryAssetsDirectory: filepath.Join(<span class="hljs-string">".."</span>, <span class="hljs-string">".."</span>, <span class="hljs-string">"bin"</span>, <span class="hljs-string">"k8s"</span>,
+            fmt.Sprintf(<span class="hljs-string">"1.30.0-%s-%s"</span>, runtime.GOOS, runtime.GOARCH)),
     }
 
     <span class="hljs-keyword">var</span> err <span class="hljs-type">error</span>
@@ -547,186 +571,175 @@ limitations under the License.
     err = clientgoscheme.AddToScheme(scheme)
     Expect(err).NotTo(HaveOccurred())
 
-    <span class="hljs-comment">//+kubebuilder:scaffold:scheme</span>
+    <span class="hljs-comment">// +kubebuilder:scaffold:scheme</span>
 
     k8sClient, err = client.New(cfg, client.Options{Scheme: scheme})
     Expect(err).NotTo(HaveOccurred())
     Expect(k8sClient).NotTo(BeNil())
 
-    ns := &amp;corev1.Namespace{}
-    ns.Name = <span class="hljs-string">&quot;test&quot;</span>
-    err = k8sClient.Create(context.Background(), ns)
-    Expect(err).NotTo(HaveOccurred())
 })
 
 <span class="hljs-keyword">var</span> _ = AfterSuite(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
-    By(<span class="hljs-string">&quot;tearing down the test environment&quot;</span>)
+    By(<span class="hljs-string">"tearing down the test environment"</span>)
     err := testEnv.Stop()
     Expect(err).NotTo(HaveOccurred())
 })
 </code></pre>
-<p>まず<code>envtest.Environment</code>でテスト用の環境設定をおこないます。
-ここでは、<code>CRDDirectoryPaths</code>で適用するCRDのマニフェストのパスを指定しています。</p>
+<p>最初に<code>envtest.Environment</code>でテスト用の環境設定をおこなっています。
+<code>CRDDirectoryPaths</code>で適用するCRDのマニフェストのパスを指定し、BinaryAssetsDirectoryでEnvtestのバイナリファイルのディレクトリを指定しています。</p>
 <p><code>testEnv.Start()</code>を呼び出すとetcdとkube-apiserverが起動します。
-あとはコントローラーのメイン関数と同様に初期化処理をおこなうだけです。</p>
-<p>テスト終了時にはetcdとkube-apiserverを終了するように<code>testEnv.Stop()</code>を呼び出します。</p>
+あとはカスタムコントローラーのmain関数と同様にscheme初期化処理をおこない、最後にEnvtestのapiserverに接続するためのクライアントを作成しています。</p>
+<p>テスト終了時にはetcdとkube-apiserverを終了するように、AfterSuiteで<code>testEnv.Stop()</code>を呼び出します。</p>
 <h2 id="コントローラーのテスト">コントローラーのテスト</h2>
 <p>それでは実際のテストを書いていきましょう。</p>
 <blockquote>
 <p><a id="markdownview_controller_test.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/internal/controller/markdownview_controller_test.go" target="_blank">markdownview_controller_test.go</a></p>
 </blockquote>
-<pre><code class="lang-golang"><span class="hljs-keyword">package</span> controller
+<pre><code class="lang-golang"><span class="hljs-comment">/*
+Copyright 2024.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/</span>
+
+<span class="hljs-keyword">package</span> controller
 
 <span class="hljs-keyword">import</span> (
-    <span class="hljs-string">&quot;context&quot;</span>
-    <span class="hljs-string">&quot;errors&quot;</span>
-    <span class="hljs-string">&quot;time&quot;</span>
+    <span class="hljs-string">"context"</span>
+    <span class="hljs-string">"k8s.io/utils/ptr"</span>
 
-    . <span class="hljs-string">&quot;github.com/onsi/ginkgo/v2&quot;</span>
-    . <span class="hljs-string">&quot;github.com/onsi/gomega&quot;</span>
-    viewv1 <span class="hljs-string">&quot;github.com/zoetrope/markdown-view/api/v1&quot;</span>
-    appsv1 <span class="hljs-string">&quot;k8s.io/api/apps/v1&quot;</span>
-    corev1 <span class="hljs-string">&quot;k8s.io/api/core/v1&quot;</span>
-    metav1 <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;</span>
-    <span class="hljs-string">&quot;k8s.io/apimachinery/pkg/util/intstr&quot;</span>
-    <span class="hljs-string">&quot;k8s.io/utils/pointer&quot;</span>
-    ctrl <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime&quot;</span>
-    <span class="hljs-string">&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;</span>
+    . <span class="hljs-string">"github.com/onsi/ginkgo/v2"</span>
+    . <span class="hljs-string">"github.com/onsi/gomega"</span>
+    viewv1 <span class="hljs-string">"github.com/zoetrope/markdown-view/api/v1"</span>
+    appsv1 <span class="hljs-string">"k8s.io/api/apps/v1"</span>
+    corev1 <span class="hljs-string">"k8s.io/api/core/v1"</span>
+    apierrors <span class="hljs-string">"k8s.io/apimachinery/pkg/api/errors"</span>
+    metav1 <span class="hljs-string">"k8s.io/apimachinery/pkg/apis/meta/v1"</span>
+    <span class="hljs-string">"k8s.io/apimachinery/pkg/types"</span>
+    <span class="hljs-string">"k8s.io/apimachinery/pkg/util/intstr"</span>
+    <span class="hljs-string">"sigs.k8s.io/controller-runtime/pkg/client"</span>
+    <span class="hljs-string">"sigs.k8s.io/controller-runtime/pkg/reconcile"</span>
 )
 
-<span class="hljs-keyword">var</span> _ = Describe(<span class="hljs-string">&quot;MarkdownView controller&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+<span class="hljs-keyword">var</span> _ = Describe(<span class="hljs-string">"MarkdownView Controller"</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+    Context(<span class="hljs-string">"When reconciling a resource"</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+        <span class="hljs-keyword">const</span> resourceName = <span class="hljs-string">"sample"</span>
+        <span class="hljs-keyword">const</span> testNamespace = <span class="hljs-string">"test"</span>
 
-    ctx := context.Background()
-    <span class="hljs-keyword">var</span> stopFunc <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span>
+        ctx := context.Background()
 
-    BeforeEach(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
-        err := k8sClient.DeleteAllOf(ctx, &amp;viewv1.MarkdownView{}, client.InNamespace(<span class="hljs-string">&quot;test&quot;</span>))
-        Expect(err).NotTo(HaveOccurred())
-        err = k8sClient.DeleteAllOf(ctx, &amp;corev1.ConfigMap{}, client.InNamespace(<span class="hljs-string">&quot;test&quot;</span>))
-        Expect(err).NotTo(HaveOccurred())
-        err = k8sClient.DeleteAllOf(ctx, &amp;appsv1.Deployment{}, client.InNamespace(<span class="hljs-string">&quot;test&quot;</span>))
-        Expect(err).NotTo(HaveOccurred())
-        svcs := &amp;corev1.ServiceList{}
-        err = k8sClient.List(ctx, svcs, client.InNamespace(<span class="hljs-string">&quot;test&quot;</span>))
-        Expect(err).NotTo(HaveOccurred())
-        <span class="hljs-keyword">for</span> _, svc := <span class="hljs-keyword">range</span> svcs.Items {
-            err := k8sClient.Delete(ctx, &amp;svc)
+        typeNamespacedName := types.NamespacedName{
+            Name:      resourceName,
+            Namespace: testNamespace,
+        }
+
+        BeforeEach(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+            By(<span class="hljs-string">"creating the namespace for the test"</span>)
+            ns := &amp;corev1.Namespace{}
+            ns.Name = testNamespace
+            err := k8sClient.Create(context.Background(), ns)
             Expect(err).NotTo(HaveOccurred())
-        }
-        time.Sleep(<span class="hljs-number">100</span> * time.Millisecond)
 
-        mgr, err := ctrl.NewManager(cfg, ctrl.Options{
-            Scheme: scheme,
+            By(<span class="hljs-string">"creating the custom resource for the Kind MarkdownView"</span>)
+            markdownview := &amp;viewv1.MarkdownView{}
+            err = k8sClient.Get(ctx, typeNamespacedName, markdownview)
+            <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &amp;&amp; apierrors.IsNotFound(err) {
+                resource := &amp;viewv1.MarkdownView{
+                    ObjectMeta: metav1.ObjectMeta{
+                        Name:      resourceName,
+                        Namespace: testNamespace,
+                    },
+                    Spec: viewv1.MarkdownViewSpec{
+                        Markdowns: <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{
+                            <span class="hljs-string">"SUMMARY.md"</span>: <span class="hljs-string">`summary`</span>,
+                            <span class="hljs-string">"page1.md"</span>:   <span class="hljs-string">`page1`</span>,
+                        },
+                        Replicas:    <span class="hljs-number">3</span>,
+                        ViewerImage: <span class="hljs-string">"peaceiris/mdbook:0.4.10"</span>,
+                    },
+                }
+                Expect(k8sClient.Create(ctx, resource)).To(Succeed())
+            }
         })
-        Expect(err).ToNot(HaveOccurred())
 
-        reconciler := MarkdownViewReconciler{
-            Client: k8sClient,
-            Scheme: scheme,
-        }
-        err = reconciler.SetupWithManager(mgr)
-        Expect(err).NotTo(HaveOccurred())
+        AfterEach(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+            <span class="hljs-comment">// TODO(user): Cleanup logic after each test, like removing the resource instance.</span>
+            resource := &amp;viewv1.MarkdownView{}
+            err := k8sClient.Get(ctx, typeNamespacedName, resource)
+            Expect(err).NotTo(HaveOccurred())
 
-        ctx, cancel := context.WithCancel(ctx)
-        stopFunc = cancel
-        <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
-            err := mgr.Start(ctx)
-            <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-                <span class="hljs-built_in">panic</span>(err)
+            By(<span class="hljs-string">"Cleanup the specific resource instance MarkdownView"</span>)
+            Expect(k8sClient.Delete(ctx, resource)).To(Succeed())
+
+            err = k8sClient.DeleteAllOf(ctx, &amp;corev1.ConfigMap{}, client.InNamespace(testNamespace))
+            Expect(err).NotTo(HaveOccurred())
+            err = k8sClient.DeleteAllOf(ctx, &amp;appsv1.Deployment{}, client.InNamespace(testNamespace))
+            Expect(err).NotTo(HaveOccurred())
+            svcs := &amp;corev1.ServiceList{}
+            err = k8sClient.List(ctx, svcs, client.InNamespace(testNamespace))
+            Expect(err).NotTo(HaveOccurred())
+            <span class="hljs-keyword">for</span> _, svc := <span class="hljs-keyword">range</span> svcs.Items {
+                err := k8sClient.Delete(ctx, &amp;svc)
+                Expect(err).NotTo(HaveOccurred())
             }
-        }()
-        time.Sleep(<span class="hljs-number">100</span> * time.Millisecond)
-    })
+        })
 
-    AfterEach(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
-        stopFunc()
-        time.Sleep(<span class="hljs-number">100</span> * time.Millisecond)
-    })
-
-    It(<span class="hljs-string">&quot;should create ConfigMap&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
-        mdView := newMarkdownView()
-        err := k8sClient.Create(ctx, mdView)
-        Expect(err).NotTo(HaveOccurred())
-
-        cm := corev1.ConfigMap{}
-        Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> <span class="hljs-type">error</span> {
-            <span class="hljs-keyword">return</span> k8sClient.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;test&quot;</span>, Name: <span class="hljs-string">&quot;markdowns-sample&quot;</span>}, &amp;cm)
-        }).Should(Succeed())
-        Expect(cm.Data).Should(HaveKey(<span class="hljs-string">&quot;SUMMARY.md&quot;</span>))
-        Expect(cm.Data).Should(HaveKey(<span class="hljs-string">&quot;page1.md&quot;</span>))
-    })
-
-    It(<span class="hljs-string">&quot;should create Deployment&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
-        mdView := newMarkdownView()
-        err := k8sClient.Create(ctx, mdView)
-        Expect(err).NotTo(HaveOccurred())
-
-        dep := appsv1.Deployment{}
-        Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> <span class="hljs-type">error</span> {
-            <span class="hljs-keyword">return</span> k8sClient.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;test&quot;</span>, Name: <span class="hljs-string">&quot;viewer-sample&quot;</span>}, &amp;dep)
-        }).Should(Succeed())
-        Expect(dep.Spec.Replicas).Should(Equal(pointer.Int32Ptr(<span class="hljs-number">3</span>)))
-        Expect(dep.Spec.Template.Spec.Containers[<span class="hljs-number">0</span>].Image).Should(Equal(<span class="hljs-string">&quot;peaceiris/mdbook:0.4.10&quot;</span>))
-    })
-
-    It(<span class="hljs-string">&quot;should create Service&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
-        mdView := newMarkdownView()
-        err := k8sClient.Create(ctx, mdView)
-        Expect(err).NotTo(HaveOccurred())
-
-        svc := corev1.Service{}
-        Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> <span class="hljs-type">error</span> {
-            <span class="hljs-keyword">return</span> k8sClient.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;test&quot;</span>, Name: <span class="hljs-string">&quot;viewer-sample&quot;</span>}, &amp;svc)
-        }).Should(Succeed())
-        Expect(svc.Spec.Ports[<span class="hljs-number">0</span>].Port).Should(Equal(<span class="hljs-type">int32</span>(<span class="hljs-number">80</span>)))
-        Expect(svc.Spec.Ports[<span class="hljs-number">0</span>].TargetPort).Should(Equal(intstr.FromInt(<span class="hljs-number">3000</span>)))
-    })
-
-    It(<span class="hljs-string">&quot;should update status&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
-        mdView := newMarkdownView()
-        err := k8sClient.Create(ctx, mdView)
-        Expect(err).NotTo(HaveOccurred())
-
-        updated := viewv1.MarkdownView{}
-        Eventually(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> <span class="hljs-type">error</span> {
-            err := k8sClient.Get(ctx, client.ObjectKey{Namespace: <span class="hljs-string">&quot;test&quot;</span>, Name: <span class="hljs-string">&quot;sample&quot;</span>}, &amp;updated)
-            <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-                <span class="hljs-keyword">return</span> err
+        It(<span class="hljs-string">"should successfully reconcile the resource"</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> {
+            By(<span class="hljs-string">"Reconciling the created resource"</span>)
+            controllerReconciler := &amp;MarkdownViewReconciler{
+                Client: k8sClient,
+                Scheme: k8sClient.Scheme(),
             }
-            <span class="hljs-keyword">if</span> updated.Status == <span class="hljs-string">&quot;&quot;</span> {
-                <span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">&quot;status should be updated&quot;</span>)
-            }
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
-        }).Should(Succeed())
+
+            _, err := controllerReconciler.Reconcile(ctx, reconcile.Request{
+                NamespacedName: typeNamespacedName,
+            })
+            Expect(err).NotTo(HaveOccurred())
+
+            By(<span class="hljs-string">"Making sure the ConfigMap created successfully"</span>)
+            cm := corev1.ConfigMap{}
+            err = k8sClient.Get(ctx, client.ObjectKey{Namespace: testNamespace, Name: <span class="hljs-string">"markdowns-sample"</span>}, &amp;cm)
+            Expect(err).NotTo(HaveOccurred())
+            Expect(cm.Data).Should(HaveKey(<span class="hljs-string">"SUMMARY.md"</span>))
+            Expect(cm.Data).Should(HaveKey(<span class="hljs-string">"page1.md"</span>))
+
+            By(<span class="hljs-string">"Making sure the Deployment created successfully"</span>)
+            dep := appsv1.Deployment{}
+            err = k8sClient.Get(ctx, client.ObjectKey{Namespace: testNamespace, Name: <span class="hljs-string">"viewer-sample"</span>}, &amp;dep)
+            Expect(err).NotTo(HaveOccurred())
+            Expect(dep.Spec.Replicas).Should(Equal(ptr.To[<span class="hljs-type">int32</span>](<span class="hljs-number">3</span>)))
+            Expect(dep.Spec.Template.Spec.Containers[<span class="hljs-number">0</span>].Image).Should(Equal(<span class="hljs-string">"peaceiris/mdbook:0.4.10"</span>))
+
+            By(<span class="hljs-string">"Making sure the Service created successfully"</span>)
+            svc := corev1.Service{}
+            err = k8sClient.Get(ctx, client.ObjectKey{Namespace: testNamespace, Name: <span class="hljs-string">"viewer-sample"</span>}, &amp;svc)
+            Expect(err).NotTo(HaveOccurred())
+            Expect(svc.Spec.Ports[<span class="hljs-number">0</span>].Port).Should(Equal(<span class="hljs-type">int32</span>(<span class="hljs-number">80</span>)))
+            Expect(svc.Spec.Ports[<span class="hljs-number">0</span>].TargetPort).Should(Equal(intstr.FromInt32(<span class="hljs-number">3000</span>)))
+
+            By(<span class="hljs-string">"Making sure the Status updated successfully"</span>)
+            updated := viewv1.MarkdownView{}
+            err = k8sClient.Get(ctx, typeNamespacedName, &amp;updated)
+            Expect(err).NotTo(HaveOccurred())
+            Expect(updated.Status).ShouldNot(BeEmpty(), <span class="hljs-string">"status should be updated"</span>)
+        })
     })
 })
-
-<span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">newMarkdownView</span><span class="hljs-params">()</span></span> *viewv1.MarkdownView {
-    <span class="hljs-keyword">return</span> &amp;viewv1.MarkdownView{
-        ObjectMeta: metav1.ObjectMeta{
-            Name:      <span class="hljs-string">&quot;sample&quot;</span>,
-            Namespace: <span class="hljs-string">&quot;test&quot;</span>,
-        },
-        Spec: viewv1.MarkdownViewSpec{
-            Markdowns: <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>{
-                <span class="hljs-string">&quot;SUMMARY.md&quot;</span>: <span class="hljs-string">`summary`</span>,
-                <span class="hljs-string">&quot;page1.md&quot;</span>:   <span class="hljs-string">`page1`</span>,
-            },
-            Replicas:    <span class="hljs-number">3</span>,
-            ViewerImage: <span class="hljs-string">&quot;peaceiris/mdbook:0.4.10&quot;</span>,
-        },
-    }
-}
 </code></pre>
-<p>まずは各テストの実行前と実行後に呼び出される<code>BeforeEach</code>と<code>AfterEach</code>を実装します。</p>
-<p><code>BeforeEach</code>では、テストで利用したリソースをすべて削除します。 (なお、Serviceリソースは<code>DeleteAllOf</code>をサポートしていないため、1つずつ削除しています。)
-その後、MarkdownViewReconcilerを作成し、Reconciliation Loop処理を開始します。</p>
-<p><code>AfterEach</code>では、<code>BeforeEach</code>で起動したReconciliation Loop処理を停止します。</p>
-<p>次に<code>It</code>を利用してテストケースを記述します。</p>
-<p>これらのテストケースでは<code>k8sClient</code>を利用してKubernetesクラスターにMarkdownViewリソースを作成し、
-その後に期待するリソースが作成されていることを確認しています。
-Reconcile処理はテストコードとは非同期に動くため、Eventually関数を利用してリソースが作成できるまで待つようにしています。</p>
-<p>なお、<code>newMarkdownView</code>はテスト用のMarkdownViewリソースを作成するための補助関数です。</p>
+<p>まずは各テストの実行前と実行後に呼び出される<code>BeforeEach</code>と<code>AfterEach</code>を実装します。
+<code>BeforeEach</code>では、テスト用のNamespaceとMarkdownViewリソースを作成しています。
+<code>AfterEach</code>では、テストで利用したリソースを削除していmます。 (なお、Serviceリソースは<code>DeleteAllOf</code>をサポートしていないため、1つずつ削除しています。)</p>
+<p>次に<code>It</code>を利用してテストケースを記述します。
+このテストケースでは<code>k8sClient</code>を利用してKubernetesクラスターにMarkdownViewリソースを作成し、その後に期待するリソースが作成されていることを確認しています。</p>
 <p>最後のテストではStatusが更新されることを確認しています。
 本来はここでStatusがHealthyになることをテストすべきでしょう。
 しかし、Envtestではcontroller-managerが存在しないためDeploymentがReadyにならず、MarkdownViewのStatusもHealthyになることはありません。
@@ -734,9 +747,12 @@ Reconcile処理はテストコードとは非同期に動くため、Eventually�
 Envtestは実際のKubernetesクラスターとは異なるということを意識してテストを書くようにしましょう。</p>
 <p>テストが書けたら、<code>make test</code>で実行してみましょう。
 テストに成功すると以下のようにokと表示されます。</p>
-<pre><code class="lang-console">?       github.com/zoetrope/markdown-view       [no test files]
-ok      github.com/zoetrope/markdown-view/api/v1        6.957s  coverage: 51.6% of statements
-ok      github.com/zoetrope/markdown-view/controllers   8.319s  coverage: 85.3% of statements
+<pre><code class="lang-console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">make <span class="hljs-built_in">test</span></span>
+KUBEBUILDER_ASSETS="~/markdown-view/bin/k8s/1.30.0-linux-amd64" go test $(go list ./... | grep -v /e2e) -coverprofile cover.out
+        github.com/zoetrope/markdown-view/cmd           coverage: 0.0% of statements
+        github.com/zoetrope/markdown-view/test/utils            coverage: 0.0% of statements
+ok      github.com/zoetrope/markdown-view/api/v1        5.573s  coverage: 51.6% of statements
+ok      github.com/zoetrope/markdown-view/internal/controller   6.136s  coverage: 69.6% of statements
 </code></pre>
 
                                 
@@ -781,7 +797,7 @@ ok      github.com/zoetrope/markdown-view/controllers   8.319s  coverage: 85.3% 
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"コントローラーのテスト","level":"1.4.3","depth":2,"next":{"title":"Webhookの実装","level":"1.4.4","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"Reconcileの実装","level":"1.4.2","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/ikezoe/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2023-08-29T06:12:05.500Z","type":"markdown"},"gitbook":{"version":"5.0.0","time":"2023-08-29T06:12:17.862Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"コントローラーのテスト(Envtest)","level":"1.4.4","depth":2,"next":{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"Reconcileの実装","level":"1.4.3","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2024-08-16T09:19:47.377Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-16T09:20:13.853Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
