@@ -23,8 +23,10 @@ Kubebuilderが生成したプロジェクトには、以下のようにいくつ
 1つは、Envtestと呼ばれるツールを利用したカスタムコントローラーやWebhookの簡易的なテストです。
 もう1つは、本物のKubernetesクラスターを利用したE2E(End-to-End)テストです。
 
-なおEnvtestとE2Eテストのコードでは、[Ginkgo](https://github.com/onsi/ginkgo)というテストフレームワークを利用しています。
-このフレームワークの利用方法については[Ginkgoのドキュメント](https://onsi.github.io/ginkgo/)を御覧ください。
+なおEnvtestとE2Eテストのコードでは、[Ginkgo](https://onsi.github.io/ginkgo/)/[Gomega](https://onsi.github.io/gomega/)というテストフレームワークを利用しています。
+以下のBookにGinkgo/Gomegaを利用したカスタムコントローラーやWebhookのテストの記述方法をまとめていますので、参考にしてください。
+
+- [Ginkgo/GomegaによるKubernetes Operatorのテスト手法](https://zenn.dev/zoetro/books/testing-kubernetes-operator)
 
 ## Envtest
 

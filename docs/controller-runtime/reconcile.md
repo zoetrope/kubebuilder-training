@@ -98,6 +98,12 @@ Reconcileの引数として渡ってきたRequestを利用して、対象とな�
 
 最後に`updateStatus`でステータスの更新をおこないます。
 
+また、Reconcileの中では`logger := log.FromContext(ctx)`を呼び出してコンテキストからロガーを取得し、ログの出力をおこなうことができます。
+このロガーを利用すると、Reconcile対象のオブジェクトのNamespaceやNameなどの情報が自動的にログに埋め込まれます。
+以下の記事に詳しく記載しましたので、参考にしてください。
+
+- [controller-runtimeのロギング機能](https://zenn.dev/zoetro/articles/760346baab7e24)
+
 ### reconcileConfigMap
 
 `reconcileConfigMap`では、MarkdownViewリソースに記述されたMarkdownの内容をもとに、ConfigMapリソースを作成します。

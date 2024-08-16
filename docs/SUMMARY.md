@@ -11,6 +11,7 @@
   * [Webhookの雛形作成](kubebuilder/webhook.md)
   * [カスタムコントローラーの動作確認](kubebuilder/kind.md)
   <!-- * [手軽な動作確認](kubebuilder/debug.md) -->
+  * [カスタムコントローラーのリリース](kubebuilder/release.md)
 * [controller-tools](controller-tools/README.md)
   * [CRDマニフェストの生成](controller-tools/crd.md)
   <!-- * [CRDマニフェストの生成(応用編)](controller-tools/advanced_crd.md) -->
