@@ -563,6 +563,10 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 <code>MarkdownViewSpec</code>と<code>MarkdownViewStatus</code>は<code>MarkdownView</code>構造体を構成する要素です。この2つの構造体を書き換えてカスタムリソースを定義していきます。</p>
 <p>一般的にカスタムリソースの<code>Spec</code>はユーザーが記述するもので、システムのあるべき状態をユーザーからコントローラーに伝える用途として利用されます。
 一方の<code>Status</code>は、コントローラーが処理した結果をユーザーや他のシステムに伝える用途として利用されます。</p>
+<p>なお、CRDを利用してKubernetes APIを拡張する際には、以下の規約に従うことが推奨されています。一度目を通しておくとよいでしょう。</p>
+<ul>
+<li><a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank">Kubernetes API Conventions</a></li>
+</ul>
 <h2 id="markdownviewspec">MarkdownViewSpec</h2>
 <p>さっそく<code>MarkdownViewSpec</code>を書き換えていきましょう。</p>
 <p><a href="../introduction/sample.html">作成するカスタムコントローラ</a>において、MarkdownViewコントローラーが扱うカスタムリソースとして下記のようなマニフェストを例示しました。</p>
@@ -662,17 +666,25 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 <p><a id="markdownview_types.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/20_manifests/api/v1/markdownview_types.go" target="_blank">markdownview_types.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">// MarkdownViewStatus defines the observed state of MarkdownView</span>
-<span class="hljs-comment">// +kubebuilder:validation:Enum=NotReady;Available;Healthy</span>
-<span class="hljs-keyword">type</span> MarkdownViewStatus <span class="hljs-type">string</span>
+<span class="hljs-keyword">type</span> MarkdownViewStatus <span class="hljs-keyword">struct</span> {
+    <span class="hljs-comment">// Conditions represent the latest available observations of an object's state</span>
+    <span class="hljs-comment">// +listType=map</span>
+    <span class="hljs-comment">// +listMapKey=type</span>
+    <span class="hljs-comment">// +optional</span>
+    Conditions []metav1.Condition <span class="hljs-string">`json:"conditions,omitempty"`</span>
+}
 
 <span class="hljs-keyword">const</span> (
-    MarkdownViewNotReady  = MarkdownViewStatus(<span class="hljs-string">"NotReady"</span>)
-    MarkdownViewAvailable = MarkdownViewStatus(<span class="hljs-string">"Available"</span>)
-    MarkdownViewHealthy   = MarkdownViewStatus(<span class="hljs-string">"Healthy"</span>)
+    TypeMarkdownViewAvailable = <span class="hljs-string">"Available"</span>
+    TypeMarkdownViewDegraded  = <span class="hljs-string">"Degraded"</span>
 )
 </code></pre>
-<p>今回のカスタムコントローラーでは、<code>MarkdownViewStatus</code>を文字列型とし、<code>NotReady</code>,<code>Available</code>,<code>Healty</code>の3つの状態をあらわすようにしました。</p>
-<p><code>//+kubebuilder:validation:Enum</code>を利用すると、指定した文字列以外の値を設定できないようになります。</p>
+<p>カスタムリソースの状態を表現するには、<a href="https://pkg.go.dev/k8s.io/apimachinery/pkg/apis/meta/v1" target="_blank"><code>metav1.Condition</code></a>を利用することが一般的です。
+今回のカスタムコントローラーでは、ConditionのTypeとして<code>Available</code>,<code>Degraded</code>の3つの状態を表現できるようにしました。</p>
+<ul>
+<li>Available: レンダリングされたMarkdownが閲覧可能な状態</li>
+<li>Degraded: Reconcile処理に失敗した状態</li>
+</ul>
 <h2 id="markdownview">MarkdownView</h2>
 <p>続いて<code>MarkdownView</code>構造体のマーカーを見てみましょう。</p>
 <blockquote>
@@ -680,16 +692,15 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-comment">// +kubebuilder:object:root=true</span>
 <span class="hljs-comment">// +kubebuilder:subresource:status</span>
-<span class="hljs-comment">// +kubebuilder:printcolumn:name="REPLICAS",type="integer",JSONPath=".spec.replicas"</span>
-<span class="hljs-comment">// +kubebuilder:printcolumn:name="STATUS",type="string",JSONPath=".status"</span>
+<span class="hljs-comment">// +kubebuilder:printcolumn:name="Replicas",type="integer",JSONPath=".spec.replicas"</span>
+<span class="hljs-comment">// +kubebuilder:printcolumn:name="Available",type="string",JSONPath=".status.conditions[?(@.type==\"Available\")].status"</span>
 
 <span class="hljs-comment">// MarkdownView is the Schema for the markdownviews API</span>
 <span class="hljs-keyword">type</span> MarkdownView <span class="hljs-keyword">struct</span> {
     metav1.TypeMeta   <span class="hljs-string">`json:",inline"`</span>
     metav1.ObjectMeta <span class="hljs-string">`json:"metadata,omitempty"`</span>
 
-    Spec MarkdownViewSpec <span class="hljs-string">`json:"spec,omitempty"`</span>
-    <span class="hljs-comment">// +kubebuilder:default=NotReady</span>
+    Spec   MarkdownViewSpec   <span class="hljs-string">`json:"spec,omitempty"`</span>
     Status MarkdownViewStatus <span class="hljs-string">`json:"status,omitempty"`</span>
 }
 </code></pre>
@@ -697,7 +708,6 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 ここではさらに<code>+kubebuilder:printcolumn</code>を追加することとします。</p>
 <p><code>+kubebuilder:object:root=true</code>は、<code>MarkdownView</code>構造体がカスタムリソースのrootオブジェクトであることを表すマーカーです。</p>
 <p><code>+kubebuilder:subresource</code>と<code>+kubebuilder:printcolumn</code>マーカーについて、以降で解説します。</p>
-<p>また、<code>Status</code>フィールドに<code>+kubebuilder:default=NotReady</code>マーカーを付与することで、初期値を<code>NotReady</code>に設定しています。</p>
 <h3 id="subresource">subresource</h3>
 <p><code>+kubebuilder:subresource:status</code>というマーカーを追加すると、<code>status</code>フィールドがサブリソースとして扱われるようになります。</p>
 <p>Kubernetesでは、すべてのリソースはそれぞれ独立したAPIエンドポイントを持っており、APIサーバー経由でリソースの取得・作成・変更・削除をおこなうことができます。</p>
@@ -713,8 +723,8 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 例えば、<code>JSONPath=".spec.replicas"</code>と記述すると、kubectl getしたときに<code>.spec.replicas</code>の値が表示されます。</p>
 <p>kubectlでMarkdownViewリソースを取得すると、下記のようにREPLICASやSTATUSの値が表示されていることが確認できます。</p>
 <pre><code>$ kubectl get markdownview
-NAME                  REPLICAS   STATUS
-MarkdownView-sample   1          NotReady
+NAME                  REPLICAS   AVAILABLE
+MarkdownView-sample   1
 </code></pre><h2 id="crdマニフェストの生成">CRDマニフェストの生成</h2>
 <p>最後にGoで記述したstructからCRDを生成してみましょう。</p>
 <p>以下のコマンドを実行してください。</p>
@@ -742,10 +752,10 @@ MarkdownView-sample   1          NotReady
   <span class="hljs-attr">versions:</span>
   <span class="hljs-bullet">-</span> <span class="hljs-attr">additionalPrinterColumns:</span>
     <span class="hljs-bullet">-</span> <span class="hljs-attr">jsonPath:</span> <span class="hljs-string">.spec.replicas</span>
-      <span class="hljs-attr">name:</span> <span class="hljs-string">REPLICAS</span>
+      <span class="hljs-attr">name:</span> <span class="hljs-string">Replicas</span>
       <span class="hljs-attr">type:</span> <span class="hljs-string">integer</span>
-    <span class="hljs-bullet">-</span> <span class="hljs-attr">jsonPath:</span> <span class="hljs-string">.status</span>
-      <span class="hljs-attr">name:</span> <span class="hljs-string">STATUS</span>
+    <span class="hljs-bullet">-</span> <span class="hljs-attr">jsonPath:</span> <span class="hljs-string">.status.conditions[?(@.type=="Available")].status</span>
+      <span class="hljs-attr">name:</span> <span class="hljs-string">Available</span>
       <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
     <span class="hljs-attr">name:</span> <span class="hljs-string">v1</span>
     <span class="hljs-attr">schema:</span>
@@ -791,13 +801,83 @@ MarkdownView-sample   1          NotReady
                 <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
             <span class="hljs-attr">type:</span> <span class="hljs-string">object</span>
           <span class="hljs-attr">status:</span>
-            <span class="hljs-attr">default:</span> <span class="hljs-string">NotReady</span>
             <span class="hljs-attr">description:</span> <span class="hljs-string">MarkdownViewStatus</span> <span class="hljs-string">defines</span> <span class="hljs-string">the</span> <span class="hljs-string">observed</span> <span class="hljs-string">state</span> <span class="hljs-string">of</span> <span class="hljs-string">MarkdownView</span>
-            <span class="hljs-attr">enum:</span>
-            <span class="hljs-bullet">-</span> <span class="hljs-string">NotReady</span>
-            <span class="hljs-bullet">-</span> <span class="hljs-string">Available</span>
-            <span class="hljs-bullet">-</span> <span class="hljs-string">Healthy</span>
-            <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
+            <span class="hljs-attr">properties:</span>
+              <span class="hljs-attr">conditions:</span>
+                <span class="hljs-attr">description:</span> <span class="hljs-string">Conditions</span> <span class="hljs-string">represent</span> <span class="hljs-string">the</span> <span class="hljs-string">latest</span> <span class="hljs-string">available</span> <span class="hljs-string">observations</span>
+                  <span class="hljs-string">of</span> <span class="hljs-string">an</span> <span class="hljs-string">object's</span> <span class="hljs-string">state</span>
+                <span class="hljs-attr">items:</span>
+                  <span class="hljs-attr">description:</span> <span class="hljs-string">"Condition contains details for one aspect of the current
+                    state of this API Resource.\n---\nThis struct is intended for
+                    direct use as an array at the field path .status.conditions.  For
+                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
+                    observations of a foo's current state.\n\t    // Known .status.conditions.type
+                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
+                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
+                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
+                    \   // other fields\n\t}"</span>
+                  <span class="hljs-attr">properties:</span>
+                    <span class="hljs-attr">lastTransitionTime:</span>
+                      <span class="hljs-attr">description:</span> <span class="hljs-string">|-
+                        lastTransitionTime is the last time the condition transitioned from one status to another.
+                        This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
+</span>                      <span class="hljs-attr">format:</span> <span class="hljs-string">date-time</span>
+                      <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
+                    <span class="hljs-attr">message:</span>
+                      <span class="hljs-attr">description:</span> <span class="hljs-string">|-
+                        message is a human readable message indicating details about the transition.
+                        This may be an empty string.
+</span>                      <span class="hljs-attr">maxLength:</span> <span class="hljs-number">32768</span>
+                      <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
+                    <span class="hljs-attr">observedGeneration:</span>
+                      <span class="hljs-attr">description:</span> <span class="hljs-string">|-
+                        observedGeneration represents the .metadata.generation that the condition was set based upon.
+                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                        with respect to the current state of the instance.
+</span>                      <span class="hljs-attr">format:</span> <span class="hljs-string">int64</span>
+                      <span class="hljs-attr">minimum:</span> <span class="hljs-number">0</span>
+                      <span class="hljs-attr">type:</span> <span class="hljs-string">integer</span>
+                    <span class="hljs-attr">reason:</span>
+                      <span class="hljs-attr">description:</span> <span class="hljs-string">|-
+                        reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                        Producers of specific condition types may define expected values and meanings for this field,
+                        and whether the values are considered a guaranteed API.
+                        The value should be a CamelCase string.
+                        This field may not be empty.
+</span>                      <span class="hljs-attr">maxLength:</span> <span class="hljs-number">1024</span>
+                      <span class="hljs-attr">minLength:</span> <span class="hljs-number">1</span>
+                      <span class="hljs-attr">pattern:</span> <span class="hljs-string">^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$</span>
+                      <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
+                    <span class="hljs-attr">status:</span>
+                      <span class="hljs-attr">description:</span> <span class="hljs-string">status</span> <span class="hljs-string">of</span> <span class="hljs-string">the</span> <span class="hljs-string">condition,</span> <span class="hljs-string">one</span> <span class="hljs-string">of</span> <span class="hljs-literal">True</span><span class="hljs-string">,</span> <span class="hljs-literal">False</span><span class="hljs-string">,</span> <span class="hljs-string">Unknown.</span>
+                      <span class="hljs-attr">enum:</span>
+                      <span class="hljs-bullet">-</span> <span class="hljs-string">"True"</span>
+                      <span class="hljs-bullet">-</span> <span class="hljs-string">"False"</span>
+                      <span class="hljs-bullet">-</span> <span class="hljs-string">Unknown</span>
+                      <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
+                    <span class="hljs-attr">type:</span>
+                      <span class="hljs-attr">description:</span> <span class="hljs-string">|-
+                        type of condition in CamelCase or in foo.example.com/CamelCase.
+                        ---
+                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+                        useful (see .node.status.conditions), the ability to deconflict is important.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+</span>                      <span class="hljs-attr">maxLength:</span> <span class="hljs-number">316</span>
+                      <span class="hljs-attr">pattern:</span> <span class="hljs-string">^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$</span>
+                      <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
+                  <span class="hljs-attr">required:</span>
+                  <span class="hljs-bullet">-</span> <span class="hljs-string">lastTransitionTime</span>
+                  <span class="hljs-bullet">-</span> <span class="hljs-string">message</span>
+                  <span class="hljs-bullet">-</span> <span class="hljs-string">reason</span>
+                  <span class="hljs-bullet">-</span> <span class="hljs-string">status</span>
+                  <span class="hljs-bullet">-</span> <span class="hljs-string">type</span>
+                  <span class="hljs-attr">type:</span> <span class="hljs-string">object</span>
+                <span class="hljs-attr">type:</span> <span class="hljs-string">array</span>
+                <span class="hljs-attr">x-kubernetes-list-map-keys:</span>
+                <span class="hljs-bullet">-</span> <span class="hljs-string">type</span>
+                <span class="hljs-attr">x-kubernetes-list-type:</span> <span class="hljs-string">map</span>
+            <span class="hljs-attr">type:</span> <span class="hljs-string">object</span>
         <span class="hljs-attr">type:</span> <span class="hljs-string">object</span>
     <span class="hljs-attr">served:</span> <span class="hljs-literal">true</span>
     <span class="hljs-attr">storage:</span> <span class="hljs-literal">true</span>
@@ -847,7 +927,7 @@ MarkdownView-sample   1          NotReady
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"next":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},"previous":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/crd.md","mtime":"2024-08-16T09:19:47.377Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-16T09:24:24.944Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"next":{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},"previous":{"title":"controller-tools","level":"1.3","depth":1,"path":"controller-tools/README.md","ref":"controller-tools/README.md","articles":[{"title":"CRDマニフェストの生成","level":"1.3.1","depth":2,"path":"controller-tools/crd.md","ref":"controller-tools/crd.md","articles":[]},{"title":"RBACマニフェストの生成","level":"1.3.2","depth":2,"path":"controller-tools/rbac.md","ref":"controller-tools/rbac.md","articles":[]},{"title":"Webhookマニフェストの生成","level":"1.3.3","depth":2,"path":"controller-tools/webhook.md","ref":"controller-tools/webhook.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-tools/crd.md","mtime":"2024-08-18T13:55:49.904Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-18T14:15:30.407Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

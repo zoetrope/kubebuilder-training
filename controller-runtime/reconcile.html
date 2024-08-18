@@ -581,15 +581,21 @@ RequeueAfterを指定した場合は、指定した時間が経過したあと�
 
     err = r.reconcileConfigMap(ctx, mdView)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> ctrl.Result{}, err
+        result, err2 := r.updateStatus(ctx, mdView)
+        logger.Error(err2, <span class="hljs-string">"unable to update status"</span>)
+        <span class="hljs-keyword">return</span> result, err
     }
     err = r.reconcileDeployment(ctx, mdView)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> ctrl.Result{}, err
+        result, err2 := r.updateStatus(ctx, mdView)
+        logger.Error(err2, <span class="hljs-string">"unable to update status"</span>)
+        <span class="hljs-keyword">return</span> result, err
     }
     err = r.reconcileService(ctx, mdView)
     <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-        <span class="hljs-keyword">return</span> ctrl.Result{}, err
+        result, err2 := r.updateStatus(ctx, mdView)
+        logger.Error(err2, <span class="hljs-string">"unable to update status"</span>)
+        <span class="hljs-keyword">return</span> result, err
     }
 
     <span class="hljs-keyword">return</span> r.updateStatus(ctx, mdView)
@@ -602,7 +608,7 @@ RequeueAfterを指定した場合は、指定した時間が経過したあと�
 <code>DeletionTimestamp</code>がゼロでない場合は、対象のリソースの削除が開始されたということです。(詳しくは<a href="deletion.html">リソースの削除</a>を参照してください。)
 この場合もすぐに関数を抜けましょう。</p>
 <p>そして、<code>reconcileConfigMap</code>, <code>reconcileDeployment</code>, <code>reconcileService</code>で、それぞれConfigMap, Deployment, Serviceリソースの作成・更新処理をおこないます。</p>
-<p>最後に<code>updateStatus</code>でステータスの更新をおこないます。</p>
+<p>エラーが発生した場合と、Reconcile処理の最後に<code>updateStatus</code>でステータスの更新をおこないます。</p>
 <p>また、Reconcileの中では<code>logger := log.FromContext(ctx)</code>を呼び出してコンテキストからロガーを取得し、ログの出力をおこなうことができます。
 このロガーを利用すると、Reconcile対象のオブジェクトのNamespaceやNameなどの情報が自動的にログに埋め込まれます。
 以下の記事に詳しく記載しましたので、参考にしてください。</p>
@@ -824,36 +830,87 @@ DeploymentやServiceリソースはフィールド数が多いこともあり、
 <p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/40_reconcile/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
 <pre><code class="lang-golang"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(r *MarkdownViewReconciler)</span></span> updateStatus(ctx context.Context, mdView viewv1.MarkdownView) (ctrl.Result, <span class="hljs-type">error</span>) {
-    <span class="hljs-keyword">var</span> dep appsv1.Deployment
-    err := r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: <span class="hljs-string">"viewer-"</span> + mdView.Name}, &amp;dep)
-    <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+    meta.SetStatusCondition(&amp;mdView.Status.Conditions, metav1.Condition{
+        Type:   viewv1.TypeMarkdownViewAvailable,
+        Status: metav1.ConditionTrue,
+        Reason: <span class="hljs-string">"OK"</span>,
+    })
+    meta.SetStatusCondition(&amp;mdView.Status.Conditions, metav1.Condition{
+        Type:   viewv1.TypeMarkdownViewDegraded,
+        Status: metav1.ConditionFalse,
+        Reason: <span class="hljs-string">"OK"</span>,
+    })
+
+    <span class="hljs-keyword">var</span> cm corev1.ConfigMap
+    err := r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: <span class="hljs-string">"markdowns-"</span> + mdView.Name}, &amp;cm)
+    <span class="hljs-keyword">if</span> errors.IsNotFound(err) {
+        meta.SetStatusCondition(&amp;mdView.Status.Conditions, metav1.Condition{
+            Type:    viewv1.TypeMarkdownViewDegraded,
+            Status:  metav1.ConditionTrue,
+            Reason:  <span class="hljs-string">"Reconciling"</span>,
+            Message: <span class="hljs-string">"ConfigMap not found"</span>,
+        })
+        meta.SetStatusCondition(&amp;mdView.Status.Conditions, metav1.Condition{
+            Type:   viewv1.TypeMarkdownViewAvailable,
+            Status: metav1.ConditionFalse,
+            Reason: <span class="hljs-string">"Reconciling"</span>,
+        })
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
         <span class="hljs-keyword">return</span> ctrl.Result{}, err
     }
 
-    <span class="hljs-keyword">var</span> status viewv1.MarkdownViewStatus
+    <span class="hljs-keyword">var</span> svc corev1.Service
+    err = r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: <span class="hljs-string">"viewer-"</span> + mdView.Name}, &amp;svc)
+    <span class="hljs-keyword">if</span> errors.IsNotFound(err) {
+        meta.SetStatusCondition(&amp;mdView.Status.Conditions, metav1.Condition{
+            Type:    viewv1.TypeMarkdownViewDegraded,
+            Status:  metav1.ConditionTrue,
+            Reason:  <span class="hljs-string">"Reconciling"</span>,
+            Message: <span class="hljs-string">"Service not found"</span>,
+        })
+        meta.SetStatusCondition(&amp;mdView.Status.Conditions, metav1.Condition{
+            Type:   viewv1.TypeMarkdownViewAvailable,
+            Status: metav1.ConditionFalse,
+            Reason: <span class="hljs-string">"Reconciling"</span>,
+        })
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
+    }
+
+    <span class="hljs-keyword">var</span> dep appsv1.Deployment
+    err = r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: <span class="hljs-string">"viewer-"</span> + mdView.Name}, &amp;dep)
+    <span class="hljs-keyword">if</span> errors.IsNotFound(err) {
+        meta.SetStatusCondition(&amp;mdView.Status.Conditions, metav1.Condition{
+            Type:    viewv1.TypeMarkdownViewDegraded,
+            Status:  metav1.ConditionTrue,
+            Reason:  <span class="hljs-string">"Reconciling"</span>,
+            Message: <span class="hljs-string">"Deployment not found"</span>,
+        })
+        meta.SetStatusCondition(&amp;mdView.Status.Conditions, metav1.Condition{
+            Type:   viewv1.TypeMarkdownViewAvailable,
+            Status: metav1.ConditionFalse,
+            Reason: <span class="hljs-string">"Reconciling"</span>,
+        })
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
+        <span class="hljs-keyword">return</span> ctrl.Result{}, err
+    }
+
+    result := ctrl.Result{}
     <span class="hljs-keyword">if</span> dep.Status.AvailableReplicas == <span class="hljs-number">0</span> {
-        status = viewv1.MarkdownViewNotReady
-    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> dep.Status.AvailableReplicas == mdView.Spec.Replicas {
-        status = viewv1.MarkdownViewHealthy
-    } <span class="hljs-keyword">else</span> {
-        status = viewv1.MarkdownViewAvailable
+        meta.SetStatusCondition(&amp;mdView.Status.Conditions, metav1.Condition{
+            Type:    viewv1.TypeMarkdownViewAvailable,
+            Status:  metav1.ConditionFalse,
+            Reason:  <span class="hljs-string">"Unavailable"</span>,
+            Message: <span class="hljs-string">"AvailableReplicas is 0"</span>,
+        })
+        result = ctrl.Result{Requeue: <span class="hljs-literal">true</span>}
     }
 
-    <span class="hljs-keyword">if</span> mdView.Status != status {
-        mdView.Status = status
-        err = r.Status().Update(ctx, &amp;mdView)
-        <span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> {
-            <span class="hljs-keyword">return</span> ctrl.Result{}, err
-        }
-    }
-
-    <span class="hljs-keyword">if</span> mdView.Status != viewv1.MarkdownViewHealthy {
-        <span class="hljs-keyword">return</span> ctrl.Result{Requeue: <span class="hljs-literal">true</span>}, <span class="hljs-literal">nil</span>
-    }
-    <span class="hljs-keyword">return</span> ctrl.Result{}, <span class="hljs-literal">nil</span>
+    err = r.Status().Update(ctx, &amp;mdView)
+    <span class="hljs-keyword">return</span> result, err
 }
 </code></pre>
-<p>ここでは、<code>reconcileDeployment</code>で作成したDeploymentリソースをチェックし、その状態に応じてMarkdownViewリソースの
+<p>ここでは、Reconcile処理で作成したConfigMap, Service, Deploymentリソースをチェックし、その状態に応じてMarkdownViewリソースの
 ステータスを決定しています。</p>
 <h2 id="動作確認">動作確認</h2>
 <p>Reconcile処理の実装が完了したら動作確認してみましょう。
@@ -871,8 +928,8 @@ NAME                                      DATA   AGE
 configmap/markdowns-markdownview-sample   2      177m
 
 $ kubectl get markdownview markdownview-sample
-NAME                  REPLICAS   STATUS
-markdownview-sample   1          Healthy
+NAME                  REPLICAS   AVAILABLE
+markdownview-sample   1          True
 </code></pre><p>次にローカル環境から作成されたサービスにアクセスするため、Port Forwardをおこないます。</p>
 <pre><code>$ kubectl port-forward svc/viewer-markdownview-sample 3000:80
 </code></pre><p>最後にブラウザで<code>http://localhost:3000</code>にアクセスしてください。
@@ -921,7 +978,7 @@ markdownview-sample   1          Healthy
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Reconcileの実装","level":"1.4.3","depth":2,"next":{"title":"コントローラーのテスト(Envtest)","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"previous":{"title":"テスト","level":"1.4.2","depth":2,"path":"controller-runtime/test.md","ref":"controller-runtime/test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/reconcile.md","mtime":"2024-08-16T09:19:47.377Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-16T09:24:24.944Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Reconcileの実装","level":"1.4.3","depth":2,"next":{"title":"コントローラーのテスト(Envtest)","level":"1.4.4","depth":2,"path":"controller-runtime/controller_test.md","ref":"controller-runtime/controller_test.md","articles":[]},"previous":{"title":"テスト","level":"1.4.2","depth":2,"path":"controller-runtime/test.md","ref":"controller-runtime/test.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/reconcile.md","mtime":"2024-08-18T13:58:07.490Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-18T14:15:30.407Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

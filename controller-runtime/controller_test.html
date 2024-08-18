@@ -615,7 +615,6 @@ limitations under the License.
 
 <span class="hljs-keyword">import</span> (
     <span class="hljs-string">"context"</span>
-    <span class="hljs-string">"k8s.io/utils/ptr"</span>
 
     . <span class="hljs-string">"github.com/onsi/ginkgo/v2"</span>
     . <span class="hljs-string">"github.com/onsi/gomega"</span>
@@ -626,6 +625,7 @@ limitations under the License.
     metav1 <span class="hljs-string">"k8s.io/apimachinery/pkg/apis/meta/v1"</span>
     <span class="hljs-string">"k8s.io/apimachinery/pkg/types"</span>
     <span class="hljs-string">"k8s.io/apimachinery/pkg/util/intstr"</span>
+    <span class="hljs-string">"k8s.io/utils/ptr"</span>
     <span class="hljs-string">"sigs.k8s.io/controller-runtime/pkg/client"</span>
     <span class="hljs-string">"sigs.k8s.io/controller-runtime/pkg/reconcile"</span>
 )
@@ -730,7 +730,7 @@ limitations under the License.
             updated := viewv1.MarkdownView{}
             err = k8sClient.Get(ctx, typeNamespacedName, &amp;updated)
             Expect(err).NotTo(HaveOccurred())
-            Expect(updated.Status).ShouldNot(BeEmpty(), <span class="hljs-string">"status should be updated"</span>)
+            Expect(updated.Status.Conditions).ShouldNot(BeEmpty(), <span class="hljs-string">"status should be updated"</span>)
         })
     })
 })
@@ -797,7 +797,7 @@ ok      github.com/zoetrope/markdown-view/internal/controller   6.136s  coverage
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"コントローラーのテスト(Envtest)","level":"1.4.4","depth":2,"next":{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"Reconcileの実装","level":"1.4.3","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2024-08-16T09:19:47.377Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-16T09:24:24.944Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"コントローラーのテスト(Envtest)","level":"1.4.4","depth":2,"next":{"title":"Webhookの実装","level":"1.4.5","depth":2,"path":"controller-runtime/webhook.md","ref":"controller-runtime/webhook.md","articles":[]},"previous":{"title":"Reconcileの実装","level":"1.4.3","depth":2,"path":"controller-runtime/reconcile.md","ref":"controller-runtime/reconcile.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/controller_test.md","mtime":"2024-08-16T09:19:47.377Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-18T14:15:30.407Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
