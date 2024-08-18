@@ -18,7 +18,6 @@ package controller
 
 import (
 	"context"
-	"k8s.io/utils/ptr"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -29,6 +28,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 )
@@ -133,7 +133,7 @@ var _ = Describe("MarkdownView Controller", func() {
 			updated := viewv1.MarkdownView{}
 			err = k8sClient.Get(ctx, typeNamespacedName, &updated)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(updated.Status).ShouldNot(BeEmpty(), "status should be updated")
+			Expect(updated.Status.Conditions).ShouldNot(BeEmpty(), "status should be updated")
 		})
 	})
 })

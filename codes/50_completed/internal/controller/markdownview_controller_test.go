@@ -133,7 +133,7 @@ var _ = Describe("MarkdownView Controller", func() {
 			updated := viewv1.MarkdownView{}
 			err = k8sClient.Get(ctx, typeNamespacedName, &updated)
 			Expect(err).NotTo(HaveOccurred())
-			Expect(updated.Status).ShouldNot(BeEmpty(), "status should be updated")
+			Expect(updated.Status.Conditions).ShouldNot(BeEmpty(), "status should be updated")
 		})
 	})
 })

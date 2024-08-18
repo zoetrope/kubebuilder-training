@@ -96,7 +96,7 @@ Reconcileの引数として渡ってきたRequestを利用して、対象とな�
 
 そして、`reconcileConfigMap`, `reconcileDeployment`, `reconcileService`で、それぞれConfigMap, Deployment, Serviceリソースの作成・更新処理をおこないます。
 
-最後に`updateStatus`でステータスの更新をおこないます。
+エラーが発生した場合と、Reconcile処理の最後に`updateStatus`でステータスの更新をおこないます。
 
 また、Reconcileの中では`logger := log.FromContext(ctx)`を呼び出してコンテキストからロガーを取得し、ログの出力をおこなうことができます。
 このロガーを利用すると、Reconcile対象のオブジェクトのNamespaceやNameなどの情報が自動的にログに埋め込まれます。
@@ -131,7 +131,7 @@ DeploymentやServiceリソースはフィールド数が多いこともあり、
 
 [import:"update-status"](../../codes/40_reconcile/internal/controller/markdownview_controller.go)
 
-ここでは、`reconcileDeployment`で作成したDeploymentリソースをチェックし、その状態に応じてMarkdownViewリソースの
+ここでは、Reconcile処理で作成したConfigMap, Service, Deploymentリソースをチェックし、その状態に応じてMarkdownViewリソースの
 ステータスを決定しています。
 
 ## 動作確認
@@ -154,8 +154,8 @@ NAME                                      DATA   AGE
 configmap/markdowns-markdownview-sample   2      177m
 
 $ kubectl get markdownview markdownview-sample
-NAME                  REPLICAS   STATUS
-markdownview-sample   1          Healthy
+NAME                  REPLICAS   AVAILABLE
+markdownview-sample   1          True
 ```
 
 次にローカル環境から作成されたサービスにアクセスするため、Port Forwardをおこないます。

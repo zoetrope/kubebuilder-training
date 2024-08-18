@@ -52,13 +52,17 @@ type MarkdownViewSpec struct {
 //! [status]
 
 // MarkdownViewStatus defines the observed state of MarkdownView
-// +kubebuilder:validation:Enum=NotReady;Available;Healthy
-type MarkdownViewStatus string
+type MarkdownViewStatus struct {
+	// Conditions represent the latest available observations of an object's state
+	// +listType=map
+	// +listMapKey=type
+	// +optional
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
+}
 
 const (
-	MarkdownViewNotReady  = MarkdownViewStatus("NotReady")
-	MarkdownViewAvailable = MarkdownViewStatus("Available")
-	MarkdownViewHealthy   = MarkdownViewStatus("Healthy")
+	TypeMarkdownViewAvailable = "Available"
+	TypeMarkdownViewDegraded  = "Degraded"
 )
 
 //! [status]
@@ -66,16 +70,15 @@ const (
 //! [markdown-view]
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
-// +kubebuilder:printcolumn:name="REPLICAS",type="integer",JSONPath=".spec.replicas"
-// +kubebuilder:printcolumn:name="STATUS",type="string",JSONPath=".status"
+// +kubebuilder:printcolumn:name="Replicas",type="integer",JSONPath=".spec.replicas"
+// +kubebuilder:printcolumn:name="Available",type="string",JSONPath=".status.conditions[?(@.type==\"Available\")].status"
 
 // MarkdownView is the Schema for the markdownviews API
 type MarkdownView struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec MarkdownViewSpec `json:"spec,omitempty"`
-	// +kubebuilder:default=NotReady
+	Spec   MarkdownViewSpec   `json:"spec,omitempty"`
 	Status MarkdownViewStatus `json:"status,omitempty"`
 }
 

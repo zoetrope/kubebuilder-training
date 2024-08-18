@@ -74,7 +74,6 @@ controller-runtimeが提供するメトリクスだけでなく、カスタム�
 詳しくは[Prometheusのドキュメント](https://prometheus.io/docs/instrumenting/writing_exporters/)を参照してください。
 
 ここではMarkdownViewリソースのステータスをメトリクスとして公開してみましょう。
-MarkdownViewには3種類のステータスがあるので、Gauge Vectorも3つ用意します。
 
 [import, title="metrics.go"](../../codes/50_completed/internal/controller/metrics.go)
 
@@ -102,13 +101,7 @@ $ curl localhost:8080/metrics
 
 # HELP markdownview_available The cluster status about available condition
 # TYPE markdownview_available gauge
-markdownview_available{name="markdownview-sample",namespace="markdownview-sample"} 0
-# HELP markdownview_healthy The cluster status about healthy condition
-# TYPE markdownview_healthy gauge
-markdownview_healthy{name="markdownview-sample",namespace="markdownview-sample"} 1
-# HELP markdownview_notready The cluster status about not ready condition
-# TYPE markdownview_notready gauge
-markdownview_notready{name="markdownview-sample",namespace="markdownview-sample"} 0
+markdownview_available{name="markdownview-sample",namespace="markdownview-sample"} 1
 ```
 
 ## Grafanaでの可視化
