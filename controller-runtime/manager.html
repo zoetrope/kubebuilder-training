@@ -656,7 +656,14 @@ NeedLeaderElectionメソッドで <code>false</code> を返すようにします
 <blockquote>
 <p><a id="markdownview_controller.go" href="https://github.com/zoetrope/kubebuilder-training/blob/master/docs/kubebuilder/../../codes/50_completed/internal/controller/markdownview_controller.go" target="_blank">markdownview_controller.go</a></p>
 </blockquote>
-<pre><code class="lang-golang">r.Recorder.Event(&amp;mdView, corev1.EventTypeNormal, <span class="hljs-string">"Updated"</span>, fmt.Sprintf(<span class="hljs-string">"MarkdownView(%s:%s) updated: %s"</span>, mdView.Namespace, mdView.Name, mdView.Status))
+<pre><code class="lang-golang"><span class="hljs-keyword">if</span> meta.IsStatusConditionFalse(prevStatus.Conditions, viewv1.TypeMarkdownViewDegraded) &amp;&amp;
+    meta.IsStatusConditionTrue(mdView.Status.Conditions, viewv1.TypeMarkdownViewDegraded) {
+    r.Recorder.Event(&amp;mdView, corev1.EventTypeWarning, <span class="hljs-string">"Degraded"</span>, fmt.Sprintf(<span class="hljs-string">"MarkdownView(%s:%s) degraded"</span>, mdView.Namespace, mdView.Name))
+}
+<span class="hljs-keyword">if</span> meta.IsStatusConditionFalse(prevStatus.Conditions, viewv1.TypeMarkdownViewAvailable) &amp;&amp;
+    meta.IsStatusConditionTrue(mdView.Status.Conditions, viewv1.TypeMarkdownViewAvailable) {
+    r.Recorder.Event(&amp;mdView, corev1.EventTypeNormal, <span class="hljs-string">"Available"</span>, fmt.Sprintf(<span class="hljs-string">"MarkdownView(%s:%s) available"</span>, mdView.Namespace, mdView.Name))
+}
 </code></pre>
 <p>このEventリソースは第1引数で指定したリソースに結びいており、そのリソースと同じnamespaceにEventリソースが作成されます。
 カスタムコントローラーがEventリソースを作成できるように、以下のようなRBACのマーカーを追加し、<code>make manifests</code>でマニフェストを更新しておきます。</p>
@@ -665,7 +672,7 @@ NeedLeaderElectionメソッドで <code>false</code> を返すようにします
 <p>コントローラーを実行し、作成したEventリソースを確認してみましょう。なお、Eventリソースはデフォルト設定では1時間経つと消えてしまいます。</p>
 <pre><code>$ kubectl get events -n default
 LAST SEEN   TYPE     REASON                    OBJECT                                             MESSAGE
-29s         Normal   Updated                   markdownview/markdownview-sample                   MarkdownView(default:markdownview-sample) updated: {[{Available True %!s(int64=0) 2024-08-18 14:04:51 +0000 UTC OK } {Degraded False %!s(int64=0) 2024-08-18 14:04:51 +0000 UTC OK }]}
+4s          Normal   Available                 markdownview/markdownview-sample                   MarkdownView(default:markdownview-sample) available
 </code></pre><h2 id="healthprobe">HealthProbe</h2>
 <p>Managerには、ヘルスチェック用のAPIのエンドポイントを作成する機能が用意されています。</p>
 <p>ヘルスチェック機能を利用するには、Managerの作成時に<code>HealthProbeBindAddress</code>でエンドポイントのアドレスを指定します。</p>
@@ -812,7 +819,7 @@ err := r.List(ctx, &amp;cms, client.MatchingFields(<span class="hljs-keyword">ma
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.8","depth":2,"next":{"title":"モニタリング","level":"1.4.9","depth":2,"path":"controller-runtime/monitoring.md","ref":"controller-runtime/monitoring.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.7","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2024-08-18T14:10:10.036Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-18T14:15:30.407Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Manager","level":"1.4.8","depth":2,"next":{"title":"モニタリング","level":"1.4.9","depth":2,"path":"controller-runtime/monitoring.md","ref":"controller-runtime/monitoring.md","articles":[]},"previous":{"title":"リソースの削除","level":"1.4.7","depth":2,"path":"controller-runtime/deletion.md","ref":"controller-runtime/deletion.md","articles":[]},"dir":"ltr"},"config":{"plugins":["include-codeblock"],"root":"./docs","styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"include-codeblock":{"check":false,"edit":false,"lang":"","fixlang":false,"template":"/home/zoetrope/repos/github.com/zoetrope/kubebuilder-training/template.hbs","theme":"chrome","unindent":false},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56},"embedFonts":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"つくって学ぶKubebuilder","gitbook":"*"},"file":{"path":"controller-runtime/manager.md","mtime":"2024-08-18T14:25:56.890Z","type":"markdown"},"gitbook":{"version":"5.1.4","time":"2024-08-18T14:27:52.727Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
