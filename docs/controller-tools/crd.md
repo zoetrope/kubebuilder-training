@@ -18,6 +18,10 @@ controller-genは、これらの構造体とマーカーを頼りにCRDの生成
 一般的にカスタムリソースの`Spec`はユーザーが記述するもので、システムのあるべき状態をユーザーからコントローラーに伝える用途として利用されます。
 一方の`Status`は、コントローラーが処理した結果をユーザーや他のシステムに伝える用途として利用されます。
 
+なお、CRDを利用してKubernetes APIを拡張する際には、以下の規約に従うことが推奨されています。一度目を通しておくとよいでしょう。
+
+- [Kubernetes API Conventions](https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md)
+
 ## MarkdownViewSpec
 
 さっそく`MarkdownViewSpec`を書き換えていきましょう。
@@ -93,9 +97,11 @@ Kubebuilderには`Required`以外にも様々なバリデーションが用意�
 
 [import:"status"](../../codes/20_manifests/api/v1/markdownview_types.go)
 
-今回のカスタムコントローラーでは、`MarkdownViewStatus`を文字列型とし、`NotReady`,`Available`,`Healty`の3つの状態をあらわすようにしました。
+カスタムリソースの状態を表現するには、[`metav1.Condition`](https://pkg.go.dev/k8s.io/apimachinery/pkg/apis/meta/v1)を利用することが一般的です。
+今回のカスタムコントローラーでは、ConditionのTypeとして`Available`,`Degraded`の3つの状態を表現できるようにしました。
 
-`//+kubebuilder:validation:Enum`を利用すると、指定した文字列以外の値を設定できないようになります。
+- Available: レンダリングされたMarkdownが閲覧可能な状態
+- Degraded: Reconcile処理に失敗した状態
 
 ## MarkdownView
 
@@ -109,8 +115,6 @@ Kubebuilderが生成した初期状態では、`+kubebuilder:object:root=true`�
 `+kubebuilder:object:root=true`は、`MarkdownView`構造体がカスタムリソースのrootオブジェクトであることを表すマーカーです。
 
 `+kubebuilder:subresource`と`+kubebuilder:printcolumn`マーカーについて、以降で解説します。
-
-また、`Status`フィールドに`+kubebuilder:default=NotReady`マーカーを付与することで、初期値を`NotReady`に設定しています。
 
 ### subresource
 
@@ -139,8 +143,8 @@ kubectlでMarkdownViewリソースを取得すると、下記のようにREPLICA
 
 ```
 $ kubectl get markdownview
-NAME                  REPLICAS   STATUS
-MarkdownView-sample   1          NotReady
+NAME                  REPLICAS   AVAILABLE
+MarkdownView-sample   1          
 ```
 
 ## CRDマニフェストの生成

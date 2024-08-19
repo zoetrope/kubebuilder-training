@@ -20,10 +20,13 @@ package controller
 import (
 	"context"
 
+	viewv1 "github.com/zoetrope/markdown-view/api/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/meta"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -35,8 +38,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
-
-	viewv1 "github.com/zoetrope/markdown-view/api/v1"
 )
 
 //! [import]
@@ -91,15 +92,21 @@ func (r *MarkdownViewReconciler) Reconcile(ctx context.Context, req ctrl.Request
 
 	err = r.reconcileConfigMap(ctx, mdView)
 	if err != nil {
-		return ctrl.Result{}, err
+		result, err2 := r.updateStatus(ctx, mdView)
+		logger.Error(err2, "unable to update status")
+		return result, err
 	}
 	err = r.reconcileDeployment(ctx, mdView)
 	if err != nil {
-		return ctrl.Result{}, err
+		result, err2 := r.updateStatus(ctx, mdView)
+		logger.Error(err2, "unable to update status")
+		return result, err
 	}
 	err = r.reconcileService(ctx, mdView)
 	if err != nil {
-		return ctrl.Result{}, err
+		result, err2 := r.updateStatus(ctx, mdView)
+		logger.Error(err2, "unable to update status")
+		return result, err
 	}
 
 	return r.updateStatus(ctx, mdView)
@@ -314,33 +321,84 @@ func (r *MarkdownViewReconciler) reconcileService(ctx context.Context, mdView vi
 //! [update-status]
 
 func (r *MarkdownViewReconciler) updateStatus(ctx context.Context, mdView viewv1.MarkdownView) (ctrl.Result, error) {
-	var dep appsv1.Deployment
-	err := r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: "viewer-" + mdView.Name}, &dep)
-	if err != nil {
+	meta.SetStatusCondition(&mdView.Status.Conditions, metav1.Condition{
+		Type:   viewv1.TypeMarkdownViewAvailable,
+		Status: metav1.ConditionTrue,
+		Reason: "OK",
+	})
+	meta.SetStatusCondition(&mdView.Status.Conditions, metav1.Condition{
+		Type:   viewv1.TypeMarkdownViewDegraded,
+		Status: metav1.ConditionFalse,
+		Reason: "OK",
+	})
+
+	var cm corev1.ConfigMap
+	err := r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: "markdowns-" + mdView.Name}, &cm)
+	if errors.IsNotFound(err) {
+		meta.SetStatusCondition(&mdView.Status.Conditions, metav1.Condition{
+			Type:    viewv1.TypeMarkdownViewDegraded,
+			Status:  metav1.ConditionTrue,
+			Reason:  "Reconciling",
+			Message: "ConfigMap not found",
+		})
+		meta.SetStatusCondition(&mdView.Status.Conditions, metav1.Condition{
+			Type:   viewv1.TypeMarkdownViewAvailable,
+			Status: metav1.ConditionFalse,
+			Reason: "Reconciling",
+		})
+	} else if err != nil {
 		return ctrl.Result{}, err
 	}
 
-	var status viewv1.MarkdownViewStatus
+	var svc corev1.Service
+	err = r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: "viewer-" + mdView.Name}, &svc)
+	if errors.IsNotFound(err) {
+		meta.SetStatusCondition(&mdView.Status.Conditions, metav1.Condition{
+			Type:    viewv1.TypeMarkdownViewDegraded,
+			Status:  metav1.ConditionTrue,
+			Reason:  "Reconciling",
+			Message: "Service not found",
+		})
+		meta.SetStatusCondition(&mdView.Status.Conditions, metav1.Condition{
+			Type:   viewv1.TypeMarkdownViewAvailable,
+			Status: metav1.ConditionFalse,
+			Reason: "Reconciling",
+		})
+	} else if err != nil {
+		return ctrl.Result{}, err
+	}
+
+	var dep appsv1.Deployment
+	err = r.Get(ctx, client.ObjectKey{Namespace: mdView.Namespace, Name: "viewer-" + mdView.Name}, &dep)
+	if errors.IsNotFound(err) {
+		meta.SetStatusCondition(&mdView.Status.Conditions, metav1.Condition{
+			Type:    viewv1.TypeMarkdownViewDegraded,
+			Status:  metav1.ConditionTrue,
+			Reason:  "Reconciling",
+			Message: "Deployment not found",
+		})
+		meta.SetStatusCondition(&mdView.Status.Conditions, metav1.Condition{
+			Type:   viewv1.TypeMarkdownViewAvailable,
+			Status: metav1.ConditionFalse,
+			Reason: "Reconciling",
+		})
+	} else if err != nil {
+		return ctrl.Result{}, err
+	}
+
+	result := ctrl.Result{}
 	if dep.Status.AvailableReplicas == 0 {
-		status = viewv1.MarkdownViewNotReady
-	} else if dep.Status.AvailableReplicas == mdView.Spec.Replicas {
-		status = viewv1.MarkdownViewHealthy
-	} else {
-		status = viewv1.MarkdownViewAvailable
+		meta.SetStatusCondition(&mdView.Status.Conditions, metav1.Condition{
+			Type:    viewv1.TypeMarkdownViewAvailable,
+			Status:  metav1.ConditionFalse,
+			Reason:  "Unavailable",
+			Message: "AvailableReplicas is 0",
+		})
+		result = ctrl.Result{Requeue: true}
 	}
 
-	if mdView.Status != status {
-		mdView.Status = status
-		err = r.Status().Update(ctx, &mdView)
-		if err != nil {
-			return ctrl.Result{}, err
-		}
-	}
-
-	if mdView.Status != viewv1.MarkdownViewHealthy {
-		return ctrl.Result{Requeue: true}, nil
-	}
-	return ctrl.Result{}, nil
+	err = r.Status().Update(ctx, &mdView)
+	return result, err
 }
 
 //! [update-status]

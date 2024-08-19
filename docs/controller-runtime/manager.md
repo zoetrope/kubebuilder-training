@@ -82,9 +82,8 @@ Eventを記録するための関数として、`Event`, `Eventf`, `AnnotatedEven
 
 ```
 $ kubectl get events -n default
-LAST SEEN   TYPE     REASON    OBJECT                             MESSAGE
-14s         Normal   Updated   markdownview/markdownview-sample   MarkdownView(default:markdownview-sample) updated: NotReady
-13s         Normal   Updated   markdownview/markdownview-sample   MarkdownView(default:markdownview-sample) updated: Healthy
+LAST SEEN   TYPE     REASON                    OBJECT                                             MESSAGE
+4s          Normal   Available                 markdownview/markdownview-sample                   MarkdownView(default:markdownview-sample) available
 ```
 
 ## HealthProbe
