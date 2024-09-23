@@ -88,7 +88,7 @@ Admission Webhook機能を利用するためには証明書が必要となりま
 Kubebuilderコマンドで生成した直後の状態では、Webhook機能が利用できるようにはなっていません。
 `config/default/kustomization.yaml`ファイルを編集する必要があります。
 
-`config/default/kustomization.yaml`ファイルを開き、以下のように`resources`の`../webhook`と`../certmanager`, `patchesStrategicMerge`の`manager_webhook_patch.yaml`と`webhookcainjection_patch.yaml`, `replacements`のコメントを外して有効化します。
+`config/default/kustomization.yaml`ファイルを開き、以下のように`resources`の`../webhook`と`../certmanager`, `patches`の`manager_webhook_patch.yaml`と`webhookcainjection_patch.yaml`, `replacements`のコメントを外して有効化します。
 
 [import](../../codes/00_scaffold/config/default/kustomization.yaml)
 
