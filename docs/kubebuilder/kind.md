@@ -168,7 +168,7 @@ $ kubectl rollout restart -n markdown-view-system deployment markdown-view-contr
 
 まず、以下のページを参考に[aqua](https://aquaproj.github.io)をインストールします。
 
-- https://aquaproj.github.io/docs/reference/install
+- https://aquaproj.github.io/docs/install/
 
 次にaquaを使って、各種ツールをインストールします。
 
